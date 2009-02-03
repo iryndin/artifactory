@@ -1,7 +1,5 @@
 package org.artifactory.webapp.wicket.page.config.repos;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.repeater.Item;
@@ -40,22 +38,6 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
         form.add(virtualRepoFields);
 
         virtualRepoFields.add(new StyledCheckbox("artifactoryRequestsCanRetrieveRemoteArtifacts"));
-        virtualRepoFields.add(new SchemaHelpBubble("artifactoryRequestsCanRetrieveRemoteArtifacts.help"));
-
-        final WebMarkupContainer resolvedRepo = new WebMarkupContainer("resolvedRepoWrapper");
-        resolvedRepo.setOutputMarkupId(true);
-        virtualRepoFields.add(resolvedRepo);
-        virtualRepoFields.add(new HelpBubble("resolvedRepo.help",
-                new ResourceModel("resolvedRepo.help")));
-
-        resolvedRepo.add(new DataView("resolvedRepo", new ResolvedReposDataProvider()) {
-            @Override
-            protected void populateItem(final Item item) {
-                RepoDescriptor repo = (RepoDescriptor) item.getModelObject();
-                item.add(new Label("key", repo.getKey()));
-            }
-        });
-
         List<RepoDescriptor> repos = getReposExcludingCurrent();
         DragDropSelection<RepoDescriptor> reposSelection =
                 new DragDropSelection<RepoDescriptor>("repositories", repos) {
@@ -65,18 +47,22 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
                         String simpleName = item.getModelObject().getClass().getSimpleName();
                         item.add(new CssClass(simpleName));
                     }
-
-                    @Override
-                    protected void onOrderChanged(AjaxRequestTarget target) {
-                        super.onOrderChanged(target);
-                        target.addComponent(resolvedRepo);
-                    }
                 };
         virtualRepoFields.add(reposSelection);
+
+        virtualRepoFields.add(new DataView("resolvedRepo", new ResolvedReposDataProvider()) {
+            @Override
+            protected void populateItem(final Item item) {
+                RepoDescriptor repo = (RepoDescriptor) item.getModelObject();
+                item.add(new Label("key", repo.getKey()));
+            }
+        });
+
         virtualRepoFields.add(new SchemaHelpBubble("repositories.help"));
+        virtualRepoFields.add(new HelpBubble("resolvedRepo.help",
+                new ResourceModel("resolvedRepo.help")));
     }
 
-    @Override
     public void handleCreate(CentralConfigDescriptor descriptor) {
         VirtualRepoDescriptor virtualRepoDescriptor = getRepoDescriptor();
         getEditingDescriptor().addVirtualRepository(virtualRepoDescriptor);

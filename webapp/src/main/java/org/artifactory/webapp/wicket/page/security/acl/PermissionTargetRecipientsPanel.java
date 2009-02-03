@@ -35,10 +35,10 @@ import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
+import org.artifactory.webapp.wicket.common.component.CheckboxColumn;
 import org.artifactory.webapp.wicket.common.component.panel.actionable.StyledTabbedPanel;
 import org.artifactory.webapp.wicket.common.component.panel.fieldset.FieldSetPanel;
 import org.artifactory.webapp.wicket.common.component.table.SortableTable;
-import org.artifactory.webapp.wicket.common.component.table.columns.checkbox.AjaxCheckboxColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,8 @@ import java.util.List;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class PermissionTargetRecipientsPanel extends FieldSetPanel {
-    private static final Logger log = LoggerFactory.getLogger(PermissionTargetRecipientsPanel.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(PermissionTargetRecipientsPanel.class);
 
     @SpringBean
     private AclService aclService;
@@ -80,7 +81,7 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
             warnIfAnnonEnabled.setModelObject("Global anonymous access is on, therefore " +
                     "anyone can read from caches and trigger cache population from " +
                     "remote repositories, regardless of the permissions set below. " +
-                    "System admin can turn off anonymous access from the general security config page.");
+                    "You can turn off anonymous access from the permission targets main screen.");
         }
 
         aclInfo = aclService.getAcl(permissionTarget);
@@ -120,12 +121,7 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
                 return new SubPanel(panelId, false);
             }
         });
-        StyledTabbedPanel permissionsTabs = new StyledTabbedPanel("permissionsTabs", tabs);
-        if (groupsDataProvider.getGroups().isEmpty()) {
-            // change the default displayed tab to users if there are no groups
-            permissionsTabs.setSelectedTab(1);
-        }
-
+        final StyledTabbedPanel permissionsTabs = new StyledTabbedPanel("permissionsTabs", tabs);
         add(permissionsTabs);
     }
 
@@ -137,7 +133,7 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
     }
 
     private SortableTable getPermissionsTable(PermissionTargetInfo permissionTarget,
-                                              final boolean isGroup) {
+            final boolean isGroup) {
 
 
         //Permissions table
@@ -155,10 +151,9 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
                 }
             }
         });
-        columns.add(new AjaxCheckboxColumn<AceInfoRow>("Admin", "admin", "admin") {
+        columns.add(new CheckboxColumn<AceInfoRow>("Admin", "admin", "admin", this) {
             @Override
-            protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
-                super.onUpdate(row, value, target);
+            protected void doUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
                 if (sanityCheckAdmin() && isEnabled(row)) {
                     row.setAdmin(value);
                     onCheckboxUpdate(target);
@@ -169,43 +164,35 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
             protected boolean isEnabled(AceInfoRow row) {
                 String currentUsername = authService.currentUsername();
                 String username = row.getPrincipal();
-                if (username.equals(currentUsername)) {
-                    //Do not allow admin user to change (revoke) his admin bit
-                    return false;
-                }
-
-                if (username.equalsIgnoreCase(UserInfo.ANONYMOUS)) {
-                    // Do not admin permissions to the anonymous user
-                    return false;
-                }
-
-                return true;
+                //Do not allow admin user to change (revoke) his admin bit
+                return !username.equals(currentUsername);
             }
         });
-        columns.add(new AjaxCheckboxColumn<AceInfoRow>("Delete", "delete", "delete") {
+        columns.add(
+                new CheckboxColumn<AceInfoRow>("Delete", "delete", "delete", this) {
+                    @Override
+                    protected void doUpdate(AceInfoRow row, boolean value,
+                            AjaxRequestTarget target) {
+                        if (sanityCheckAdmin()) {
+                            row.setDelete(value);
+                            onCheckboxUpdate(target);
+                        }
+                    }
+                });
+        columns.add(
+                new CheckboxColumn<AceInfoRow>("Deploy", "deploy", "deploy", this) {
+                    @Override
+                    protected void doUpdate(AceInfoRow row, boolean value,
+                            AjaxRequestTarget target) {
+                        if (sanityCheckAdmin()) {
+                            row.setDeploy(value);
+                            onCheckboxUpdate(target);
+                        }
+                    }
+                });
+        columns.add(new CheckboxColumn<AceInfoRow>("Read", "read", "read", this) {
             @Override
-            protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
-                super.onUpdate(row, value, target);
-                if (sanityCheckAdmin()) {
-                    row.setDelete(value);
-                    onCheckboxUpdate(target);
-                }
-            }
-        });
-        columns.add(new AjaxCheckboxColumn<AceInfoRow>("Deploy", "deploy", "deploy") {
-            @Override
-            protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
-                super.onUpdate(row, value, target);
-                if (sanityCheckAdmin()) {
-                    row.setDeploy(value);
-                    onCheckboxUpdate(target);
-                }
-            }
-        });
-        columns.add(new AjaxCheckboxColumn<AceInfoRow>("Read", "read", "read") {
-            @Override
-            protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
-                super.onUpdate(row, value, target);
+            protected void doUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
                 if (sanityCheckAdmin()) {
                     row.setRead(value);
                     onCheckboxUpdate(target);
@@ -213,7 +200,8 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
             }
         });
 
-        PermissionTargetAceInfoRowDataProvider dataProvider = isGroup ? groupsDataProvider : usersDataProvider;
+        PermissionTargetAceInfoRowDataProvider dataProvider =
+                isGroup ? groupsDataProvider : usersDataProvider;
 
         SortableTable table = new SortableTable("recipients", columns, dataProvider, 5);
         //Recipients header

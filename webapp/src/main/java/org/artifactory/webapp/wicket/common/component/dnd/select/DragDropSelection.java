@@ -1,9 +1,6 @@
 package org.artifactory.webapp.wicket.common.component.dnd.select;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
@@ -32,6 +29,7 @@ public class DragDropSelection<T> extends FormComponentPanel {
     private IModel choicesModel;
     private IChoiceRenderer renderer;
     private List<T> sourceList;
+    private Model targetSelection;
 
     @SuppressWarnings({"unchecked"})
     public DragDropSelection(final String id) {
@@ -46,22 +44,27 @@ public class DragDropSelection<T> extends FormComponentPanel {
         this(id, new Model((Serializable) choices), renderer);
     }
 
+
     public DragDropSelection(final String id, IModel model, final List<T> choices) {
         this(id, model, new Model((Serializable) choices));
     }
+
 
     public DragDropSelection(final String id, IModel model, final List<T> choices,
                              final IChoiceRenderer renderer) {
         this(id, model, new Model((Serializable) choices), renderer);
     }
 
+
     public DragDropSelection(String id, IModel choicesModel) {
         this(id, choicesModel, StringChoiceRenderer.getInstance());
     }
 
+
     public DragDropSelection(String id, IModel model, IModel choicesModel) {
         this(id, model, choicesModel, StringChoiceRenderer.getInstance());
     }
+
 
     public DragDropSelection(String id, IModel choicesModel, IChoiceRenderer renderer) {
         super(id);
@@ -87,9 +90,9 @@ public class DragDropSelection<T> extends FormComponentPanel {
         MyDragDropList<T> targetList = new MyDragDropList<T>("targetList", new TargetListModel());
         add(targetList);
 
-        HiddenField textField = new HiddenField("selection", new TargetSelectionModel());
+        targetSelection = new Model();
+        HiddenField textField = new HiddenField("selection", targetSelection);
         textField.setOutputMarkupId(true);
-        textField.add(newOnOrderChangeEventBehavior("onOrderChanged"));
         add(textField);
 
         add(new Label("sourceTitle", new TitleModel("selection.source")));
@@ -97,27 +100,10 @@ public class DragDropSelection<T> extends FormComponentPanel {
 
         // add init script
         HtmlTemplate template = new HtmlTemplate("initScript");
-        template.setParameter("widgetClassName", getWidgetClassName());
         template.setParameter("panelId", new MarkupIdModel());
         template.setParameter("targetListId", new PropertyModel(targetList, "markupId"));
         template.setParameter("textFieldId", new PropertyModel(textField, "markupId"));
         add(template);
-    }
-
-    protected String getWidgetClassName() {
-        return "artifactory.DragDropSelection";
-    }
-
-    @Override
-    public void updateModel() {
-        // do nothing, model is updated by TargetSelectionModel
-    }
-
-    protected void onOrderChanged(AjaxRequestTarget target) {
-    }
-
-    protected IBehavior newOnOrderChangeEventBehavior(String event) {
-        return new OnOrderChangedEventBehavior(event);
     }
 
     public IModel getChoices() {
@@ -159,6 +145,25 @@ public class DragDropSelection<T> extends FormComponentPanel {
         List<T> choices = (List<T>) choicesModel.getObject();
         int index = choices.indexOf(itemObject);
         item.add(new SimpleAttributeModifier("idx", String.valueOf(index)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void updateModel() {
+        if (targetSelection.getObject() == null) {
+            setModelObject(Collections.emptyList());
+            return;
+        }
+
+        String selectionString = targetSelection.getObject().toString();
+        String[] selectedIndices = selectionString.split(",");
+        List<T> newListValue = new ArrayList<T>(selectedIndices.length);
+        List<T> choices = (List<T>) choicesModel.getObject();
+        for (String index : selectedIndices) {
+            Integer intIndex = Integer.valueOf(index);
+            newListValue.add(choices.get(intIndex));
+        }
+        setModelObject(newListValue);
     }
 
     private class SourceListModel extends AbstractReadOnlyModel {
@@ -209,37 +214,4 @@ public class DragDropSelection<T> extends FormComponentPanel {
         }
     }
 
-    public class OnOrderChangedEventBehavior extends AjaxFormComponentUpdatingBehavior {
-        private OnOrderChangedEventBehavior(String event) {
-            super(event);
-        }
-
-        @Override
-        protected void onUpdate(AjaxRequestTarget target) {
-            onOrderChanged(target);
-        }
-    }
-
-    private class TargetSelectionModel extends Model {
-        @Override
-        @SuppressWarnings({"unchecked"})
-        public void setObject(Object object) {
-            super.setObject(object);
-            if (object == null) {
-                setModelObject(Collections.emptyList());
-                return;
-            }
-
-            String selectionString = object.toString();
-            String[] selectedIndices = selectionString.split(",");
-            List<T> newListValue = new ArrayList<T>(selectedIndices.length);
-            List<T> choices = (List<T>) choicesModel.getObject();
-            for (String index : selectedIndices) {
-                Integer intIndex = Integer.valueOf(index);
-                newListValue.add(choices.get(intIndex));
-            }
-            setModelObject(newListValue);
-        }
-
-    }
 }

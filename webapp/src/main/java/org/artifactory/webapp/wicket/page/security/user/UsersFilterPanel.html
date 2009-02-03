@@ -1,23 +1,28 @@
-<wicket:extend>
-    <form wicket:id="usersFilterForm">
-        <div class="field float-left">
-            <label>Username:</label>
+<wicket:panel>
+    <h2 class="fieldset-border-title" wicket:id="title"/>
 
-            <div class="value">
-                <input type="text" wicket:id="usernameFilter" class="text">
+    <div wicket:id="border">
+
+        <form wicket:id="usersFilterForm">
+            <div class="field float-left">
+                <label>Username:</label>
+
+                <div class="value">
+                    <input type="text" wicket:id="usernameFilter" class="text">
+                </div>
             </div>
-        </div>
 
-        <div class="field group-field">
-            <label>Group:</label>
+            <div class="field group-field">
+                <label>Group:</label>
 
-            <div class="value">
-                <select wicket:id="groupFilter"/>
+                <div class="value">
+                    <select wicket:id="groupFilter" class="medium"/>
+                </div>
             </div>
-        </div>
 
-        <div class="field field-sep submit-user-field">
-            <button class="button" type="submit" wicket:id="filter"/>
-        </div>
-    </form>
-</wicket:extend>
+            <div class="field field-sep submit-user-field">
+                <button class="button" type="submit" wicket:id="filter"/>
+            </div>
+        </form>
+    </div>
+</wicket:panel>

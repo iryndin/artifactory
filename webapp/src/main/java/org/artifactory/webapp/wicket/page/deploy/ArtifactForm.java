@@ -22,19 +22,18 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.mime.ContentType;
+import org.artifactory.api.repo.DeployableArtifact;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.util.ExceptionUtils;
+import org.artifactory.utils.ExceptionUtils;
 import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
@@ -50,7 +49,7 @@ import java.util.List;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class ArtifactForm extends Form {
-    private static final Logger log = LoggerFactory.getLogger(ArtifactForm.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArtifactForm.class);
 
     @SpringBean
     private RepositoryService repoService;
@@ -79,11 +78,11 @@ public class ArtifactForm extends Form {
     }
 
     private void addInputTextFields() {
-        addTextField("groupId", true);
-        addTextField("artifactId", true);
-        addTextField("version", true);
-        addTextField("classifier", false);
-        addTextField("type", true);
+        addTextField("group");
+        addTextField("artifact");
+        addTextField("version");
+        addTextField("classifier");
+        addTextField("packaging");
     }
 
     private void addDeployPomCheckBox() {
@@ -97,16 +96,20 @@ public class ArtifactForm extends Form {
         artifactSubmitButton = new SimpleButton("artifactSubmit", this, "Deploy Artifact") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                MavenArtifactInfo artifactInfo = parent.getDeployableArtifact();
+                DeployableArtifact deployableArtifact = parent.getDeployableArtifact();
                 try {
-                    repoService.deploy(targetRepo, artifactInfo, deployPom, parent.getUploadedFile());
-                    parent.getUploadForm().info("Successfully deployed: '" + artifactInfo + "'.");
+                    repoService.deploy(targetRepo, deployableArtifact, deployPom, parent.getUploadedFile());
+                    parent.getUploadForm().info("Successfully deployed: '" + deployableArtifact + "'.");
                     FeedbackUtils.refreshFeedback(target);
                 } catch (Exception e) {
-                    log.warn("Failed to deploy artifact", e);
-                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(e,
-                            RepoAccessException.class, IllegalArgumentException.class);
-                    error(cause.getMessage());
+                    LOG.debug("Unable to deploy", e);
+                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(
+                            e, RepoAccessException.class,
+                            IllegalArgumentException.class);
+
+                    String msg = "Failed to deploy artifact '" + deployableArtifact + "'. Cause: " +
+                            cause.getMessage();
+                    error(msg);
                     FeedbackUtils.refreshFeedback(target);
                 } finally {
                     enable(false);
@@ -139,7 +142,7 @@ public class ArtifactForm extends Form {
     }
 
     private List<LocalRepoDescriptor> getDeployableRepos() {
-        return repoService.getDeployableRepoDescriptors();
+        return repoService.getLocalRepoDescriptors();
     }
 
     private void addCancelButton() {
@@ -153,8 +156,8 @@ public class ArtifactForm extends Form {
         add(cancel);
     }
 
-    private TextField addTextField(String wicketId, boolean required) {
-        TextField textField = required ? new RequiredTextField(wicketId) : new TextField(wicketId);
+    private TextField addTextField(String wicketId) {
+        TextField textField = new TextField(wicketId);
         textField.add(new ValidateArtifactFormBehavior("onKeyup"));
         add(textField);
         return textField;
@@ -173,10 +176,10 @@ public class ArtifactForm extends Form {
     }
 
     protected void cleanupResources() {
-        log.debug("Cleaning up deployment resources.");
-        MavenArtifactInfo artifactInfo = parent.getDeployableArtifact();
-        if (artifactInfo != null) {
-            artifactInfo.invalidate();
+        LOG.debug("Cleaning up deployment resources.");
+        DeployableArtifact deployableArtifact = parent.getDeployableArtifact();
+        if (deployableArtifact != null) {
+            deployableArtifact.invalidate();
         }
         parent.removeUploadedFile();
     }
@@ -198,8 +201,8 @@ public class ArtifactForm extends Form {
         this.targetRepo = targetRepo;
     }
 
-    void update(MavenArtifactInfo artifactInfo) {
-        setModelObject(artifactInfo);
+    void update(DeployableArtifact deployableArtifact) {
+        setModelObject(deployableArtifact);
         enable(true);
     }
 
@@ -212,6 +215,9 @@ public class ArtifactForm extends Form {
 
         @Override
         protected void onUpdate(AjaxRequestTarget target) {
+            DeployableArtifact artifact = parent.getDeployableArtifact();
+            boolean valid = artifact.isValid() && targetRepo != null;
+            artifactSubmitButton.setEnabled(valid);
             boolean canDeployPom = nonPomDeployableArtifact();
             deployPomCheckbox.setEnabled(canDeployPom);
             if (canDeployPom) {
@@ -221,13 +227,12 @@ public class ArtifactForm extends Form {
                 deployPom = false;
             }
             target.addComponent(deployPomCheckbox);
+            target.addComponent(artifactSubmitButton);
         }
     }
 
     /**
      * Checks if a matching pom for the deployable artifact exists in the target repo
-     *
-     * @return boolean - True if pom exists
      */
     private boolean pomExists() {
         try {
@@ -240,12 +245,10 @@ public class ArtifactForm extends Form {
 
     /**
      * Check if can deploy default pom for packaging other than pom
-     *
-     * @return boolean - True if artifact is deployed with pom
      */
     private boolean nonPomDeployableArtifact() {
-        MavenArtifactInfo artifactInfo = parent.getDeployableArtifact();
-        String packagingType = artifactInfo.getType();
+        DeployableArtifact deployableArtifact = parent.getDeployableArtifact();
+        String packagingType = deployableArtifact.getPackaging();
         return !ContentType.mavenPom.getDefaultExtension().equalsIgnoreCase(packagingType);
     }
 }

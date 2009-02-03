@@ -364,7 +364,8 @@ public class MavenEmbedder {
         // ----------------------------------------------------------------------
 
         if (classLoader == null) {
-            throw new IllegalStateException("A classloader must be specified using setClassLoader(ClassLoader).");
+            throw new IllegalStateException(
+                    "A classloader must be specified using setClassLoader(ClassLoader).");
         }
 
         embedder = new Embedder();
@@ -400,7 +401,8 @@ public class MavenEmbedder {
             // Artifact related components
             // ----------------------------------------------------------------------
 
-            artifactRepositoryFactory = (ArtifactRepositoryFactory) embedder.lookup(ArtifactRepositoryFactory.ROLE);
+            artifactRepositoryFactory =
+                    (ArtifactRepositoryFactory) embedder.lookup(ArtifactRepositoryFactory.ROLE);
 
             artifactFactory = (ArtifactFactory) embedder.lookup(ArtifactFactory.ROLE);
 

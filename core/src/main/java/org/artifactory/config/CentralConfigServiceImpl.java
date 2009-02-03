@@ -21,8 +21,6 @@ import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.config.VersionInfo;
-import org.artifactory.api.security.AuthorizationException;
-import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.config.jaxb.JaxbHelper;
@@ -30,7 +28,7 @@ import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
-import org.artifactory.repo.index.IndexerService;
+import org.artifactory.repo.index.IndexerManager;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
@@ -66,13 +64,10 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     private String serverName;
 
     @Autowired
-    private AuthorizationService authService;
-
-    @Autowired
     private InternalRepositoryService repositoryService;
 
     @Autowired
-    private IndexerService indexer;
+    private IndexerManager indexerManager;
 
     public CentralConfigServiceImpl() {
     }
@@ -105,7 +100,8 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         //Get the server name
         serverName = descriptor.getServerName();
         if (serverName == null) {
-            log.info("No custom server id in configuration. Using hostname instead.");
+            log.warn("Could not determine server instance id from configuration." +
+                    " Using hostname instead.");
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
@@ -157,10 +153,6 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
             throw new IllegalStateException("Mutable editing descriptor is null");
         }
 
-        if (!authService.isAdmin()) {
-            throw new AuthorizationException("Only admin user can save the artifactory config file");
-        }
-
         // before doing anything do a sanity check that the edited descriptor is valid
         // will fail if not valid without affecting the current configuration
         File tmpNewConfig = new File(originalConfigFile.getAbsolutePath() + ".tmp");
@@ -201,28 +193,30 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
 
     public void importFrom(ImportSettings settings, StatusHolder status) {
         File dirToImport = settings.getBaseDir();
-        if ((dirToImport != null) && (dirToImport.isDirectory()) && (dirToImport.listFiles().length > 0)) {
+
+        if ((dirToImport != null) && (dirToImport.isDirectory()) &&
+                (dirToImport.listFiles().length > 0)) {
             status.setStatus("Importing config...", log);
-            File newConfigFile = new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
+            File newConfigFile =
+                    new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
             if (newConfigFile.exists()) {
-                // copy the newly imported config file to the current artifactory etc directory 
-                File etcDir = ArtifactoryHome.getEtcDir();
-                File tempConfFile = new File(etcDir, "import_" + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
-                try {
-                    FileUtils.copyFile(newConfigFile, tempConfFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to backup " + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE, e);
-                }
-                status.setStatus("Reloading configuration from " + tempConfFile, log);
-                reloadConfiguration(tempConfFile);
+                status.setStatus("Reloading configuration from " + newConfigFile, log);
+                reloadConfiguration(newConfigFile);
                 init();
                 status.setStatus("Configuration reloaded from " + newConfigFile, log);
-
-                //Check that config files are not the same (e.g. if we reimport from the same place)
-                if (!newConfigFile.equals(originalConfigFile)) {
-                    // Switch the originial config file with the new one
-                    status.setStatus("Switching config files...", log);
-                    org.artifactory.util.FileUtils.switchFiles(originalConfigFile, tempConfFile);
+            }
+            status.setStatus("Switching config files...", log);
+            if (newConfigFile.exists()) {
+                //Backup the config file and overwrite it
+                try {
+                    //Check that config files are not the same (e.g. if we reimport from the same place)
+                    if (!newConfigFile.equals(originalConfigFile)) {
+                        org.artifactory.utils.FileUtils
+                                .switchFiles(originalConfigFile, newConfigFile);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            "Failed to backup " + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE, e);
                 }
             }
         } else if (settings.isFailIfEmpty()) {
@@ -249,19 +243,20 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     }
 
     private void reloadConfiguration(File path) {
-        log.info("Reloading configuration (using '" + path + "')...");
+        log.info("Re-Loading configuration (using '" + path + "')...");
         try {
             discardEditedDescriptor();
             CentralConfigDescriptor oldDescriptor = getDescriptor();
             if (oldDescriptor == null) {
-                throw new IllegalStateException("The system was not loaded, and a reload was called");
+                throw new IllegalStateException(
+                        "The system was not loaded, and a reload was called");
             }
             InternalArtifactoryContext ctx = InternalContextHelper.get();
             CentralConfigDescriptorImpl descriptor = JaxbHelper.readConfig(path);
             //setDescriptor() will set the new date formatter and server name
             setDescriptor(descriptor);
             ctx.reload(oldDescriptor);
-            log.info("Reloaded configuration from '" + path + "'.");
+            log.info("Re-Loaded configuration from '" + path + "'.");
         } catch (Exception e) {
             log.error("Failed to reload configuration from '" + path + "'.", e);
             throw new RuntimeException(e);
@@ -296,7 +291,8 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
             String key = proxy.getKey();
             ProxyDescriptor oldProxy = map.put(key, proxy);
             if (oldProxy != null) {
-                throw new RuntimeException("Duplicate proxy key in configuration: " + key + ".");
+                throw new RuntimeException(
+                        "Duplicate proxy key in configuration: " + key + ".");
             }
         }
     }

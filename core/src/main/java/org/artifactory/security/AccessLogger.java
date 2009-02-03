@@ -29,7 +29,7 @@ public abstract class AccessLogger {
     private static final Logger log = LoggerFactory.getLogger(AccessLogger.class);
 
     public enum RepoPathAction {
-        DOWNLOAD, DEPLOY, DELETE, SEARCH
+        DOWNLOAD, DEPLOY, DELETE
     }
 
     public static void downloaded(RepoPath repoPath) {
@@ -42,7 +42,7 @@ public abstract class AccessLogger {
 
     public static void downloaded(RepoPath repoPath, boolean denied,
             Authentication authentication) {
-        logRepoPathAction(repoPath, RepoPathAction.DOWNLOAD, denied, authentication);
+        repoPathAction(repoPath, RepoPathAction.DOWNLOAD, denied, authentication);
     }
 
     public static void deployed(RepoPath repoPath) {
@@ -54,7 +54,7 @@ public abstract class AccessLogger {
     }
 
     public static void deployed(RepoPath repoPath, boolean denied, Authentication authentication) {
-        logRepoPathAction(repoPath, RepoPathAction.DEPLOY, denied, authentication);
+        repoPathAction(repoPath, RepoPathAction.DEPLOY, denied, authentication);
     }
 
     public static void deleted(RepoPath repoPath) {
@@ -66,15 +66,11 @@ public abstract class AccessLogger {
     }
 
     public static void deleted(RepoPath repoPath, boolean denied, Authentication authentication) {
-        logRepoPathAction(repoPath, RepoPathAction.DELETE, denied, authentication);
+        repoPathAction(repoPath, RepoPathAction.DELETE, denied, authentication);
     }
 
-    public static void unauthorizedSearch() {
-        logRepoPathAction(null, RepoPathAction.SEARCH, true, SecurityServiceImpl.getAuthentication());
-    }
-
-    public static void logRepoPathAction(
-            RepoPath repoPath, RepoPathAction action, boolean denied, Authentication authentication) {
+    public static void repoPathAction(RepoPath repoPath, RepoPathAction action, boolean denied,
+            Authentication authentication) {
         if (authentication != null) {
             Object details = authentication.getDetails();
             String address = null;
@@ -82,8 +78,9 @@ public abstract class AccessLogger {
                 address = ((WebAuthenticationDetails) details).getRemoteAddress();
             }
             log.info(
-                    (denied ? "[DENIED " : "[ACCEPTED ") + action.name() + "] " + (repoPath != null ? repoPath : "") +
-                            " for " + authentication.getName() + (address != null ? "/" + address : "") + ".");
+                    (denied ? "[DENIED " : "[ACCEPTED ") + action.name() + "] " + repoPath +
+                            " for " + authentication.getName() + (
+                            address != null ? "/" + address : "") + ".");
         }
     }
 }

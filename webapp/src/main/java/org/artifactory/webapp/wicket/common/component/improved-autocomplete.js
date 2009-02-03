@@ -1,4 +1,33 @@
-Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Wicket Ajax Autocomplete
+ *
+ * @author Janne Hietam&auml;ki
+ */
+
+if (typeof(Wicket) == "undefined")
+    Wicket = { };
+
+Wicket.AutoComplete = function(elementId, callbackUrl) {
+    //yoava: max rows to show, if list contains more rows, div will be scorlled
+    var MAX_VISIBLE_ROWS = 10;
+
+    var KEY_BACKSPACE = 8;
     var KEY_TAB = 9;
     var KEY_ENTER = 13;
     var KEY_ESC = 27;
@@ -10,11 +39,16 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
     var KEY_CTRL = 17;
     var KEY_ALT = 18;
 
-    var selected = -1; 	// index of the currently selected item
-    var elementCount = 0; // number of items on the auto complete list
-    var visible = 0;		// is the list visible
-    var mouseactive = 0;	// is mouse selection active
-    var hidingAutocomplete = 0;		// are we hiding the autocomplete list
+    var selected = -1;
+    // index of the currently selected item
+    var elementCount = 0;
+    // number of items on the auto complete list
+    var visible = 0;
+    // is the list visible
+    var mouseactive = 0;
+    // is mouse selection active
+    var hidingautocomplete = 0;
+    // are we hiding the autocomplete list
 
     // pointers of the browser events
     var objonkeydown;
@@ -22,65 +56,52 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
     var objonkeyup;
     var objonkeypress;
     var objonchange;
-    var objonchangeoriginal;
 
-    // holds the eventual margins, padding, etc. of the menu container.
-    // it is computed when the menu is first rendered, and then reused.
-    var initialDelta = -1;
-
-    // holds a throttler, for not sending many requests if the user types
-    // too quickly.
-    var localThrottler = new Wicket.Throttler(true);
-    var throttleDelay = 300;
+    //yoava: true when cursor inside menu div.
+    //       needed for scrolling in IE
+    var isMouseOverMenu = false;
+    window.isScrolling = false;
 
     function initialize() {
-        // Remove the autocompletion menu if still present from
-        // a previous call. This is required to properly register
-        // the mouse event handler again (using the new stateful 'mouseactive'
-        // variable which just gets created)
-        var choiceDiv = document.getElementById(getMenuId());
-        if (choiceDiv != null) {
-            choiceDiv.parentNode.parentNode.removeChild(choiceDiv.parentNode);
-        }
-
         var obj = wicketGet(elementId);
 
         objonkeydown = obj.onkeydown;
         objonblur = obj.onblur;
         objonkeyup = obj.onkeyup;
         objonkeypress = obj.onkeypress;
-
-        // WICKET-1280
-        objonchangeoriginal = obj.onchange;
-        obj.onchange = function(event) {
-            if (mouseactive == 1)return false;
-            if (typeof objonchangeoriginal == "function")objonchangeoriginal();
-        }
         objonchange = obj.onchange;
 
         obj.onblur = function(event) {
-            if (mouseactive == 1) {
-                Wicket.$(elementId).focus();
-                return killEvent(event);
+            if (mouseactive == 1)return false;
+
+            //yoava: patch for not hiding menu div when scrolling in IE
+            if (isMouseOverMenu) {
+                wicketGet(elementId).focus();
+                return;
             }
+
             hideAutoComplete();
-            if (typeof objonblur == "function")objonblur();
         }
 
         obj.onkeydown = function(event) {
-            switch (wicketKeyCode(Wicket.fixEvent(event))) {
+            switch (wicketKeyCode(getEvent(event))) {
                 case KEY_UP:
-                    if (selected > -1)selected--;
+                    if (selected > -1) {
+                        selected--;
+                        scrollToSelection();
+                    }
+
                     if (selected == -1) {
                         hideAutoComplete();
                     } else {
                         render();
                     }
-                    if (Wicket.Browser.isSafari())return killEvent(event);
+                    if (navigator.appVersion.indexOf('AppleWebKit') > 0)return killEvent(event);
                     break;
                 case KEY_DOWN:
                     if (selected < elementCount - 1) {
                         selected++;
+                        scrollToSelection();
                     }
                     if (visible == 0) {
                         updateChoices();
@@ -88,27 +109,26 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
                         render();
                         showAutoComplete();
                     }
-                    if (Wicket.Browser.isSafari())return killEvent(event);
+
+                    if (navigator.appVersion.indexOf('AppleWebKit') > 0)return killEvent(event);
                     break;
                 case KEY_ESC:
                     hideAutoComplete();
                     return killEvent(event);
                     break;
                 case KEY_ENTER:
-                    if (selected > -1) {
-                        var value = getSelectedValue();
-                        if (handleSelection(value)) {
-                            obj.value = value;
-                            if (typeof objonchange == "function") objonchange(event);
-                        }
-                        hideAutoComplete();
-                        hidingAutocomplete = 1;
-                    } else if (Wicket.AutoCompleteSettings.enterHidesWithNoSelection) {
+                    if (visible) {
+                        obj.value = getSelectedValue();
                         hideAutoComplete();
                         hidingAutocomplete = 1;
                     }
-                    mouseactive = 0;
-                    if (typeof objonkeydown == "function") objonkeydown(event);
+
+                    if (typeof objonkeydown == "function")objonkeydown();
+                    if (typeof objonchange == "function")objonchange();
+
+                    if (selected > -1) {
+                        return killEvent(event);
+                    }
                     return true;
                     break;
                 default:
@@ -116,44 +136,43 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
         }
 
         obj.onkeyup = function(event) {
-            switch (wicketKeyCode(Wicket.fixEvent(event))) {
+            switch (wicketKeyCode(getEvent(event))) {
                 case KEY_ENTER:
                     return killEvent(event);
-                case KEY_TAB:
-                    if (cfg.showListOnFocusGain)
-                        updateChoices();
-                    break;
                 case KEY_UP:
                 case KEY_DOWN:
                 case KEY_ESC:
+                case KEY_TAB:
                 case KEY_RIGHT:
                 case KEY_LEFT:
                 case KEY_SHIFT:
                 case KEY_ALT:
                 case KEY_CTRL:
-                    break;
+                //yoava: no need to update for special keys
+                case 20:
+                case 33:case 34:case 35:
+                case 44:case 46:
+                case 91:case 93:
+                case 112:case 113:case 114:case 115:case 116:case 117:case 118:case 119:
+                case 120:case 121:case 123:
+                case 144:case 145:
+                break;
                 default:
                     updateChoices();
             }
-            if (typeof objonkeyup == "function")objonkeyup(event);
+            if (typeof objonkeyup == "function")objonkeyup();
             return null;
         }
 
         obj.onkeypress = function(event) {
-            if (wicketKeyCode(Wicket.fixEvent(event)) == KEY_ENTER) {
+            if (wicketKeyCode(getEvent(event)) == KEY_ENTER) {
                 if (selected > -1 || hidingAutocomplete == 1) {
                     hidingAutocomplete = 0;
                     return killEvent(event);
                 }
             }
-            if (typeof objonkeypress == "function")objonkeypress(event);
+            if (typeof objonkeypress == "function")objonkeypress();
         }
-    }
-
-    function handleSelection(input) {
-        var menu = getAutocompleteMenu();
-        var attr = menu.firstChild.childNodes[selected].attributes['onselect'];
-        return attr ? eval(attr.value) : input;
     }
 
     function getMenuId() {
@@ -163,46 +182,37 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
     function getAutocompleteMenu() {
         var choiceDiv = document.getElementById(getMenuId());
         if (choiceDiv == null) {
-            var container = document.createElement("div");
-            container.className = "wicket-aa-container";
-            if (cfg.className)
-                container.className += ' ' + cfg.className;
-            document.body.appendChild(container);
-            container.style.display = "none";
-            container.style.overflow = "auto";
-            container.style.position = "absolute";
-            container.id = getMenuId() + "-container";
-
-            container.show = function() {
-                wicketShow(this.id)
-            };
-            container.hide = function() {
-                wicketHide(this.id)
-            };
-
             choiceDiv = document.createElement("div");
-            container.appendChild(choiceDiv);
+            document.body.appendChild(choiceDiv);
             choiceDiv.id = getMenuId();
             choiceDiv.className = "wicket-aa";
+            choiceDiv.style.display = "none";
+            choiceDiv.style.position = "absolute";
+            choiceDiv.style.zIndex = "10000";
 
-
-            // WICKET-1350/WICKET-1351
-            container.onmouseout = function() {
-                mouseactive = 0;
-            };
-            container.onmousemove = function() {
-                mouseactive = 1;
-            };
+            //yoava: updates mouseOnMenu flag.
+            //       needed for scrolling in IE
+            choiceDiv.onmouseover = function () {
+                isMouseOverMenu = true;
+            }
+            choiceDiv.onmouseout = function () {
+                isMouseOverMenu = false;
+            }
         }
 
+        choiceDiv.show = function() {
+            wicketShow(this.id)
+        }
+        choiceDiv.hide = function() {
+            wicketHide(this.id)
+        }
 
         return choiceDiv;
     }
 
-    function getAutocompleteContainer() {
-        var node = getAutocompleteMenu().parentNode;
-
-        return node;
+    function getEvent(event) {
+        if (!event)return window.event;
+        return event;
     }
 
     function killEvent(event) {
@@ -224,33 +234,16 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
     }
 
     function updateChoices() {
-        if (cfg.preselect == true) {
-            selected = 0;
-        }
-        else {
-            selected = -1;
-        }
-        localThrottler.throttle(getMenuId(), throttleDelay, actualUpdateChoices);
-    }
+        //yoava: call global ajax CallHandler - removed
+        // if (window.wicketGlobalPreCallHandler)
+        //     window.wicketGlobalPreCallHandler();
 
-    function actualUpdateChoices()
-    {
-        showIndicator();
+        selected = -1;
+
         var value = wicketGet(elementId).value;
-        var request = new Wicket.Ajax.Request(callbackUrl + "&q=" + processValue(value), doUpdateChoices, false, true, false, "wicket-autocomplete|d");
+        var request = new Wicket.Ajax.Request(callbackUrl + "&q=" +
+                                              processValue(value), doUpdateChoices, false, true, false, "wicket-autocomplete|d");
         request.get();
-    }
-
-    function showIndicator() {
-        if (indicatorId != null) {
-            Wicket.$(indicatorId).style.display = '';
-        }
-    }
-
-    function hideIndicator() {
-        if (indicatorId != null) {
-            Wicket.$(indicatorId).style.display = 'none';
-        }
     }
 
     function processValue(param) {
@@ -259,27 +252,32 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
 
     function showAutoComplete() {
         var position = getPosition(wicketGet(elementId));
-        var container = getAutocompleteContainer();
+        var menu = getAutocompleteMenu();
         var input = wicketGet(elementId);
-        var index = getOffsetParentZIndex(elementId);
-        container.show();
-        container.style.zIndex = (!isNaN(Number(index)) ? Number(index) + 1 : index);
-        container.style.left = position[0] + 'px'
-        container.style.top = (input.offsetHeight + position[1]) + 'px';
-        if (cfg.adjustInputWidth)
-            container.style.width = input.offsetWidth + 'px';
+        menu.show();
+        menu.style.left = position[0] + 'px'
+        menu.style.top = (input.offsetHeight + position[1]) + 'px';
+        menu.style.width = input.offsetWidth + 'px';
+
+        //yoava: add scrollbars if items > MAX_VISIBLE_ROWS
+        var items = menu.getElementsByTagName('li');
+        if (items.length > MAX_VISIBLE_ROWS) {
+            menu.style.height = (MAX_VISIBLE_ROWS * items[0].offsetHeight) + 'px';
+            menu.style.overflowY = 'auto';
+        } else {
+            menu.style.height = 'auto';
+        }
+
         visible = 1;
         hideShowCovered();
     }
 
     function hideAutoComplete() {
+        hidingAutocomplete = 1;
         visible = 0;
         selected = -1;
-        if (getAutocompleteContainer())
-        {
-            getAutocompleteContainer().hide();
-            hideShowCovered();
-        }
+        getAutocompleteMenu().hide();
+        hideShowCovered();
     }
 
     function getPosition(obj) {
@@ -294,45 +292,35 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
     }
 
     function doUpdateChoices(resp) {
-
-        // check if the input hasn't been cleared in the meanwhile
-        var input = wicketGet(elementId);
-        if ((Wicket.Focus.getFocusedElement() != input) || !cfg.showListOnEmptyInput && (input.value == null || input.value == "")) {
-            hideAutoComplete();
-
-            // yoava: fixed RTFACT-1059
-            Wicket.Log.info("Response processed successfully.");
-            Wicket.Ajax.invokePostCallHandlers();
-            hideIndicator();
-            return;
-        }
-
         var element = getAutocompleteMenu();
         element.innerHTML = resp;
         if (element.firstChild && element.firstChild.childNodes) {
             elementCount = element.firstChild.childNodes.length;
 
-            var clickFunc = function(event) {
-                mouseactive = 0;
-                var value = getSelectedValue();
-                if (value = handleSelection(value)) {
-                    wicketGet(elementId).value = value;
-                    if (typeof objonchange == "function") objonchange();
-                }
-                hideAutoComplete();
-            };
-
-            var mouseOverFunc = function(event) {
-                selected = getElementIndex(this);
-                render();
-                showAutoComplete();
-            };
-
-            var node = element.firstChild.childNodes[0];
             for (var i = 0; i < elementCount; i++) {
-                node.onclick = clickFunc;
-                node.onmouseover = mouseOverFunc;
-                node = node.nextSibling;
+                var node = element.firstChild.childNodes[i];
+
+                node.onclick = function(event) {
+                    //yoava: fix: when selecting something, input is selected
+                    wicketGet(elementId).focus();
+
+                    wicketGet(elementId).value = getSelectedValue();
+                    if (typeof objonchange == "function")objonchange();
+                    hideAutoComplete();
+                }
+
+                node.onmouseover = function(event) {
+                    if (!window.isScrolling) {
+                        mouseactive = 1;
+                        selected = getElementIndex(this);
+                        render();
+                        showAutoComplete();
+                    }
+                }
+
+                node.onmouseout = function(event) {
+                    mouseactive = 0;
+                }
             }
         } else {
             elementCount = 0;
@@ -340,37 +328,38 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
 
         if (elementCount > 0) {
             showAutoComplete();
+
+            //yoava: scroll to first option
+            getAutocompleteMenu().firstChild.firstChild.scrollIntoView();
         } else {
             hideAutoComplete();
         }
+
         render();
 
-        scheduleEmptyCheck();
-
-        Wicket.Log.info("Response processed successfully.");
-        Wicket.Ajax.invokePostCallHandlers();
-        hideIndicator();
-    }
-
-    function scheduleEmptyCheck() {
-        window.setTimeout(function() {
-            var input = wicketGet(elementId);
-            if (!cfg.showListOnEmptyInput && (input.value == null || input.value == "")) {
-                hideAutoComplete();
-            }
-        }, 100);
+        //yoava: call global ajax CallHandler
+        if (window.wicketGlobalPostCallHandler)
+            window.wicketGlobalPostCallHandler();
     }
 
     function getSelectedValue() {
-        var element = getAutocompleteMenu();
-        var attr = element.firstChild.childNodes[selected].attributes['textvalue'];
-        var value;
-        if (attr == undefined) {
-            value = element.firstChild.childNodes[selected].innerHTML;
-        } else {
-            value = attr.value;
+        //yoava: added try-catch in-case no options are opened
+        try {
+
+            var element = getAutocompleteMenu();
+            var attr = element.firstChild.childNodes[selected].attributes['textvalue'];
+            var value;
+            if (attr == undefined) {
+                value = element.firstChild.childNodes[selected].innerHTML;
+            } else {
+                value = attr.value;
+            }
+            return stripHTML(value);
+
+        } catch (e) {
+            return wicketGet(elementId).value;
         }
-        return stripHTML(value);
+
     }
 
     function getElementIndex(element) {
@@ -385,94 +374,51 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
         return str.replace(/<[^>]+>/g, "");
     }
 
-    function adjustScrollOffset(menu, item) {
-        if (item.offsetTop + item.offsetHeight > menu.scrollTop + menu.offsetHeight) {
-            menu.scrollTop = item.offsetTop + item.offsetHeight - menu.offsetHeight;
-        } else
-        // adjust to the top
-            if (item.offsetTop < menu.scrollTop) {
-                menu.scrollTop = item.offsetTop;
-            }
-    }
-
     function render() {
-        var menu = getAutocompleteMenu();
-        var height = 0;
-        var node = menu.firstChild.childNodes[0];
-        var re = /\bselected\b/gi;
-        for (var i = 0; i < elementCount; i++)
-        {
-            var origClassNames = node.className;
-            var classNames = origClassNames.replace(re, "");
-            if (selected == i) {
-                classNames += " selected";
-                adjustScrollOffset(menu.parentNode, node);
+        var element = getAutocompleteMenu();
+        for (var i = 0; i < elementCount; i++) {
+            var node = element.firstChild.childNodes[i];
+
+            var classNames = node.className.split(" ");
+            for (var j = 0; j < classNames.length; j++) {
+                if (classNames[j] == 'selected') {
+                    classNames[j] = '';
+                }
             }
-            if (classNames != origClassNames)
-                node.className = classNames;
 
-            if ((cfg.maxHeight > -1) && (height < cfg.maxHeight))
-                height += node.offsetHeight;
+            if (selected == i) {
+                classNames.push('selected');
+            }
 
-            node = node.nextSibling;
-        }
-        if (cfg.maxHeight > -1) {
-            // If we don't exceed the maximum size, we add the extra space
-            // that may be there due to padding, margins, etc.
-            if (initialDelta == -1)
-                initialDelta = menu.parentNode.offsetHeight - height;
-            height = height < cfg.maxHeight ? height + initialDelta : cfg.maxHeight;
-            menu.parentNode.style.height = height + "px";
+            node.className = classNames.join(" ");
         }
     }
 
-    // From http://www.robertnyman.com/2006/04/24/get-the-rendered-style-of-an-element/
-    function getStyle(obj, cssRule) {
-        var cssRuleAlt = cssRule.replace(/\-(\w)/g, function(strMatch, p1) {
-            return p1.toUpperCase();
-        });
-        var value = obj.style[cssRuleAlt];
+
+    function isVisible(obj) {
+        var value = obj.style.visibility;
         if (!value) {
-            if (document.defaultView && document.defaultView.getComputedStyle) {
-                value = document.defaultView.getComputedStyle(obj, "").getPropertyValue(cssRule);
-            }
-            else if (obj.currentStyle)
-            {
-                value = obj.currentStyle[cssRuleAlt];
+            if (document.defaultView &&
+                typeof(document.defaultView.getComputedStyle) == "function") {
+                value =
+                document.defaultView.getComputedStyle(obj, "").getPropertyValue("visibility");
+            } else if (obj.currentStyle) {
+                value = obj.currentStyle.visibility;
+            } else {
+                value = '';
             }
         }
         return value;
     }
 
-    function isVisible(obj) {
-        return getStyle(obj, "visibility");
-    }
-
-    function getOffsetParentZIndex(obj) {
-        obj = typeof obj == "string" ? Wicket.$(obj) : obj;
-        obj = obj.offsetParent;
-        var index = "auto";
-        do {
-            var pos = getStyle(obj, "position");
-            if (pos == "relative" || pos == "absolute" || pos == "fixed") {
-                index = getStyle(obj, "z-index");
-            }
-            obj = obj.offsetParent;
-        } while (obj && index == "auto");
-        return index;
-    }
-
     function hideShowCovered() {
-        if (!/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+        //yoava: not needed for ie7
+        if ((!/msie/i.test(navigator.userAgent) || /msie 7/i.test(navigator.userAgent) ) &&
+            !/opera/i.test(navigator.userAgent)) {
             return;
         }
-        // IE7 fix, if this doesn't go in a timeout then the complete page could become invisible.
-        // when closing the popup.
-        setTimeout(hideShowCoveredTimeout, 1);
-    }
 
-    function hideShowCoveredTimeout() {
-        var el = getAutocompleteContainer();
+        var el = getAutocompleteMenu();
         var p = getPosition(el);
 
         var acLeftX = p[0];
@@ -492,7 +438,8 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
                 var topY = p[1];
                 var bottomY = topY + tag.offsetHeight;
 
-                if (this.hidden || (leftX > acRightX) || (rightX < acLeftX) || (topY > acBottomY) || (bottomY < acTopY)) {
+                if (this.hidden || (leftX > acRightX) || (rightX < acLeftX) || (topY > acBottomY) ||
+                    (bottomY < acTopY)) {
                     if (!tag.wicket_element_visibility) {
                         tag.wicket_element_visibility = isVisible(tag);
                     }
@@ -505,6 +452,19 @@ Wicket.AutoComplete = function(elementId, callbackUrl, cfg, indicatorId) {
                 }
             }
         }
+    }
+
+
+    //yoava: scroll selection into view (when using keyboard)
+    function scrollToSelection() {
+        if (selected < MAX_VISIBLE_ROWS / 2) {
+            return;
+        }
+
+        window.isScrolling = true;
+        var menu = getAutocompleteMenu();
+        menu.firstChild.childNodes[selected - MAX_VISIBLE_ROWS / 2].scrollIntoView();
+        window.setTimeout("window.isScrolling = false;", 100);
     }
 
     initialize();

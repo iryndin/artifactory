@@ -19,8 +19,7 @@ package org.artifactory.webapp.servlet;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.api.request.ArtifactoryResponse;
-import org.artifactory.util.ExceptionUtils;
-import org.artifactory.util.LoggingUtils;
+import org.artifactory.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,18 +58,9 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
     }
 
     public void sendInternalError(Exception exception, Logger logger) throws IOException {
-        Throwable ioException = ExceptionUtils.getCauseOfTypes(exception, IOException.class);
-        int statusCode;
-        String reason;
-        if (ioException != null) {
-            statusCode = HttpStatus.SC_NOT_FOUND;
-            reason = ioException.getMessage();
-            LoggingUtils.warnOrDebug(logger, makeDebugMessage(statusCode, reason));
-        } else {
-            statusCode = HttpStatus.SC_INTERNAL_SERVER_ERROR;
-            reason = exception.getMessage();
-            logger.error(makeDebugMessage(statusCode, reason), exception);
-        }
+        int statusCode = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+        String reason = exception.getMessage();
+        logger.error(makeDebugMessage(statusCode, reason), exception);
         status = Status.FAILURE;
         sendErrorInternal(statusCode, reason);
     }
@@ -106,7 +96,7 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
     private static String makeDebugMessage(int statusCode, String reason) {
         StringBuilder builder = new StringBuilder("Sending HTTP error code ").append(statusCode);
         if (reason != null) {
-            builder.append(": ").append(reason);
+            builder.append(":").append(reason);
         }
         return builder.toString();
     }

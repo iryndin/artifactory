@@ -16,10 +16,10 @@
  */
 package org.artifactory.update.md.v130beta3;
 
+import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.update.md.MetadataConverter;
 import org.artifactory.update.md.MetadataConverterUtils;
-import org.artifactory.update.md.MetadataType;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -30,14 +30,10 @@ import java.util.List;
  * @date Nov 9, 2008
  */
 public class ArtifactoryFolderConverter implements MetadataConverter {
-    public static final String ARTIFACTORY_FOLDER = "artifactory.folder";
+    public static final String OLD_METADATA_NAME = "artifactory.folder";
 
     public String getNewMetadataName() {
-        return "artifactory-folder";
-    }
-
-    public MetadataType getSupportedMetadataType() {
-        return MetadataType.folder;
+        return FolderInfo.ROOT;
     }
 
     public void convert(Document doc) {

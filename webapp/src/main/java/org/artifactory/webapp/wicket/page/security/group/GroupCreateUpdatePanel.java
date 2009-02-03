@@ -28,7 +28,6 @@ import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.CreateUpdatePanel;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
-import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalCloseLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
@@ -43,7 +42,7 @@ public class GroupCreateUpdatePanel extends CreateUpdatePanel<GroupInfo> {
     private UserGroupService groupService;
 
     public GroupCreateUpdatePanel(CreateUpdateAction action, GroupInfo groupInfo,
-            GroupsListPanel groupsListPanel) {
+                                  GroupsListPanel groupsListPanel) {
         super(action, groupInfo);
         setWidth(440);
 
@@ -56,15 +55,12 @@ public class GroupCreateUpdatePanel extends CreateUpdatePanel<GroupInfo> {
         // Group name
         RequiredTextField groupNameTf = new RequiredTextField("groupName");
         groupNameTf.setEnabled(isCreate());// don't allow groupname update
-        groupNameTf.add(new JcrNameValidator("Invalid group name '%s'"));
+        groupNameTf.add(JcrNameValidator.getInstance());
         border.add(groupNameTf);
 
         // Group description
         TextArea groupDescriptionTextArea = new TextArea("description");
         border.add(groupDescriptionTextArea);
-
-        // If default for newly created users
-        border.add(new StyledCheckbox("newUserDefault"));
 
         // Cancel button
         form.add(new ModalCloseLink("cancel"));
@@ -80,38 +76,38 @@ public class GroupCreateUpdatePanel extends CreateUpdatePanel<GroupInfo> {
         SimpleButton submit = new SimpleButton("submit", form, submitCaption) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                boolean hasError = false;
                 if (isCreate()) {
-                    hasError = onCreate();
+                    onCreate();
                 } else {
                     onUpdate();
                 }
+
                 FeedbackUtils.refreshFeedback(target);
-                if (!hasError) {
-                    // close panel and refresh
-                    target.addComponent(groupsListPanel);
-                    ModalHandler.closeCurrent(target);
-                }
+                target.addComponent(groupsListPanel);
+                ModalHandler.closeCurrent(target);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
             }
         };
         return submit;
     }
 
-    private boolean onCreate() {
+    private void onCreate() {
         GroupInfo group = getGroupInfo();
         boolean created = groupService.createGroup(group);
         if (!created) {
             error("Group '" + group.getGroupName() + "' already exists.");
-            return true;    // has error
         } else {
-            getPage().info("Group '" + group.getGroupName() + "' successfully created.");
-            return false;   // no error
+            info("Group '" + group.getGroupName() + "' successfully created.");
         }
     }
 
     private void onUpdate() {
         groupService.updateGroup(getGroupInfo());
-        getPage().info("Group '" + getGroupInfo().getGroupName() + "' successfully updated.");
+        info("Group '" + getGroupInfo().getGroupName() + "' successfully updated.");
     }
 
     private GroupInfo getGroupInfo() {

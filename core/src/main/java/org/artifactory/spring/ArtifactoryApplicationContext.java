@@ -30,7 +30,6 @@ import org.artifactory.api.security.SecurityService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ArtifactoryProperties;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.TaskService;
@@ -47,6 +46,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -60,26 +60,20 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         implements InternalArtifactoryContext {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryApplicationContext.class);
     public static final String CURRENT_TIME_EXPORT_DIR_NAME = "current";
-    private Set<Class<? extends ReloadableBean>> toInitialize = new HashSet<Class<? extends ReloadableBean>>();
+    private Set<Class<? extends ReloadableBean>> toInitialize =
+            new HashSet<Class<? extends ReloadableBean>>();
     private boolean ready = false;
     private ConcurrentHashMap<Class, Object> beansForType = new ConcurrentHashMap<Class, Object>();
     private List<ReloadableBean> reloadableBeans;
-    private long started;
 
     public ArtifactoryApplicationContext(String configLocation) throws BeansException {
         super(new String[]{configLocation}, false, null);
-        started = System.currentTimeMillis();
         refresh();
     }
 
     public ArtifactoryApplicationContext(String[] configLocations) throws BeansException {
         super(configLocations, false, null);
-        started = System.currentTimeMillis();
         refresh();
-    }
-
-    public long getUptime() {
-        return System.currentTimeMillis() - started;
     }
 
     public CentralConfigService getCentralConfig() {
@@ -115,7 +109,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             ArtifactoryContextThreadBinder.bind(this);
             super.refresh();
             reloadableBeans = new ArrayList<ReloadableBean>(toInitialize.size());
-            Set<Class<? extends ReloadableBean>> toInit = new HashSet<Class<? extends ReloadableBean>>(toInitialize);
+            Set<Class<? extends ReloadableBean>> toInit =
+                    new HashSet<Class<? extends ReloadableBean>>(toInitialize);
             for (Class<? extends ReloadableBean> beanClass : toInitialize) {
                 orderReloadableBeans(toInit, beanClass);
             }
@@ -230,10 +225,6 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         return beanForType(JcrService.class);
     }
 
-    public JcrRepoService getJcrRepoService() {
-        return beanForType(JcrRepoService.class);
-    }
-
     public void importFrom(ImportSettings settings, StatusHolder status) {
         status.setStatus("### Beginning full system import ###", log);
         // First sync status and settings
@@ -242,8 +233,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         // First check the version of the folder imported
         ArtifactoryVersion backupVersion = BackupUtils.findVersion(settings.getBaseDir());
         // We don't support import from 125 and before
-        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125;
-        if (backupVersion.before(supportFrom)) {
+        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125u1;
+        if (backupVersion.beforeOrEqual(supportFrom)) {
             throw new IllegalArgumentException("Folder " + settings.getBaseDir().getAbsolutePath() +
                     " contain an export from a version older than " + supportFrom.getValue() + ".\n" +
                     "Please use Artifactory Command Line command dump to import from theses versions!");
@@ -257,26 +248,25 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
     }
 
     public void exportTo(ExportSettings settings, StatusHolder status) {
-        // First sync status and settings
-        status.setFailFast(settings.isFailFast());
-        status.setVerbose(settings.isVerbose());
         log.info("Beginning full system export...");
         status.setStatus("Creating export directory", log);
         String timestamp;
-        boolean incremental = settings.isIncremental();
-        if (!incremental) {
+        Date time = settings.getTime();
+        boolean inPlace;
+        if (time != null) {
             DateFormat formatter = new SimpleDateFormat("yyyyMMdd.HHmmss");
-            timestamp = formatter.format(settings.getTime());
+            timestamp = formatter.format(time);
+            inPlace = false;
         } else {
             timestamp = CURRENT_TIME_EXPORT_DIR_NAME;
+            inPlace = true;
         }
         File baseDir = settings.getBaseDir();
 
         //Only create a temp dir when not doing in-place backup (time == null), otherwise do
         //in-place and make sure all exports except repositories delete their target or write to temp before exporting
         File tmpExportDir;
-        if (incremental) {
-            //Will alwyas be baseDir/CURRENT_TIME_EXPORT_DIR_NAME
+        if (inPlace) {
             tmpExportDir = new File(baseDir, timestamp);
             try {
                 FileUtils.forceMkdir(tmpExportDir);
@@ -284,7 +274,9 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                 throw new RuntimeException("Failed to create in place " +
                         tmpExportDir.getAbsolutePath() + " backup dir.", e);
             }
-            status.setStatus("Using in place export directory '" + tmpExportDir.getAbsolutePath() + "'.", log);
+            status.setStatus(
+                    "Using in place export directory '" + tmpExportDir.getAbsolutePath() + "'.",
+                    log);
         } else {
             tmpExportDir = new File(baseDir, timestamp + ".tmp");
             //Make sure the directory does not already exist
@@ -292,14 +284,16 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                 FileUtils.deleteDirectory(tmpExportDir);
             } catch (IOException e) {
                 throw new IllegalArgumentException(
-                        "Failed to delete temp export directory: " + tmpExportDir.getAbsolutePath(), e);
+                        "Failed to delete temp export directory: " + tmpExportDir.getAbsolutePath(),
+                        e);
             }
             try {
                 FileUtils.forceMkdir(tmpExportDir);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create temp backup dir.", e);
             }
-            status.setStatus("Created temp export directory '" + tmpExportDir.getAbsolutePath() + "'.", log);
+            status.setStatus(
+                    "Created temp export directory '" + tmpExportDir.getAbsolutePath() + "'.", log);
         }
         //Export the repositories to the temp dir
         ExportSettings exportSettings = new ExportSettings(tmpExportDir, settings);
@@ -319,10 +313,10 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             return;
         }
         exportSystemProperties(exportSettings, status);
-        if (incremental && settings.isCreateArchive()) {
+        if (inPlace && settings.isCreateArchive()) {
             log.warn("Cannot create archive for an in place backup.");
         }
-        if (!incremental) {
+        if (!inPlace) {
             //Create an archive if necessary
             if (settings.isCreateArchive()) {
                 createArchive(status, timestamp, baseDir, tmpExportDir);
@@ -355,8 +349,9 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             File tmpExportDir) {
         status.setStatus("Creating archive...", log);
         File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
+        new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
         try {
-            new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
+            de.schlichtherle.io.File.umount();
         } catch (Exception e) {
             throw new RuntimeException("Failed to create system export archive.", e);
         } finally {

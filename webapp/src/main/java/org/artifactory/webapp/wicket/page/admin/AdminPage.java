@@ -18,10 +18,11 @@ public class AdminPage extends AuthenticatedPage {
         if (authService.isAdmin()) {
             // for now redirect all valid admin requests to the general configuration tab
             setResponsePage(GeneralConfigPage.class);
+            //add(new TitledBorder("border"));
         } else if (authService.canAdminPermissionTarget()) {
             setResponsePage(AclsPage.class);
         } else {
-            throw new UnauthorizedInstantiationException(getClass());
+            throw new UnauthorizedInstantiationException(this.getClass());
         }
     }
 

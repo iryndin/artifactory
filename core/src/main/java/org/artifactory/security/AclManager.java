@@ -18,7 +18,7 @@ package org.artifactory.security;
 
 import org.artifactory.api.security.AclInfo;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.utils.AlreadyExistsException;
 import org.springframework.security.acls.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 

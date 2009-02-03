@@ -23,10 +23,8 @@ import static org.apache.jackrabbit.JcrConstants.JCR_LASTMODIFIED;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.config.ImportableExportable;
-import org.artifactory.api.fs.ChecksumsInfo;
-import org.artifactory.api.fs.ItemAdditionalInfo;
+import org.artifactory.api.fs.ItemExtraInfo;
 import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.fs.MetadataInfo;
 import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.md.MetadataReader;
 import org.artifactory.api.repo.RepoPath;
@@ -42,9 +40,10 @@ import org.artifactory.jcr.md.MetadataDefinitionService;
 import org.artifactory.jcr.md.MetadataService;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
+import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.update.md.MetadataVersion;
-import org.artifactory.util.PathUtils;
+import org.artifactory.update.md.ArtifactoryMetadataVersion;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -214,28 +212,9 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
         return getMdService().getXmlMetadataObject(this, clazz, true);
     }
 
+    @SuppressWarnings({"unchecked"})
     public <MD> MD getXmlMetdataObject(Class<MD> clazz, boolean createIfMissing) {
         return getMdService().getXmlMetadataObject(this, clazz, createIfMissing);
-    }
-
-    public String getXmlMetdata(String metadataName) {
-        return getMdService().getXmlMetadata(this, metadataName);
-    }
-
-    public boolean hasXmlMetdata(String metadataName) {
-        return getMdService().hasXmlMetdata(this, metadataName);
-    }
-
-    public final void setXmlMetadata(String metadataName, Object xstreamable) {
-        getMdService().setXmlMetadata(this, xstreamable);
-    }
-
-    public final void setXmlMetadata(String metadataName, String value) {
-        try {
-            getMdService().setXmlMetadata(this, metadataName, new ByteArrayInputStream(value.getBytes("utf-8")));
-        } catch (UnsupportedEncodingException e) {
-            throw new RepositoryRuntimeException("Cannot set xml metadata.", e);
-        }
     }
 
     protected void setInfoFields(Node node) {
@@ -257,13 +236,13 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
             }
             info.setCreated(getJcrCreated(node));
             info.setLastModified(getJcrLastModified(node));
-            setAdditionalInfoFields(node);
+            setExtraInfoFields(node);
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException("Saving node failed.", e);
         }
     }
 
-    protected abstract void setAdditionalInfoFields(Node node) throws RepositoryException;
+    protected abstract void setExtraInfoFields(Node node) throws RepositoryException;
 
     protected void setMandatoryInfoFields() {
         try {
@@ -280,21 +259,21 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
 
     public final void saveBasicInfo() {
         setMandatoryInfoFields();
-        getMdService().setXmlMetadata(this, info.getInernalXmlInfo());
+        getMdService().setXmlMetadata(this, info.getExtension());
     }
 
     public final void saveModifiedInfo() {
         String userId = getAuthorizationService().currentUsername();
-        ItemAdditionalInfo xmlInfo = info.getInernalXmlInfo();
-        if (xmlInfo.getCreatedBy() == null) {
-            xmlInfo.setCreatedBy(userId);
+        ItemExtraInfo extension = info.getExtension();
+        if (extension.getCreatedBy() == null) {
+            extension.setCreatedBy(userId);
         }
-        xmlInfo.setModifiedBy(userId);
+        extension.setModifiedBy(userId);
         saveBasicInfo();
     }
 
-    public List<String> getXmlMetadataNames() {
-        return getMdService().getXmlMetadataNames(this);
+    public List<String> getExtraXmlMetadataNames() {
+        return getMdService().getExtraXmlMetadataNames(this);
     }
 
     @Override
@@ -330,11 +309,11 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
     }
 
     public String getModifiedBy() {
-        return getInfo().getInernalXmlInfo().getModifiedBy();
+        return getInfo().getExtension().getModifiedBy();
     }
 
     public String getCreatedBy() {
-        return getInfo().getInernalXmlInfo().getCreatedBy();
+        return getInfo().getExtension().getCreatedBy();
     }
 
     protected long getJcrCreated(Node node) throws RepositoryException {
@@ -356,10 +335,13 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
     @Override
     public boolean delete() {
         if (!isMutable()) {
-            throw new LockingException("Cannot modify an immutable item: " + this);
+            throw new LockingException("Cannot modified immutable " + this);
         }
         deleted = true;
-        boolean result = getJcrService().delete(this);
+        boolean result = getJcrService().delete(absPath);
+        if (result) {
+            AccessLogger.deleted(getRepoPath());
+        }
         return result;
     }
 
@@ -370,7 +352,8 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
 
     public RepoPath getParentRepoPath() {
         RepoPath myRepoPath = getRepoPath();
-        RepoPath parentRepoPath = new RepoPath(myRepoPath.getRepoKey(), PathUtils.getParent(myRepoPath.getPath()));
+        RepoPath parentRepoPath = new RepoPath(myRepoPath.getRepoKey(),
+                PathUtils.getParent(myRepoPath.getPath()));
         return parentRepoPath;
     }
 
@@ -581,16 +564,8 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
     @Override
     public abstract boolean isDirectory();
 
-    public boolean isFolder() {
-        return isDirectory();
-    }
-
     public final T getInfo() {
         return info;
-    }
-
-    public final MetadataInfo getMetadataInfo(String metadataName) {
-        return getMdService().getMetadataInfo(this, metadataName);
     }
 
     protected Node getNode() {
@@ -618,7 +593,7 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
 
     protected JcrRepoService getJcrService() {
         if (jcrService == null) {
-            jcrService = InternalContextHelper.get().getJcrRepoService();
+            jcrService = InternalContextHelper.get().beanForType(JcrRepoService.class);
         }
         return jcrService;
     }
@@ -631,6 +606,7 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
     }
 
     protected AuthorizationService getAuthorizationService() {
+        // TODO: Analyze the optimization if made as a member
         return InternalContextHelper.get().getAuthorizationService();
     }
 
@@ -650,111 +626,51 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
      * Export all metadata as the real xml content (jcr:data, including commennts etc.) into a
      * {item-name}.artifactory-metadata folder, where each metadata is named {metadata-name}.xml
      */
-    protected void exportMetadata(File targetPath, StatusHolder status, boolean incremental) {
+    protected void exportMetadata(File targetPath, long modified, StatusHolder status) {
         File metadataFolder = getMetadataContainerFolder(targetPath);
         try {
             FileUtils.forceMkdir(metadataFolder);
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Failed to create metadata folder '" + metadataFolder.getPath() + "'.", e);
+                    "Failed to create metadata folder '" + metadataFolder.getPath() + "'.",
+                    e);
         }
-        // Save the info manually
-        saveInfoManually(status, metadataFolder, getInfo(), incremental);
-        // Save all other metadata
-        saveXml(status, metadataFolder, incremental);
-    }
-
-    private void saveInfoManually(StatusHolder status, File folder, ItemInfo itemInfo, boolean incremental) {
-        MetadataDefinition definition = getMetadataDefinitionService().getMetadataDefinition(itemInfo.getClass());
-        String metadataName = definition.getMetadataName();
-        File metadataFile = new File(folder, metadataName + ".xml");
-        long lastModified = itemInfo.getLastModified();
-        if (incremental && isFileNewerOrEquals(metadataFile, lastModified, metadataName)) {
-            // incremental export and file system is current. skip
-            return;
-        }
-        writeFile(status, metadataFile, itemInfo, lastModified);
-    }
-
-    private void saveXml(StatusHolder status, File metadataFolder, boolean incremental) {
         File metadataFile;
-        List<String> metadataNames = getXmlMetadataNames();
+
+        // Save the info manually
+        ItemInfo itemInfo = getInfo();
+        MetadataDefinition definition =
+                getMetadataDefinitionService().getMetadataDefinition(itemInfo.getClass());
+        metadataFile = new File(metadataFolder, definition.getMetadataName() + ".xml");
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(metadataFile));
+            getMetadataDefinitionService().getXstream().toXML(itemInfo, os);
+        } catch (Exception e) {
+            status.setError(
+                    "Failed to export xml metadata from '" + metadataFile.getPath() + "'.",
+                    e, log);
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+
+        List<String> metadataNames = getExtraXmlMetadataNames();
         for (String metadataName : metadataNames) {
-            if (!hasXmlMetdata(metadataName)) {
-                continue;
+            metadataFile = new File(metadataFolder, metadataName + ".xml");
+            os = null;
+            try {
+                os = new BufferedOutputStream(new FileOutputStream(metadataFile));
+                getMdService().writeRawXmlStream(this, metadataName, os);
+            } catch (Exception e) {
+                status.setError(
+                        "Failed to export xml metadata from '" + metadataFile.getPath() + "'.",
+                        e, log);
+            } finally {
+                IOUtils.closeQuietly(os);
             }
-            // add .xml prefix to all metadata files
-            String fileName = metadataName + ".xml";
-            metadataFile = new File(metadataFolder, fileName);
-            MetadataInfo metadataInfo = getMdService().getMetadataInfo(this, metadataName);
-            long lastModified = metadataInfo.getLastModified();
-            if (incremental && isFileNewerOrEquals(metadataFile, lastModified, metadataName)) {
-                // incremental export and file system is current. skip
-                return;
-            }
-            writeFile(status, metadataFile, metadataName, lastModified);
-        }
-    }
-
-    /**
-     * @param metadataFile The metadata file to check if newer or equals (file might not exist)
-     * @param lastModified The last modified timestamp of the metadata
-     * @param metadataName The metadata name
-     * @return True if the metadata file exists and its lsatModified is newer or equals to the input
-     */
-    private boolean isFileNewerOrEquals(File metadataFile, long lastModified, String metadataName) {
-        if (metadataFile.exists() && lastModified <= metadataFile.lastModified()) {
-            log.debug("Skipping not modified metadata {} of {}", metadataName, getPath());
-            return true;
-        }
-        return false;
-    }
-
-    protected void writeFile(StatusHolder status, File metadataFile, Object xstreamObj, long modified) {
-        if (xstreamObj == null) {
-            return;
-        }
-        OutputStream os = null;
-        try {
-            os = new BufferedOutputStream(new FileOutputStream(metadataFile));
-            getMetadataDefinitionService().getXstream().toXML(xstreamObj, os);
             if (modified >= 0) {
                 metadataFile.setLastModified(modified);
             }
-        } catch (Exception e) {
-            status.setError("Failed to export xml metadata from '" + metadataFile.getPath() + "'.", e, log);
-        } finally {
-            IOUtils.closeQuietly(os);
-        }
-    }
-
-    protected void writeFile(StatusHolder status, File metadataFile, String metadataName, long modified) {
-        OutputStream os = null;
-        try {
-            os = new BufferedOutputStream(new FileOutputStream(metadataFile));
-            getMdService().writeRawXmlStream(this, metadataName, os);
-            if (modified >= 0) {
-                metadataFile.setLastModified(modified);
-            }
-        } catch (Exception e) {
-            status.setError("Failed to export xml metadata from '" + metadataFile.getPath() + "'.", e, log);
-        } finally {
-            IOUtils.closeQuietly(os);
-        }
-    }
-
-    protected void writeChecksums(File targetPath, ChecksumsInfo checksumsInfo, String fileName, long modified) {
-        File sha1 = new File(targetPath, fileName + ".sha1");
-        File md5 = new File(targetPath, fileName + ".md5");
-        try {
-            FileUtils.writeStringToFile(sha1, checksumsInfo.getSha1(), "utf-8");
-            FileUtils.writeStringToFile(md5, checksumsInfo.getMd5(), "utf-8");
-            if (modified > 0) {
-                sha1.setLastModified(modified);
-                md5.setLastModified(modified);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -764,31 +680,36 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
             MetadataReader metadataReader = settings.getMetadataReader();
             if (metadataReader == null) {
                 if (settings.getExportVersion() != null) {
-                    metadataReader = MetadataVersion.findVersion(settings.getExportVersion());
+                    metadataReader = ArtifactoryMetadataVersion.findVersion(settings.getExportVersion());
                 } else {
                     //try to find the version from the format of the metadata folder
-                    metadataReader = MetadataVersion.findVersion(metadataFolder);
+                    metadataReader = ArtifactoryMetadataVersion.findVersion(metadataFolder);
                 }
                 settings.setMetadataReader(metadataReader);
             }
             List<MetadataEntry> metadataEntries = metadataReader.getMetadataEntries(metadataFolder, settings, status);
             for (MetadataEntry entry : metadataEntries) {
                 ByteArrayInputStream is = new ByteArrayInputStream(entry.getXmlContent().getBytes());
-                getMdService().setXmlMetadata(this, entry.getMetadataName(), is, status);
+                getMdService().importXmlMetadata(this, entry.getMetadataName(), is, status);
             }
         } else {
-            String msg = "No metadata files found for '" + sourcePath.getAbsolutePath() +
-                    "' during inport into " + getRepoPath();
+            String msg = "No metadata files found for '" + sourcePath.getAbsolutePath() + "' during inport into " +
+                    getRepoPath();
             if (settings.isIncludeMetadata()) {
-                status.setWarning(msg, log);
+                if (settings.isFailIfEmpty()) {
+                    status.setError(msg, log);
+                } else {
+                    status.setWarning(msg, log);
+                }
             } else {
                 status.setDebug(msg, log);
             }
         }
     }
 
-    protected File getMetadataContainerFolder(File targetFile) {
-        return new File(targetFile.getParentFile(), targetFile.getName() + ItemInfo.METADATA_FOLDER);
+    private static File getMetadataContainerFolder(File targetFile) {
+        return new File(
+                targetFile.getParentFile(), targetFile.getName() + ItemInfo.METADATA_FOLDER);
     }
 
     public void updateCache() {
@@ -804,7 +725,8 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
         try {
             node.setProperty(JCR_LASTMODIFIED, lastModifiedCalendar);
         } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException("Failed to set file node's last modified time.", e);
+            throw new RepositoryRuntimeException("Failed to set file node's last modified time.",
+                    e);
         }
         return true;
     }
@@ -818,25 +740,17 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
         if (lm <= 0) {
             lm = created;
         }
-        long lu = importedInfo.getInernalXmlInfo().getLastUpdated();
+        long lu = importedInfo.getExtension().getLastUpdated();
         if (lu <= 0) {
             lu = lm;
         }
 
         info.setCreated(created);
         info.setLastModified(lm);
-        info.getInernalXmlInfo().setLastUpdated(lu);
+        info.getExtension().setLastUpdated(lu);
     }
 
-    /**
-     * Sets the last updated value of snapshot files and folders to a value that will make them expired.
-     *
-     * @param expiredLastUpdated The time to set (will cause the expiration of the cached snapshots)
-     * @return Number of files and folders affected
-     */
     public abstract int zap(long expiredLastUpdated);
-
-    public abstract void setLastUpdated(long lastUpdated);
 
     public boolean isIdentical(JcrFsItem item) {
         return absPath.equals(item.absPath) && info.isIdentical(item.info);

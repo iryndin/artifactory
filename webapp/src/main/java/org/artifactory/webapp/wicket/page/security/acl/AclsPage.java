@@ -16,20 +16,17 @@
  */
 package org.artifactory.webapp.wicket.page.security.acl;
 
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.security.AclService;
-import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
 
-@AuthorizeInstantiation(AuthorizationService.ROLE_USER)
 public class AclsPage extends AuthenticatedPage {
 
     @SpringBean
     private AclService aclService;
 
     public AclsPage() {
-        add(new PermissionTargetListPanel("permissionTargetList"));
+        add(new PermissionTargetPanel("targetsManagementPanel"));
     }
 
     @Override

@@ -16,63 +16,21 @@
  */
 package org.artifactory.resource;
 
-import org.artifactory.api.fs.RepoResourceInfo;
-import org.artifactory.api.repo.RepoPath;
+import org.artifactory.api.fs.FileInfo;
 
-public class ExpiredRepoResource implements RepoResource {
+public class ExpiredRepoResource extends SimpleRepoResource {
 
-    private RepoResource wrappedResource;
-
-    public ExpiredRepoResource(RepoResource wrappedResource) {
-        this.wrappedResource = wrappedResource;
+    public ExpiredRepoResource(FileInfo fileInfo) {
+        super(fileInfo);
     }
 
-    public RepoPath getRepoPath() {
-        return wrappedResource.getRepoPath();
-    }
-
-    public RepoResourceInfo getInfo() {
-        return wrappedResource.getInfo();
-    }
-
-    public String getParentPath() {
-        return wrappedResource.getParentPath();
-    }
-
-    public boolean hasSize() {
-        return wrappedResource.hasSize();
-    }
-
-    public long getSize() {
-        return wrappedResource.getSize();
-    }
-
-    public long getCacheAge() {
-        return wrappedResource.getCacheAge();
-    }
-
-    public long getLastModified() {
-        return wrappedResource.getLastModified();
-    }
-
-    public String getMimeType() {
-        return wrappedResource.getMimeType();
-    }
-
+    @Override
     public boolean isFound() {
         return false;
     }
 
+    @Override
     public boolean isExpired() {
         return true;
-    }
-
-    public boolean isMetadata() {
-        return wrappedResource.isMetadata();
-    }
-
-    @Override
-    public String toString() {
-        return wrappedResource.getRepoPath().toString();
     }
 }

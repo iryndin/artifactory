@@ -45,7 +45,8 @@ import java.util.List;
  *
  * @author Yossi Shaul
  */
-public abstract class RepoConfigCreateUpdatePanel<E extends RepoDescriptor> extends CreateUpdatePanel<E> {
+public abstract class RepoConfigCreateUpdatePanel<E extends RepoDescriptor>
+        extends CreateUpdatePanel<E> {
 
     @SpringBean
     private CentralConfigService centralConfigService;
@@ -62,8 +63,8 @@ public abstract class RepoConfigCreateUpdatePanel<E extends RepoDescriptor> exte
         RequiredTextField repoKeyField = new RequiredTextField("key");
         repoKeyField.setEnabled(isCreate());// don't allow key update
         if (isCreate()) {
-            repoKeyField.add(new JcrNameValidator("Invalid repository key '%s'."));
-            repoKeyField.add(new XsdNCNameValidator("Invalid repository key '%s'."));
+            repoKeyField.add(JcrNameValidator.getInstance());
+            repoKeyField.add(XsdNCNameValidator.getInstance());
             repoKeyField.add(new UniqueXmlIdValidator(getEditingDescriptor()));
         }
 
@@ -103,6 +104,12 @@ public abstract class RepoConfigCreateUpdatePanel<E extends RepoDescriptor> exte
                 ((RepositoryConfigPage) getPage()).refresh(target);
                 FeedbackUtils.refreshFeedback(target);
                 close(target);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                super.onError(target, form);
+                FeedbackUtils.refreshFeedback(target);
             }
         };
     }

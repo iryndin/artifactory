@@ -73,7 +73,6 @@
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
-            <!-- NEVER LEAVE THIS ON REPO1 OR INDEXER TESTS WILL TRY TO DOWNLOAD THE FULL R1 INDEX WITH EACH RUN -->
             <!--<url>http://repo1.maven.org/maven2/</url>-->
             <url>http://swamp.jfrog.org:8081/artifactory/remote-repos/</url>
             <!--<offline>true</offline>-->

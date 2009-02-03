@@ -59,7 +59,7 @@ public abstract class ArtifactoryTestBase {
         FileUtils.deleteDirectory(homeDir);
         ArtifactoryHome.setHomeDir(homeDir);
         ArtifactoryHome.create();
-        mockServer = MockServer.start(/*"swamp.jfrog.org",*/ "localhost");
+        mockServer = MockServer.start("swamp.jfrog.org", "localhost");
         //Set up the logback props
         //ArtifactoryHome.ensureLogbackConfig("file:${artifactory.home}/etc/logback.xml");
         copyArtifactoryConfig(configName);

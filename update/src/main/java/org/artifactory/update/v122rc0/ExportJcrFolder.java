@@ -26,11 +26,6 @@ import javax.jcr.RepositoryException;
 import java.io.File;
 
 /**
- * Example of folder node from jcr:
- * ********************************************
- * \-libs-releases[@artifactory:repoKey=libs-releases, @artifactory:modifiedBy=, @jcr:created=2008-12-01T11:37:11.734+02:00, @jcr:primaryType=artifactory:folder]
- * ********************************************
- *
  * @author freds
  * @date Nov 16, 2008
  */
@@ -41,19 +36,16 @@ public class ExportJcrFolder extends BasicExportJcrFolder {
         super(node, repoKey);
     }
 
-    @Override
     protected FolderInfo createFolderInfo() throws RepositoryException {
         FolderInfo folderInfo = new FolderInfo(new RepoPath(getJcrRepoKey(), getRelativePath()));
         JcrExporterImpl.fillWithGeneralMetadata(folderInfo, getNode());
         return folderInfo;
     }
 
-    @Override
     protected void createExportJcrFile(File exportDir, StatusHolder status, Node node) throws Exception {
         new ExportJcrFile(node, repoKey).exportTo(exportDir, status);
     }
 
-    @Override
     protected void createExportJcrFolder(File exportDir, StatusHolder status, Node node) {
         new ExportJcrFolder(node, repoKey).exportTo(exportDir, status);
     }

@@ -3,7 +3,7 @@ package org.artifactory.config;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,10 +27,6 @@ public class JcrConfResourceLoader implements ResourceStreamHandle {
 
     public JcrConfResourceLoader(String resourceName) {
         this.resourceName = resourceName;
-    }
-
-    public String getResourceName() {
-        return resourceName;
     }
 
     public InputStream getInputStream() {
@@ -60,19 +56,15 @@ public class JcrConfResourceLoader implements ResourceStreamHandle {
                     }
                 }
             }
-            is = getFallbackInputStream();
+
+            String resName = "/META-INF/jcr/" + resourceName;
+            is = getClass().getResourceAsStream(resName);
+            if (is == null) {
+                throw new RuntimeException(
+                        "Did not find resource " + resName + " in the classpath");
+            }
         }
         return is;
-    }
-
-    protected InputStream getFallbackInputStream() {
-        String resName = "/META-INF/jcr/" + resourceName;
-        InputStream result = getClass().getResourceAsStream(resName);
-        if (result == null) {
-            throw new RuntimeException(
-                    "Did not find resource " + resName + " in the classpath");
-        }
-        return result;
     }
 
     public void close() {

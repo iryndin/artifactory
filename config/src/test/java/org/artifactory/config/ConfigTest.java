@@ -60,7 +60,7 @@ public class ConfigTest {
     public void writeCentralConfig() throws Exception {
         MutableCentralConfigDescriptor desc = new CentralConfigDescriptorImpl();
         desc.setServerName("mymy");
-        desc.setDateFormat("dd-MM-yy HH:mm:ss z");
+        desc.setDateFormat("dd-MM-yy HH:mm:ssZ");
 
         LocalRepoDescriptor local1 = new LocalRepoDescriptor();
         local1.setBlackedOut(false);

@@ -17,6 +17,7 @@
 package org.artifactory.repo;
 
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
@@ -27,8 +28,6 @@ import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.common.ResourceStreamHandle;
@@ -37,13 +36,12 @@ import org.artifactory.descriptor.repo.ProxyDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoType;
 import org.artifactory.io.NullResourceStreamHandle;
 import org.artifactory.jcr.fs.JcrFile;
+import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.resource.FileResource;
-import org.artifactory.resource.MetadataResource;
 import org.artifactory.resource.RepoResource;
+import org.artifactory.resource.SimpleRepoResource;
 import org.artifactory.resource.UnfoundRepoResource;
-import org.artifactory.util.HttpClientUtils;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +52,9 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(HttpRepo.class);
@@ -189,12 +189,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
             }
             long lastModified = getLastModified(method);
             long size = getContentLength(method);
-            RepoResource res;
-            if (NamingUtils.isMetadata(relPath)) {
-                res = new MetadataResource(repoPath);
-            } else {
-                res = new FileResource(repoPath);
-            }
+            SimpleRepoResource res = new SimpleRepoResource(repoPath);
             res.getInfo().setLastModified(lastModified);
             res.getInfo().setSize(size);
             if (log.isDebugEnabled()) {
@@ -209,7 +204,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         }
     }
 
-    HttpClient createHttpClient() {
+    private HttpClient createHttpClient() {
         HttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
         HttpConnectionManagerParams connectionManagerParams = connectionManager.getParams();
         connectionManagerParams.setDefaultMaxConnectionsPerHost(50);
@@ -220,13 +215,13 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         connectionManagerParams.setSoTimeout(socketTimeoutMillis);
         connectionManagerParams.setStaleCheckingEnabled(true);
         HttpClient client = new HttpClient(connectionManager);
-        //Set uagent
-        HttpClientUtils.configureUserAgent(client);
         HttpClientParams clientParams = client.getParams();
         //Set the socket data timeout
         clientParams.setSoTimeout(socketTimeoutMillis);
         //Limit the retries to a signle retry
-        clientParams.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(1, false));
+        clientParams.setParameter(
+                HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(1, false));
+        HostConfiguration hostConf = new HostConfiguration();
         //Set the local address if exists
         String localAddress = getLocalAddress();
         if (!StringUtils.isEmpty(localAddress)) {
@@ -236,13 +231,37 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
             } catch (UnknownHostException e) {
                 throw new RuntimeException("Invalid local address: " + localAddress, e);
             }
-            HostConfiguration hostConf = client.getHostConfiguration();
             hostConf.setLocalAddress(address);
         }
         //Set the proxy
         ProxyDescriptor proxy = getProxy();
-        HttpClientUtils.configureProxy(client, proxy);
-        //Set authentication
+        if (proxy != null) {
+            hostConf.setProxy(proxy.getHost(), proxy.getPort());
+            client.setHostConfiguration(hostConf);
+            if (proxy.getUsername() != null) {
+                if (proxy.getDomain() == null) {
+                    Credentials creds = new UsernamePasswordCredentials(proxy.getUsername(),
+                            proxy.getPassword());
+                    //This will exclude the NTLM authentication scheme so that the proxy won't barf
+                    //when we try to give it traditional credentials. If the proxy doesn't do NTLM
+                    //then this won't hurt it (jcej at tragus dot org)
+                    List<String> authPrefs = Arrays.asList(AuthPolicy.DIGEST, AuthPolicy.BASIC);
+                    client.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+                    client.getState().setProxyCredentials(AuthScope.ANY, creds);
+                } else {
+                    try {
+                        Credentials creds = new NTCredentials(proxy.getUsername(),
+                                proxy.getPassword(), InetAddress.getLocalHost().getHostName(),
+                                proxy.getDomain());
+                        client.getState().setProxyCredentials(AuthScope.ANY, creds);
+                    } catch (UnknownHostException e) {
+                        log.error(
+                                "Failed to determine required local hostname for NTLM credentials.",
+                                e);
+                    }
+                }
+            }
+        }
         String username = getUsername();
         if (username != null) {
             try {
@@ -290,7 +309,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
             case maven2:
                 return path;
             case maven1:
-                return MavenNaming.toMaven1Path(path);
+                return MavenUtils.toMaven1Path(path);
             case obr:
                 return path;
         }
@@ -305,5 +324,9 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         }
         String contentLengthString = contentLengthHeader.getValue();
         return Long.parseLong(contentLengthString);
+    }
+
+    public String getMetadata(String path) throws IOException {
+        return null;
     }
 }

@@ -8,7 +8,7 @@ var FeedbackDistributer = {
     panels: new Array(),
 
     init: function (defaultPanel) {
-        FeedbackDistributer.defaultPanel = dojo.byId(defaultPanel);
+        FeedbackDistributer.defaultPanel = get(defaultPanel);
         FeedbackDistributer.clearMessages();
     },
 
@@ -17,7 +17,7 @@ var FeedbackDistributer = {
             return;
         }
 
-        dojo.forEach(FeedbackDistributer.panels, function(panel) {
+        foreach(FeedbackDistributer.panels, function(panel) {
             try {
                 while (panel.firstChild) {
                     panel.removeChild(panel.firstChild);
@@ -30,7 +30,7 @@ var FeedbackDistributer = {
     },
 
     showMessages: function() {
-        dojo.forEach(FeedbackDistributer.panels, function(panel) {
+        foreach(FeedbackDistributer.panels, function(panel) {
             if (panel.getElementsByTagName('li').length) {
                 // trigger panel.onShow() event handler
                 var onshow = panel.getAttribute('onshow');
@@ -43,7 +43,7 @@ var FeedbackDistributer = {
 
     addMessage: function(reporterId, level, message) {
         // get reporter and feedback panel
-        var reporter = dojo.byId(reporterId);
+        var reporter = get(reporterId);
         var panel = FeedbackDistributer.getFeedbackPanelFor(reporter);
 
         // setup panel if needed
@@ -76,7 +76,7 @@ var FeedbackDistributer = {
         while (node && node != document.body) {
             var feedbackId = node.getAttribute('feedbackId');
             if (feedbackId) {
-                return dojo.byId(feedbackId);
+                return get(feedbackId);
             }
 
             node = node.parentNode;

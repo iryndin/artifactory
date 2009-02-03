@@ -18,7 +18,7 @@ package org.artifactory.webapp.servlet;
 
 
 import org.artifactory.api.context.ContextHelper;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -41,12 +41,6 @@ public class RequestUtils {
     public static final String LAST_USER_KEY = "artifactory:lastUserId";
     public static final String WEBAPP_URL_PATH_PREFIX = "webapp";
     private static boolean USE_PATH_INFO = false;
-    private static final Set<String> WEBDAV_METHODS = new HashSet<String>() {{
-        add("propfind");
-        add("mkcol");
-        add("delete");
-        add("options");
-    }};
 
     public static void setNonUiPathPrefixes(Collection<String> uriPathPrefixes) {
         NON_UI_PATH_PREFIXES.clear();
@@ -100,9 +94,6 @@ public class RequestUtils {
     }
 
     public static boolean isWebdavRequest(HttpServletRequest request) {
-        if (WEBDAV_METHODS.contains(request.getMethod().toLowerCase())) {
-            return true;
-        }
         String wagonProvider = request.getHeader("X-wagon-provider");
         return wagonProvider != null && wagonProvider.contains("webdav");
     }
@@ -146,8 +137,8 @@ public class RequestUtils {
         return (Authentication) session.getAttribute(LAST_USER_KEY);
     }
 
-    public static boolean setAuthentication(HttpServletRequest request, Authentication authentication,
-            boolean createSession) {
+    public static boolean setAuthentication(HttpServletRequest request,
+            Authentication authentication, boolean createSession) {
         HttpSession session = request.getSession(createSession);
         if (session == null) {
             return false;

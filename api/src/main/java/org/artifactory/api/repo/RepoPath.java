@@ -17,9 +17,8 @@
 package org.artifactory.api.repo;
 
 import org.artifactory.api.common.Info;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.security.PermissionTargetInfo;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * An object identity that represents a repository and a groupId
@@ -121,13 +120,5 @@ public final class RepoPath implements Info {
         return new RepoPath(PermissionTargetInfo.ANY_REPO, PermissionTargetInfo.ANY_PATH);
     }
 
-    public static RepoPath getMetadataContainerRepoPath(RepoPath metdadataRepoPath) {
-        String path = metdadataRepoPath.getPath();
-        if (NamingUtils.isMetadata(path)) {
-            String fsItemPath = NamingUtils.getMetadataParentPath(path);
-            return new RepoPath(metdadataRepoPath.getRepoKey(), fsItemPath);
-        } else {
-            return metdadataRepoPath;
-        }
-    }
+
 }

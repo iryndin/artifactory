@@ -18,11 +18,16 @@ package org.artifactory.rest.system;
 
 
 import org.artifactory.api.config.CentralConfigService;
+import org.artifactory.api.config.ExportSettings;
+import org.artifactory.api.config.ImportSettings;
+import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.api.rest.SystemActionInfo;
 import org.artifactory.api.rest.SystemInfo;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +36,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -73,7 +81,35 @@ public class SystemResource {
             systemInfo.jvm.put(prop, System.getProperty(prop));
         }
         systemInfo.configFilePath = ArtifactoryHome.getConfigFile().getAbsolutePath();
+        systemInfo.actionExample = new SystemActionInfo();
+        systemInfo.actionExample.importFrom = "The local file path to import from";
+        systemInfo.actionExample.exportTo = "The local file path to export to";
+        systemInfo.actionExample.repositories =
+                PathUtils.collectionToDelimitedString(repoService.getAllRepoKeys(), ",");
         return systemInfo;
+    }
+
+    @POST
+    @Consumes("application/xml")
+    @Produces("text/plain")
+    public void activate(SystemActionInfo systemActionInfo) {
+        log.debug("Activated system Action {}", systemActionInfo);
+        StreamStatusHolder holder = new StreamStatusHolder(httpResponse);
+        if (PathUtils.hasText(systemActionInfo.exportTo)) {
+            File destDir = new File(systemActionInfo.exportTo);
+            ExportSettings exportSettings = new ExportSettings(destDir);
+            if (PathUtils.hasText(systemActionInfo.repositories)) {
+                // TODO: get list of repos
+                ContextHelper.get().exportTo(exportSettings, holder);
+            } else {
+                ContextHelper.get().exportTo(exportSettings, holder);
+            }
+        }
+        if (PathUtils.hasText(systemActionInfo.importFrom)) {
+            File fromDir = new File(systemActionInfo.importFrom);
+            ImportSettings importSettings = new ImportSettings(fromDir);
+            ContextHelper.get().importFrom(importSettings, holder);
+        }
     }
 
     @Path("import")

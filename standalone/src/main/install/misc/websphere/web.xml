@@ -43,10 +43,6 @@
     <filter>
         <filter-name>AccessFilter</filter-name>
         <filter-class>org.artifactory.webapp.servlet.AccessFilter</filter-class>
-        <init-param>
-            <param-name>usePathInfo</param-name>
-            <param-value>true</param-value>
-        </init-param>
     </filter>
 
     <filter>
@@ -58,7 +54,11 @@
         </init-param>
         <init-param>
             <param-name>UIPathPrefixes</param-name>
-            <param-value>webapp,v200,favicon.ico</param-value>
+            <param-value>webapp,130beta6,favicon.ico</param-value>
+        </init-param>
+        <init-param>
+            <param-name>usePathInfo</param-name>
+            <param-value>true</param-value>
         </init-param>
     </filter>
 

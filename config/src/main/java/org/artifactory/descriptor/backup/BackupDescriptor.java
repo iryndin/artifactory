@@ -20,8 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -53,7 +51,7 @@ public class BackupDescriptor implements Descriptor {
     @XmlElement(required = true)
     private String cronExp;
 
-    private File dir;
+    private String dir;
 
     @XmlElement(defaultValue = DEFAULT_RETENTION_PERIOD_HOURS + "")
     private int retentionPeriodHours = DEFAULT_RETENTION_PERIOD_HOURS;
@@ -85,11 +83,11 @@ public class BackupDescriptor implements Descriptor {
         this.enabled = enabled;
     }
 
-    public File getDir() {
+    public String getDir() {
         return dir;
     }
 
-    public void setDir(File dir) {
+    public void setDir(String dir) {
         this.dir = dir;
     }
 
@@ -98,7 +96,7 @@ public class BackupDescriptor implements Descriptor {
             if (dir == null) {
                 backupDir = new File(ArtifactoryHome.getBackupDir(), key);
             } else {
-                backupDir = dir;
+                backupDir = new File(dir);
                 try {
                     FileUtils.forceMkdir(backupDir);
                 } catch (IOException e) {
@@ -126,6 +124,7 @@ public class BackupDescriptor implements Descriptor {
         this.retentionPeriodHours = retentionPeriodHours;
     }
 
+
     public boolean isCreateArchive() {
         return createArchive;
     }
@@ -135,23 +134,6 @@ public class BackupDescriptor implements Descriptor {
     }
 
     public List<RealRepoDescriptor> getExcludedRepositories() {
-        /**
-         * Even though there should not be any virtual repos in the list, it is checked again as a safety net
-         */
-        List erased = new ArrayList(excludedRepositories);
-        for (int i = 0; i < erased.size(); i++) {
-            Object anErased = erased.get(i);
-            RepoDescriptor descriptorToCheck = (RepoDescriptor) anErased;
-            if (!descriptorToCheck.isReal()) {
-                String virtualRepoKey = descriptorToCheck.getKey();
-                List<RepoDescriptor> repositories = ((VirtualRepoDescriptor) descriptorToCheck).getRepositories();
-                for (RepoDescriptor descriptor : repositories) {
-                    if ((descriptor.isReal()) || (virtualRepoKey.contains(descriptor.getKey()))) {
-                        excludedRepositories.set(i, (RealRepoDescriptor) descriptor);
-                    }
-                }
-            }
-        }
         return excludedRepositories;
     }
 
@@ -163,7 +145,4 @@ public class BackupDescriptor implements Descriptor {
         return excludedRepositories.remove(realRepo);
     }
 
-    public boolean isIncremental() {
-        return retentionPeriodHours <= 0;
-    }
 }

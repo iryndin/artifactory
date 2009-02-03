@@ -14,7 +14,6 @@ public class PomLocator extends ChildBasedLocator {
         super(localRepo);
     }
 
-    @Override
     protected String getChildName(File source, Gav gav) {
         return M2GavCalculator.calculateArtifactName(gav);
     }

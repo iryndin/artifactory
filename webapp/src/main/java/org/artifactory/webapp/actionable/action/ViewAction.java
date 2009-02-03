@@ -55,7 +55,7 @@ public class ViewAction extends RepoAwareItemAction {
     public void onAction(RepoAwareItemEvent e) {
         RepoAwareActionableItem source = e.getSource();
         ItemInfo info = source.getItemInfo();
-        String content = getRepoService().getPomContent(info);
+        String content = getRepoService().getContent(info);
         ItemEventTargetComponents eventTargetComponents = e.getTargetComponents();
         ModalWindow textContentViewer = eventTargetComponents.getModalWindow();
         TextContentPanel contentPanel =

@@ -48,7 +48,8 @@ import java.util.List;
  * @date Aug 14, 2008
  */
 public class SecurityExporter implements ImportableExportable {
-    private static final Logger log = LoggerFactory.getLogger(SecurityExporter.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(SecurityExporter.class);
 
     private static final String ACLS_KEY = "acls";
     private static final String OCM_CLASSNAME = "ocm:classname";
@@ -108,11 +109,7 @@ public class SecurityExporter implements ImportableExportable {
                             new PermissionTargetInfo(Text.unescapeIllegalJcrChars(jcrName), repoKey,
                                     includes, excludes);
                     AclInfo acl = new AclInfo(permissionTarget);
-                    if (node.hasProperty("updatedBy")) {
-                        acl.setUpdatedBy(node.getProperty("updatedBy").getString());
-                    } else {
-                        acl.setUpdatedBy("export");
-                    }
+                    acl.setUpdatedBy(node.getProperty("updatedBy").getString());
                     result.add(acl);
                     NodeIterator children = node.getNodes();
                     while (children.hasNext()) {
@@ -194,14 +191,10 @@ public class SecurityExporter implements ImportableExportable {
                     if (node.hasProperty("description")) {
                         description = node.getProperty("description").getString();
                     }
-                    boolean newUserDefault = false;
-                    if (node.hasProperty("newUserDefault")) {
-                         newUserDefault = node.getProperty("newUserDefault").getBoolean();
-                    }
                     final GroupInfo groupInfo = new GroupInfo(
                             node.getProperty("groupName").getString(),
-                            description,
-                            newUserDefault);
+                            description
+                    );
                     result.add(groupInfo);
                 }
             }

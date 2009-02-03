@@ -2,7 +2,7 @@
     <form wicket:id="exportForm" class="import-export-form">
 
         <div class="field">
-            <label>Source local repository</label>
+            <label class="float-left">Source local repository</label>
 
             <div class="value">
                 <select wicket:id="sourceRepo"/>
@@ -10,26 +10,13 @@
         </div>
 
         <div class="field field-sep">
-            <label>Export to path</label>
+            <label class="float-left">Export to path</label>
 
             <div class="value">
-                <input wicket:id="exportToPath" type="text" class="path-field text"/>
+                <input wicket:id="exportToPath" type="text" class="path_field text"/>
                 <span wicket:id="browseButton"></span>
             </div>
         </div>
-
-        <div class="field field-sep">
-            <input wicket:id="includeMetadata" type="checkbox"/>
-            <span wicket:id="includeMetadataHelp"/>
-        </div>
-
-        <div class="field field-sep">
-            <input wicket:id="m2Compatible" type="checkbox"/>
-            <span wicket:id="m2CompatibleHelp"/>
-        </div>
-
-        <div class="buttons">
-            <button wicket:id="export"/>
-        </div>
+        <button wicket:id="export"/>
     </form>
 </wicket:extend>

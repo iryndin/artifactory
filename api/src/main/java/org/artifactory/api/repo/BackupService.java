@@ -16,9 +16,7 @@
  */
 package org.artifactory.api.repo;
 
-import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.config.ExportSettings;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 
 import java.io.File;
@@ -28,8 +26,8 @@ import java.util.List;
  * User: freds Date: Aug 5, 2008 Time: 9:25:33 PM
  */
 public interface BackupService {
-    void backupRepos(File backupDir, ExportSettings exportSettings, MultiStatusHolder status);
+    void backupRepos(File backupDir);
 
-    void backupRepos(File backupDir, List<RealRepoDescriptor> excludeRepositories,
-            StatusHolder status, ExportSettings exportSettings);
+    void backupRepos(
+            File backupDir, List<RealRepoDescriptor> excludeRepositories, StatusHolder status);
 }

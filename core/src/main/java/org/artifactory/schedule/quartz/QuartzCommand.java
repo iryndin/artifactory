@@ -28,6 +28,7 @@ import org.springframework.security.Authentication;
  * @author yoavl
  */
 public abstract class QuartzCommand extends TaskCallback<JobExecutionContext> implements StatefulJob {
+    @SuppressWarnings({"UnusedDeclaration"})
     private static final Logger log = LoggerFactory.getLogger(QuartzCommand.class);
 
     public final void execute(final JobExecutionContext jobContext) throws JobExecutionException {
@@ -55,8 +56,8 @@ public abstract class QuartzCommand extends TaskCallback<JobExecutionContext> im
 
     @Override
     protected Authentication getAuthenticationFromWorkContext(JobExecutionContext jobContext) {
-        Authentication authentication =
-                (Authentication) jobContext.getMergedJobDataMap().get(QuartzTask.TASK_AUTHENTICATION);
+        Authentication authentication = (Authentication) jobContext.getMergedJobDataMap().
+                get(QuartzTask.TASK_AUTHENTICATION);
         return authentication;
     }
 }

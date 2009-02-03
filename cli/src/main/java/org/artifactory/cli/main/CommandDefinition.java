@@ -1,13 +1,11 @@
 package org.artifactory.cli.main;
 
 import org.artifactory.cli.command.CompressCommand;
-import org.artifactory.cli.command.ConfigurationCommand;
 import org.artifactory.cli.command.DumpCommand;
 import org.artifactory.cli.command.ExportCommand;
 import org.artifactory.cli.command.HelpCommand;
 import org.artifactory.cli.command.ImportCommand;
 import org.artifactory.cli.command.InfoCommand;
-import org.artifactory.cli.command.SecurityCommand;
 import org.artifactory.cli.common.BaseParam;
 import org.artifactory.cli.common.Command;
 import org.artifactory.cli.common.Param;
@@ -18,36 +16,17 @@ import org.artifactory.cli.common.Param;
  * @author Noam Tenne
  */
 public enum CommandDefinition {
-    help(
-            HelpCommand.class,
-            "The help message",
-            "the command help"),
-    info(
-            InfoCommand.class,
-            "Get system information"),
-    export(
-            ExportCommand.class,
-            "Export a running artifactory instance data into host destination path",
-            "host destination path"),
-    imp(
-            ImportCommand.class,
-            "import",
-            "Import full system from host path",
-            "host path"),
-    dump(
-            DumpCommand.class,
-            "Dump the database of an older version of an offline artifactory instance to the latest export format",
-            "artifactory home folder"),
-    compress(
-            CompressCommand.class,
-            "Compress the (Derby only) tables in order to free up disk space.",
-            "artifactory home folder"),
-    security(
-            SecurityCommand.class,
-            "Display or update the security definitions using a security configuration file."),
-    configuration(
-            ConfigurationCommand.class,
-            "Print or update the artifactory configuration using a configuration file.");
+    help(HelpCommand.class, "The help message", true, "the command help"),
+    info(InfoCommand.class, "Get system information"),
+    export(ExportCommand.class, "Export artifactory data to destination path", true,
+            "destination path"),
+    imp(ImportCommand.class, "import", "Import full system from import path", true,
+            "import from path"),
+    dump(DumpCommand.class, "Dump the database of an older version of Artifactory", true,
+            "Artifactory home folder"),
+    compress(CompressCommand.class, "Compress the database tables in order to free up disk space.",
+            true,
+            "Artifactory home folder");
 
     /**
      * The class of the command
@@ -74,10 +53,13 @@ public enum CommandDefinition {
      *
      * @param commandClass Command class
      * @param desc         Command description
+     * @param extraArg     Extra arguments (if needed as well as global ones)
      * @param argDesc      Description of argument
      */
-    CommandDefinition(Class<? extends Command> commandClass, String desc, String argDesc) {
-        this(commandClass, null, desc, argDesc);
+    CommandDefinition(Class<? extends Command> commandClass, String desc, boolean extraArg,
+            String argDesc) {
+        this.commandClass = commandClass;
+        this.commandParam = new BaseParam(name(), desc, extraArg, argDesc);
     }
 
     /**
@@ -86,14 +68,13 @@ public enum CommandDefinition {
      * @param commandClass Command class
      * @param name         Command name
      * @param desc         Command description
+     * @param extraArg     Extra arguments (if needed as well as global ones)
      * @param argDesc      Description of argument
      */
-    CommandDefinition(Class<? extends Command> commandClass, String name, String desc, String argDesc) {
-        if (argDesc == null) {
-            throw new IllegalArgumentException("Argument description cannot be null");
-        }
+    CommandDefinition(Class<? extends Command> commandClass, String name, String desc,
+            boolean extraArg, String argDesc) {
         this.commandClass = commandClass;
-        this.commandParam = new BaseParam(name != null ? name : name(), desc, true, argDesc);
+        this.commandParam = new BaseParam(name, desc, extraArg, argDesc);
     }
 
     /**

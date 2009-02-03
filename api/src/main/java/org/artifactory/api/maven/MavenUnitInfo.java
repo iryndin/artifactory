@@ -18,8 +18,7 @@ package org.artifactory.api.maven;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.artifactory.api.common.Info;
-import org.artifactory.api.mime.ContentType;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * @author freds
@@ -31,17 +30,15 @@ public class MavenUnitInfo implements Info {
 
     public static final String NA = "NA";
 
-    public static final String POM = ContentType.mavenPom.getDefaultExtension();
-    public static final String JAR = ContentType.javaArchive.getDefaultExtension();
-    public static final String XML = ContentType.applicationXml.getDefaultExtension();
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
 
-    private String groupId;
-    private String artifactId;
-    private String version;
-
-    public MavenUnitInfo(String groupId, String artifactId, String version) {
+    public MavenUnitInfo(
+            String groupId, String artifactId, String version) {
         if (groupId == null || artifactId == null) {
-            throw new IllegalArgumentException("Cannot create a maven unit with null groupId or ArtifactId");
+            throw new IllegalArgumentException(
+                    "Cannot create a maven unit with null groupId or ArtifactId");
         }
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -67,35 +64,18 @@ public class MavenUnitInfo implements Info {
     }
 
     public String getVersion() {
+        if (!hasVersion()) {
+            return null;
+        }
         return version;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public boolean hasGroupId() {
-        return groupId != null && !NA.equals(groupId);
-    }
-
-    public boolean hasArtifactId() {
-        return artifactId != null && !NA.equals(artifactId);
-    }
-
     public boolean hasVersion() {
-        return version != null && !NA.equals(version);
+        return !NA.equals(version);
     }
 
     public boolean isValid() {
-        return groupId != null && !NA.equals(groupId) && artifactId != null && !NA.equals(artifactId);
+        return !NA.equals(groupId) && !NA.equals(artifactId);
     }
 
     public String getPath() {
@@ -114,12 +94,6 @@ public class MavenUnitInfo implements Info {
 
     public boolean isSnapshot() {
         return MavenNaming.isVersionSnapshot(version);
-    }
-
-    public void invalidate() {
-        setGroupId(NA);
-        setArtifactId(NA);
-        setVersion(NA);
     }
 
     public String getXml() {
@@ -143,16 +117,16 @@ public class MavenUnitInfo implements Info {
         private final StringBuilder builder = new StringBuilder();
 
         protected StringBuilder wrapInTag(String content, String tag) {
-            return builder.append("<").append(tag).append(">").append(content).append("</").append(tag).append(">");
+            return builder.append("<").append(tag).append(">").append(content).append("</")
+                    .append(tag)
+                    .append(">");
         }
 
-        @Override
         public String toString() {
             return builder.toString();
         }
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -160,11 +134,18 @@ public class MavenUnitInfo implements Info {
         if (!(o instanceof MavenUnitInfo)) {
             return false;
         }
+
         MavenUnitInfo info = (MavenUnitInfo) o;
-        return artifactId.equals(info.artifactId) && groupId.equals(info.groupId) && version.equals(info.version);
+
+        if (!artifactId.equals(info.artifactId)) {
+            return false;
+        }
+        if (!groupId.equals(info.groupId)) {
+            return false;
+        }
+        return version.equals(info.version);
     }
 
-    @Override
     public int hashCode() {
         int result;
         result = groupId.hashCode();
@@ -173,7 +154,6 @@ public class MavenUnitInfo implements Info {
         return result;
     }
 
-    @Override
     public String toString() {
         return "MavenUnitInfo{" +
                 "groupId='" + groupId + '\'' +

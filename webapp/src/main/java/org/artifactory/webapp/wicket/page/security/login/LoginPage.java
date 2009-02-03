@@ -16,7 +16,6 @@
  */
 package org.artifactory.webapp.wicket.page.security.login;
 
-import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.page.base.BasePage;
 
@@ -35,10 +34,5 @@ public class LoginPage extends BasePage {
     @Override
     protected String getPageName() {
         return "Log In";
-    }
-
-    @Override
-    protected Class<? extends BasePage> getMenuPageClass() {
-        return ArtifactoryApplication.get().getHomePage();
     }
 }

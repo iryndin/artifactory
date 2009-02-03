@@ -22,11 +22,12 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusEntry;
+import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
+import org.artifactory.utils.ExceptionUtils;
 import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
@@ -54,18 +55,6 @@ public class BasicImportPanel extends TitledPanel {
     @WicketProperty
     private File importFromPath;
 
-    @WicketProperty
-    private boolean copyFiles;
-
-    @WicketProperty
-    private boolean useSymLinks;
-
-    @WicketProperty
-    private boolean verbose;
-
-    @WicketProperty
-    private boolean includeMetadata;
-
     private Form importForm;
 
     public BasicImportPanel(String id) {
@@ -90,7 +79,7 @@ public class BasicImportPanel extends TitledPanel {
         add(importForm);
         //Add the dropdown choice for the targetRepo
         final IModel targetRepoModel = new PropertyModel(this, "targetRepoKey");
-        List<LocalRepoDescriptor> localRepos =
+        final List<LocalRepoDescriptor> localRepos =
                 repositoryService.getLocalAndCachedRepoDescriptors();
         final List<String> repoKeys = new ArrayList<String>(localRepos.size() + 1);
         //Add the "All" pseudo repository
@@ -109,54 +98,48 @@ public class BasicImportPanel extends TitledPanel {
         //Needed because get getDefaultChoice does not update the actual selection object
         targetRepoDdc.setModelObject(ImportExportReposPage.ALL_REPOS);
         importForm.add(targetRepoDdc);
-        final MultiStatusHolder status = new MultiStatusHolder();
         SimpleButton importButton = new SimpleButton("import", importForm, "Import") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
-                    status.reset();
                     //If we chose "All" import all local repositories, else import a single repo
                     File folder = importFromPath;
-                    status.setVerbose(verbose);
+                    final StatusHolder status = new StatusHolder();
                     ImportSettings importSettings = new ImportSettings(folder);
+                    // TODO: Add check boxes for these falgs
                     importSettings.setFailFast(true);
                     importSettings.setFailIfEmpty(true);
-                    importSettings.setCopyToWorkingFolder(copyFiles);
-                    importSettings.setUseSymLinks(useSymLinks);
-                    importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
                     if (ImportExportReposPage.ALL_REPOS.equals(targetRepoKey)) {
                         repositoryService.importAll(importSettings, status);
                     } else {
                         repositoryService.importRepo(targetRepoKey, importSettings, status);
                     }
-                    List<StatusEntry> warnings = status.getWarnings();
-                    if (!warnings.isEmpty()) {
-                        warn(warnings.size() +
-                                " warnings were produced during the import. Please see the import/export log for more details.");
-                    }
                     if (status.isError()) {
-                        errorImportFeedback(status);
+                        String msg = errorImportFeedback(status.getStatusMsg());
+                        if (status.getException() != null) {
+                            log.warn(msg, status.getException());
+                        }
                     } else {
-                        info("Successfully imported '" + importFromPath + "' into '" + targetRepoKey + "'.");
+                        info("Successfully imported '" + importFromPath + "' into '" +
+                                targetRepoKey +
+                                "'.");
                     }
                 } catch (Exception e) {
-                    status.setError(e.getMessage(), log);
-                    errorImportFeedback(status);
+                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(
+                            e, RepositoryRuntimeException.class, RuntimeException.class);
+                    String exceptionMessage = cause.getMessage();
+                    String msg = errorImportFeedback(exceptionMessage);
+                    log.warn(msg, e);
                 }
                 FeedbackUtils.refreshFeedback(target);
                 target.addComponent(form);
             }
 
-            private void errorImportFeedback(MultiStatusHolder status) {
-                String error = status.getStatusMsg();
-                Throwable exception = status.getException();
-                if (exception != null) {
-                    error = exception.getMessage();
-                }
+            private String errorImportFeedback(String exceptionMessage) {
                 String msg = "Failed to import '" + importFromPath + "' into '" +
-                        targetRepoKey + "'. Cause: " + error;
+                        targetRepoKey + "'. Cause: " + exceptionMessage;
                 error(msg);
+                return msg;
             }
         };
         importForm.add(importButton);

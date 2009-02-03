@@ -127,10 +127,4 @@ public interface TaskService extends ReloadableBean {
      * @param token
      */
     TaskBase getInternalActiveTask(String token);
-
-    /**
-     * @param callbackType Type of callback to check if exists
-     * @return True if a task with the callback type already exists
-     */
-    boolean hasTaskOfType(Class<? extends TaskCallback> callbackType);
 }

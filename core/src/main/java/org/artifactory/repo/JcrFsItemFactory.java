@@ -81,9 +81,6 @@ public interface JcrFsItemFactory {
     JcrFsItem getLockedJcrFsItem(RepoPath repoPath);
 
     @Deprecated
-    JcrFsItem getLockedJcrFsItem(String relPath);
-
-    @Deprecated
     JcrFile getLockedJcrFile(String relPath, boolean createIfMissing) throws FileExpectedException;
 
     JcrFile getLockedJcrFile(RepoPath repoPath, boolean createIfMissing) throws FileExpectedException;

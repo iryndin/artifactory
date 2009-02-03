@@ -23,23 +23,18 @@ import static org.apache.jackrabbit.JcrConstants.*;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
-import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.api.fs.FileAdditionalInfo;
+import org.artifactory.api.fs.FileExtraInfo;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.ChecksumType;
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.stat.StatsInfo;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.io.checksum.Checksum;
 import org.artifactory.io.checksum.ChecksumInputStream;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
-import org.artifactory.io.checksum.policy.ChecksumPolicyException;
+import org.artifactory.io.checksum.ChecksumType;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.lock.LockingException;
 import org.artifactory.jcr.lock.LockingHelper;
@@ -50,7 +45,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -61,7 +56,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import java.io.*;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -79,12 +73,10 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     private boolean uncommitted;
 
-    @Override
     protected FileInfo createInfo(RepoPath repoPath) {
         return new FileInfo(repoPath);
     }
 
-    @Override
     protected FileInfo createInfo(FileInfo copy) {
         return new FileInfo(copy);
     }
@@ -110,13 +102,12 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         super(fileNode, repo);
     }
 
-    @Override
-    protected void setAdditionalInfoFields(Node node) throws RepositoryException {
+    protected void setExtraInfoFields(Node node) throws RepositoryException {
         FileInfo fileInfo = getInfo();
         if (isUncommitted(node)) {
             uncommitted = true;
             File workingCopy = getWorkingCopyFile();
-            ContentType ct = NamingUtils.getContentType(workingCopy.getName());
+            ContentType ct = PackagingType.getContentType(workingCopy.getName());
             String mimeType = ct.getMimeType();
             fileInfo.setSize(workingCopy.length());
             fileInfo.setMimeType(mimeType);
@@ -130,9 +121,9 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 fileInfo.setLastModified(lastModified);
             }
         }
-        FileAdditionalInfo additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
-        if (additionalInfo != null) {
-            fileInfo.setAdditionalInfo(additionalInfo);
+        FileExtraInfo extraInfo = getXmlMetdataObject(FileExtraInfo.class);
+        if (extraInfo != null) {
+            fileInfo.setExtension(extraInfo);
         }
     }
 
@@ -173,7 +164,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         }
         try {
             createOrGetFileNode(getParentNode(), getName());
-            setResourceNode(in, lastModified, true);
+            setResourceNode(in, lastModified, getInfo(), true);
             saveModifiedInfo();
         } catch (Exception e) {
             throw new RepositoryRuntimeException(
@@ -191,7 +182,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
      * @throws RepositoryRuntimeException if the parentNode cannot be read or the JCR node elements cannot be created
      * @throws IOException                if the stream cannot be read or closed
      */
-    public void importFrom(File file, ImportSettings settings, StatusHolder status) throws IOException {
+    public void importFrom(File file, ImportSettings settings, StatusHolder status)
+            throws IOException {
         try {
             createOrGetFileNode(getParentNode(), getName());
             importFrom(settings, status);
@@ -214,7 +206,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 FileUtils.forceMkdir(targetWcFile.getParentFile());
                 if (settings.isUseSymLinks()) {
                     //Create a symlink in the wokring copy
-                    org.artifactory.util.FileUtils.createSymLink(file, targetWcFile);
+                    org.artifactory.utils.FileUtils.createSymLink(file, targetWcFile);
                 } else {
                     //Copy the file to the working copy, overriding any previously existing file
                     FileUtils.copyFile(file, targetWcFile);
@@ -242,7 +234,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 InputStream is = null;
                 try {
                     is = new BufferedInputStream(new FileInputStream(file));
-                    setResourceNode(is, lastModified, false);
+                    setResourceNode(is, lastModified, info, false);
                 } finally {
                     IOUtils.closeQuietly(is);
                 }
@@ -255,7 +247,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                             info.getSha1() + " expected=" + sha1, log);
                 }
             }
-            getMdService().setXmlMetadata(this, info.getInernalXmlInfo());
+            getMdService().setXmlMetadata(this, info.getExtension());
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(
                     "Failed to create file node resource at '" + getAbsolutePath() + "'.", e);
@@ -295,7 +287,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         }
     }
 
-    @Override
     public void setLastUpdated(long lastUpdated) {
         if (!isMutable()) {
             throw new LockingException("Cannot modified immutable " + this);
@@ -320,7 +311,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 JcrService service = InternalContextHelper.get().getJcrService();
                 boolean success = service.commitSingleFile(wcAbsPath);
                 if (success) {
-                    status.setDebug("File " + wcAbsPath + " was committed succesfully", log);
+                    status.setStatus("File " + wcAbsPath + " was committed succesfully", log);
                 } else {
                     status.setStatus(HttpStatus.SC_NOT_FOUND, "File " + wcAbsPath + " was deleted",
                             log);
@@ -331,11 +322,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         }
     }
 
-    /**
-     * Retrieve JCR content, and do working copy commit if needed.
-     *
-     * @return null if deleted, the InputStream of the content of the file otherwise
-     */
     public InputStream getStream() {
         try {
             if (uncommitted) {
@@ -345,7 +331,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                         return null;
                     }
                 } else {
-                    QuartzTask task = new QuartzTask(ExtractWorkingCopyFileJob.class, "ExtractWorkingCopyFile");
+                    QuartzTask task = new QuartzTask(ExtractWorkingCopyFileJob.class,
+                            "ExtractWorkingCopyFile");
                     StatusHolder status = new StatusHolder();
                     task.addAttribute(StatusHolder.class.getName(), status);
                     task.addAttribute(WORKING_COPY_ABS_PATH, getAbsolutePath());
@@ -409,7 +396,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             BufferedInputStream bis = null;
             try {
                 bis = new BufferedInputStream(new FileInputStream(workingCopyFile));
-                setResourceNode(bis, workingCopyFile.lastModified(), false);
+                setResourceNode(bis, workingCopyFile.lastModified(), getInfo(), false);
                 if (log.isDebugEnabled()) {
                     log.debug("Imported working copy file at '" +
                             workingCopyFile.getAbsolutePath() + " into '" + getPath() +
@@ -452,7 +439,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
     private void deleteWcFile(File workingCopyFile) {
         boolean deleted = workingCopyFile.delete();
         if (!deleted) {
-            log.warn("Failed to delete imported file: " + workingCopyFile.getAbsolutePath() +
+            log.warn("Failed to delete imported file: " +
+                    workingCopyFile.getAbsolutePath() +
                     ". File might have been removed externally.");
         }
     }
@@ -466,7 +454,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         return false;
     }
 
-    @Override
     public JcrFsItem save() {
         if (isDeleted()) {
             throw new IllegalStateException("Cannot save item " + getRepoPath() + " it is schedule for deletion");
@@ -482,69 +469,52 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             return false;
         }
         JcrFile jcrFile = (JcrFile) item;
-        return this.uncommitted == jcrFile.uncommitted && super.isIdentical(item);
+        return this.uncommitted == jcrFile.uncommitted &&
+                super.isIdentical(item);
     }
 
     @Override
     public int zap(long expiredLastUpdated) {
-        if (MavenNaming.isNonUniqueSnapshot(getPath())) {
-            // zap has a meaning only on non unique snapshot files
-            setLastUpdated(expiredLastUpdated);
-            return 1;
-        } else {
-            return 0;
-        }
+        setLastUpdated(expiredLastUpdated);
+        return 1;
     }
 
-    public void exportTo(ExportSettings settings, StatusHolder status) {
-        status.setDebug("Exporting file '" + getRelativePath() + "'...", log);
-        File targetFile = new File(settings.getBaseDir(), getRelativePath());
-        try {
-            exportFileContent(targetFile, status, settings);
-
-            if (settings.isIncludeMetadata()) {
-                exportMetadata(targetFile, status, settings.isIncremental());
-            }
-            if (settings.isM2Compatible()) {
-                writeChecksums(targetFile.getParentFile(), getInfo().getChecksumsInfo(), targetFile.getName(),
-                        getLastModified());
-            }
-        } catch (FileNotFoundException e) {
-            status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
-        } catch (Exception e) {
-            status.setError("Failed to export " + getAbsolutePath() + " to file '" +
-                    targetFile.getPath() + "'.", e, log);
-        }
+    public void exportNoMetadata(File targetFile) {
+        export(targetFile, null, false);
     }
 
-    private void exportFileContent(File targetFile, StatusHolder status, ExportSettings settings)
-            throws IOException {
-        if (settings.isIncremental() && targetFile.exists()) {
-            // incremental export - only export the file if it is newer
-            if (getInfo().getLastModified() <= targetFile.lastModified()) {
-                log.debug("Skipping not modified file {}", getPath());
-                return;
-            }
+    void export(File targetFile, StatusHolder status, boolean includeMetadata) {
+        if (log.isDebugEnabled()) {
+            log.debug("Exporting file '" + getRelativePath() + "'...");
         }
-        log.debug("Exporting file content to {}", targetFile.getAbsolutePath());
         OutputStream os = null;
         InputStream is = null;
         try {
             os = new BufferedOutputStream(new FileOutputStream(targetFile));
             is = getStream();
-            if (is == null) {
-                // File was deleted
-                throw new FileNotFoundException();
-            }
-
             IOUtils.copy(is, os);
-            if (getLastModified() >= 0) {
-                targetFile.setLastModified(getLastModified());
+            IOUtils.closeQuietly(os);
+            long modified = getLastModified();
+            if (modified >= 0) {
+                targetFile.setLastModified(modified);
+            }
+            if (includeMetadata) {
+                exportMetadata(targetFile, modified, status);
+            }
+        } catch (Exception e) {
+            if (status != null) {
+                status.setError("Failed to export " + getAbsolutePath() + " to file '" +
+                        targetFile.getPath() + "'.", e, log);
             }
         } finally {
-            IOUtils.closeQuietly(os);
             IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
         }
+    }
+
+    public void exportTo(ExportSettings settings, StatusHolder status) {
+        File targetFile = new File(settings.getBaseDir(), getRelativePath());
+        export(targetFile, status, settings.isIncludeMetadata());
     }
 
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
@@ -578,13 +548,13 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         if (definition.getMetadataName().equals(FileInfo.ROOT) && md instanceof FileInfo) {
             FileInfo importedFileInfo = (FileInfo) md;
             FileInfo info = getInfo();
-            info.setAdditionalInfo(importedFileInfo.getInernalXmlInfo());
+            info.setExtension(importedFileInfo.getExtension());
             info.setMimeType(importedFileInfo.getMimeType());
             info.setSize(importedFileInfo.getSize());
             updateTimestamps(importedFileInfo, info);
         } else {
-            throw new IllegalStateException(
-                    "Metadata " + definition + " for object " + md + " is not supported has transient!");
+            throw new IllegalStateException("Metadata " + definition + " for object " + md +
+                    " is not supported has transient!");
         }
     }
 
@@ -644,23 +614,19 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         return new File(wcDir, getPath());
     }
 
-    /**
-     * Do not import metadata,index folders and checksums
-     */
     public static boolean isStorable(String name) {
-        return !name.endsWith(ItemInfo.METADATA_FOLDER) && !NamingUtils.isChecksum(name);
+        return !name.endsWith(ItemInfo.METADATA_FOLDER) && !MavenUtils.isChecksum(name);
     }
 
     /**
      * OVERIDDEN FROM java.io.File END
      */
 
-    private void setResourceNode(InputStream in, long lastModified, boolean updateInfo)
+    private void setResourceNode(InputStream in, long lastModified, FileInfo info, boolean updateInfo)
             throws RepositoryException, IOException {
         Node node = getNode();
         Node resourceNode = getJcrService().getOrCreateNode(node, JCR_CONTENT, NT_RESOURCE);
         String name = getName();
-        FileInfo info = getInfo();
         ContentType ct = setContentType(resourceNode, name, info);
         //If it is an XML document save the XML in memory since marking does not always work on the
         //remote stream, and import its xml content into the repo for indexing
@@ -676,17 +642,13 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             //Get
             in.mark(Integer.MAX_VALUE);
             //If it is a pom, verify that its groupId/artifactId/version match the dest path
-            if (MavenNaming.isPom(name)) {
-                try {
-                    MavenUtils.validatePomTargetPath(in, getRelativePath());
-                } catch (BadPomException e) {
-                    throw new RepositoryException("Could not store POM file.", e);
-                }
+            if (MavenUtils.isPom(name)) {
+                MavenUtils.validatePomTargetPath(in, getRelativePath());
                 in.reset();
             }
-            Node xmlNode = getJcrService().getOrCreateUnstructuredNode(node, NODE_ARTIFACTORY_XML);
-            getJcrService().importXml(xmlNode, in);
             //Reset the stream
+            Node xmlNode = getJcrService().getOrCreateUnstructuredNode(node, NODE_ARTIFACTORY_XML);
+            getMdService().importXml(xmlNode, in);
             in.reset();
         }
         try {
@@ -702,39 +664,61 @@ public class JcrFile extends JcrFsItem<FileInfo> {
     @SuppressWarnings({"MethodMayBeStatic"})
     private ContentType setContentType(Node resourceNode, String name, FileInfo info)
             throws RepositoryException {
-        ContentType ct = NamingUtils.getContentType(name);
+        ContentType ct = PackagingType.getContentType(name);
         String mimeType = ct.getMimeType();
         resourceNode.setProperty(JCR_MIMETYPE, mimeType);
         info.setMimeType(mimeType);
         return ct;
     }
 
-    @SuppressWarnings({"OverlyComplexMethod"})
     private void fillJcrData(Node resourceNode, String name, InputStream in, long lastModified,
             FileInfo info, boolean updateInfo) throws RepositoryException {
-
         //Check if needs to create checksum and not checksum file
-        log.debug("Calculating checksums for '{}'.", name);
-        Checksum[] checksums = getChecksumsToCompute();
-        ChecksumInputStream resourceInputStream = new ChecksumInputStream(in, checksums);
-
+        ChecksumInputStream resourceInputStream;
+        if (log.isDebugEnabled()) {
+            log.debug("Calculating checksum for '" + name + "'.");
+        }
+        resourceInputStream = new ChecksumInputStream(in,
+                new Checksum(name, ChecksumType.md5),
+                new Checksum(name, ChecksumType.sha1));
         //Do this after xml import: since Jackrabbit 1.4
         //org.apache.jackrabbit.core.value.BLOBInTempFile.BLOBInTempFile will close the stream
         resourceNode.setProperty(JCR_DATA, resourceInputStream);
         setLastModified(resourceNode, lastModified);
-
-        // set the actual checksums on the file extra info
-        setFileActualChecksums(info, checksums);
-
-        // apply the checksum policy
-        LocalRepo repository = getLocalRepo();
-        ChecksumPolicy policy = repository.getChecksumPolicy();
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
-        boolean passes = policy.verify(checksumInfos);
-        if (!passes) {
-            throw new ChecksumPolicyException(policy, checksumInfos, name);
+        Checksum[] checksums = resourceInputStream.getChecksums();
+        for (Checksum checksum : checksums) {
+            //Save the checksum
+            String checksumStr = checksum.getChecksum();
+            if (log.isDebugEnabled()) {
+                log.debug("Saving checksum for '" + name + "' (checksum=" + checksumStr + ").");
+            }
+            ChecksumType checksumType = checksum.getType();
+            if (checksumType.equals(ChecksumType.sha1)) {
+                if (!updateInfo) {
+                    // Do a sanity check
+                    if (PathUtils.hasText(info.getSha1()) && !info.getSha1().equals(checksumStr)) {
+                        log.warn("Received file " + getRepoPath() + " with Checksum error on SHA1");
+                        // TODO: May be refuse import? FOr the moment update the MD
+                        info.setSha1(checksumStr);
+                    }
+                } else {
+                    info.setSha1(checksumStr);
+                }
+            } else if (checksumType.equals(ChecksumType.md5)) {
+                if (!updateInfo) {
+                    // Do a sanity check
+                    if (PathUtils.hasText(info.getMd5()) && !info.getMd5().equals(checksumStr)) {
+                        log.warn("Received file " + getRepoPath() + " with Checksum error on MD5");
+                        // TODO: May be refuse import? FOr the moment update the MD
+                        info.setMd5(checksumStr);
+                    }
+                } else {
+                    info.setMd5(checksumStr);
+                }
+            } else {
+                log.warn("Skipping unknown checksum type: " + checksumType + ".");
+            }
         }
-
         long actualSize = getLength();
         if (updateInfo) {
             //Update the info
@@ -752,49 +736,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 info.setSize(actualSize);
             }
         }
-    }
-
-    private void setFileActualChecksums(FileInfo info, Checksum[] checksums) {
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
-        for (Checksum checksum : checksums) {
-            ChecksumType checksumType = checksum.getType();
-            String calculatedChecksum = checksum.getChecksum();
-            ChecksumInfo checksumInfo = getChecksumInfo(checksumType, checksumInfos);
-            if (checksumInfo != null) {
-                // set the actual checksum
-                checksumInfo.setActual(calculatedChecksum);
-                // original checksum migh be null
-                String originalChecksum = checksumInfo.getOriginal();
-                if (!checksumInfo.checksumsMatch()) {
-                    log.debug("Checksum mismatch {}. original: {} calculated: {}",
-                            new String[]{checksumType.toString(), originalChecksum, calculatedChecksum});
-                }
-            } else {
-                log.warn(checksumType + " checksum info not found for '" + info.getRepoPath().getPath() +
-                        ". Creating one with empty original checksum.");
-                ChecksumInfo missingChecksumInfo = new ChecksumInfo(checksumType);
-                missingChecksumInfo.setActual(calculatedChecksum);
-                info.addChecksumInfo(missingChecksumInfo);
-            }
-        }
-    }
-
-    private ChecksumInfo getChecksumInfo(ChecksumType type, Set<ChecksumInfo> infos) {
-        for (ChecksumInfo info : infos) {
-            if (type.equals(info.getType())) {
-                return info;
-            }
-        }
-        return null;
-    }
-
-    private Checksum[] getChecksumsToCompute() {
-        ChecksumType[] checksumTypes = ChecksumType.values();
-        Checksum[] checksums = new Checksum[checksumTypes.length];
-        for (int i = 0; i < checksumTypes.length; i++) {
-            checksums[i] = new Checksum(checksumTypes[i]);
-        }
-        return checksums;
     }
 
     private Node getResourceNode(Node node) {

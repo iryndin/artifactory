@@ -34,18 +34,18 @@ public class MetadataDefinition implements Info {
      */
     private final Class xstreamClass;
     /**
-     * If true the XML stream will be saved under the JCR metadata folder container. If false, this metadata is
-     * transient in memory
+     * If true the XML stream will be saved under the JCR metadata folder container. If false, this
+     * metadata is transient in memory
      */
     private final boolean persistent;
     /**
-     * Valid with xStreamClass not null only. When editing, the cache will activate the copy constructor before
-     * editing.
+     * Valid with xStreamClass not null only. When editing, the cache will activate the copy
+     * constructor before editing.
      */
     private final Constructor copyConstructor;
     /**
-     * If false, it means this metadata is transparently (store/load) managed without special business logic.
-     * The basic folder and file info are set to true here.
+     * If true, it means this metadata is transparently (store/load) managed without special
+     * business logic. The basic folder and file info are set to false here.
      */
     private final boolean internal;
 
@@ -53,7 +53,8 @@ public class MetadataDefinition implements Info {
         this(metadataName, null, true, false);
     }
 
-    public MetadataDefinition(String metadataName, Class xstreamClass, boolean persistent, boolean internal) {
+    public MetadataDefinition(
+            String metadataName, Class xstreamClass, boolean persistent, boolean internal) {
         if (metadataName == null) {
             throw new IllegalArgumentException("Metadata definition name cannot be null");
         }
@@ -104,7 +105,8 @@ public class MetadataDefinition implements Info {
         try {
             return xstreamClass.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot create new metadata value of class " + xstreamClass, e);
+            throw new RuntimeException("Cannot create new metadata value of class " + xstreamClass,
+                    e);
         }
     }
 

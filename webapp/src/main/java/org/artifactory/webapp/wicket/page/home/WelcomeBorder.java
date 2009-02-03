@@ -1,14 +1,8 @@
 package org.artifactory.webapp.wicket.page.home;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
-import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.time.Duration;
 import org.artifactory.api.config.CentralConfigService;
-import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.ArtifactCount;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
@@ -16,13 +10,13 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.version.VersionInfoService;
 import static org.artifactory.common.ConstantsValue.artifactoryVersion;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.webapp.wicket.common.ajax.NoAjaxIndicatorDecorator;
+import org.artifactory.webapp.wicket.application.ArtifactoryWebSession;
 import org.artifactory.webapp.wicket.common.component.SimplePageLink;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
-import org.artifactory.webapp.wicket.page.base.EditProfileLink;
-import org.artifactory.webapp.wicket.page.base.LoginLink;
-import org.artifactory.webapp.wicket.page.base.LogoutLink;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.BrowseRepoPage;
+import org.artifactory.webapp.wicket.page.security.login.LoginPage;
+import org.artifactory.webapp.wicket.page.security.login.LogoutPage;
+import org.artifactory.webapp.wicket.page.security.profile.ProfilePage;
 import org.artifactory.webapp.wicket.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +28,7 @@ import java.util.Map;
  */
 public class WelcomeBorder extends TitledBorder {
     private static final Logger LOG = LoggerFactory.getLogger(WelcomeBorder.class);
+    private static final String LATEST_VERSION_NA = "NA";
 
     @SpringBean
     private RepositoryService repoService;
@@ -49,21 +44,10 @@ public class WelcomeBorder extends TitledBorder {
 
     public WelcomeBorder(String id) {
         super(id);
-        addUptime();
+
         addArtifactsCount();
         addCurrentUserInfo();
-        addVersionInfo();
-    }
-
-    private void addUptime() {
-        long uptime = ContextHelper.get().getUptime();
-        String uptimeStr = DurationFormatUtils.formatDuration(uptime, "d'd' H'h' m'm' s's'");
-        Label uptimeLabel = new Label("uptime", uptimeStr);
-        //Only show uptime for admins
-        if (!authorizationService.isAdmin()) {
-            uptimeLabel.setVisible(false);
-        }
-        add(uptimeLabel);
+        addLatestVersionInfo();
     }
 
     private void addArtifactsCount() {
@@ -81,48 +65,44 @@ public class WelcomeBorder extends TitledBorder {
     private void addCurrentUserInfo() {
         add(new SimplePageLink("browseLink", "browse", BrowseRepoPage.class));
 
-        add(new LoginLink("loginLink", "log in"));
-        add(new LogoutLink("logoutLink", "log out"));
-        add(new EditProfileLink("profileLink"));
+        SimplePageLink loginLink = new SimplePageLink("loginLink", "login", LoginPage.class);
+        add(loginLink);
+
+        SimplePageLink logoutLink = new SimplePageLink("logoutLink", "logout", LogoutPage.class);
+        add(logoutLink);
+
+        // update profile link
+        SimplePageLink profileLink = new SimplePageLink("profileLink", authorizationService.currentUsername(), ProfilePage.class) {
+            @Override
+            public boolean isEnabled() {
+                return authorizationService.isUpdatableProfile();
+            }
+        };
+        add(profileLink);
+
+        if (ArtifactoryWebSession.get().isSignedIn() && !authorizationService.isAnonymous()) {
+            loginLink.setVisible(false);
+        } else {
+            logoutLink.setVisible(false);
+        }
     }
 
-    private void addVersionInfo() {
+    private void addLatestVersionInfo() {
         Label currentLabel = new Label("currentLabel", artifactoryVersion.getString());
         add(currentLabel);
 
-        final Label latestLabel = new Label("latestLabel", "");
-        latestLabel.setOutputMarkupId(true);
+        Label latestLabel = new Label("latestLabel", "");
+        latestLabel.setVisible(false);
+        add(latestLabel);
+
         CentralConfigDescriptor configDescriptor = centralConfigService.getDescriptor();
         if (!configDescriptor.isOfflineMode()) {
-            // try to get the latest version from the cache with a non-blocking call
-            final Map<String, String> headersMap = WebUtils.getHeadersMap();
+            Map<String, String> headersMap = WebUtils.getHeadersMap();
             String latestVersion = versionInfoService.getLatestVersion(headersMap, true);
-            if (VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
-                // send ajax refresh in 5 second and update the latest version with the result
-                latestLabel.add(new AbstractAjaxTimerBehavior(Duration.seconds(5)) {
-                    @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new NoAjaxIndicatorDecorator();
-                    }
-
-                    @Override
-                    protected void onTimer(AjaxRequestTarget target) {
-                        stop(); // try only once
-                        String latestVersion = versionInfoService.getLatestVersionFromCache(true);
-                        if (!VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
-                            latestLabel.setModelObject(buildLatestversionString(latestVersion));
-                            target.addComponent(latestLabel);
-                        }
-                    }
-                });
-            } else {
-                latestLabel.setModelObject(buildLatestversionString(latestVersion));
+            if (!LATEST_VERSION_NA.equals(latestVersion)) {
+                latestLabel.setModelObject(latestVersion);
+                latestLabel.setVisible(true);
             }
         }
-        add(latestLabel);
-    }
-
-    private String buildLatestversionString(String latestVersion) {
-        return "(latest release is " + latestVersion + ")";
     }
 }

@@ -2,6 +2,15 @@
     <form wicket:id="form">
         <div wicket:id="border">
 
+            <div class="field required float-left">
+                <label>Proxy key</label>
+                <span wicket:id="key.help"/>
+
+                <div class="value">
+                    <input wicket:id="key" type="text" class="text"/>
+                </div>
+            </div>
+
             <div class="field float-right">
                 <label>NT Domain</label>
                 <span wicket:id="domain.help"/>
@@ -11,16 +20,7 @@
                 </div>
             </div>
 
-            <div class="field required">
-                <label>Proxy key</label>
-                <span wicket:id="key.help"/>
-
-                <div class="value">
-                    <input wicket:id="key" type="text" class="text"/>
-                </div>
-            </div>
-
-            <div class="field required field-sep float-left">
+            <div class="field required field-sep clear float-left">
                 <label>Host</label>
                 <span wicket:id="host.help"/>
 
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="field field-sep float-left">
+            <div class="field field-sep clear float-left">
                 <label>Username</label>
                 <span wicket:id="username.help"/>
 

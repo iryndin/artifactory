@@ -16,41 +16,34 @@
  */
 package org.artifactory.repo;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.api.fs.RepoResourceInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.ChecksumType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoType;
+import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.resource.RepoResource;
 import org.artifactory.resource.UnfoundRepoResource;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends RealRepoBase<T> implements RemoteRepo<T> {
+public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends RealRepoBase<T>
+        implements RemoteRepo<T> {
     private static final Logger log = LoggerFactory.getLogger(RemoteRepoBase.class);
 
     private LocalCacheRepo localCacheRepo;
@@ -58,7 +51,8 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
     private Map<String, RepoResource> missedRetrievalsCache;
     private boolean globalOfflineMode;
 
-    protected RemoteRepoBase(InternalRepositoryService repositoryService, T descriptor, boolean globalOfflineMode) {
+    protected RemoteRepoBase(InternalRepositoryService repositoryService, T descriptor,
+            boolean globalOfflineMode) {
         super(repositoryService, descriptor);
         this.globalOfflineMode = globalOfflineMode;
     }
@@ -66,41 +60,43 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
     public void init() {
         if (isStoreArtifactsLocally()) {
             //Initialize the local cache
-            localCacheRepo = new JcrCacheRepo(this);
-            localCacheRepo.init();
+            localCacheRepo = new LocalCacheRepo(this);
         }
         initCaches();
         logCacheInfo();
     }
 
+    private void logCacheInfo() {
+        long retrievalCachePeriodSecs = getDescriptor().getRetrievalCachePeriodSecs();
+        if (retrievalCachePeriodSecs > 0) {
+            log.info(this + ": Retrieval cache will be enabled with period of "
+                    + retrievalCachePeriodSecs + " seconds");
+        } else {
+            log.info(this + ": Retrieval cache will be disbaled.");
+        }
+        long failedRetrievalCachePeriodSecs =
+                getDescriptor().getFailedRetrievalCachePeriodSecs();
+        if (failedRetrievalCachePeriodSecs > 0) {
+            log.info(this + ": Enabling failed retrieval cache with period of "
+                    + failedRetrievalCachePeriodSecs + " seconds");
+        } else {
+            log.info(this + ": Disabling failed retrieval cache");
+        }
+        long missedRetrievalCachePeriodSecs =
+                getDescriptor().getMissedRetrievalCachePeriodSecs();
+        if (missedRetrievalCachePeriodSecs > 0) {
+            log.info(this + ": Enabling misses retrieval cache with period of "
+                    + missedRetrievalCachePeriodSecs + " seconds");
+        } else {
+            log.info(this + ": Disabling misses retrieval cache");
+        }
+    }
+
+    @SuppressWarnings({"unchecked"})
     private void initCaches() {
         CacheService cacheService = InternalContextHelper.get().beanForType(CacheService.class);
         failedRetrievalsCache = cacheService.getRepositoryCache(getKey(), ArtifactoryCache.failed);
         missedRetrievalsCache = cacheService.getRepositoryCache(getKey(), ArtifactoryCache.missed);
-    }
-
-    private void logCacheInfo() {
-        long retrievalCachePeriodSecs = getDescriptor().getRetrievalCachePeriodSecs();
-        if (retrievalCachePeriodSecs > 0) {
-            log.info(
-                    this + ": Retrieval cache will be enabled with period of " + retrievalCachePeriodSecs + " seconds");
-        } else {
-            log.info(this + ": Retrieval cache will be disbaled.");
-        }
-        long failedRetrievalCachePeriodSecs = getDescriptor().getFailedRetrievalCachePeriodSecs();
-        if (failedRetrievalCachePeriodSecs > 0) {
-            log.info(this + ": Enabling failed retrieval cache with period of " + failedRetrievalCachePeriodSecs +
-                    " seconds");
-        } else {
-            log.info(this + ": Disabling failed retrieval cache");
-        }
-        long missedRetrievalCachePeriodSecs = getDescriptor().getMissedRetrievalCachePeriodSecs();
-        if (missedRetrievalCachePeriodSecs > 0) {
-            log.info(this + ": Enabling misses retrieval cache with period of " + missedRetrievalCachePeriodSecs +
-                    " seconds");
-        } else {
-            log.info(this + ": Disabling misses retrieval cache");
-        }
     }
 
     public RemoteRepoType getType() {
@@ -140,12 +136,13 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
     }
 
     /**
-     * Retrieve the (metadata) information about the artifact, unless still cached as failure or miss. Reach this point
-     * only if local and cached repo did not find resource or expired.
+     * Retrieve the (metadata) information about the artifact, unless still cached as failure or
+     * miss. Reach this point only if local and cached repo did not find resource or expired.
      *
      * @param path the artifact's path
      * @return A repository resource updated with the uptodate metadata
      */
+    @SuppressWarnings({"SynchronizeOnNonFinalField", "OverlyComplexMethod"})
     public final RepoResource getInfo(String path) throws FileExpectedException {
         RepoPath repoPath = new RepoPath(getKey(), path);
 
@@ -156,11 +153,12 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
         }
         // TODO: Do a checksum security check on download
         //Never query remote checksums
-        if (NamingUtils.isChecksum(path)) {
+        if (MavenUtils.isChecksum(path)) {
             return new UnfoundRepoResource(repoPath, "Checksums are not downloaded");
         }
+        RepoResource res;
         //Try to get it from the caches
-        RepoResource res = getFailedOrMissedResource(path);
+        res = getFailedOrMissedResource(path);
         if (res == null) {
             res = internalGetInfo(repoPath);
         } else if (!res.isFound()) {
@@ -195,17 +193,20 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
                     missedRetrievalsCache.put(path, res);
                 }
             } catch (Exception e) {
-                String reason = this + ": Error in getting information for '" + path + "' (" + e.getMessage() + ").";
+                String reason = this + ": Error in getting information for '" + path +
+                        "' (" + e.getMessage() + ").";
                 log.warn(reason);
                 //Update the non-found cache for a failure
                 res = new UnfoundRepoResource(repoPath, reason);
                 failedRetrievalsCache.put(path, res);
                 if (isHardFail()) {
-                    throw new RuntimeException(this + ": Error in getting information for '" + path + "'.", e);
+                    throw new RuntimeException(
+                            this + ": Error in getting information for '" + path + "'.", e);
                 }
             }
         } else {
-            String msg = this + ": is offline, " + repoPath + " is not found at '" + path + "'.";
+            String msg =
+                    this + ": is offline, " + repoPath + " is not found at '" + path + "'.";
             res = new UnfoundRepoResource(repoPath, msg);
             log.debug(msg);
         }
@@ -220,18 +221,19 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
             return status;
         }
         if (localCacheRepo != null) {
-            repoPath = new RepoPath(localCacheRepo.getKey(), repoPath.getPath());
             status = localCacheRepo.allowsDownload(repoPath);
         }
         return status;
     }
 
-    public ResourceStreamHandle getResourceStreamHandle(RepoResource res) throws IOException {
+    public ResourceStreamHandle getResourceStreamHandle(RepoResource res)
+            throws IOException, FileExpectedException {
         String path = res.getRepoPath().getPath();
         if (isStoreArtifactsLocally()) {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Retrieving info from cache for '" + path + "' from '" + localCacheRepo + "'.");
+                    log.debug("Retrieving info from cache for '" + path + "' from '" +
+                            localCacheRepo + "'.");
                 }
                 ResourceStreamHandle handle = getRepositoryService().downloadAndSave(this, res);
                 return handle;
@@ -239,8 +241,8 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
                 //If we fail on remote fetching and we can get the resource from an expired entry in
                 //the local cache - fallback to using it, else rethrow the exception
                 if (res.isExpired()) {
-                    ResourceStreamHandle result =
-                            getRepositoryService().unexpireAndRetrieveIfExists(localCacheRepo, path);
+                    ResourceStreamHandle result = getRepositoryService()
+                            .unexpireAndRetrieveIfExists(localCacheRepo, path);
                     if (result != null) {
                         return result;
                     }
@@ -253,101 +255,59 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
         }
     }
 
-    public ResourceStreamHandle downloadAndSave(RepoResource res, RepoResource targetResource) throws IOException {
+    public ResourceStreamHandle downloadAndSave(RepoResource res, RepoResource targetResource)
+            throws IOException {
         String path = res.getRepoPath().getPath();
-        RepoResourceInfo info = res.getInfo();
-        RepoResourceInfo targetInfo = targetResource.getInfo();
+        FileInfo info = res.getInfo();
+        FileInfo targetInfo = targetResource.getInfo();
         //Retrieve remotely only if locally cached artifact is older than remote one
-        if (!isOffline() && (!targetResource.isFound() || info.getLastModified() > targetInfo.getLastModified())) {
+        if (!isOffline() && (!targetResource.isFound() ||
+                info.getLastModified() > targetInfo.getLastModified())) {
             // Check for security deploy rigths
-            StatusHolder status = getRepositoryService().assertValidDeployPath(localCacheRepo, path);
+            StatusHolder status =
+                    getRepositoryService().assertValidDeployPath(localCacheRepo, path);
             if (status.isError()) {
                 throw new IOException(status.getStatusMsg());
             }
-            ResourceStreamHandle handle = null;
+
+            //Do the actual download
+            ResourceStreamHandle handle = retrieveResource(path);
             try {
-                //Do the actual download
-                handle = retrieveResource(path);
-                Set<ChecksumInfo> remoteChecksums = getRemoteChecksums(path);
-                info.setChecksums(remoteChecksums);
                 if (log.isDebugEnabled()) {
-                    log.debug("Copying " + path + " from " + this + " to " + localCacheRepo);
+                    log.debug(
+                            "Copying " + path + " from " + this + " to " + localCacheRepo);
                 }
                 //Create/override the resource in the storage cache
                 InputStream is = handle.getInputStream();
                 if (log.isDebugEnabled()) {
-                    log.debug("Saving resource '" + res + "' into cache '" + localCacheRepo + "'.");
+                    log.debug("Saving resource '" + res + "' into cache '" +
+                            localCacheRepo + "'.");
                 }
                 targetResource = localCacheRepo.saveResource(res, is);
-                if (MavenNaming.isSnapshotMavenMetadata(path) || !res.isMetadata()) {
-                    if (MavenNaming.isSnapshotMavenMetadata(path)) {
-                        // unexpire the parent folder
-                        localCacheRepo.unexpire(PathUtils.getParent(path));
-                    } else {
-                        // unexpire the file
-                        localCacheRepo.unexpire(path);
-                    }
-                    // remove it from bad retrieval caches
-                    removeFromCaches(path, false);
-                }
+                //Unexpire the resource and remove it from bad retrieval caches
+                localCacheRepo.unexpire(path);
+                removeFromCaches(path);
             } finally {
-                if (handle != null) {
-                    handle.close();
-                }
+                handle.close();
             }
         }
         return localCacheRepo.getResourceStreamHandle(targetResource);
     }
 
-    private Set<ChecksumInfo> getRemoteChecksums(String path) {
-        Set<ChecksumInfo> checksums = new HashSet<ChecksumInfo>();
-        for (ChecksumType checksumType : ChecksumType.values()) {
-            String checksum = null;
-            try {
-                checksum = getRemoteChecksum(path + checksumType.ext());
-            } catch (FileNotFoundException e) {
-                log.debug("Remote checksum file {} doesn't exist", path);
-            } catch (Exception e) {
-                log.debug("Failed to retrieve remote checksum file {}: {}", path, e.getMessage());
-            }
-            ChecksumInfo info = new ChecksumInfo(checksumType);
-            info.setOriginal(checksum);
-            checksums.add(info);
-        }
-        return checksums;
-    }
-
-    public String getChecksum(String path) throws IOException {
+    public String getMetadataProperty(String path) throws IOException {
         String value;
         if (isStoreArtifactsLocally()) {
             //We assume the resource is already contained in the repo-cache
-            value = localCacheRepo.getChecksum(path);
+            value = localCacheRepo.getMetadataProperty(path);
         } else {
-            value = getRemoteChecksum(path);
-
+            //Ugly hack: try to download the value directly as the first line of a remote file
+            //(assuming it's a cheksum file)
+            ResourceStreamHandle handle = retrieveResource(path);
+            InputStream is = handle.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
+            value = reader.readLine();
         }
         return value;
-    }
-
-    private String getRemoteChecksum(String path) throws IOException {
-        ResourceStreamHandle handle = retrieveResource(path);
-        try {
-            InputStream is = handle.getInputStream();
-            String fileContent = IOUtils.toString(is);
-            //Remove whitespaces at the end
-            fileContent = fileContent.trim();
-            //Check for 'MD5 (name) = CHECKSUM'
-            int prefixPos = fileContent.indexOf(")= ");
-            if (prefixPos != -1) {
-                fileContent = fileContent.substring(prefixPos + 3);
-            }
-            //We don't simply returns the file content since some checksum files have more
-            //characters at the end of the checksum file.
-            String checksum = StringUtils.split(fileContent)[0];
-            return checksum;
-        } finally {
-            handle.close();
-        }
     }
 
     public LocalCacheRepo getLocalCacheRepo() {
@@ -363,31 +323,16 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
         }
     }
 
-    public void removeFromCaches(String path, boolean removeSubPaths) {
-        if (failedRetrievalsCache != null && !failedRetrievalsCache.isEmpty()) {
+    public void removeFromCaches(String path) {
+        if (failedRetrievalsCache != null) {
             failedRetrievalsCache.remove(path);
-            if (removeSubPaths) {
-                removeSubPathsFromCache(path, failedRetrievalsCache);
-            }
         }
-        if (missedRetrievalsCache != null && !missedRetrievalsCache.isEmpty()) {
+        if (missedRetrievalsCache != null) {
             missedRetrievalsCache.remove(path);
-            if (removeSubPaths) {
-                removeSubPathsFromCache(path, missedRetrievalsCache);
-            }
         }
     }
 
-    private void removeSubPathsFromCache(String basePath, Map<String, RepoResource> cache) {
-        Iterator<String> cachedPaths = cache.keySet().iterator();
-        while (cachedPaths.hasNext()) {
-            String key = cachedPaths.next();
-            if (key.startsWith(basePath)) {
-                cachedPaths.remove();
-            }
-        }
-    }
-
+    @SuppressWarnings({"SynchronizeOnNonFinalField"})
     private RepoResource getFailedOrMissedResource(String path) {
         RepoResource res = failedRetrievalsCache.get(path);
         if (res == null) {

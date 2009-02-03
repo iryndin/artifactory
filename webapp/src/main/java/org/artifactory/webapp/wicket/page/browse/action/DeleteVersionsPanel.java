@@ -17,12 +17,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.fs.DeployableUnit;
 import org.artifactory.api.maven.MavenUnitInfo;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.webapp.wicket.common.component.CheckboxColumn;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalCloseLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.table.SortableTable;
-import org.artifactory.webapp.wicket.common.component.table.columns.checkbox.SelectAllCheckboxColumn;
 import org.artifactory.webapp.wicket.utils.ListPropertySorter;
 
 import javax.swing.tree.DefaultTreeModel;
@@ -46,23 +46,32 @@ public class DeleteVersionsPanel extends Panel {
 
 
     public DeleteVersionsPanel(String id, List<DeployableUnit> deployableUnits,
-                               Component componentToRefresh) {
+            Component componentToRefresh) {
         super(id);
 
         Form form = new Form("form");
         add(form);
 
-        MultiMap<String, DeployableUnit> duGroupAndVersion = aggregateByGroupAndVersion(deployableUnits);
+        MultiMap<String, DeployableUnit> duGroupAndVersion =
+                aggregateByGroupAndVersion(deployableUnits);
 
         dataProvider = new DeployableUnitsDataProvider(duGroupAndVersion);
 
         List<IColumn> columns = new ArrayList<IColumn>();
-        columns.add(new SelectAllCheckboxColumn<DeployableUnitModel>("", "selected", null));
-        columns.add(new PropertyColumn(new Model("Group Id"), "groupId", "groupId"));
-        columns.add(new PropertyColumn(new Model("Version"), "version", "version"));
+        columns.add(
+                new CheckboxColumn<DeployableUnitModel>("", "selected", this) {
+                    @Override
+                    protected void doUpdate(DeployableUnitModel duModel,
+                            boolean checked,
+                            AjaxRequestTarget target) {
+                    }
+                });
+
+        columns.add(new PropertyColumn(new Model("GroupId:Version"), "key"));
         columns.add(new PropertyColumn(new Model("Directories Count"), "count"));
 
-        SortableTable table = new SortableTable("deployableUnits", columns, dataProvider, 20);
+        SortableTable table =
+                new SortableTable("deployableUnits", columns, dataProvider, 20);
         form.add(table);
 
         form.add(new ModalCloseLink("cancel"));
@@ -71,61 +80,51 @@ public class DeleteVersionsPanel extends Panel {
     }
 
 
-    private MultiMap<String, DeployableUnit> aggregateByGroupAndVersion(List<DeployableUnit> units) {
+    private MultiMap<String, DeployableUnit> aggregateByGroupAndVersion(
+            List<DeployableUnit> units) {
         MultiMap<String, DeployableUnit> multiMap = new MultiHashMap<String, DeployableUnit>();
         for (DeployableUnit unit : units) {
             MavenUnitInfo info = unit.getMavenInfo();
-            String unitKey = toGroupVersionKey(info);
+            String unitKey = info.getGroupId() + ":" + info.getVersion();
             multiMap.put(unitKey, unit);
         }
         return multiMap;
     }
 
-    private String toGroupVersionKey(MavenUnitInfo info) {
-        return info.getGroupId() + ":" + info.getVersion();
-    }
-
-    private String groupFromGroupVersionKey(String groupVersionKey) {
-        return groupVersionKey.split(":")[0];
-    }
-
-    private String versionFromGroupVersionKey(String groupVersionKey) {
-        return groupVersionKey.split(":")[1];
-    }
-
     private SimpleButton createSubmitButton(Form form, final Component componentToRefresh) {
         SimpleButton submit = new SimpleButton("submit", form, "Delete Selected") {
-            @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 List<DeployableUnit> selectedDeployableUnits =
                         dataProvider.getSelectedDeploymentUnits();
                 if (selectedDeployableUnits.isEmpty()) {
                     error("No version selected for deletion");
-                    return; // keep popup open
-                }
+                } else {
+                    for (DeployableUnit unit : selectedDeployableUnits) {
+                        repoService.undeploy(unit.getRepoPath());
+                    }
+                    info("Selected versions successfully deleted");
 
-                for (DeployableUnit unit : selectedDeployableUnits) {
-                    repoService.undeploy(unit.getRepoPath());
+                    // colapse all tree nodes
+                    if (componentToRefresh instanceof Tree) {
+                        // we collapse all since we don't know what tree node the user clicked on (it
+                        // is not passed / to the action event and it might not be the currently
+                        // selected node if the user right click on a node)
+                        // probably will be fixed in 2.0
+                        Tree tree = (Tree) componentToRefresh;
+                        ITreeState treeState = tree.getTreeState();
+                        treeState.collapseAll();
+                        DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModelObject();
+                        treeState.selectNode(((TreeNode) treeModel.getRoot()).getChildAt(0), true);
+                    }
                 }
-                getPage().info("Selected versions deleted successfully");
-
-                // colapse all tree nodes
-                if (componentToRefresh instanceof Tree) {
-                    // we collapse all since we don't know what tree node the user clicked on (it
-                    // is not passed / to the action event and it might not be the currently
-                    // selected node if the user right click on a node)
-                    // probably will be fixed in 2.0
-                    Tree tree = (Tree) componentToRefresh;
-                    ITreeState treeState = tree.getTreeState();
-                    treeState.collapseAll();
-                    DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModelObject();
-                    treeState.selectNode(((TreeNode) treeModel.getRoot()).getChildAt(0), true);
-                }
-
 
                 target.addComponent(componentToRefresh);
                 FeedbackUtils.refreshFeedback(target);
                 ModalHandler.closeCurrent(target);
+            }
+
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
             }
         };
         return submit;
@@ -133,26 +132,26 @@ public class DeleteVersionsPanel extends Panel {
 
     private class DeployableUnitsDataProvider extends SortableDataProvider {
         private MultiMap<String, DeployableUnit> duGroupAndVersion;
-        protected ArrayList<DeployableUnitModel> duModels;
+        protected ArrayList<DeployableUnitModel> models;
 
         private DeployableUnitsDataProvider(MultiMap<String, DeployableUnit> duGroupAndVersion) {
             this.duGroupAndVersion = duGroupAndVersion;
             Set<String> groupVersionKeys = duGroupAndVersion.keySet();
-            duModels = new ArrayList<DeployableUnitModel>(groupVersionKeys.size());
+            models = new ArrayList<DeployableUnitModel>(groupVersionKeys.size());
             for (String key : groupVersionKeys) {
-                duModels.add(new DeployableUnitModel(key, duGroupAndVersion.get(key).size()));
+                models.add(new DeployableUnitModel(key, duGroupAndVersion.get(key).size()));
             }
-            setSort("groupId", true);
+            setSort("key", true);
         }
 
         public Iterator iterator(int first, int count) {
-            ListPropertySorter.sort(duModels, getSort());
-            List<DeployableUnitModel> dusSubList = duModels.subList(first, first + count);
+            List<DeployableUnitModel> dusSubList = models.subList(first, first + count);
+            ListPropertySorter.sort(dusSubList, getSort());
             return dusSubList.iterator();
         }
 
         public int size() {
-            return duModels.size();
+            return models.size();
         }
 
         public IModel model(Object object) {
@@ -161,7 +160,7 @@ public class DeleteVersionsPanel extends Panel {
 
         public List<DeployableUnit> getSelectedDeploymentUnits() {
             List<DeployableUnit> selectedDeploymentUnits = new ArrayList<DeployableUnit>();
-            for (DeployableUnitModel model : duModels) {
+            for (DeployableUnitModel model : models) {
                 if (model.isSelected()) {
                     selectedDeploymentUnits.addAll(duGroupAndVersion.get(model.getKey()));
                 }
@@ -172,24 +171,28 @@ public class DeleteVersionsPanel extends Panel {
 
     private class DeployableUnitModel implements Serializable {
         private String key;
-        private String groupId;
-        private String version;
         private int count;
         private boolean selected;
 
         private DeployableUnitModel(String key, int count) {
             this.key = key;
             this.count = count;
-            this.groupId = groupFromGroupVersionKey(key);
-            this.version = versionFromGroupVersionKey(key);
         }
 
         public int getCount() {
             return count;
         }
 
+        public void setCount(int count) {
+            this.count = count;
+        }
+
         public String getKey() {
             return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
 
         public boolean isSelected() {
@@ -198,14 +201,6 @@ public class DeleteVersionsPanel extends Panel {
 
         public void setSelected(boolean selected) {
             this.selected = selected;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public String getVersion() {
-            return version;
         }
     }
 }

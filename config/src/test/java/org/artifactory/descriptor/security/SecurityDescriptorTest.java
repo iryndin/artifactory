@@ -18,8 +18,7 @@ public class SecurityDescriptorTest {
         assertTrue(security.isAnonAccessEnabled(),
                 "Annon access should be enabled by default");
         assertNull(security.getLdapSettings(), "Ldap settings list should be null");
-        assertNotNull(security.getPasswordSettings(), "Password settings list should not be null");
-        }
+    }
 
     public void addLdap() {
         SecurityDescriptor security = new SecurityDescriptor();

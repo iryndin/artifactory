@@ -17,17 +17,14 @@
 package org.artifactory.webapp.wicket.page.importexport.system;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusEntry;
+import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
@@ -36,10 +33,8 @@ import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.behavior.AjaxCallConfirmationDecorator;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
-import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
 import org.artifactory.webapp.wicket.common.component.file.browser.button.FileBrowserButton;
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
-import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
 import org.slf4j.Logger;
@@ -47,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Yoav Landman
@@ -59,41 +53,16 @@ public class ImportSystemPanel extends TitledPanel {
     @WicketProperty
     private File importFromPath;
 
-    @WicketProperty
-    private boolean copyFiles;
-
-    @WicketProperty
-    private boolean useSymLinks;
-
-    @WicketProperty
-    private boolean verbose;
-
-    @WicketProperty
-    private boolean includeMetadata;
-
-    final StyledCheckbox copyCheckbox;
-    final StyledCheckbox symLinkCheckbox;
-
     public ImportSystemPanel(String string) {
         super(string);
-        copyCheckbox = new StyledCheckbox("copyFiles", new PropertyModel(this, "copyFiles"));
-        copyCheckbox.setOutputMarkupId(true);
-
-        symLinkCheckbox = new StyledCheckbox("useSymLinks", new PropertyModel(this, "useSymLinks"));
-        symLinkCheckbox.setOutputMarkupId(true);
-
-        final MultiStatusHolder status = new MultiStatusHolder();
+        final StatusHolder status = new StatusHolder();
         status.setStatus("Idle.", log);
         Form importForm = new Form("importForm");
         add(importForm);
         PropertyModel pathModel = new PropertyModel(this, "importFromPath");
-        final PathAutoCompleteTextField importToPathTf = new PathAutoCompleteTextField("importFromPath", pathModel);
+        final PathAutoCompleteTextField importToPathTf =
+                new PathAutoCompleteTextField("importFromPath", pathModel);
         importToPathTf.setRequired(true);
-        importToPathTf.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            protected void onUpdate(AjaxRequestTarget target) {
-                updateCheckboxes(target);
-            }
-        });
         importForm.add(importToPathTf);
 
         importForm.add(new FileBrowserButton("browseButton", pathModel) {
@@ -101,38 +70,8 @@ public class ImportSystemPanel extends TitledPanel {
             protected void onOkClicked(AjaxRequestTarget target) {
                 super.onOkClicked(target);
                 target.addComponent(importToPathTf);
-                updateCheckboxes(target);
             }
         });
-
-        StyledCheckbox verboseCheckbox = new StyledCheckbox("verbose", new PropertyModel(this, "verbose"));
-        verboseCheckbox.setRequired(false);
-        importForm.add(verboseCheckbox);
-        importForm.add(new HelpBubble("verboseHelp", "HINT: You can monitor the log in the 'System Logs' page."));
-
-        importForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        importForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export."));
-
-        copyCheckbox.setEnabled(false);
-        copyCheckbox.setRequired(false);
-        copyCheckbox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
-            protected void onUpdate(AjaxRequestTarget target) {
-                if (copyCheckbox.isChecked() && canUseSymLink()) {
-                    symLinkCheckbox.setEnabled(true);
-                } else {
-                    symLinkCheckbox.setEnabled(false);
-                    symLinkCheckbox.setModelObject(Boolean.FALSE);
-                }
-                target.addComponent(symLinkCheckbox);
-            }
-        });
-        importForm.add(copyCheckbox);
-
-        symLinkCheckbox.setOutputMarkupId(true);
-        symLinkCheckbox.setEnabled(false);
-        symLinkCheckbox.setRequired(false);
-        importForm.add(symLinkCheckbox);
 
         SimpleButton importButton = new SimpleButton("import", importForm, "Import") {
             @Override
@@ -146,7 +85,6 @@ public class ImportSystemPanel extends TitledPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                status.reset();
                 //If the path denotes an archive extract it first, else use the directory
                 de.schlichtherle.io.File file = new de.schlichtherle.io.File(importFromPath);
                 File importFromFolder = null;
@@ -179,18 +117,11 @@ public class ImportSystemPanel extends TitledPanel {
                     status.setStatus("Importing from directory...", log);
                     ArtifactoryContext context = ContextHelper.get();
                     ImportSettings importSettings = new ImportSettings(importFromFolder);
+                    // TODO: Add check boxes for these falgs
                     importSettings.setFailFast(false);
-                    importSettings.setCopyToWorkingFolder(copyFiles);
-                    importSettings.setUseSymLinks(useSymLinks);
+                    importSettings.setUseSymLinks(false);
                     importSettings.setFailIfEmpty(true);
-                    importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
                     context.importFrom(importSettings, status);
-                    List<StatusEntry> warnings = status.getWarnings();
-                    if (!warnings.isEmpty()) {
-                        warn(warnings.size() + " Warnings have been produces during the export. " +
-                                "Please review the log for further information.");
-                    }
                     if (status.isError()) {
                         String msg = "Error while importing system from '" + importFromPath +
                                 "': " + status.getStatusMsg();
@@ -202,16 +133,16 @@ public class ImportSystemPanel extends TitledPanel {
                         info("Successfully imported system from '" + importFromPath + "'.");
                     }
                 } catch (Exception e) {
-                    error("Failed to import system from '" + importFromPath + "': " + e.getMessage());
+                    error("Failed to import system from '" + importFromPath + "': " +
+                            e.getMessage());
                     log.error("Failed to import system.", e);
                 } finally {
                     FeedbackUtils.refreshFeedback(target);
                     if (file.isArchive()) {
                         //Delete the extracted dir
                         try {
-                            if (importFromFolder != null) {
-                                FileUtils.deleteDirectory(importFromFolder);
-                            }
+                            de.schlichtherle.io.File.umount();
+                            FileUtils.deleteDirectory(importFromFolder);
                         } catch (IOException e) {
                             log.warn("Failed to delete export directory: " + importFromFolder, e);
                         }
@@ -234,22 +165,4 @@ public class ImportSystemPanel extends TitledPanel {
         //importForm.add(statusLabel);
     }
 
-    private void updateCheckboxes(AjaxRequestTarget target) {
-        if ((importFromPath != null) && importFromPath.exists()) {
-            copyCheckbox.setEnabled(true);
-        } else {
-            copyCheckbox.setEnabled(false);
-            copyCheckbox.setModelObject(Boolean.FALSE);
-            symLinkCheckbox.setEnabled(false);
-            symLinkCheckbox.setModelObject(Boolean.FALSE);
-        }
-        target.addComponent(copyCheckbox);
-        target.addComponent(symLinkCheckbox);
-    }
-
-    private boolean canUseSymLink() {
-        boolean isArchive = new de.schlichtherle.io.File(importFromPath).isArchive();
-        boolean usingWindows = SystemUtils.IS_OS_WINDOWS;
-        return (!isArchive && !usingWindows);
-    }
 }

@@ -37,7 +37,7 @@ import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
@@ -46,8 +46,8 @@ import org.artifactory.webapp.actionable.action.ItemAction;
 import org.artifactory.webapp.actionable.action.RemoveAction;
 import org.artifactory.webapp.actionable.action.ViewAction;
 import org.artifactory.webapp.actionable.action.ZapAction;
+import org.artifactory.webapp.wicket.common.component.panel.actionable.PomViewTabPanel;
 import org.artifactory.webapp.wicket.common.component.panel.actionable.StatsTabPanel;
-import org.artifactory.webapp.wicket.common.component.panel.actionable.maven.PomViewTabPanel;
 import org.artifactory.webapp.wicket.utils.CssClass;
 
 import java.util.List;
@@ -147,6 +147,6 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
     private boolean shouldShowTabs() {
         //Hack - dont display anything for checksums or metadata
         String name = getDisplayName();
-        return NamingUtils.isChecksum(name) || NamingUtils.isMetadata(name);
+        return PackagingType.isChecksum(name) || PackagingType.isMetadata(name);
     }
 }

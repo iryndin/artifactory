@@ -34,10 +34,10 @@ public interface JcrService extends ReloadableBean {
     /**
      * Create an unstructure node under the root node of the jcr repository
      *
-     * @param absPath the new or existing node path
+     * @param folderName the new or existing folder name
      * @return the new or current node for the folder
      */
-    Node getOrCreateUnstructuredNode(String absPath);
+    Node getOrCreateUnstructuredNode(String folderName);
 
     /**
      * Create an unstructure node under the parent node paased
@@ -102,12 +102,4 @@ public interface JcrService extends ReloadableBean {
 
     @Lock(transactional = true)
     void garbageCollect();
-
-    /**
-     * Returns an unmanaged non-transactional session. You must call logout() on this session after using it, to
-     * guarantee the underlying raw session is returned to the session pool.
-     *
-     * @return
-     */
-    JcrSession getUnmanagedSession();
 }

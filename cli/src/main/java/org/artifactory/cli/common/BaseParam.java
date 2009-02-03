@@ -1,6 +1,6 @@
 package org.artifactory.cli.common;
 
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * Represents a basic parameter of the CLI
@@ -37,7 +37,8 @@ public class BaseParam implements Param {
      * @param needExtraParam   Indicates the need of an extra parameter
      * @param paramDescription Describes the extra parameter
      */
-    public BaseParam(String name, String description, boolean needExtraParam, String paramDescription) {
+    public BaseParam(
+            String name, String description, boolean needExtraParam, String paramDescription) {
         this.paramDescription = paramDescription;
         this.description = description;
         this.name = name;
@@ -112,10 +113,5 @@ public class BaseParam implements Param {
      */
     public void set() {
         setValue("on");
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

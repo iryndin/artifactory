@@ -16,10 +16,10 @@
  */
 package org.artifactory.update.md.v125rc0;
 
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.update.md.MetadataConverter;
 import org.artifactory.update.md.MetadataConverterUtils;
-import org.artifactory.update.md.MetadataType;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -31,11 +31,7 @@ import java.util.List;
  */
 public class MdFileConverter implements MetadataConverter {
     public String getNewMetadataName() {
-        return "artifactory-file";
-    }
-
-    public MetadataType getSupportedMetadataType() {
-        return MetadataType.file;
+        return FileInfo.ROOT;
     }
 
     public void convert(Document doc) {

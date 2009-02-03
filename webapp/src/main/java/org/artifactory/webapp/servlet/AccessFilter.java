@@ -16,13 +16,11 @@
  */
 package org.artifactory.webapp.servlet;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ArtifactoryContextThreadBinder;
 import org.artifactory.api.security.UserInfo;
-import org.artifactory.security.HttpAuthenticationDetailsSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -32,6 +30,7 @@ import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.ui.AuthenticationDetailsSource;
+import org.springframework.security.ui.WebAuthenticationDetailsSource;
 import org.springframework.security.ui.basicauth.BasicProcessingFilter;
 import org.springframework.security.ui.basicauth.BasicProcessingFilterEntryPoint;
 import org.springframework.web.context.WebApplicationContext;
@@ -49,21 +48,20 @@ import java.io.IOException;
 import java.util.Map;
 
 public class AccessFilter implements Filter {
-    private static final Logger log = LoggerFactory.getLogger(AccessFilter.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(AccessFilter.class);
 
     private ArtifactoryContext context;
     private BasicProcessingFilter authFilter;
     private BasicProcessingFilterEntryPoint authenticationEntryPoint;
 
-    /**
-     * holds cached Authentication instances for the non ui requests based on the Authorization header and client ip
-     */
-    private Map<AuthCacheKey, Authentication> nonUiAuthCache;
+    private Map<String, Authentication> authCache;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
-        this.context = (ArtifactoryContext) servletContext
-                .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        this.context =
+                (ArtifactoryContext) servletContext
+                        .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         authFilter = context.beanForType(BasicProcessingFilter.class);
         authenticationEntryPoint = context.beanForType(BasicProcessingFilterEntryPoint.class);
         initCaches();
@@ -76,14 +74,15 @@ public class AccessFilter implements Filter {
     @SuppressWarnings({"unchecked"})
     private void initCaches() {
         CacheService cacheService = context.beanForType(CacheService.class);
-        nonUiAuthCache = cacheService.getCache(ArtifactoryCache.authentication);
+        authCache = cacheService.getCache(ArtifactoryCache.authentication);
     }
 
     public void destroy() {
         authFilter.destroy();
     }
 
-    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain)
+    public void doFilter(final ServletRequest req, final ServletResponse resp,
+            final FilterChain chain)
             throws IOException, ServletException {
         ArtifactoryContextThreadBinder.bind(context);
         try {
@@ -93,7 +92,8 @@ public class AccessFilter implements Filter {
         }
     }
 
-    private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    private void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         final String servletPath = RequestUtils.getServletPathFromRequest(request);
         String method = request.getMethod();
@@ -126,12 +126,14 @@ public class AccessFilter implements Filter {
     }
 
     private void authenticateAndExecute(HttpServletRequest request, HttpServletResponse response,
-            FilterChain chain, SecurityContext securityContext) throws IOException, ServletException {
-        // Try to see if authentication in cache based on the hashed header and client ip
-        AuthCacheKey authCacheKey = new AuthCacheKey(request);
-        Authentication authentication = nonUiAuthCache.get(authCacheKey);
+            FilterChain chain, SecurityContext securityContext)
+            throws IOException, ServletException {
+        // Try to see if header in cache
+        String header = request.getHeader("Authorization");
+        log.debug("Using basic authentication header {}", header);
+        Authentication authentication = authCache.get(header);
         if (authentication != null) {
-            log.debug("Header authentication {} found in cache.", authentication);
+            log.debug("Header authentication {} in cache.", authentication);
             useAuthentication(request, response, chain, authentication, securityContext);
             return;
         }
@@ -143,7 +145,7 @@ public class AccessFilter implements Filter {
                 // Save authentication like in Wicket Session (if session exists
                 if (!RequestUtils.setAuthentication(request, auth, false)) {
                     // Use the header cache
-                    nonUiAuthCache.put(authCacheKey, auth);
+                    authCache.put(header, auth);
                     log.debug("Added authentication {} in cache.", auth);
                 } else {
                     log.debug("Added authentication {} in Http session.", auth);
@@ -155,25 +157,25 @@ public class AccessFilter implements Filter {
 
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
     private void useAnonymousIfPossible(HttpServletRequest request, HttpServletResponse response,
-            FilterChain chain, SecurityContext securityContext) throws IOException, ServletException {
-        boolean anonAccessEnabled = context.getAuthorizationService().isAnonAccessEnabled();
+            FilterChain chain, SecurityContext securityContext)
+            throws IOException, ServletException {
+        boolean anonAccessEnabled =
+                context.getAuthorizationService().isAnonAccessEnabled();
         if (anonAccessEnabled) {
             log.debug("Using anonymous");
-            AuthCacheKey authCacheKey = new AuthCacheKey("", request.getRemoteAddr());
-            Authentication authentication = nonUiAuthCache.get(authCacheKey);
+            // TODO: Verify that Authentication is thread safe and can be reused
+            Authentication authentication = authCache.get(UserInfo.ANONYMOUS);
             if (authentication == null) {
                 log.debug("Creating the Anonymous token");
                 final UsernamePasswordAuthenticationToken authRequest =
                         new UsernamePasswordAuthenticationToken(UserInfo.ANONYMOUS, "");
-                AuthenticationDetailsSource ads = new HttpAuthenticationDetailsSource();
+                AuthenticationDetailsSource ads = new WebAuthenticationDetailsSource();
                 authRequest.setDetails(ads.buildDetails(request));
                 authentication = context.beanForType(AuthenticationManager.class).authenticate(authRequest);
                 if (authentication != null && authentication.isAuthenticated()) {
-                    nonUiAuthCache.put(authCacheKey, authentication);
+                    authCache.put(UserInfo.ANONYMOUS, authentication);
                     log.debug("Added anonymous authentication {} to cache", authentication);
                 }
-            } else {
-                log.debug("Using cached anonymous authentication");
             }
             useAuthentication(request, response, chain, authentication, securityContext);
         } else {
@@ -183,8 +185,9 @@ public class AccessFilter implements Filter {
         }
     }
 
-    private void useAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication authentication, SecurityContext securityContext) throws IOException, ServletException {
+    private void useAuthentication(HttpServletRequest request,
+            HttpServletResponse response, FilterChain chain, Authentication authentication,
+            SecurityContext securityContext) throws IOException, ServletException {
         try {
             securityContext.setAuthentication(authentication);
             chain.doFilter(request, response);
@@ -192,41 +195,4 @@ public class AccessFilter implements Filter {
             securityContext.setAuthentication(null);
         }
     }
-
-    private class AuthCacheKey {
-        private String hashedHeader;
-        private String ip;
-
-        AuthCacheKey(HttpServletRequest request) {
-            this(request.getHeader("Authorization"), request.getRemoteAddr());
-        }
-
-        private AuthCacheKey(String header, String ip) {
-            if (header == null) {
-                header = "";
-            }
-            this.hashedHeader = DigestUtils.shaHex(header);
-            this.ip = ip;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            AuthCacheKey key = (AuthCacheKey) o;
-            return hashedHeader.equals(key.hashedHeader) && ip.equals(key.ip);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = hashedHeader.hashCode();
-            result = 31 * result + ip.hashCode();
-            return result;
-        }
-    }
-
 }

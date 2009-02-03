@@ -3,13 +3,14 @@ package org.artifactory.webapp.wicket.utils.validation;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Validates a URI. We use our own validator since the UrlValidator of wicket is broken in 1.3.5.
+ * Validates a URI.
+ * We use our own validator since the UrlValidator of wicket is broken in 1.3.5.
  *
  * @author Yossi Shaul
  */
@@ -20,7 +21,8 @@ public class UriValidator extends StringValidator {
     /**
      * Creates new URI validator.
      *
-     * @param allowedSchemes List of allowed uri schemes (http, ldap, etc.). If empty all schemes are allowed.
+     * @param allowedSchemes    List of allowed uri schemes (http, ldap, etc.). If empty
+     *  all schemes are allowed.
      */
     public UriValidator(String... allowedSchemes) {
         this.allowedSchemes = allowedSchemes;

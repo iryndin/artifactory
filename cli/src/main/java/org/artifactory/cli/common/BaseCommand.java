@@ -192,7 +192,7 @@ public abstract class BaseCommand implements Command {
         if (param.isNeedExtraParam()) {
             i++;
             if (i >= args.length) {
-                System.out.println("The " + paramType + " " + param + " needs a parameter: " +
+                System.out.println("The " + paramType + " " + " needs a parameter - " +
                         param.getParamDescription());
                 usage();
                 return -1;
@@ -202,7 +202,7 @@ public abstract class BaseCommand implements Command {
             if (param.getValue().startsWith(OptionInfo.OPTION_PREFIX)) {
                 // Unset on error
                 param.setValue(null);
-                System.out.println("The " + paramType + " " + param + " needs a parameter: " +
+                System.out.println("The " + paramType + " " + arg + " needs a parameter - " +
                         param.getParamDescription());
                 usage();
                 return -1;
@@ -222,20 +222,24 @@ public abstract class BaseCommand implements Command {
      * @return ArtifactoryVersion Version class of chosen Artifactory
      * @throws java.io.IOException
      */
-    @SuppressWarnings({"OverlyComplexMethod"})
-    public ArtifactoryVersion getArtifactoryVersion() throws IOException {
+    public ArtifactoryVersion getArtifactoryVersion()
+            throws IOException {
         String versionName = null;
         if (CliOption.version.isSet()) {
             versionName = CliOption.version.getValue();
+        } else if (CliOption.basedir.isSet()) {
         } else {
             log.info("Finding version...");
             // First look for artifactory.properties in the data folder (works since 1.3.0-rc1)
             ArtifactoryHome.setDataAndJcrDir();
-            //File propsFile = new File(ArtifactoryHome.getDataDir(), ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE);
+            File propsFile = new File(ArtifactoryHome.getDataDir(),
+                    ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE);
+
             File webappsDir = ArtifactoryHome.getOrCreateSubDir("webapps");
             File warFile = new File(webappsDir, WEBAPPS_ARTIFACTORY_WAR);
             if (!warFile.exists()) {
-                log.error("War file {} does not exists please put it there or give a version param", warFile);
+                log.error("War file " + warFile +
+                        " does not exists please put it there or give a version param");
                 usage();
             }
             ZipFile zipFile = new ZipFile(warFile);
@@ -243,13 +247,16 @@ public abstract class BaseCommand implements Command {
             while (warEntries.hasMoreElements()) {
                 ZipEntry zipEntry = warEntries.nextElement();
                 String zipEntryName = zipEntry.getName();
-                if (zipEntryName.startsWith(LIB_ARTIFACTORY_CORE) && zipEntryName.endsWith(".jar")) {
-                    versionName = zipEntryName.substring(LIB_ARTIFACTORY_CORE.length() + 1, zipEntryName.length() - 4);
+                if (zipEntryName.startsWith(LIB_ARTIFACTORY_CORE) &&
+                        zipEntryName.endsWith(".jar")) {
+                    versionName = zipEntryName.substring(LIB_ARTIFACTORY_CORE.length() + 1,
+                            zipEntryName.length() - 4);
                     break;
                 }
             }
             if (versionName == null) {
-                log.error("Did not find the version in {} looking for {}.", warFile, LIB_ARTIFACTORY_CORE);
+                log.error("Did not find the version in " + warFile + " looking for " +
+                        LIB_ARTIFACTORY_CORE);
                 usage();
             }
             log.info("Found version name " + versionName);
@@ -264,7 +271,8 @@ public abstract class BaseCommand implements Command {
             }
         }
         if (version == null) {
-            log.error("Version {} is wrong or is not supported by this updater", versionName);
+            log.error(
+                    "Version " + versionName + " is wrong or is not supported by this updater");
             log.error("If you know a good close version, please give a version param");
             usage();
             // Too avoid the may have NPE below

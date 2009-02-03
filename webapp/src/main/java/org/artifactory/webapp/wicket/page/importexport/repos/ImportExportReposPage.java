@@ -37,6 +37,6 @@ public class ImportExportReposPage extends AuthenticatedPage {
 
     @Override
     protected String getPageName() {
-        return "Repositories Import & Export";
+        return "Repositories Export & Import";
     }
 }

@@ -18,9 +18,9 @@ package org.artifactory.jcr.md;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.collections15.map.FastHashMap;
-import org.artifactory.api.fs.FileAdditionalInfo;
+import org.artifactory.api.fs.FileExtraInfo;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.fs.FolderAdditionaInfo;
+import org.artifactory.api.fs.FolderExtraInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.maven.MavenUnitInfo;
@@ -45,8 +45,10 @@ import java.util.Map;
 public class MetadataDefinitionServiceImpl implements MetadataDefinitionService {
     private static final Logger log = LoggerFactory.getLogger(MetadataDefinitionServiceImpl.class);
 
-    private final Map<Class, MetadataDefinition> mdDefsByClass = new FastHashMap<Class, MetadataDefinition>(3);
-    private final Map<String, MetadataDefinition> mdDefsByName = new FastHashMap<String, MetadataDefinition>(3);
+    private final Map<Class, MetadataDefinition> mdDefsByClass =
+            new FastHashMap<Class, MetadataDefinition>(3);
+    private final Map<String, MetadataDefinition> mdDefsByName =
+            new FastHashMap<String, MetadataDefinition>(3);
     private final XStream xstream = new XStream();
 
     public XStream getXstream() {
@@ -67,8 +69,8 @@ public class MetadataDefinitionServiceImpl implements MetadataDefinitionService 
         // Metadata basics
         createMetadataDefinition(FolderInfo.class, false, true);
         createMetadataDefinition(FileInfo.class, false, true);
-        createMetadataDefinition(FolderAdditionaInfo.class, true, true);
-        createMetadataDefinition(FileAdditionalInfo.class, true, true);
+        createMetadataDefinition(FolderExtraInfo.class, true, true);
+        createMetadataDefinition(FileExtraInfo.class, true, true);
 
         // Extra Metadata
         createMetadataDefinition(StatsInfo.class, true, false);
@@ -109,7 +111,8 @@ public class MetadataDefinitionServiceImpl implements MetadataDefinitionService 
     public MetadataDefinition getMetadataDefinition(String metadataName) {
         MetadataDefinition definition = mdDefsByName.get(metadataName);
         if (definition == null) {
-            log.debug("Creating new Metadata definition on demand for '{}'.", metadataName);
+            log.warn("Creating new Metadata on the fly for: '" + metadataName +
+                    "'. Should have been initialized!");
             definition = new MetadataDefinition(metadataName);
             mdDefsByName.put(metadataName, definition);
         }

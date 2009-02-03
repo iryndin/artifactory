@@ -53,10 +53,6 @@ public class SecurityResource {
         log.debug("Activating import of new security data " + descriptor);
         securityService.removeAllSecurityData();
         securityService.importSecurityData(descriptor);
-        SecurityInfo securityData = securityService.getSecurityData();
-        int x = securityData.getUsers().size();
-        int y = securityData.getGroups().size();
-        int z = securityData.getAcls().size();
-        return "Import of new Security data (" + x + " users, " + y + " groups, " + z + " acls) succeeded";
+        return "Import of new Security data succeeded";
     }
 }

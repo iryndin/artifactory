@@ -18,7 +18,6 @@ package org.artifactory.repo;
 
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.jcr.md.MetadataService;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalContextHelper;
 
@@ -81,12 +80,8 @@ public abstract class RepoBase<T extends RepoDescriptor> implements Repo<T> {
         return descriptor.hashCode();
     }
 
-    protected final AuthorizationService getAuthorizationService() {
+    protected AuthorizationService getAuthorizationService() {
         // TODO: Analyze the optimization if made as a member
         return InternalContextHelper.get().getAuthorizationService();
-    }
-
-    protected final MetadataService getMetadataService() {
-        return InternalContextHelper.get().beanForType(MetadataService.class);
     }
 }

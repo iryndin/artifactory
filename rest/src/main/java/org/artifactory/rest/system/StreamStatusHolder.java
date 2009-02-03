@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * User: freds Date: Aug 12, 2008 Time: 7:49:54 PM
@@ -36,7 +35,6 @@ public class StreamStatusHolder extends MultiStatusHolder {
     private HttpServletResponse response;
     private PrintStream out;
     private boolean brokenPipe = false;
-    private AtomicInteger doingDots = new AtomicInteger(0);
 
     public StreamStatusHolder(HttpServletResponse response) {
         this.response = response;
@@ -57,24 +55,10 @@ public class StreamStatusHolder extends MultiStatusHolder {
     }
 
     @Override
-    protected StatusEntry addStatus(String statusMsg, int statusCode, Logger logger, boolean debug) {
+    protected StatusEntry addStatus(String statusMsg, int statusCode, Logger logger,
+            boolean debug) {
         StatusEntry result = super.addStatus(statusMsg, statusCode, logger, debug);
-        if (isVerbose() || !result.isDebug()) {
-            String msg = result.getStatusMessage() + "\n";
-            int dots = doingDots.getAndSet(0);
-            if (dots > 0) {
-                msg = "\n" + msg;
-            }
-            sendToClient(msg);
-        } else {
-            int dots = doingDots.incrementAndGet();
-            if (dots == 80) {
-                doingDots.getAndAdd(-80);
-                sendToClient("\n");
-            } else {
-                sendToClient(".");
-            }
-        }
+        sendToClient(statusMsg);
         return result;
     }
 
@@ -100,7 +84,7 @@ public class StreamStatusHolder extends MultiStatusHolder {
             try {
                 PrintStream os = getResponseStream();
                 os.println("" + statusCode + " : " + statusMsg);
-                if ((throwable != null) && isVerbose()) {
+                if (throwable != null) {
                     throwable.printStackTrace(os);
                 }
                 os.flush();

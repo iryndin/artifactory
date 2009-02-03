@@ -1,13 +1,13 @@
 package org.artifactory.webapp.wicket.common.component.modal.panel;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.artifactory.webapp.wicket.common.Titled;
-import org.artifactory.webapp.wicket.common.behavior.JavascriptEvent;
 import org.artifactory.webapp.wicket.common.component.modal.HasModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.aggregated.AggregateFeedbackPanel;
@@ -18,7 +18,8 @@ import java.io.Serializable;
 /**
  * @author Yoav Aharoni
  */
-public class BaseModalPanel<E extends Serializable> extends Panel implements Titled, HasModalHandler {
+public class BaseModalPanel<E extends Serializable> extends Panel
+        implements Titled, HasModalHandler {
     public static final String MODAL_ID = ModalHandler.CONTENT_ID;
     protected static final String TITLE_KEY = "panel.title";
 
@@ -26,7 +27,6 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
     private int minimalHeight = 50;
     private int initialWidth = 600;
     private int initialHeight = 0;
-
     private String title;
 
     public BaseModalPanel() {
@@ -51,7 +51,6 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
         add(modalHandler);
 
         AggregateFeedbackPanel feedback = new AggregateFeedbackPanel("feedback");
-        feedback.add(new JavascriptEvent("onshow", "ModalHandler.onError();"));
         feedback.addMessagesSource(this);
         add(feedback);
 
@@ -142,14 +141,14 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
         setInitialHeight(height);
     }
 
-    public String getCookieName() {
-        return getClass().getSimpleName();
+    public MarkupContainer addWithId(final Component child) {
+        add(child);
+        child.setOutputMarkupId(true);
+        return this;
     }
 
     public void close(AjaxRequestTarget target) {
-        ModalHandler modalHandler = ModalHandler.getInstanceFor(this);
-        modalHandler.close(target);
-        modalHandler.setContent(new WebMarkupContainer(MODAL_ID));
+        ModalHandler.getInstanceFor(this).close(target);
     }
 
     /**
@@ -159,8 +158,5 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
      * @param target AjaxRequestTarget
      */
     public void onClose(AjaxRequestTarget target) {
-    }
-
-    public void onCloseButtonClicked(AjaxRequestTarget target) {
     }
 }

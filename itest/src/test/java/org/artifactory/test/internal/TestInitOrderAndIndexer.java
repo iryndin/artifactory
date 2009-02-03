@@ -64,6 +64,8 @@ public class TestInitOrderAndIndexer extends ArtifactoryTestBase {
     public void testIndexer() {
         TaskService taskService = context.beanForType(TaskService.class);
         taskService.stopTasks(WorkingCopyCommitter.class, true);
+
+        //TODO: This test is downloading 20Mo from repo1 has a test!!!
         //Need to setup against momo MockServer where .index will exists
         QuartzTask task = new QuartzTask(IndexerJob.class, "TestIndexer");
         taskService.startTask(task);

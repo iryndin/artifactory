@@ -19,8 +19,9 @@ package org.artifactory.rest.system;
 
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.config.jaxb.JaxbHelper;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.util.FileUtils;
+import org.artifactory.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +30,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author freds
+ * @date Sep 4, 2008
  */
 public class ConfigResource {
     private static final Logger log = LoggerFactory.getLogger(ConfigResource.class);
@@ -45,34 +46,20 @@ public class ConfigResource {
 
     @GET
     @Produces("application/xml")
-    public String getConfig() {
-        File configFile = ArtifactoryHome.getConfigFile();
-        try {
-            return org.apache.commons.io.FileUtils.readFileToString(configFile, "utf-8");
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public CentralConfigDescriptor getConfig() {
+        return centralConfigService.getDescriptor();
     }
 
     @POST
     @Consumes("application/xml")
     @Produces("text/plain")
-    public String setConfig(String xmlContent) {
-        log.debug("Recieved new configuration data.");
+    public String setConfig(CentralConfigDescriptor config) {
+        log.debug("Changing configuration with {}", config);
         File configFile = ArtifactoryHome.getConfigFile();
         File tempFile = new File(ArtifactoryHome.getTmpUploadsDir(), "newArtConfig.xml");
-        try {
-            org.apache.commons.io.FileUtils.writeStringToFile(tempFile, xmlContent, "utf-8");
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        JaxbHelper.writeConfig(config, tempFile);
         FileUtils.switchFiles(configFile, tempFile);
         centralConfigService.reload();
-        CentralConfigDescriptor descriptor = centralConfigService.getDescriptor();
-        int x = descriptor.getLocalRepositoriesMap().size();
-        int y = descriptor.getRemoteRepositoriesMap().size();
-        int z = descriptor.getVirtualRepositoriesMap().size();
-        return "Reload of new configuration (" + x + " local repos, " + y + " remote repos, " + z +
-                " virtual repos) succeeded";
+        return "Reload of new configuration succeeded";
     }
 }

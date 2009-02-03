@@ -9,6 +9,6 @@ public class CancelDefaultDecorator extends AjaxCallDecorator {
     @SuppressWarnings({"RefusedBequest"})
     @Override
     public CharSequence decorateScript(CharSequence script) {
-        return script + "return cancel(event);";
+        return script + "return cEvent(event);";
     }
 }

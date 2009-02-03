@@ -18,8 +18,6 @@ package org.artifactory.repo.index;
 
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.common.ResourceStreamHandle;
@@ -27,15 +25,11 @@ import org.artifactory.io.NullResourceStreamHandle;
 import org.artifactory.io.TempFileStreamHandle;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
-import org.artifactory.maven.Maven;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
 import org.artifactory.repo.RemoteRepo;
-import org.artifactory.spring.InternalContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.nexus.index.updater.DefaultIndexUpdater;
-import org.springframework.security.util.FieldUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,16 +64,6 @@ public class RepoIndexerData {
                 log.debug("Not retrieving index for remote repository '{}'", indexedRepo.getKey());
                 return;
             }
-
-            //TODO: [by yl] Stagger remote index downloads
-            DefaultIndexUpdater indexUpdater = new DefaultIndexUpdater();
-            Maven maven = InternalContextHelper.get().beanForType(Maven.class);
-            WagonManager wagonManager = maven.getWagonManager();
-            FieldUtils.setProtectedFieldValue("wagonManager", indexUpdater, wagonManager);
-            ProxyInfo proxyInfo = new ProxyInfo();
-            //Update the proxy info
-            //indexUpdater.fetchIndexProperties(ic, tl, proxyInfo);
-
             localRepo = remoteRepo.getLocalCacheRepo();
             String indexPath = ".index/" + MavenNaming.NEXUS_INDEX_ZIP;
             String propertiesPath = ".index/" + MavenNaming.NEXUS_INDEX_PROPERTIES;

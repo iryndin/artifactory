@@ -103,15 +103,14 @@ public class FileUploadForm extends Form {
                 FileUtils.forceMkdir(tmpUploadsDir);
                 uploadedFile.createNewFile();
                 upload.writeTo(uploadedFile);
-                parent.info("Successfully uploaded file: '" + upload.getClientFileName() + ".");
+                parent.info("Successfully uploaded file: '" + upload.getClientFileName() + "' into '" +
+                        tmpUploadsDir.getAbsolutePath() + "'.");
                 parent.onFileSaved();
             } catch (Exception e) {
                 parent.onException();
                 removeUploadedFile();
                 throw new IllegalStateException(
                         "Unable to write file to '" + tmpUploadsDir.getAbsolutePath() + "'.", e);
-            } finally {
-                upload.closeStreams();
             }
         }
     }

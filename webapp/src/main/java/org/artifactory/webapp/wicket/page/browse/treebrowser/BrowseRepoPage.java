@@ -16,7 +16,6 @@
  */
 package org.artifactory.webapp.wicket.page.browse.treebrowser;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.artifactory.webapp.actionable.ActionableItem;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
 
@@ -24,15 +23,11 @@ public class BrowseRepoPage extends AuthenticatedPage {
     private String lastTabName;
 
     public BrowseRepoPage() {
-        this(null);
+        add(new BrowseRepoPanel("browseRepoPanel"));
     }
 
     public BrowseRepoPage(ActionableItem initialItem) {
         add(new BrowseRepoPanel("browseRepoPanel", initialItem));
-
-        WebMarkupContainer scrollScript = new WebMarkupContainer("scrollScript");
-        scrollScript.setVisible(initialItem != null);
-        add(scrollScript);
     }
 
     @Override

@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Resolvesd recursively the search order of the virtual repositories. The resolving is done according to the virtual
- * repository resopsitories list order. Local repositories are always placed first. If the virtual repo has cycles (one
- * or more virtual repos appears more than once) the resolver will skip the repeated virtual repo.
+ * Resolvesd recursively the search order of the virtual repositories. The resolving is done
+ * according to the virtual repository resopsitories list order. Local repositories are always
+ * placed first. If the virtual repo has cycles (one or more virtual repos appears more than once)
+ * the resolver will skip the repeated virtual repo.
  *
  * @author Yossi Shaul
  */
@@ -82,28 +83,10 @@ public class VirtualRepoResolver {
     }
 
     /**
-     * @return True if the virtual repository contains a cycle (virtual repo that appears more than once).
+     * @return True if the virtual repository contains a cycle (virtual repo that appears more than
+     *         once).
      */
     public boolean hasCycle() {
         return hasCycle;
-    }
-
-    /**
-     * Returns a boolean value which represents if the given repo descriptor is associated with the virtual repo which
-     * has been resolved. Please note, that the current version of the resolver does not support caches. To check if a
-     * cache is associated, Supply it's remote repo instead.
-     *
-     * @param descriptor A repository descriptor
-     * @return boolean - True if the supplied repo is associated with the resolved virtual repo. False if not.
-     */
-    @SuppressWarnings({"SuspiciousMethodCalls"})
-    public boolean contains(RepoDescriptor descriptor) {
-        boolean contains = false;
-        if (descriptor instanceof LocalRepoDescriptor) {
-            contains = localRepos.contains(descriptor);
-        } else if (descriptor instanceof RemoteRepoDescriptor) {
-            contains = remoteRepos.contains(descriptor);
-        }
-        return contains;
     }
 }

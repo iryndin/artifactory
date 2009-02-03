@@ -16,7 +16,7 @@
  */
 package org.artifactory.jcr;
 
-import org.artifactory.util.LoggingUtils;
+import org.artifactory.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -97,7 +97,7 @@ public class JcrTransactionManager extends LocalTransactionManager
                         .getResource(getSessionFactory());
         JcrSession session = (JcrSession) sessionHolder.getSession();
         // Release early
-        session.getSessionResourceManager().afterCompletion(false);
+        session.getSessionResources().releaseResources(false);
         if (session.isLive() && session.hasPendingChanges()) {
             if (log.isDebugEnabled()) {
                 log.debug("Early changes discrading for a rolled back transaction.");
@@ -128,10 +128,10 @@ public class JcrTransactionManager extends LocalTransactionManager
         JcrSession session = (JcrSession) sessionHolder.getSession();
         if (status == TransactionSynchronization.STATUS_COMMITTED) {
             // Commit the locks
-            session.getSessionResourceManager().afterCompletion(true);
+            session.getSessionResources().releaseResources(true);
         } else {
             //Discard changes on rollback
-            session.getSessionResourceManager().afterCompletion(false);
+            session.getSessionResources().releaseResources(false);
             session.refresh(false);
         }
     }

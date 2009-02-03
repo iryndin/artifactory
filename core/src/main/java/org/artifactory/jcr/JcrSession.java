@@ -22,7 +22,7 @@ import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.jcr.lock.SessionLockManager;
 import org.artifactory.tx.SessionResource;
 import org.artifactory.tx.SessionResourceManager;
-import org.artifactory.tx.SessionResourceManagerImpl;
+import org.artifactory.tx.SessionResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -49,7 +49,7 @@ public class JcrSession implements XASession {
     private static final Logger log = LoggerFactory.getLogger(JcrSession.class);
 
     private final XASession session;
-    private SessionResourceManager sessionResourceManager = null;
+    private SessionResources sessionResources = null;
     private StackObjectPool pool;
 
     public JcrSession(XASession session, StackObjectPool pool) {
@@ -131,7 +131,7 @@ public class JcrSession implements XASession {
 
     public void save() {
         try {
-            getSessionResourceManager().onSessionSave();
+            getSessionResources().save();
             session.save();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
@@ -148,7 +148,7 @@ public class JcrSession implements XASession {
 
     public boolean hasPendingChanges() {
         try {
-            return getSessionResourceManager().hasPendingChanges() || session.hasPendingChanges();
+            return getSessionResources().hasPendingChanges() || session.hasPendingChanges();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
         }
@@ -267,23 +267,23 @@ public class JcrSession implements XASession {
 
     @Override
     protected void finalize() throws Throwable {
-        if (sessionResourceManager != null) {
-            sessionResourceManager.afterCompletion(false);
+        if (sessionResources != null) {
+            sessionResources.releaseResources(false);
         }
         session.logout();
         super.finalize();
     }
 
-    public SessionResourceManager getSessionResourceManager() {
-        if (sessionResourceManager == null) {
-            sessionResourceManager = new SessionResourceManagerImpl();
-            sessionResourceManager.getOrCreateResource(SessionLockManager.class);
+    public SessionResources getSessionResources() {
+        if (sessionResources == null) {
+            sessionResources = new SessionResourceManager();
+            sessionResources.getOrCreateResource(SessionLockManager.class);
         }
-        return sessionResourceManager;
+        return sessionResources;
     }
 
     public <T extends SessionResource> T getOrCreateResource(Class<T> resourceClass) {
-        return getSessionResourceManager().getOrCreateResource(resourceClass);
+        return getSessionResources().getOrCreateResource(resourceClass);
     }
 
 }

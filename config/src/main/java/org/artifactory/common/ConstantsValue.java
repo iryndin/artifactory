@@ -40,8 +40,8 @@ public enum ConstantsValue {
     artifactoryVersion("version", null),
     artifactoryRevision("revision", null),
     metadataIdleTimeSecs("metadataCacheIdleTimeSecs", "1200"),
-    versioningQueryIntervalSecs("versioningQueryIntervalSecs", "43200"),
-    logsRefreshRateSecs("logs.refreshrate.secs", "10");
+    versioningQueryIntervalSecs("versioningQueryIntervalSecs", "3600"),
+    logsRefreshRateSecs("logs.refreshrate.secs", "5");
 
     static final String SYS_PROP_PREFIX = "artifactory.";
 

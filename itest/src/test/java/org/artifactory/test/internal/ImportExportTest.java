@@ -13,9 +13,9 @@ import org.artifactory.api.common.StatusEntry;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
-import org.artifactory.api.fs.FileAdditionalInfo;
+import org.artifactory.api.fs.FileExtraInfo;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.fs.FolderAdditionaInfo;
+import org.artifactory.api.fs.FolderExtraInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.repo.RepoPath;
@@ -29,7 +29,7 @@ import org.artifactory.jcr.md.MetadataDefinitionService;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.update.md.MetadataVersion;
+import org.artifactory.update.md.ArtifactoryMetadataVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -106,7 +106,7 @@ public class ImportExportTest extends ArtifactoryTestBase {
         InternalRepositoryService repositoryService = context.beanForType(InternalRepositoryService.class);
         repositoryService.importRepo(LIBS_RELEASES_LOCAL, importSettings, statusHolder);
         checkStatus(statusHolder);
-        Assert.assertEquals(importSettings.getMetadataReader(), MetadataVersion.v130beta3);
+        Assert.assertEquals(importSettings.getMetadataReader(), ArtifactoryMetadataVersion.v130beta3);
         List<StatusEntry> importWarnings = statusHolder.getWarnings();
 
         // Check good import in JCR
@@ -130,16 +130,16 @@ public class ImportExportTest extends ArtifactoryTestBase {
                 "File " + fileAbsPath + " should have metadata node " + metadataNode);
         Node folderContainerNode = folderNode.getNode(metadataNode);
         Node fileContainerNode = fileNode.getNode(metadataNode);
-        assertTrue(folderContainerNode.hasNode(FolderAdditionaInfo.ROOT),
+        assertTrue(folderContainerNode.hasNode(FolderExtraInfo.ROOT),
                 "Folder container " + folderContainerNode.getPath() + " should have " +
-                        FolderAdditionaInfo.ROOT);
-        assertTrue(fileContainerNode.hasNode(FileAdditionalInfo.ROOT),
+                        FolderExtraInfo.ROOT);
+        assertTrue(fileContainerNode.hasNode(FileExtraInfo.ROOT),
                 "File container " + fileContainerNode.getPath() + " should have " +
-                        FileAdditionalInfo.ROOT);
+                        FileExtraInfo.ROOT);
 
         // TODO: Check the xml metadata
-        Node extraFolderInfo = folderContainerNode.getNode(FolderAdditionaInfo.ROOT);
-        Node extraFileInfo = fileContainerNode.getNode(FileAdditionalInfo.ROOT);
+        Node extraFolderInfo = folderContainerNode.getNode(FolderExtraInfo.ROOT);
+        Node extraFileInfo = fileContainerNode.getNode(FileExtraInfo.ROOT);
 
         session.logout();
 
@@ -182,11 +182,11 @@ public class ImportExportTest extends ArtifactoryTestBase {
         IOUtils.closeQuietly(fileReader);
         Assert.assertEquals(folderInfo.getRepoPath(), folderPath,
                 "Folder RepoPath should be equal after import/export");
-        Assert.assertEquals(folderInfo.getModifiedBy(), "test-folder",
+        Assert.assertEquals(folderInfo.getExtension().getModifiedBy(), "test-folder",
                 "Modified by should be test-folder after import/export");
-        Assert.assertEquals(folderInfo.getCreatedBy(), "test-folder",
+        Assert.assertEquals(folderInfo.getExtension().getCreatedBy(), "test-folder",
                 "Created by should be test-folder after import/export");
-        Assert.assertEquals(folderInfo.getLastUpdated(), 1226004559605L,
+        Assert.assertEquals(folderInfo.getExtension().getLastUpdated(), 1226004559605L,
                 "Last updated by should be same after import/export");
         Assert.assertEquals(folderInfo.getLastModified(), 1220183113697L,
                 "Last modified by should be same after import/export");
@@ -203,22 +203,22 @@ public class ImportExportTest extends ArtifactoryTestBase {
         IOUtils.closeQuietly(fileReader);
         Assert.assertEquals(fileInfo.getRepoPath(), filePath,
                 "File RepoPath should be equal after import/export");
-        Assert.assertEquals(fileInfo.getModifiedBy(), "test-file",
+        Assert.assertEquals(fileInfo.getExtension().getModifiedBy(), "test-file",
                 "Modified by should be test after import/export");
-        Assert.assertEquals(fileInfo.getCreatedBy(), "test-file",
+        Assert.assertEquals(fileInfo.getExtension().getCreatedBy(), "test-file",
                 "Modified by should be test after import/export");
-        Assert.assertEquals(fileInfo.getLastUpdated(), 1218409202811L,
+        Assert.assertEquals(fileInfo.getExtension().getLastUpdated(), 1218409202811L,
                 "Last updated by should be same after import/export");
         Assert.assertEquals(fileInfo.getLastModified(), 1216224940944L,
                 "Last modified by should be same after import/export");
         Assert.assertTrue(fileInfo.getSize() == 950, "Size should be same after import/export");
-        Assert.assertEquals(fileInfo.getMd5(), "388e5963e2b4a2bc633e845b62cd6e1f",
+        Assert.assertEquals(fileInfo.getExtension().getMd5(), "388e5963e2b4a2bc633e845b62cd6e1f",
                 "MD5 should be same after import/export");
         // Status holder should have the warning on MD5 mismatch
         Assert.assertEquals(importWarnings.size(), 2, "Should have one warning on MD5 and no metadata on repo root");
         Assert.assertTrue(importWarnings.get(1).getStatusMessage().contains("MD5"),
                 "Should have one warning on MD5");
-        Assert.assertEquals(fileInfo.getSha1(),
+        Assert.assertEquals(fileInfo.getExtension().getSha1(),
                 "d38fc54f2ab67153cf8020d0b207c7eba3979e86",
                 "SHA1 should be same after import/export");
     }
@@ -234,9 +234,10 @@ public class ImportExportTest extends ArtifactoryTestBase {
         }
     }
 
-    @Test(enabled = false)
+    @Test
     public void importExportFullNormalBeta2() throws Exception {
-        File baseExportDir = new File(getClass().getResource("/export/v130beta2").toURI());
+        File baseExportDir =
+                new File(getClass().getResource("/export/v130beta2").toURI());
         ImportSettings settings = new ImportSettings(baseExportDir);
         settings.setCopyToWorkingFolder(false);
         settings.setFailFast(true);
@@ -247,9 +248,10 @@ public class ImportExportTest extends ArtifactoryTestBase {
         checkStatus(status);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class, enabled = false)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void importExportTooOld() throws Exception {
-        File baseExportDir = new File(getClass().getResource("/export/v125u1").toURI());
+        File baseExportDir =
+                new File(getClass().getResource("/export/v125u1").toURI());
         ImportSettings settings = new ImportSettings(baseExportDir);
         MultiStatusHolder status = new MultiStatusHolder();
         context.importFrom(settings, status);

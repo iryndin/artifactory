@@ -44,7 +44,7 @@ public class BackupsListPanel extends ListPanel<BackupDescriptor> {
 
     @Override
     public String getTitle() {
-        return "";
+        return "Backups";
     }
 
     @Override
@@ -78,7 +78,7 @@ public class BackupsListPanel extends ListPanel<BackupDescriptor> {
         MutableCentralConfigDescriptor centralConfig = getDescriptorForEditing();
         centralConfig.removeBackup(backup.getKey());
         centralConfigService.saveEditedDescriptorAndReload();
-        ((BackupsListPage) getPage()).refresh(target);
+        ((ServicesConfigPage) getPage()).refresh(target);
     }
 
     private MutableCentralConfigDescriptor getDescriptorForEditing() {

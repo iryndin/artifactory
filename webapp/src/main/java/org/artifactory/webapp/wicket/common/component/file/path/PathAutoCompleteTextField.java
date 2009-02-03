@@ -1,26 +1,18 @@
 package org.artifactory.webapp.wicket.common.component.file.path;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteBehavior;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.IAutoCompleteRenderer;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.file.File;
-import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.component.ImprovedAutoCompleteBehavior;
 
 import java.util.Iterator;
 
 public class PathAutoCompleteTextField extends AutoCompleteTextField {
-    private static final AutoCompleteSettings SETTINGS = new AutoCompleteSettings().setShowListOnEmptyInput(true).setMaxHeightInPx(200);
-    private static final ResourceReference AUTOCOMPLETE_JS = new JavascriptResourceReference(
-            ImprovedAutoCompleteBehavior.class, "improved-autocomplete.js");
-
     private PathMask mask = PathMask.ALL;
     private PathHelper pathHelper;
     private PathAutoCompleteConverter converter;
@@ -42,30 +34,14 @@ public class PathAutoCompleteTextField extends AutoCompleteTextField {
     }
 
     protected PathAutoCompleteTextField(String id, IModel model, PathHelper pathHelper) {
-        super(id, model, File.class, new PathAutoCompleteRenderer(pathHelper), SETTINGS);
+        super(id, model, File.class, new PathAutoCompleteRenderer(pathHelper), false);
 
         this.pathHelper = pathHelper;
         converter = new PathAutoCompleteConverter(pathHelper);
 
-        add(new CssClass("text pathAutoComplete"));
+        add(new AttributeAppender("class", true, new Model("pathAutoComplete"), " "));
         add(new SimpleAttributeModifier("autoCompleteCssClass", "wicket-aa pathAutoComplete_menu"));
-    }
-
-    @Override
-    protected AutoCompleteBehavior newAutoCompleteBehavior(IAutoCompleteRenderer renderer, AutoCompleteSettings settings) {
-        return new AutoCompleteBehavior(renderer, settings) {
-
-            @Override
-            public void renderHead(IHeaderResponse response) {
-                super.renderHead(response);
-                response.renderJavascriptReference(AUTOCOMPLETE_JS);
-            }
-
-            @Override
-            protected Iterator getChoices(String input) {
-                return PathAutoCompleteTextField.this.getChoices(input);
-            }
-        };
+        add(HeaderContributor.forJavaScript(ImprovedAutoCompleteBehavior.class, "improved-autocomplete.js"));
     }
 
     public PathMask getMask() {

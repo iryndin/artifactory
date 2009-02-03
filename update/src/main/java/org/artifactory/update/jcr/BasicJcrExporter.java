@@ -189,14 +189,16 @@ public abstract class BasicJcrExporter implements JcrExporter {
 
     public static void fillTimestamps(ItemInfo itemInfo, Node node) throws RepositoryException {
         if (node.hasProperty(JCR_CREATED)) {
-            itemInfo.setCreated(node.getProperty(JCR_CREATED).getDate().getTimeInMillis());
+            itemInfo.setCreated(
+                    node.getProperty(JCR_CREATED).getDate().getTimeInMillis());
         }
         if (node.hasProperty(JCR_LASTMODIFIED)) {
-            itemInfo.setLastModified(node.getProperty(JCR_LASTMODIFIED).getDate().getTimeInMillis());
+            itemInfo.setLastModified(
+                    node.getProperty(JCR_LASTMODIFIED).getDate().getTimeInMillis());
         }
     }
 
-    public static String getXmlContent(Node mdNode, List<MetadataConverter> converters) throws RepositoryException {
+    public static String getXmlContent(Node mdNode, MetadataConverter converter) throws RepositoryException {
         InputStream is = getRawXmlStream(mdNode);
         String xmlContent;
         try {
@@ -206,12 +208,9 @@ public abstract class BasicJcrExporter implements JcrExporter {
         } finally {
             IOUtils.closeQuietly(is);
         }
-
-        if (converters != null) {
+        if (converter != null) {
             Document doc = ConverterUtils.parse(xmlContent);
-            for (MetadataConverter converter : converters) {
-                converter.convert(doc);
-            }
+            converter.convert(doc);
             xmlContent = ConverterUtils.outputString(doc);
         }
         return xmlContent;

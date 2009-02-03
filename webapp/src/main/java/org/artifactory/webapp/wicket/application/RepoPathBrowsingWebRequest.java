@@ -53,7 +53,7 @@ public class RepoPathBrowsingWebRequest extends ServletWebRequest {
         if (prefix == null) {
             return super.getRelativePathPrefixToWicketHandler();
         }
-        String path = getURL();
+        String path = getServletPath();
         int begin = 0;
         if (path.startsWith("/")) {
             begin = 1;

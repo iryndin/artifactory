@@ -3,7 +3,11 @@ package org.artifactory.cli.command;
 import org.artifactory.cli.common.BaseCommand;
 import org.artifactory.cli.main.CommandDefinition;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.version.CompoundVersionDetails;
+import org.artifactory.common.ConstantsValue;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * The "Help" command class
@@ -24,9 +28,8 @@ public class HelpCommand extends BaseCommand {
      *
      * @throws Exception
      */
-    public int execute() throws Exception {
+    public void execute() throws Exception {
         usage();
-        return 0;
     }
 
     /**
@@ -34,17 +37,16 @@ public class HelpCommand extends BaseCommand {
      */
     public void usage() {
         if (CommandDefinition.help.getCommandParam().isSet()) {
-            CommandDefinition commandDefinition;
-            String param = CommandDefinition.help.getCommandParam().getValue();
+            CommandDefinition commandDefinition = null;
             try {
-                commandDefinition = CommandDefinition.get(param);
-            } catch (IllegalArgumentException iae) {
-                System.out.println("Error: could not find command parameter: " + param);
-                printGeneralUsage();
-                return;
+                commandDefinition =
+                        CommandDefinition.get(CommandDefinition.help.getCommandParam().getValue());
             }
-            //Avoid getting help on help
-            if (CommandDefinition.help.equals(commandDefinition)) {
+            catch (IllegalArgumentException iae) {
+                System.out.println("Error: could not find command parameter");
+                printGeneralUsage();
+            }
+            if (commandDefinition.equals(CommandDefinition.help)) {
                 CommandDefinition.help.getCommandParam().setValue(null);
             }
             commandDefinition.getCommand().usage();
@@ -57,11 +59,21 @@ public class HelpCommand extends BaseCommand {
         StringBuilder usage = new StringBuilder();
         usage.append("Artifactory Command Line Interface");
 
+        URL propertiesURL = ArtifactoryHome.getDefaultArtifactoryPropertiesUrl();
+        Properties propertiesFile = new Properties();
         try {
-            CompoundVersionDetails version = ArtifactoryHome.readRunningArtifactoryVersion();
-            usage.append(", version ").append(version.getVersionName());
-            usage.append(" (rev. ").append(version.getRevision()).append(")");
-        } catch (Exception e) {
+            propertiesFile.load(propertiesURL.openStream());
+            String versionNumber = propertiesFile.
+                    getProperty(ConstantsValue.artifactoryVersion.getPropertyName());
+            String revision = propertiesFile.
+                    getProperty(ConstantsValue.artifactoryRevision.getPropertyName());
+            if (versionNumber != null) {
+                usage.append(", version ").append(versionNumber);
+            }
+            if (revision != null) {
+                usage.append(" (rev. ").append(revision).append(")");
+            }
+        } catch (IOException e) {
             System.out.println("Error reading properties file. " +
                     "Disabling version number and revision properties.");
         }

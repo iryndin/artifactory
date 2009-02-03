@@ -3,14 +3,12 @@ package org.artifactory.webapp.wicket.common.component.links;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.IAjaxLink;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.model.IModel;
 
 /**
  * @author Yoav Aharoni
  */
-public abstract class TitledAjaxSubmitLink extends BaseTitledLink implements IAjaxLink, IFormSubmittingComponent {
+public abstract class TitledAjaxSubmitLink extends BaseTitledLink implements IAjaxLink {
 
     protected TitledAjaxSubmitLink(String id) {
         super(id);
@@ -44,21 +42,6 @@ public abstract class TitledAjaxSubmitLink extends BaseTitledLink implements IAj
     }
 
     protected abstract void onSubmit(AjaxRequestTarget target);
-
-    public boolean getDefaultFormProcessing() {
-        return true;
-    }
-
-    public Form getForm() {
-        return null;
-    }
-
-    public String getInputName() {
-        return getId();
-    }
-
-    public void onSubmit() {
-    }
 
     @SuppressWarnings({"UnusedDeclaration"})
     protected void onError(AjaxRequestTarget target) {

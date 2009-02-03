@@ -1,6 +1,5 @@
 <wicket:extend>
     <div wicket:id="welcomeBorder" class="welcome-border">
-
         <wicket:enclosure>
             <div class="artifacts-count info">
                 <span>Artifactory is happily serving</span>
@@ -14,7 +13,11 @@
                 <div>
                     <span>You are logged in as</span>
                     <a wicket:id="profileLink"/>
-                    (<a wicket:id="logoutLink"/>).
+                </div>
+
+                <div>
+                    To leave artifactory
+                    <a wicket:id="logoutLink">logout</a>.
                 </div>
             </div>
         </wicket:enclosure>
@@ -27,15 +30,11 @@
             </div>
         </wicket:enclosure>
 
-        <wicket:enclosure>
+        <wicket:enclosure child="latestLabel">
             <div class="info">
-                Uptime is <span wicket:id="uptime"/>.
+                You are running Artifactory version
+                <span class="value" wicket:id="currentLabel"/>&nbsp;(latest release is <span wicket:id="latestLabel"/>).
             </div>
         </wicket:enclosure>
-
-        <div class="info">
-            You are running Artifactory version <span class="value" wicket:id="currentLabel"/>
-            <span wicket:id="latestLabel"/>
-        </div>
     </div>
 </wicket:extend>

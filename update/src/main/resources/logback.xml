@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5p] %m%n</pattern>
+        </layout>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>artifactoryUpdate.log</File>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d [%-5p] \(%-13F:%L{10}\) - %m%n</pattern>
+        </layout>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <root>
+        <level value="DEBUG"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="org.apache.jackrabbit">
+        <level value="WARN"/>
+    </logger>
+    <logger name="httpclient.wire">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.apache.commons.httpclient">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.mortbay">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.apache.jasper">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.artifactory">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.apache.jackrabbit.extractor.XMLTextExtractor">
+        <level value="ERROR"/>
+    </logger>
+</configuration>

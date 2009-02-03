@@ -1,11 +1,12 @@
 package org.artifactory.webapp.wicket.utils;
 
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.DirectoryItem;
 
 /**
- * Enum of the files, folders and repositories CSS classes. Use cssClass() for the name of the css class.
+ * Enum of the files, folders and repositories CSS classes.
+ * Use cssClass() for the name of the css class.
  *
  * @author Yossi Shaul
  */
@@ -38,11 +39,11 @@ public enum CssClass {
 
     /**
      * @param path The file path
-     * @return The matching css class for the give file path. If there is no special css class for the given path, the
-     *         generic 'doc' class will be returned.
+     * @return The matching css class for the give file path. If there is no special css
+     * class for the given path, the generic 'doc' class will be returned.
      */
     public static CssClass getFileCssClass(String path) {
-        ContentType ct = NamingUtils.getContentType(path);
+        ContentType ct = PackagingType.getContentType(path);
         if (ct.isJarVariant()) {
             return jar;
         } else if (ct.isPom()) {

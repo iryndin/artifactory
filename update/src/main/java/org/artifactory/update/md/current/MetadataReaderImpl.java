@@ -23,14 +23,13 @@ import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.md.MetadataReader;
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.util.PathUtils;
+import org.artifactory.api.mime.PackagingType;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,30 +40,47 @@ public class MetadataReaderImpl implements MetadataReader {
     private static final Logger log = LoggerFactory.getLogger(MetadataReaderImpl.class);
 
     public List<MetadataEntry> getMetadataEntries(File file, ImportSettings settings, StatusHolder status) {
-        if (!file.isDirectory()) {
-            status.setError("Expecting a directory but got file: " + file.getAbsolutePath(), log);
-            return Collections.emptyList();
-        }
-
+        //TODO: Check that the file is a folder...
+        List<MetadataEntry> result = new ArrayList<MetadataEntry>();
+        //Import all the xml files within the metadata folder
         String[] metadataFileNames = file.list(new SuffixFileFilter(".xml"));
         if (metadataFileNames == null) {
-            status.setError("Cannot read list of metadata files from " + file.getAbsolutePath(), log);
-            return Collections.emptyList();
+            status.setError(
+                    "Cannot read list of metadata file from " + file.getAbsolutePath(), log);
+            return result;
         }
-
-        //Import all the xml files within the metadata folder
-        List<MetadataEntry> result = new ArrayList<MetadataEntry>();
         for (String metadataFileName : metadataFileNames) {
             File metadataFile = new File(file, metadataFileName);
+            if (metadataFile.exists() && metadataFile.isDirectory()) {
+                //Sanity chek
+                status.setWarning("Skipping xml metadata import from '" +
+                        metadataFile.getAbsolutePath() +
+                        "'. Expected a file but encountered a folder.", log);
+                continue;
+            }
             String extension = PathUtils.getExtension(metadataFileName);
-            if (!verify(status, metadataFileName, metadataFile, extension)) {
+            ContentType type = null;
+            if (extension != null) {
+                type = PackagingType.getContentTypeByExtension(extension);
+            }
+            if (type == null || !type.isXml()) {
+                //Sanity chek
+                status.setWarning("Skipping xml metadata import from '" +
+                        metadataFile.getAbsolutePath() +
+                        "'. Expected an XML file but encountered the extension " + extension +
+                        " which is not an XML type.", log);
+                continue;
+            }
+            if (extension.length() + 1 >= metadataFileName.length()) {
+                // No name for file, just extension
+                status.setWarning("Skipping xml metadata import from '" +
+                        metadataFile.getAbsolutePath() +
+                        "'. The file does not have a name.", log);
                 continue;
             }
             status.setDebug("Importing metadata from '" + metadataFile.getPath() + "'.", log);
-
             try {
-                // metadata name is the name of the file without the extension
-                String metadataName = PathUtils.stripExtension(metadataFileName);
+                String metadataName = metadataFileName.substring(0, metadataFileName.length() - extension.length() - 1);
                 String xmlContent = FileUtils.readFileToString(metadataFile);
                 MetadataEntry metadataEntry = createMetadataEntry(metadataName, xmlContent);
                 result.add(metadataEntry);
@@ -76,35 +92,7 @@ public class MetadataReaderImpl implements MetadataReader {
         return result;
     }
 
-    private boolean verify(StatusHolder status, String metadataFileName, File metadataFile, String extension) {
-        if (metadataFile.exists() && metadataFile.isDirectory()) {
-            //Sanity chek
-            status.setWarning("Skipping xml metadata import from '" + metadataFile.getAbsolutePath() +
-                    "'. Expected a file but encountered a folder.", log);
-            return false;
-        }
-        ContentType type = null;
-        if (extension != null) {
-            type = NamingUtils.getContentTypeByExtension(extension);
-        }
-        if (type == null || !type.isXml()) {
-            //Sanity chek
-            status.setWarning("Skipping xml metadata import from '" + metadataFile.getAbsolutePath() +
-                    "'. Expected an XML file but encountered the extension " + extension +
-                    " which is not an XML type.", log);
-            return false;
-        }
-        if (extension.length() + 1 >= metadataFileName.length()) {
-            // No name for file, just extension
-            status.setWarning("Skipping xml metadata import from '" + metadataFile.getAbsolutePath() +
-                    "'. The file does not have a name.", log);
-            return false;
-        }
-        return true;
-    }
-
     protected MetadataEntry createMetadataEntry(String metadataName, String xmlContent) {
-        // current doesn't need any conversions...
         MetadataEntry metadataEntry = new MetadataEntry(metadataName, xmlContent);
         return metadataEntry;
     }

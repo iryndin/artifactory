@@ -19,14 +19,16 @@ package org.artifactory.update.utils;
 import org.apache.commons.io.FileUtils;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.update.security.ArtifactorySecurityVersion;
 import org.artifactory.version.ArtifactoryVersion;
-import org.artifactory.version.ArtifactoryVersionReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author freds
@@ -38,16 +40,57 @@ public class BackupUtils {
 
     public static ArtifactoryVersion findVersion(File backupFolder) {
         if (backupFolder == null || !backupFolder.exists()) {
-            throw new IllegalArgumentException("Cannot find Artifactory of null or non existent folder");
+            throw new IllegalArgumentException(
+                    "Cannot find Artifactory of null or non existent folder");
         }
-
         File propFile = new File(backupFolder, ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE);
         if (!propFile.exists()) {
-            throw new RuntimeException("Backup folder " + backupFolder.getAbsolutePath() +
-                    " does not contain file " + propFile.getName());
+            throw new RuntimeException(
+                    "Backup folder " + backupFolder.getAbsolutePath() + " does not contains file " +
+                            propFile.getName());
         }
-
-        return ArtifactoryVersionReader.read(propFile).getVersion();
+        Properties props = new Properties();
+        try {
+            FileInputStream stream = new FileInputStream(propFile);
+            props.load(stream);
+            stream.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot read property file " + propFile.getAbsolutePath(), e);
+        }
+        String artifactoryVersion = props.getProperty(ConstantsValue.artifactoryVersion.getPropertyName());
+        String revisionString = props.getProperty(ConstantsValue.artifactoryRevision.getPropertyName());
+        // If current version or development version ${project.version}
+        if (ArtifactoryVersion.getCurrent().getValue().equals(artifactoryVersion) ||
+                artifactoryVersion.equals("${project.version}") ||
+                revisionString.equals("${buildNumber}")) {
+            // Just return the current version
+            return ArtifactoryVersion.getCurrent();
+        }
+        int artifactoryRevision = Integer.parseInt(revisionString);
+        for (ArtifactoryVersion version : ArtifactoryVersion.values()) {
+            if (version.getValue().equals(artifactoryVersion)) {
+                if (artifactoryRevision != version.getRevision()) {
+                    log.warn("Backup version found is " + version + " but the revision " +
+                            artifactoryRevision + " is not the one supported!\n" +
+                            "Reading the backup folder may work with this version.\n" +
+                            "For Information: Using the Command Line Tool is preferable in this case.");
+                }
+                return version;
+            }
+        }
+        log.warn("Backup version " + artifactoryVersion + " is not part of the realeased version" +
+                "The actual version will be determined by the closest revision from " +
+                artifactoryRevision + ". Becareful: This action is not the one supported!\n" +
+                "Reading the backup folder may or may not work!\n" +
+                "For Information: Using the Command Line Tool and providing the version by hand " +
+                "is preferable in this case.");
+        for (ArtifactoryVersion version : ArtifactoryVersion.values()) {
+            if (version.getRevision() >= artifactoryRevision) {
+                return version;
+            }
+        }
+        throw new IllegalStateException(
+                "No version declared is higher than " + artifactoryRevision);
     }
 
     public static String convertSecurityFile(File backupFolder, ArtifactoryVersion backupVersion) throws IOException {

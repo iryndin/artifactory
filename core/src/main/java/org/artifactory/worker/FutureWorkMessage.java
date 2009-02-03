@@ -73,7 +73,6 @@ public abstract class FutureWorkMessage<V> extends WorkMessage implements Future
         task.run();
     }
 
-    @Override
     public final void execute() {
         try {
             repoServiceCallable.setResult(clientCallback.call());

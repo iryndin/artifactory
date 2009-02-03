@@ -16,12 +16,12 @@
  */
 package org.artifactory.update.md.v130beta3;
 
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.update.md.MetadataConverter;
 import org.artifactory.update.md.MetadataConverterUtils;
-import org.artifactory.update.md.MetadataType;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -32,14 +32,10 @@ import java.util.List;
  * @date Nov 9, 2008
  */
 public class ArtifactoryFileConverter implements MetadataConverter {
-    public static final String ARTIFACTORY_FILE = "artifactory.file";
+    public static final String OLD_METADATA_NAME = "artifactory.file";
 
     public String getNewMetadataName() {
-        return "artifactory-file";
-    }
-
-    public MetadataType getSupportedMetadataType() {
-        return MetadataType.file;
+        return FileInfo.ROOT;
     }
 
     public void convert(Document doc) {
@@ -48,7 +44,7 @@ public class ArtifactoryFileConverter implements MetadataConverter {
         RepoPath repoPath = MetadataConverterUtils.extractRepoPath(rootElement);
         List<Element> toMove = MetadataConverterUtils.extractExtensionFields(rootElement);
         MetadataConverterUtils.addNewContent(rootElement, repoPath, toMove);
-        ContentType ct = NamingUtils.getContentType(repoPath.getName());
+        ContentType ct = PackagingType.getContentType(repoPath.getName());
         rootElement.removeChild("mimeType");
         rootElement.addContent(new Element("mimeType").setText(ct.getMimeType()));
     }

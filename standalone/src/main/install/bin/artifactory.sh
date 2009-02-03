@@ -14,7 +14,7 @@ else
    fi
 fi
 
-# Verify that it is java 5+
+# Verify that it is java 6
 javaVersion=`$JAVACMD -version 2>&1 | grep "java version" | egrep -e "1\.[56]"`
 if [ -z "$javaVersion" ]; then
     $JAVACMD -version
@@ -27,14 +27,8 @@ if [ -z "$ARTIFACTORY_HOME" ]; then
 fi
 
 JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.home=$ARTIFACTORY_HOME -Dartifactory.home=$ARTIFACTORY_HOME"
+#Command for discovering all the jar files under lib, to specify the Classpath. Unnecessary at the moment.
+#CP=`find $ARTIFACTORY_HOME/lib -name '*.jar'|xargs -l1 -iW echo -n 'W:'`
 
-LIB_DIR=$ARTIFACTORY_HOME/lib
-CLASSPATH=$ARTIFACTORY_HOME/artifactory.jar
-# Add all jars under the lib dir to the classpath
-for i in `ls $LIB_DIR/*.jar`
-do
-  CLASSPATH="$CLASSPATH:$i"
-done
-
-echo "Runing: exec $JAVACMD $JAVA_OPTIONS -cp \"$CLASSPATH\" org.artifactory.standalone.main.Main $@"
-exec "$JAVACMD" $JAVA_OPTIONS -cp "$CLASSPATH" org.artifactory.standalone.main.Main "$@"
+echo "Runing: exec $JAVACMD $JAVA_OPTIONS -cp \"$ARTIFACTORY_HOME/artifactory.jar\" org.artifactory.standalone.main.Main $@"
+exec "$JAVACMD" $JAVA_OPTIONS -cp "$ARTIFACTORY_HOME/artifactory.jar" org.artifactory.standalone.main.Main "$@"

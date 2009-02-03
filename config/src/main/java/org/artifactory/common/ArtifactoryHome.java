@@ -17,13 +17,9 @@
 package org.artifactory.common;
 
 import org.apache.commons.io.FileUtils;
-import org.artifactory.version.ArtifactoryDbVersion;
-import org.artifactory.version.ArtifactoryVersionReader;
-import org.artifactory.version.CompoundVersionDetails;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -34,11 +30,13 @@ public abstract class ArtifactoryHome {
     public static String ENV_VAR = "ARTIFACTORY_HOME";
 
     public static final String ARTIFACTORY_CONFIG_FILE = "artifactory.config.xml";
-    public static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE = "artifactory.system.properties";
+    public static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE =
+            "artifactory.system.properties";
     public static final String ARTIFACTORY_PROPERTIES_FILE = "artifactory.properties";
     private static final String LOGBACK_CONFIG_FILE_NAME = "logback.xml";
 
-    public static final File TEMP_FOLDER = new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
+    public static final File TEMP_FOLDER =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
 
     private static boolean readOnly = false;
     private static IllegalArgumentException initFailCause = null;
@@ -145,15 +143,12 @@ public abstract class ArtifactoryHome {
             // Create or find all the needed subfolders
             etcDir = getOrCreateSubDir("etc");
             setDataAndJcrDir();
-            File jettyWorkDir = null;
-            if (!readOnly) {
-                logDir = getOrCreateSubDir("logs");
-                backupDir = getOrCreateSubDir("backup");
-                jettyWorkDir = getOrCreateSubDir("work");
-                workingCopyDir = getOrCreateSubDir(dataDir, "wc");
-                tmpDir = getOrCreateSubDir(dataDir, "tmp");
-                tmpUploadsDir = getOrCreateSubDir(tmpDir, "artifactory-uploads");
-            }
+            logDir = getOrCreateSubDir("logs");
+            backupDir = getOrCreateSubDir("backup");
+            File jettyWorkDir = getOrCreateSubDir("work");
+            workingCopyDir = getOrCreateSubDir(dataDir, "wc");
+            tmpDir = getOrCreateSubDir(dataDir, "tmp");
+            tmpUploadsDir = getOrCreateSubDir(tmpDir, "artifactory-uploads");
 
             //Manage the artifactory.system.properties file under etc dir
             initAndLoadSystemPropertyFile();
@@ -270,12 +265,6 @@ public abstract class ArtifactoryHome {
         return ArtifactoryHome.class.getResource("/META-INF/" + ARTIFACTORY_PROPERTIES_FILE);
     }
 
-    public static CompoundVersionDetails readRunningArtifactoryVersion() {
-        InputStream inputStream = ArtifactoryHome.class.getResourceAsStream("/META-INF/" + ARTIFACTORY_PROPERTIES_FILE);
-        CompoundVersionDetails details = ArtifactoryVersionReader.read(inputStream);
-        return details;
-    }
-
     /**
      * Copy the system properties file and set its data as system properties
      */
@@ -296,43 +285,19 @@ public abstract class ArtifactoryHome {
             }
         }
 
-        CompoundVersionDetails runningVersion = readRunningArtifactoryVersion();
-        if (!runningVersion.isCurrent()) {
-            throw new IllegalStateException("Running version is not the current version.");
-        }
         File artifactoryPropertiesFile = getArtifactoryPropertiesFile();
-        if (!readOnly) {
-            boolean writeArtifactoryProperties;
-            if (artifactoryPropertiesFile.exists()) {
-                CompoundVersionDetails versionFromFile = ArtifactoryVersionReader.read(artifactoryPropertiesFile);
-                if (!runningVersion.equals(versionFromFile)) {
-                    // the version written in the jar and the version read from the data directory are different
-                    // make sure the version from the data directory is supported by the current deployed artifactory
-                    ArtifactoryDbVersion actualDbVersion =
-                            ArtifactoryDbVersion.findVersion(versionFromFile.getVersion());
-                    if (!actualDbVersion.isCurrent()) {
-                        throw new IllegalStateException("The database version for (" + versionFromFile + ") " +
-                                "is not supported by the current deployed Artifactory (" + runningVersion + ")");
-                    }
-                    writeArtifactoryProperties = true;
-                } else {
-                    writeArtifactoryProperties = false;
-                }
-            } else {
-                writeArtifactoryProperties = true;
-            }
-            if (writeArtifactoryProperties) {
-                //Copy the artifactory.properties file into the data folder
-                try {
-                    //Copy from default
-                    FileUtils.copyURLToFile(getDefaultArtifactoryPropertiesUrl(), artifactoryPropertiesFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not copy " + ARTIFACTORY_PROPERTIES_FILE + " to " +
-                            artifactoryPropertiesFile.getAbsolutePath(), e);
-                }
+        if (!readOnly && !artifactoryPropertiesFile.exists()) {
+            //Copy the artifactory.properties file into the data folder
+            try {
+                //Copy from default
+                URL url = getDefaultArtifactoryPropertiesUrl();
+                FileUtils.copyURLToFile(url, artifactoryPropertiesFile);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not copy " +
+                        ARTIFACTORY_PROPERTIES_FILE + " to " +
+                        artifactoryPropertiesFile.getAbsolutePath(), e);
             }
         }
-
         ArtifactoryProperties.get().loadArtifactorySystemProperties(systemPropertiesFile, artifactoryPropertiesFile);
     }
 
@@ -367,7 +332,8 @@ public abstract class ArtifactoryHome {
 
     private static void checkWritableDirectory(File dir) {
         if (!dir.exists() || !dir.isDirectory() || !dir.canWrite()) {
-            throw new IllegalArgumentException("Directory '" + dir.getAbsolutePath() + "' is not writable!");
+            throw new IllegalArgumentException("Failed to create writable directory: " +
+                    dir.getAbsolutePath());
         }
     }
 }

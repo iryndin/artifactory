@@ -22,7 +22,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
-import org.artifactory.webapp.wicket.application.sitemap.MenuNode;
+import org.artifactory.webapp.wicket.application.sitemap.PageNode;
 import org.artifactory.webapp.wicket.application.sitemap.SiteMap;
 
 import java.util.Collections;
@@ -37,16 +37,16 @@ public abstract class AuthenticatedPage extends BasePage {
 
     protected AuthenticatedPage() {
         add(new Label("title", getPageName()));
-        add(new SubMenuPanel("sideMenuPanel", getSecondLevelMenuNodes(), getMenuPageClass()));
+        add(new SideMenu("sideMenuPanel", getPageNodes(), getMenuPageClass()));
     }
 
-    private List<MenuNode> getSecondLevelMenuNodes() {
+    private List<PageNode> getPageNodes() {
         SiteMap siteMap = ArtifactoryApplication.get().getSiteMap();
-        MenuNode pageNode = siteMap.getPageNode(getMenuPageClass());
+        PageNode pageNode = siteMap.getPageNode(getMenuPageClass());
         if (pageNode == null) {
             return Collections.emptyList();
         }
-        MenuNode current = pageNode;
+        PageNode current = pageNode;
         while (!current.getParent().equals(siteMap.getRoot())) {
             current = current.getParent();
         }

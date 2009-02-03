@@ -28,14 +28,10 @@ import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.fs.MetadataInfo;
 import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.ChecksumType;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.repo.exception.FolderExpectedException;
-import org.artifactory.api.repo.exception.ItemNotFoundException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
@@ -43,11 +39,7 @@ import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.io.SimpleResourceStreamHandle;
-import org.artifactory.io.StringResourceStreamHandle;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
-import org.artifactory.io.checksum.policy.ChecksumPolicyException;
-import org.artifactory.io.checksum.policy.ChecksumPolicyIgnoreAndGenerate;
+import org.artifactory.io.checksum.ChecksumType;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
@@ -56,23 +48,19 @@ import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.lock.LockEntry;
 import org.artifactory.jcr.lock.LockingHelper;
-import org.artifactory.jcr.md.MetadataService;
-import org.artifactory.maven.MavenMetadataCalculator;
+import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepoBase;
 import org.artifactory.repo.interceptor.LocalRepoInterceptor;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.resource.ArtifactResource;
-import org.artifactory.resource.FileResource;
-import org.artifactory.resource.MetadataResource;
 import org.artifactory.resource.RepoResource;
+import org.artifactory.resource.SimpleRepoResource;
 import org.artifactory.resource.UnfoundRepoResource;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.ExceptionUtils;
-import org.artifactory.util.PathUtils;
-import org.artifactory.worker.StatsMessage;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,12 +72,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRepoBase<T> implements LocalRepo<T> {
+public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRepoBase<T>
+        implements LocalRepo<T> {
     private static final Logger log = LoggerFactory.getLogger(JcrRepoBase.class);
 
     private final JcrFileCreator jcrFileCreator = new JcrFileCreator();
@@ -102,14 +90,14 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
     private Map<RepoPath, JcrFsItem> fsItemCache;
     private LocalRepoInterceptor localRepoInterceptor;
     private JcrRepoService jcrService;
-    private ChecksumPolicy defaultChecksumPolicy = new ChecksumPolicyIgnoreAndGenerate();
 
     protected JcrRepoBase(InternalRepositoryService repositoryService) {
         super(repositoryService);
     }
 
     protected JcrRepoBase(InternalRepositoryService repositoryService, T descriptor) {
-        super(repositoryService, descriptor);
+        this(repositoryService);
+        setDescriptor(descriptor);
     }
 
     @Override
@@ -123,7 +111,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
     }
 
     public void init() {
-        jcrService = InternalContextHelper.get().getJcrRepoService();
+        jcrService = (JcrRepoService) InternalContextHelper.get().getJcrService();
         anonAccessEnabled = getRepositoryService().isAnonAccessEnabled();
         //Purge and recreate the (temp) repo dir
         final String key = getKey();
@@ -241,11 +229,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         return (JcrFolder) item;
     }
 
-    public JcrFsItem getLockedJcrFsItem(String relPath) {
-        RepoPath repoPath = new RepoPath(getKey(), relPath);
-        return getLockedJcrFsItem(repoPath);
-    }
-
     public JcrFsItem getLockedJcrFsItem(RepoPath repoPath) {
         JcrFsItem fsItem = internalGetFsItem(new JcrFsItemLocator(repoPath, false));
         if (fsItem != null) {
@@ -271,21 +254,25 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         }
     }
 
-    public JcrFile getLockedJcrFile(String relPath, boolean createIfMissing) throws FileExpectedException {
+    public JcrFile getLockedJcrFile(String relPath, boolean createIfMissing)
+            throws FileExpectedException {
         RepoPath repoPath = new RepoPath(getKey(), relPath);
         return getLockedJcrFile(repoPath, createIfMissing);
     }
 
-    public JcrFile getLockedJcrFile(RepoPath repoPath, boolean createIfMissing) throws FileExpectedException {
+    public JcrFile getLockedJcrFile(RepoPath repoPath, boolean createIfMissing)
+            throws FileExpectedException {
         return internalGetLockedJcrFsItem(repoPath, createIfMissing, jcrFileCreator);
     }
 
-    public JcrFolder getLockedJcrFolder(String relPath, boolean createIfMissing) throws FolderExpectedException {
+    public JcrFolder getLockedJcrFolder(String relPath, boolean createIfMissing)
+            throws FolderExpectedException {
         RepoPath repoPath = new RepoPath(getKey(), relPath);
         return getLockedJcrFolder(repoPath, createIfMissing);
     }
 
-    public JcrFolder getLockedJcrFolder(RepoPath repoPath, boolean createIfMissing) throws FolderExpectedException {
+    public JcrFolder getLockedJcrFolder(RepoPath repoPath, boolean createIfMissing)
+            throws FolderExpectedException {
         return internalGetLockedJcrFsItem(repoPath, createIfMissing, jcrFolderCreator);
     }
 
@@ -301,22 +288,15 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         }
     }
 
-    protected final void assertRepoPath(RepoPath repoPath) {
-        if (!getKey().equals(repoPath.getRepoKey())) {
-            throw new IllegalArgumentException(
-                    "Trying to retrieve resource " + repoPath + " from local repo " + getKey());
-        }
-    }
-
     /**
-     * Get from cache, or load from JCR. Read lock according to locator.
+     * Get from cache, or load from JCR. No read lock
      *
      * @param locator
      * @return null if item does not exists, a JcrFsItem otherwise
      */
     private JcrFsItem internalGetFsItem(JcrFsItemLocator locator) {
         RepoPath repoPath = locator.getRepoPath();
-        assertRepoPath(repoPath);
+        checkRepoPath(repoPath);
         // First check if we have already the write lock
         JcrFsItem item = LockingHelper.getIfLockedByMe(repoPath);
         if (item != null) {
@@ -331,6 +311,13 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         }
         locator.lock(fsItem);
         return fsItem;
+    }
+
+    private void checkRepoPath(RepoPath repoPath) {
+        if (!getKey().equals(repoPath.getRepoKey())) {
+            throw new IllegalArgumentException(
+                    "Trying to retrieve resource " + repoPath + " from local repo " + getKey());
+        }
     }
 
     private LockEntry getLockEntry(JcrFsItem fsItem) {
@@ -348,39 +335,11 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         if (statusHolder.isError()) {
             return new UnfoundRepoResource(repoPath, statusHolder.getStatusMsg());
         }
-        // TODO: Why there is a need for lock here?
-        //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getLockedJcrFsItem(path);
-        if (item == null) {
+        JcrFsItem item = getJcrFsItem(path);
+        if (item == null || item.isDirectory()) {
             return new UnfoundRepoResource(repoPath, "file not found");
         }
-        if (item.isDeleted() || !item.exists()) {
-            item.setDeleted(true);
-            throw new ItemNotFoundException("File " + repoPath + " was deleted during download!");
-        }
-        RepoResource localRes;
-        //When requesting a property/metadata return a special resouce class that contains the parent node
-        //path and the metadata name.
-        if (NamingUtils.isMetadata(path)) {
-            String metadataName = NamingUtils.getMetadataName(path);
-            boolean metadataExists = item.hasXmlMetdata(metadataName);
-            if (metadataExists) {
-                MetadataInfo metadataInfo = getMetadataService().getMetadataInfo(item, metadataName);
-                if (MavenNaming.isSnapshotMavenMetadata(path)) {
-                    // this is hack - for snapshot maven metadata use the last updated time of the folder
-                    // the cache repo will use this value to determine if the resource is expired
-                    metadataInfo.setLastModified(item.getInfo().getInernalXmlInfo().getLastUpdated());
-                }
-                localRes = new MetadataResource(metadataInfo);
-            } else {
-                return new UnfoundRepoResource(repoPath, "metadata not found");
-            }
-        } else {
-            if (item.isDirectory()) {
-                throw new FileExpectedException(repoPath);
-            }
-            localRes = new FileResource((FileInfo) item.getInfo());
-        }
+        RepoResource localRes = new SimpleRepoResource((FileInfo) item.getInfo());
         return localRes;
     }
 
@@ -395,63 +354,57 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         AuthorizationService authService = getAuthorizationService();
         boolean canRead = authService.canRead(repoPath);
         if (!canRead) {
-            status.setError("Download request for repo:path '" + repoPath + "' is forbidden for user '" +
-                    authService.currentUsername() + "'.", log);
+            status.setError("Download request for repo:path '" + repoPath +
+                    "' is forbidden for user '" + authService.currentUsername() + "'.", log);
             AccessLogger.downloadDenied(repoPath);
         }
         return status;
     }
 
     public ResourceStreamHandle getResourceStreamHandle(final RepoResource res) throws IOException {
-        log.debug("Transferring {} directly to user from {}.", res, this);
+        if (log.isDebugEnabled()) {
+            log.debug("Transferring " + res + " directly to user from " + this);
+        }
         String relPath = res.getRepoPath().getPath();
-        //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getJcrFsItem(relPath);
+        JcrFile file;
+        try {
+            file = getJcrFile(relPath);
+        } catch (FileExpectedException e) {
+            IOException ioEx = new IOException(
+                    "Cannot extract resource stream from a folder: " + res + ".");
+            ioEx.initCause(e);
+            throw ioEx;
+        }
         //If resource does not exist throw an IOException
-        if (item == null) {
-            throw new IOException("Could not get resource stream. Path not found: " + res + ".");
+        if (file == null) {
+            throw new IOException(
+                    "Could not get resource stream. Path not found: " + res + ".");
         }
-        if (item.isDeleted() || !item.exists()) {
-            item.setDeleted(true);
-            throw new ItemNotFoundException("Could not get resource stream. Item " + item + " was deleted!");
-        }
-        ResourceStreamHandle handle;
-        if (res.isMetadata()) {
-            String medtadataName = res.getInfo().getName();
-            String xmlMetdata = item.getXmlMetdata(medtadataName);
-            if (xmlMetdata == null) {
-                throw new IOException("Could not get resource stream. Stream not found: " + res + ".");
-            } else {
-                handle = new StringResourceStreamHandle(xmlMetdata);
-            }
-        } else if (item.isFile()) {
-            JcrFile jcrFile = (JcrFile) item;
-            final InputStream is = jcrFile.getStream();
-            if (is == null) {
-                throw new IOException("Could not get resource stream. Stream not found: " + item + ".");
-            }
-            //Update the stats
-            getRepositoryService().publish(new StatsMessage(jcrFile));
-            handle = new SimpleResourceStreamHandle(is);
-        } else {
-            throw new IOException("Could not get resource stream from a folder " + res + ".");
-        }
+        ResourceStreamHandle handle = getStreamResourceHandle(file);
         return handle;
     }
 
-    public String getChecksum(String checksumFilePath) throws IOException {
-        //For checksums return the property directly
-        String resourcePath = checksumFilePath.substring(0, checksumFilePath.lastIndexOf("."));
-        RepoResource resource = getInfo(resourcePath);
-        if (resource == null) {
-            throw new IOException("Could not get resource stream. Path not found: " + resourcePath + ".");
+    public String getMetadataProperty(String path) throws IOException {
+        if (MavenUtils.isChecksum(path)) {
+            //For checksums return the property directly
+            String resourcePath = path.substring(0, path.lastIndexOf("."));
+            FileInfo info = getJcrFile(resourcePath).getInfo();
+            if (info == null) {
+                throw new IOException(
+                        "Could not get resource stream. Path not found: " + resourcePath + ".");
+            }
+            ChecksumType checksumType = ChecksumType.forPath(path);
+            if (checksumType.equals(ChecksumType.sha1)) {
+                return info.getSha1();
+            } else if (checksumType.equals(ChecksumType.md5)) {
+                return info.getMd5();
+            } else {
+                log.warn("Skipping unknown checksum type: " + checksumType + ".");
+                return null;
+            }
+        } else {
+            throw new IOException("Cannot determine requested property for path '" + path + "'.");
         }
-        String extension = '.' + PathUtils.getExtension(checksumFilePath);
-        ChecksumType checksumType = ChecksumType.forExtension(extension);
-        if (checksumType == null) {
-            throw new IllegalArgumentException("Checksum type not found for path " + checksumFilePath);
-        }
-        return getChecksumPolicy().getChecksum(checksumType, resource.getInfo().getChecksums());
     }
 
     public void undeploy(RepoPath repoPath) {
@@ -462,7 +415,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
          * pom - if packaging is jar remove pom and jar, else remove pom and update metadata
          * metadata - remove pom, jar and classifiers
          * version dir - update versions metadata in containing dir
-         * plugin pom - update plugins in maven-metadata.xml in the groupId directory above
+         * plugin pom - update plugins in maven-metadata.xml in the directory above
          */
         if (!PathUtils.hasText(repoPath.getPath())) {
             // Delete the all repo
@@ -471,8 +424,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             JcrFsItem fsItem = getLockedJcrFsItem(repoPath);
             if (fsItem != null && !fsItem.isDeleted()) {
                 fsItem.delete();
-                //Move the deleted item to the trash
-                jcrService.trash(Collections.singletonList(fsItem));
             }
         }
     }
@@ -502,11 +453,12 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         }
         LockingHelper.readLock(rootLockEntry);
         File dir = settings.getBaseDir();
-        status.setStatus("Exporting repository '" + getKey() + "' to '" + dir.getAbsolutePath() + "'.", log);
+        status.setStatus("Exporting repository '" + getKey() + "' to '" + dir + "'.", log);
         try {
             FileUtils.forceMkdir(dir);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create export directory '" + dir.getAbsolutePath() + "'.", e);
+            throw new RuntimeException(
+                    "Failed to create export directory '" + dir + "'.", e);
         }
         JcrFolder folder = getRootFolder();
         folder.exportTo(settings, status);
@@ -515,7 +467,9 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
     public void importFrom(ImportSettings settings, StatusHolder status) {
         JcrFolder rootFolder = getLockedRootFolder();
         File baseDir = settings.getBaseDir();
-        status.setStatus("Importing repository '" + getKey() + "' from " + baseDir + ".", log);
+        status.setStatus(
+                "Importing repository '" + getKey() + "' from " + baseDir + ".",
+                log);
         LinkedList<RepoPath> foldersToScan = new LinkedList<RepoPath>();
         RepoPath currentFolder;
         foldersToScan.add(rootFolder.getRepoPath());
@@ -555,53 +509,35 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
      * @param in  the stream to save at the location
      */
     public RepoResource saveResource(RepoResource res, final InputStream in) throws IOException {
-        log.debug("Saving resource '{}' into repository '{}'.", res, this);
-        RepoPath repoPath = new RepoPath(getKey(), res.getRepoPath().getPath());
+        if (log.isDebugEnabled()) {
+            log.debug("Saving resource '" + res + "' into repository '" + this + "'.");
+        }
         try {
-            if (res.isMetadata()) {
-                //If we are dealing with metadata return the containing fsitem
-                RepoPath metadataContainerRepoPath = RepoPath.getMetadataContainerRepoPath(repoPath);
-                JcrFsItem metadataAware = getLockedJcrFsItem(metadataContainerRepoPath);
-                if (metadataAware == null) {
-                    //If we cannot find the container, assume it's a folder and create it on demand
-                    metadataAware = getLockedJcrFolder(metadataContainerRepoPath, true);
-                    metadataAware.mkdirs();
-                }
-                MetadataService metadataService = getMetadataService();
-                String metadataName = res.getInfo().getName();
-                metadataService.setXmlMetadata(metadataAware, metadataName, in);
-            } else {
-                //Create the parent folder
-                JcrFile jcrFile = getLockedJcrFile(repoPath, true);
-                // set the file extension checksums (only needed if the file is currently being download)
-                jcrFile.getInfo().setChecksums(((FileResource) res).getInfo().getChecksums());
-                JcrFolder jcrFolder = getLockedJcrFolder(jcrFile.getParentRepoPath(), true);
-                jcrFolder.mkdirs();
-                //Deploy
-                long lastModified = res.getInfo().getLastModified();
-                BufferedInputStream bis = new BufferedInputStream(in);
-                jcrFile.fillData(lastModified, bis);
-                AccessLogger.deployed(jcrFile.getRepoPath());
-                //If the resource has no size specified, update the size
-                //(this can happen if we established the resource based on a HEAD request that failed to
-                //return the content-length).
-                res = new FileResource(jcrFile.getInfo());
-                //Cleanup old snapshots etc.
-                localRepoInterceptor.afterResourceSave(res, this);
-            }
+            RepoPath repoPath = new RepoPath(getKey(), res.getRepoPath().getPath());
+            JcrFile jcrFile = getLockedJcrFile(repoPath, true);
+            JcrFolder jcrFolder = getLockedJcrFolder(jcrFile.getParentRepoPath(), true);
+            jcrFolder.mkdirs();
+            long lastModified = res.getInfo().getLastModified();
+            BufferedInputStream bis = new BufferedInputStream(in);
+            jcrFile.fillData(lastModified, bis);
+            AccessLogger.deployed(jcrFile.getRepoPath());
+            //If the resource has no size specified, update the size
+            //(this can happen if we established the resource based on a HEAD request that failed to
+            //return the content-length).
+            res = new SimpleRepoResource(jcrFile.getInfo());
+            localRepoInterceptor.afterResourceSave(res, this);
             return res;
         } catch (Exception e) {
             //Unwrap any IOException and throw it
-            Throwable ioCause = ExceptionUtils.getCauseOfTypes(e, IOException.class);
-            if (ioCause != null) {
-                log.warn("IO error while trying to save resource {}'': {}",
-                        res.getRepoPath(), ioCause.getMessage());
-                throw (IOException) ioCause;
-            }
-            // throw back ChecksumPolicyException if it is the cause
-            Throwable checksumCause = ExceptionUtils.getCauseOfTypes(e, ChecksumPolicyException.class);
-            if (checksumCause != null) {
-                throw (ChecksumPolicyException) checksumCause;
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof IOException) {
+                    log.warn(
+                            "IO error while trying to save resource '" + res.getRepoPath() + "': " +
+                                    cause.getMessage());
+                    throw (IOException) cause;
+                }
+                cause = cause.getCause();
             }
             throw new RuntimeException("Failed to save resource '" + res.getRepoPath() + "'.", e);
         }
@@ -623,8 +559,9 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
 
     public boolean shouldProtectPathDeletion(String path) {
         //Snapshots should generally be overridable, except for unique ones
-        return (!MavenNaming.isSnapshot(path) || !MavenNaming.isNonUniqueSnapshot(path)) &&
-                !(NamingUtils.isChecksum(path) || NamingUtils.isMetadata(path));
+        return (!MavenNaming.isSnapshot(path) || !MavenNaming
+                .isNonUniqueSnapshot(path)) &&
+                !(MavenUtils.isChecksum(path) || MavenUtils.isMetadata(path));
     }
 
     private String getPomContent(String relPath) {
@@ -685,25 +622,18 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         for (JcrFsItem child : children) {
             child.delete();
         }
-        //Move the deleted item to the trash
-        jcrService.trash(children);
     }
 
-    public ChecksumPolicy getChecksumPolicy() {
-        return defaultChecksumPolicy;
-    }
-
-    public void onDelete(JcrFsItem fsItem) {
-        AccessLogger.deleted(fsItem.getRepoPath());
-        //Calculate the for a folder metadata
-        MavenMetadataCalculator mavenMetadataCalculator =
-                jcrService.getManagedSession().getOrCreateResource(MavenMetadataCalculator.class);
-        mavenMetadataCalculator.addDeletedItem(fsItem);
+    public String getMetadata(String path) throws IOException {
+        //TODO: [by yl] Switch between maven md and regular md (path:mdName)
+        return null;
     }
 
     @SuppressWarnings({"unchecked"})
-    private <T extends JcrFsItem<? extends ItemInfo>> T internalGetLockedJcrFsItem(
-            RepoPath repoPath, boolean createIfMissing, FsItemCreator<T> creator) throws FileExpectedException {
+    private <T extends JcrFsItem<? extends ItemInfo>> T internalGetLockedJcrFsItem(RepoPath repoPath,
+            boolean createIfMissing,
+            FsItemCreator<T> creator)
+            throws FileExpectedException {
         // First check if we have already the write lock
         T item = (T) LockingHelper.getIfLockedByMe(repoPath);
         if (item != null) {
@@ -733,13 +663,12 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         if (result != null) {
             return result;
         }
-        T original = item;
-        if (!original.isMutable()) {
+        if (!item.isMutable()) {
             // Do a copy constructor to start modifying it
-            item = creator.newFsItem(original, this);
+            item = creator.newFsItem(item, this);
         }
         // Create a lock entry with new item
-        LockEntry lockEntry = new LockEntry(getLockEntry(original), item);
+        LockEntry lockEntry = new LockEntry(getLockEntry(item), item);
         // acquire the write lock
         LockingHelper.writeLock(lockEntry);
         return item;
@@ -751,8 +680,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         private final boolean acquireReadLock;
 
         JcrFsItemLocator(RepoPath repoPath, boolean acquireReadLock) {
-            //If we are dealing with metadata return the containing fsitem
-            this.repoPath = RepoPath.getMetadataContainerRepoPath(repoPath);
+            this.repoPath = repoPath;
             this.node = null;
             this.acquireReadLock = acquireReadLock;
         }
@@ -839,4 +767,5 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             return new JcrFolder(node, repo);
         }
     }
+
 }

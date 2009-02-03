@@ -1,74 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
 <wicket:extend>
-    <form wicket:id="unlockForm" class="unlock-profile-form">
+    <form wicket:id="userForm" class="user-profile-form">
         <div class="field">
-            <label>
-                <wicket:message key="currentPassword"/>
-                <span wicket:id="currentPassword.help"/>
-            </label>
+            <label class="float-left">Current Password</label>
 
             <div class="value">
                 <input wicket:id="currentPassword" autocomplete="off" type="password" class="text"/>
             </div>
         </div>
-
-        <button wicket:id="unlock" type="submit"/>
-        <hr/>
-    </form>
-
-    <form wicket:id="userForm" class="update-profile-form">
-
-        <wicket:enclosure child="encryptedPassword">
-            <div class="field">
-                <label>
-                    Encrypted Password
-                    <span wicket:id="encryptedPassword.help"></span>
-                </label>
-
-                <div class="value">
-                    <span wicket:id="encryptedPassword" class="textbox textbox-disabled"/>
-                </div>
-            </div>
-        </wicket:enclosure>
-
-        <div wicket:id="updateFieldsContainer">
-            <div class="field required">
-                <label>
-                    <wicket:message key="email"/>
-                </label>
-
-                <div class="value">
-                    <input wicket:id="email" type="text" autocomplete="off" class="text"/>
-                </div>
-            </div>
+        <div class="field field-sep">
+            <label class="float-left">New Password</label>
 
             <div class="field">
-                <label>
-                    <wicket:message key="newPassword"/>
-                </label>
-
-                <div class="value">
-                    <input wicket:id="newPassword" type="password" autocomplete="off" class="text password"/>
-                </div>
+                <input wicket:id="newPassword" type="password" class="text"/>
             </div>
+        </div>
+        <div class="field field-sep">
+            <label class="float-left">Retype password</label>
 
             <div class="field">
-                <label>
-                    <wicket:message key="retypedPassword"/>
-                </label>
+                <input wicket:id="retypedPassword" type="password" class="text"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <label class="float-left">Email address</label>
 
-                <div class="value">
-                    <input wicket:id="retypedPassword" type="password" autocomplete="off" class="text password"/>
-                </div>
+            <div class="field">
+                <input wicket:id="email" type="text" class="text"/>
             </div>
         </div>
     </form>
 
-    <div wicket:id="settingsSnippet" class="settings-snippet">
-        <div class="info">
-            Use the following in your settings.xml (replace ${server-id} with your server id).
-        </div>
-        <div wicket:id="settingsBorder">
-            <div wicket:id="settingsDeclaration"/>
-        </div>
-    </div>
 </wicket:extend>
+</body>
+</html>

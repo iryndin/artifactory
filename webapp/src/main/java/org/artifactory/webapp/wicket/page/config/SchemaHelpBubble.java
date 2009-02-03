@@ -5,8 +5,8 @@ import org.artifactory.descriptor.Descriptor;
 import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
 
 /**
- * Schema help bubble is a help bubble that uses schema help model which retrieves the help message from the artifactory
- * schema.
+ * Schema help bubble is a help bubble that uses schema help model which retrieves the help message
+ * from the artifactory schema.
  *
  * @author Yossi Shaul
  */
@@ -29,6 +29,19 @@ public class SchemaHelpBubble extends HelpBubble {
 
     public SchemaHelpBubble(String id, SchemaHelpModel model) {
         super(id, model);
+    }
+
+    /**
+     * This constructor recieves and sets the help message directly, with no use of the specialized
+     * model
+     *
+     * @param id          The ID of the component
+     * @param property    The name of the property
+     * @param helpMessage The content of the help message
+     */
+    public SchemaHelpBubble(String id, String property, String helpMessage) {
+        super(id, helpMessage);
+        this.property = property;
     }
 
     @Override

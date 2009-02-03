@@ -93,24 +93,6 @@ public class User implements OcmStorable {
     }
 
     @Field
-    public String getPrivateKey() {
-        return info.getPrivateKey();
-    }
-
-    public void setPrivateKey(String privateKey) {
-        info.setPrivateKey(privateKey);
-    }
-
-    @Field
-    public String getPublicKey() {
-        return info.getPublicKey();
-    }
-
-    public void setPublicKey(String publicKey) {
-        info.setPublicKey(publicKey);
-    }
-
-    @Field
     public boolean isAdmin() {
         return info.isAdmin();
     }

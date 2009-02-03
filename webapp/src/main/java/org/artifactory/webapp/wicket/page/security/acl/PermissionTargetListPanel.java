@@ -46,8 +46,6 @@ public class PermissionTargetListPanel extends ListPanel<PermissionTargetInfo> {
         if (!authService.isAdmin()) {
             disableNewItemLink();
         }
-
-        getDataProvider().setSort("name", true);
     }
 
     @Override
@@ -63,7 +61,6 @@ public class PermissionTargetListPanel extends ListPanel<PermissionTargetInfo> {
     @Override
     protected void addColumns(List<IColumn> columns) {
         columns.add(new PropertyColumn(new Model("Permissionn target name"), "name", "name"));
-        columns.add(new PropertyColumn(new Model("Repository"), "repoKey", "repoKey"));
     }
 
     @Override

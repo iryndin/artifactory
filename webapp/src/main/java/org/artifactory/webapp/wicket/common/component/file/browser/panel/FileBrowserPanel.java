@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -23,7 +24,6 @@ import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
 import org.artifactory.webapp.wicket.common.component.file.path.PathHelper;
 import org.artifactory.webapp.wicket.common.component.file.path.PathMask;
-import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author Yoav Aharoni
  */
-public class FileBrowserPanel extends BaseModalPanel {
+public class FileBrowserPanel extends Panel {
     private PathHelper pathHelper;
     private String chRoot;
 
@@ -40,8 +40,25 @@ public class FileBrowserPanel extends BaseModalPanel {
     private DropDownChoice breadcrumbs;
     private ListView filesList;
 
-    protected FileBrowserPanel(IModel model, PathHelper pathHelper) {
-        setWidth(600);
+
+    public FileBrowserPanel(String id) {
+        this(id, null, new PathHelper());
+    }
+
+    public FileBrowserPanel(String id, IModel model) {
+        this(id, model, new PathHelper());
+    }
+
+    public FileBrowserPanel(String id, String root) {
+        this(id, null, root);
+    }
+
+    public FileBrowserPanel(String id, IModel model, String root) {
+        this(id, model, new PathHelper(root));
+    }
+
+    protected FileBrowserPanel(String id, IModel model, PathHelper pathHelper) {
+        super(id);
 
         if (model != null) {
             setModel(model);
@@ -109,7 +126,6 @@ public class FileBrowserPanel extends BaseModalPanel {
         onOkClicked(target);
     }
 
-    @Override
     public String getTitle() {
         return getString("file.browser.title", null);
     }

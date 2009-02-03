@@ -19,7 +19,7 @@ package org.artifactory.repo.webdav;
 import org.apache.commons.httpclient.HttpStatus;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryResponse;
@@ -183,17 +183,11 @@ public class WebdavServiceImpl implements WebdavService {
     public void handleMkcol(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException {
         RepoPath repoPath = request.getRepoPath();
-        final LocalRepo repo = getLocalRepo(request, response);
-        //Return 405 if folder exists
-        if (repo.itemExists(repoPath.getPath())) {
-            response.setStatus(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            return;
-        }
         //Check that we are allowed to write
         checkCanDeploy(repoPath, response);
+        final LocalRepo repo = getLocalRepo(request, response);
         JcrFolder targetFolder = repo.getLockedJcrFolder(repoPath, true);
         targetFolder.mkdirs();
-        // Return 201 when element created
         response.setStatus(HttpStatus.SC_CREATED);
     }
 
@@ -337,7 +331,7 @@ public class WebdavServiceImpl implements WebdavService {
                     generatedXml.writeProperty(null, "getlastmodified", lastModified);
                     generatedXml.writeProperty(null, "getcontentlength", resourceLength);
 
-                    ContentType ct = NamingUtils.getContentType(path);
+                    ContentType ct = PackagingType.getContentType(path);
                     if (ct != null) {
                         generatedXml.writeProperty(null, "getcontenttype", ct.getMimeType());
                     }
@@ -408,7 +402,7 @@ public class WebdavServiceImpl implements WebdavService {
                             propertiesNotFound.add(property);
                         } else {
                             generatedXml.writeProperty(null, "getcontenttype",
-                                    NamingUtils.getMimeTypeByPathAsString(path));
+                                    PackagingType.getMimeTypeByPathAsString(path));
                         }
                     } else if (property.equals("getetag")) {
                         if (isFolder) {

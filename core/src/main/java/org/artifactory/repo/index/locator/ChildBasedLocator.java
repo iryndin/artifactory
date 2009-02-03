@@ -16,10 +16,8 @@
  */
 package org.artifactory.repo.index.locator;
 
-import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.jcr.JcrPath;
-import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.repo.LocalRepo;
 import org.sonatype.nexus.artifact.Gav;
 
@@ -36,22 +34,8 @@ public abstract class ChildBasedLocator extends ArtifactoryLocator {
 
     public File locate(File source, Gav gav) {
         RepoPath parentRepoPath = JcrPath.get().getRepoPath(source.getParent());
-        String fileName = getChildName(source, gav);
-        if (MavenNaming.MAVEN_METADATA_NAME.equals(fileName)) {
-            return null;
-        }
-        RepoPath repoPath = new RepoPath(parentRepoPath, fileName);
-        JcrFile jcrFile = getLocalRepo().getJcrFile(repoPath);
-        if (jcrFile == null) {
-            //Should never return null to the sensitive indexer - return a non-exiting file
-            return new File(JcrPath.get().getAbsolutePath(repoPath)) {
-                @Override
-                public boolean exists() {
-                    return false;
-                }
-            };
-        }
-        return jcrFile;
+        return getLocalRepo().getJcrFile(
+                new RepoPath(parentRepoPath, getChildName(source, gav)));
     }
 
     protected abstract String getChildName(File source, Gav gav);

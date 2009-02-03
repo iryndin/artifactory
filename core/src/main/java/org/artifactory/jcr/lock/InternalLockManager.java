@@ -169,7 +169,10 @@ public class InternalLockManager {
      */
     public boolean releaseReadLock(RepoPath repoPath) {
         SessionLockEntry sessionLockEntry = getSessionLockEntry(repoPath);
-        return sessionLockEntry != null && sessionLockEntry.releaseReadLock();
+        if (sessionLockEntry != null) {
+            return sessionLockEntry.releaseReadLock();
+        }
+        return false;
     }
 
     public void reacquireReadLock(RepoPath repoPath) {

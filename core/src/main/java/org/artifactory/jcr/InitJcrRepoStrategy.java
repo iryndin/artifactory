@@ -76,7 +76,8 @@ public class InitJcrRepoStrategy {
                     pmConfig.getParameters().put("consistencyFix", "true");
                     log.info("Fix consistency requested on '" + className + "'.");
                 } else {
-                    log.warn("Fix consistency requested on a persistence manager that does not support this feature.");
+                    log.warn("Fix consistency requested on a persistence manager that " +
+                            "does not support this feature.");
                 }
             }
             repository = RepositoryImpl.create(repoConfig);
@@ -96,7 +97,6 @@ public class InitJcrRepoStrategy {
             registerTypes(workspace, jcrService.getArtifactoryNodeTypes());
             initializeOcm();
             initializeRepoRoot();
-            initializeTrash();
         } catch (Exception e) {
             log.error("Cannot initialize JCR repository " + e.getMessage(), e);
             throw new RuntimeException("Cannot initialize JCR repository " + e.getMessage(), e);
@@ -118,10 +118,6 @@ public class InitJcrRepoStrategy {
             }
             jcrService.setOcmMapper(new AnnotationMapperImpl(ocmClasses));
         }
-    }
-
-    protected void initializeTrash() {
-        jcrService.getOrCreateUnstructuredNode(JcrPath.get().getTrashJcrRootPath());
     }
 
     protected void registerTypes(Workspace workspace, NodeTypeDef[] types)
@@ -155,10 +151,13 @@ public class InitJcrRepoStrategy {
         NamespaceRegistry nsReg = workspace.getNamespaceRegistry();
         List<String> nsPrefixes = Arrays.asList(nsReg.getPrefixes());
         if (!nsPrefixes.contains(ARTIFACTORY_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(ARTIFACTORY_NAMESPACE_PREFIX, ARTIFACTORY_NAMESPACE);
+            nsReg.registerNamespace(
+                    ARTIFACTORY_NAMESPACE_PREFIX,
+                    ARTIFACTORY_NAMESPACE);
         }
         if (!nsPrefixes.contains(OCM_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX, OCM_NAMESPACE);
+            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX,
+                    OCM_NAMESPACE);
         }
     }
 

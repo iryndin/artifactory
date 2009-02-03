@@ -47,15 +47,16 @@ public interface ArtifactoryRequest {
     String getDir();
 
     /**
-     * This feels a bit dirty, but it represents a request where we don't want the actual file, just the meta
-     * information about last update etc.
+     * This feels a bit dirty, but it represents a request where we don't want the actual file, just
+     * the meta information about last update etc.
      *
      * @return
      */
     boolean isHeadOnly();
 
     /**
-     * Indicates whether the request is coming back to the same proxy as a result of reverse mirroring
+     * Indicates whether the request is coming back to the same proxy as a result of reverse
+     * mirroring
      *
      * @return
      */
@@ -71,8 +72,8 @@ public interface ArtifactoryRequest {
     long getModificationTime();
 
     /**
-     * Returns true if the request specification is newer than the resource. This will occur if the client has a newer
-     * version of the artifact than we can provide.
+     * Returns true if the request specification is newer than the resource. This will occur if the
+     * client has a newer version of the artifact than we can provide.
      *
      * @param resourceLastModified
      * @return
@@ -90,6 +91,14 @@ public interface ArtifactoryRequest {
     String getName();
 
     String getUri();
+
+    /**
+     * Is this a request for a resource property (such as checksum), rather than an independent
+     * resource request
+     *
+     * @return
+     */
+    boolean isResourceProperty();
 
     boolean isChecksum();
 

@@ -167,7 +167,7 @@
             <param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
             <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
             <param name="respectDocumentOrder" value="false"/>
-            <param name="resultFetchSize" value="700"/>
+            <param name="resultFetchSize" value="500"/>
             <!--
             Use 3 background threads for text extraction that takes more than 100 milliseconds
             -->

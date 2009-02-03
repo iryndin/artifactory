@@ -27,12 +27,6 @@ public class ModalHandler extends ModalWindow implements TitleModel {
         setCssClassName("w_modal");
 
         add(HeaderContributor.forJavaScript(ModalHandler.class, "ModalHandler.js"));
-        setCloseButtonCallback(new CloseButtonCallback() {
-            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
-                ModalHandler.this.onCloseButtonClicked(target);
-                return true;
-            }
-        });
 
         setWindowClosedCallback(new WindowClosedCallback() {
             public void onClose(AjaxRequestTarget target) {
@@ -47,28 +41,22 @@ public class ModalHandler extends ModalWindow implements TitleModel {
 
     @Override
     public void setContent(Component component) {
+        String cookieName = getId() + "-" + component.getClass().getSimpleName();
+        setCookieName(cookieName);
+
         // set content first
         super.setContent(component);
 
-        // get BaseModalPanel settings
         if (component instanceof BaseModalPanel) {
             BaseModalPanel modalPanel = (BaseModalPanel) component;
 
             setTitle(modalPanel.getTitle());
-            setCookieName(modalPanel.getCookieName());
 
             setMinimalWidth(modalPanel.getMinimalWidth());
             setMinimalHeight(modalPanel.getMinimalHeight());
 
             setInitialWidth(modalPanel.getInitialWidth());
             setInitialHeight(modalPanel.getInitialHeight());
-        }
-    }
-
-    protected void onCloseButtonClicked(AjaxRequestTarget target) {
-        BaseModalPanel modalPanel = getModalPanel();
-        if (modalPanel != null) {
-            modalPanel.onCloseButtonClicked(target);
         }
     }
 

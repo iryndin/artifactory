@@ -26,7 +26,6 @@ public class PagingNavigatorWithDropDown extends Panel {
     private Integer currentPageIndex = 0;
     private static final String PREV_PAGE = "prevPage";
     private static final String NEXT_PAGE = "nextPage";
-    private DropDownChoice pageableDropDown;
 
     public PagingNavigatorWithDropDown(String id, IPageable pageable) {
         super(id);
@@ -37,15 +36,7 @@ public class PagingNavigatorWithDropDown extends Panel {
     @Override
     protected void onBeforeRender() {
         // already added ?
-        if (pageableDropDown != null) {
-            // make sure the pages count and current index are in sync
-            // this is necessary in case the number of results or current page were changed
-            // by someone else (for example new search results)
-            pageableDropDown.setChoices(getPagesNumbers());
-            if (currentPageIndex != pageable.getCurrentPage()) {
-                currentPageIndex = pageable.getCurrentPage();
-                updateButtons();    // enable/disable next and prev buttons
-            }
+        if (get(PREV_PAGE) != null) {
             super.onBeforeRender();
             return;
         }
@@ -56,7 +47,7 @@ public class PagingNavigatorWithDropDown extends Panel {
         link = new TitledAjaxLink(PREV_PAGE) {
             public void onClick(AjaxRequestTarget target) {
                 // no more prev pages ?
-                if (shouldDisablePrevButton()) {
+                if (pageable.getCurrentPage() < 1) {
                     // update the buttons state
                     updateButtons(target);
                     return;
@@ -74,11 +65,11 @@ public class PagingNavigatorWithDropDown extends Panel {
                 updateButtons(target);
             }
         };
-        link.setEnabled(!shouldDisablePrevButton());
+        link.setEnabled(!isPrevButtonDisabled());
         add(link);
 
         // pageable drop down
-        pageableDropDown = new DropDownChoice("pageableDropDown", new Model() {
+        DropDownChoice pdd = new DropDownChoice("pageableDropDown", new Model() {
             @Override
             public Object getObject() {
                 return currentPageIndex;
@@ -91,9 +82,9 @@ public class PagingNavigatorWithDropDown extends Panel {
                 }
                 currentPageIndex = (Integer) object;
             }
-        }, getPagesNumbers());
-        pageableDropDown.setOutputMarkupId(true);
-        pageableDropDown.setChoiceRenderer(new ChoiceRenderer() {
+        }, getPages());
+        pdd.setOutputMarkupId(true);
+        pdd.setChoiceRenderer(new ChoiceRenderer() {
             @Override
             public Object getDisplayValue(Object object) {
                 if (object == null) {
@@ -107,7 +98,7 @@ public class PagingNavigatorWithDropDown extends Panel {
         });
 
         // adding ajax
-        pageableDropDown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        pdd.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 if (currentPageIndex == null) {
@@ -117,20 +108,20 @@ public class PagingNavigatorWithDropDown extends Panel {
                 // changing the page
                 pageable.setCurrentPage(currentPageIndex);
 
-                // render it
-                target.addComponent((Component) pageable);
+                // render it !
+                target.addComponent(((Component) pageable).getParent());
 
                 updateButtons(target);
 
             }
         });
-        add(pageableDropDown);
+        add(pdd);
 
-        // next link
+        // prev link
         link = new TitledAjaxLink(NEXT_PAGE) {
             public void onClick(AjaxRequestTarget target) {
                 // no more next pages ?
-                if (shouldDisableNextButton()) {
+                if (pageable.getCurrentPage() > pageable.getPageCount() - 2) {
                     // update the buttons state
                     updateButtons(target);
                     return;
@@ -149,7 +140,7 @@ public class PagingNavigatorWithDropDown extends Panel {
                 updateButtons(target);
             }
         };
-        link.setEnabled(!shouldDisableNextButton());
+        link.setEnabled(!isNextButtonDisabled());
         add(link);
 
         super.onBeforeRender();
@@ -157,21 +148,16 @@ public class PagingNavigatorWithDropDown extends Panel {
     }
 
 
-    private void updateButtons() {
-        updateButton(null, PREV_PAGE, !shouldDisablePrevButton());
-        updateButton(null, NEXT_PAGE, !shouldDisableNextButton());
-    }
-
     private void updateButtons(AjaxRequestTarget target) {
-        updateButton(target, PREV_PAGE, !shouldDisablePrevButton());
-        updateButton(target, NEXT_PAGE, !shouldDisableNextButton());
+        updateButton(target, PREV_PAGE, !isPrevButtonDisabled());
+        updateButton(target, NEXT_PAGE, !isNextButtonDisabled());
     }
 
-    private boolean shouldDisableNextButton() {
+    private boolean isNextButtonDisabled() {
         return pageable.getCurrentPage() > pageable.getPageCount() - 2;
     }
 
-    private boolean shouldDisablePrevButton() {
+    private boolean isPrevButtonDisabled() {
         return pageable.getCurrentPage() < 1;
     }
 
@@ -181,14 +167,12 @@ public class PagingNavigatorWithDropDown extends Panel {
         // rendering the button ONLY if the state was changed
         if (c.isEnabled() != state) {
             c.setEnabled(state);
-            if (target != null) {
-                target.addComponent(c);
-            }
+            target.addComponent(c);
         }
     }
 
-    private List<Integer> getPagesNumbers() {
-        List<Integer> pages = new ArrayList<Integer>(pageable.getPageCount());
+    private List<Integer> getPages() {
+        List<Integer> pages = new ArrayList<Integer>(2);
 
         // filling the list
         for (int i = 0; i < pageable.getPageCount(); i++) {

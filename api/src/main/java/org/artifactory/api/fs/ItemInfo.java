@@ -31,12 +31,6 @@ public abstract class ItemInfo implements Info {
         this.lastModified = info.getLastModified();
     }
 
-    protected ItemInfo(ItemInfo info, RepoPath repoPath) {
-        this(repoPath);
-        this.created = info.getCreated();
-        this.lastModified = info.getLastModified();
-    }
-
     public RepoPath getRepoPath() {
         return repoPath;
     }
@@ -70,6 +64,8 @@ public abstract class ItemInfo implements Info {
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
+
+    public abstract ItemExtraInfo getExtension();
 
     @Override
     public boolean equals(Object o) {
@@ -105,15 +101,4 @@ public abstract class ItemInfo implements Info {
                 this.repoPath.equals(info.repoPath) &&
                 this.created == info.created;
     }
-
-    public void setModifiedBy(String name) {
-        getInernalXmlInfo().setModifiedBy(name);
-    }
-
-    /**
-     * Should not be called by clients - always use direct accessors
-     *
-     * @return
-     */
-    public abstract ItemAdditionalInfo getInernalXmlInfo();
 }

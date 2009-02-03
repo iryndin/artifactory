@@ -97,11 +97,7 @@ public class SecurityExporter implements ImportableExportable {
                     PermissionTargetInfo permissionTarget = UpdateUtils
                             .createFromObjectIdentity(Text.unescape(objectIdentity));
                     AclInfo acl = new AclInfo(permissionTarget);
-                    if (node.hasProperty("updatedBy")) {
-                        acl.setUpdatedBy(node.getProperty("updatedBy").getString());
-                    } else {
-                        acl.setUpdatedBy("export");
-                    }
+                    acl.setUpdatedBy(node.getProperty("updatedBy").getString());
                     result.add(acl);
                     NodeIterator children = node.getNodes();
                     while (children.hasNext()) {

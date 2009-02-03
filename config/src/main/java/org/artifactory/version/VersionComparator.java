@@ -36,16 +36,4 @@ public class VersionComparator {
     public boolean supports(ArtifactoryVersion version) {
         return from.beforeOrEqual(version) && version.beforeOrEqual(until);
     }
-
-    public boolean supports(int revision) {
-        return from.getRevision() <= revision && revision <= until.getRevision();
-    }
-
-    public ArtifactoryVersion getFrom() {
-        return from;
-    }
-
-    public ArtifactoryVersion getUntil() {
-        return until;
-    }
 }

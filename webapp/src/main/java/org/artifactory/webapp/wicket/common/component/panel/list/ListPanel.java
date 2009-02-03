@@ -1,18 +1,14 @@
 package org.artifactory.webapp.wicket.common.component.panel.list;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.component.CancelDefaultDecorator;
 import org.artifactory.webapp.wicket.common.component.links.TitledAjaxLink;
-import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalShowLink;
 import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
@@ -30,24 +26,21 @@ import java.util.List;
  * @author Yoav Aharoni
  */
 public abstract class ListPanel<T> extends TitledPanel {
-    private static final int DEFAULT_ROWS_PER_PAGE = 15;
+    private static final int DEFAULT_ROWS_PER_PAGE = 8;
     private String defaultInitialSortProperty;
     private ModalShowLink newItemLink;
-    private SortableDataProvider dataProvider;
 
     protected ListPanel(String id) {
         super(id);
-        dataProvider = new DefaultSortableDataProvider();
-        init();
+        init(new DefaultSortableDataProvider());
     }
 
-    protected ListPanel(String id, SortableDataProvider dataProvider) {
+    public ListPanel(String id, SortableDataProvider dataProvider) {
         super(id);
-        this.dataProvider = dataProvider;
-        init();
+        init(dataProvider);
     }
 
-    private void init() {
+    private void init(SortableDataProvider dataProvider) {
         add(new CssClass("list-panel"));
 
         // add new item link
@@ -68,11 +61,9 @@ public abstract class ListPanel<T> extends TitledPanel {
             defaultInitialSortProperty = columns.get(1).getSortProperty();
         }
 
-        add(new MySortableTable(columns, dataProvider));
-    }
-
-    public final SortableDataProvider getDataProvider() {
-        return dataProvider;
+        SortableTable table = new SortableTable(
+                "table", columns, dataProvider, getRowsPerPage());
+        add(table);
     }
 
     /**
@@ -189,34 +180,6 @@ public abstract class ListPanel<T> extends TitledPanel {
 
         public CharSequence decorateOnFailureScript(CharSequence script) {
             return script;
-        }
-    }
-
-    private class MySortableTable extends SortableTable {
-        private MySortableTable(List<IColumn> columns, SortableDataProvider dataProvider) {
-            super("table", columns, dataProvider, ListPanel.this.getRowsPerPage());
-        }
-
-        @SuppressWarnings({"RefusedBequest"})
-        @Override
-        protected Item newRowItem(String id, int index, final IModel model) {
-            Item item = super.newRowItem(id, index, model);
-            item.add(new AjaxEventBehavior("ondblclick") {
-                @SuppressWarnings({"unchecked"})
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    ModalHandler modalHandler = ModalHandler.getInstanceFor(ListPanel.this);
-                    T itemObject = (T) model.getObject();
-                    modalHandler.setModalPanel(newUpdateItemPanel(itemObject));
-                    modalHandler.show(target);
-                }
-
-                @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return new CancelDefaultDecorator();
-                }
-            });
-            return item;
         }
     }
 }

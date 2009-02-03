@@ -10,7 +10,6 @@ import org.apache.wicket.proxy.IProxyTargetLocator;
 import org.apache.wicket.proxy.LazyInitProxyFactory;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
-import org.artifactory.security.HttpAuthenticationDetails;
 import org.artifactory.webapp.servlet.RequestUtils;
 import org.artifactory.webapp.wicket.utils.WebUtils;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class ArtifactoryWebSession extends AuthenticatedWebSession {
                 new UsernamePasswordAuthenticationToken(username, password);
         WebRequest webRequest = WebUtils.getWebRequest();
         HttpServletRequest servletRequest = webRequest.getHttpServletRequest();
-        WebAuthenticationDetails details = new HttpAuthenticationDetails(servletRequest);
+        WebAuthenticationDetails details = new WebAuthenticationDetails(servletRequest);
         authenticationToken.setDetails(details);
         boolean authenticated;
         try {
@@ -73,7 +72,8 @@ public class ArtifactoryWebSession extends AuthenticatedWebSession {
         } catch (AuthenticationException e) {
             authenticated = false;
             if (log.isDebugEnabled()) {
-                log.debug("Fail to authenticate " + username + "/" + DigestUtils.md5Hex(password), e);
+                log.debug(
+                        "Fail to authenticate " + username + "/" + DigestUtils.md5Hex(password), e);
             }
         }
         return authenticated;
@@ -134,8 +134,7 @@ public class ArtifactoryWebSession extends AuthenticatedWebSession {
     private static class SecurityServiceLocator implements IProxyTargetLocator {
         public Object locateProxyTarget() {
             ArtifactoryContext context = ContextHelper.get();
-            // get the "ui" authentication manager (no password encryption stuff)
-            AuthenticationManager security = (AuthenticationManager) context.getBean("authenticationManager");
+            AuthenticationManager security = context.beanForType(AuthenticationManager.class);
             return security;
         }
     }

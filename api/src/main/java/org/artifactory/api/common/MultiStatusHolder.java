@@ -32,7 +32,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MultiStatusHolder extends StatusHolder {
     private static final Logger log = LoggerFactory.getLogger(MultiStatusHolder.class);
 
-    private final BlockingQueue<StatusEntry> statusEntries = new LinkedBlockingQueue<StatusEntry>(500);
+    private final BlockingQueue<StatusEntry> statusEntries =
+            new LinkedBlockingQueue<StatusEntry>(500);
     private final BlockingQueue<File> callbacks = new LinkedBlockingQueue<File>(100);
 
     @Override
@@ -56,8 +57,9 @@ public class MultiStatusHolder extends StatusHolder {
         if (statusEntries.remainingCapacity() < 3) {
             // No more space, log and throw to garbage
             StatusEntry oldEntry = statusEntries.poll();
-            // If active logging is on, it's already logged so ignored
-            if (oldEntry != null && !isActivateLogging()) {
+            if (isActivateLogging()) {
+                // Already logged so ignored
+            } else {
                 logEntry(oldEntry, logger);
             }
         }

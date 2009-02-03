@@ -18,7 +18,6 @@ package org.artifactory.schedule;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,19 +42,18 @@ public class TaskServiceTest extends TaskServiceTestBase {
     public void startTask() throws Exception {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getLogger("org.artifactory.schedule.TaskServiceTest").setLevel(Level.INFO);
-        lc.getLogger("org.artifactory.schedule").setLevel(Level.DEBUG);
         lc.getLogger("org.artifactory.schedule.TaskBase").setLevel(Level.TRACE);
         lc.getLogger("org.artifactory.schedule.TaskCallback").setLevel(Level.TRACE);
     }
 
     @Test(invocationCount = 5, threadPoolSize = 3)
     public void testServiceSynchronization() throws Exception {
-        QuartzTask task1 = new QuartzTask(DummyQuartzCommand.class, 100);
+        QuartzTask task1 = new QuartzTask(DummyQuartzCommand.class, 500);
         taskService.startTask(task1);
         taskService.pauseTask(task1.getToken(), true);
-        QuartzTask task2 = new QuartzTask(DummyQuartzCommand.class, 100);
+        QuartzTask task2 = new QuartzTask(DummyQuartzCommand.class, 500);
         taskService.startTask(task2);
-        Thread.sleep(600);
+        Thread.sleep(3000);
         taskService.stopTask(task1.getToken(), true);
         taskService.stopTask(task2.getToken(), true);
         /*
@@ -135,52 +133,20 @@ public class TaskServiceTest extends TaskServiceTestBase {
                 return null;
             }
         };
+        new Callable<String>() {
+            public String call() throws Exception {
+                log.info("........... PAUSING-2");
+                taskService.pauseTask(tsk.getToken(), true);
+                pauseBarrier1.await();
+                log.info("........... CANCELING");
+                taskService.cancelTask(tsk.getToken(), true);
+                pauseBarrier2.await();
+                return null;
+            }
+        };
         taskService.startTask(tsk);
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.submit(c1);
-    }
-
-    @Test
-    public void testMultiSingleExecution() throws Exception {
-        taskService.cancelAllTasks(true);
-        QuartzCommand cmd = new DummyQuartzCommand();
-        final QuartzTask tsk1 = new QuartzTask(cmd.getClass(), 0, 0);
-        tsk1.setSingleton(true);
-        taskService.startTask(tsk1);
-        //TODO: [by yl] Find a better way...
-        //Let it start
-        Thread.sleep(500);
-        log.info("........... STARTED TSK1");
-        /*TaskBase activeTask = taskService.getInternalActiveTask(tsk1.getToken());
-        Assert.assertNull(activeTask);*/
-        final TaskBase tsk2 = new QuartzTask(cmd.getClass(), 0, 0);
-        tsk2.setSingleton(true);
-        try {
-            taskService.startTask(tsk2);
-            Assert.fail("Should not be able to run 2 singleton tasks concurrently.");
-        } catch (IllegalStateException e) {
-            //Good - we expected it
-        }
-    }
-
-    @Test
-    public void testSingleExecutionWithError() throws Exception {
-        taskService.cancelAllTasks(true);
-        QuartzCommand cmd = new DummyQuartzCommand();
-        final QuartzTask tsk1 = new QuartzTask(cmd.getClass(), 0, 0);
-        tsk1.setSingleton(true);
-        tsk1.addAttribute(DummyQuartzCommand.FAIL, Boolean.TRUE);
-        taskService.startTask(tsk1);
-        //TODO: [by yl] Find a better way...
-        //Let it start
-        Thread.sleep(500);
-        log.info("........... WAITING FOR TSK1");
-        taskService.waitForTaskCompletion(tsk1.getToken());
-        TaskBase activeTask = taskService.getInternalActiveTask(tsk1.getToken());
-        Assert.assertNull(activeTask);
-        final TaskBase tsk2 = new QuartzTask(cmd.getClass(), 0, 0);
-        tsk2.setSingleton(true);
-        taskService.startTask(tsk2);
     }
 
     @Test
@@ -207,7 +173,7 @@ public class TaskServiceTest extends TaskServiceTestBase {
             }
         };
         taskService.startTask(tsk);
-        Thread.sleep(200);
+        Thread.sleep(1000);
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.submit(c1);
         executorService.submit(c2);
@@ -215,7 +181,7 @@ public class TaskServiceTest extends TaskServiceTestBase {
 
     @Test
     public void testDoubleResume() throws Exception {
-        QuartzTask task1 = new QuartzTask(DummyQuartzCommand.class, 100);
+        QuartzTask task1 = new QuartzTask(DummyQuartzCommand.class, 500);
         taskService.startTask(task1);
         taskService.pauseTask(task1.getToken(), true);
         taskService.stopTask(task1.getToken(), true);

@@ -27,7 +27,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.component.BooleanColumn;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel;
 import org.artifactory.webapp.wicket.common.component.panel.list.ListPanel;
@@ -48,17 +47,14 @@ public class GroupsListPanel extends ListPanel<GroupInfo> {
         super(id);
     }
 
-    @Override
     public String getTitle() {
         return "";
     }
 
-    @Override
     protected List<GroupInfo> getList() {
         return userGroupService.getAllGroups();
     }
 
-    @Override
     protected void addColumns(List<IColumn> columns) {
         columns.add(new PropertyColumn(new Model("Group name"), "groupName", "groupName") {
             @Override
@@ -79,25 +75,20 @@ public class GroupsListPanel extends ListPanel<GroupInfo> {
                 item.add(new CssClass("one-line"));
             }
         });
-        columns.add(new BooleanColumn(new Model("Auto Join"), "newUserDefault", "newUserDefault"));        
     }
 
-    @Override
     protected BaseModalPanel newCreateItemPanel() {
         return new GroupCreateUpdatePanel(CreateUpdateAction.CREATE, new GroupInfo(), this);
     }
 
-    @Override
     protected BaseModalPanel newUpdateItemPanel(GroupInfo group) {
         return new GroupCreateUpdatePanel(CreateUpdateAction.UPDATE, group, this);
     }
 
-    @Override
     protected String getDeleteConfirmationText(GroupInfo group) {
         return "Are you sure you wish to delete the group " + group.getGroupName() + "?";
     }
 
-    @Override
     protected void deleteItem(GroupInfo group, AjaxRequestTarget target) {
         userGroupService.deleteGroup(group.getGroupName());
     }

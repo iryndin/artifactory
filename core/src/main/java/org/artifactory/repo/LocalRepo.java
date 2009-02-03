@@ -22,7 +22,6 @@ import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.resource.ArtifactResource;
@@ -65,8 +64,4 @@ public interface LocalRepo<T extends LocalRepoDescriptor>
     void updateCache(JcrFsItem fsItem);
 
     String getAbsolutePath(Node node);
-
-    ChecksumPolicy getChecksumPolicy();
-
-    void onDelete(JcrFsItem fsItem);
 }

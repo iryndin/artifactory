@@ -16,10 +16,78 @@
  */
 package org.artifactory.tx;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author freds
  * @date Sep 22, 2008
  */
-public interface SessionResourceManager extends SessionResource {
-    <T extends SessionResource> T getOrCreateResource(Class<T> resourceClass);
+public class SessionResourceManager implements SessionResources {
+    private static final Logger log =
+            LoggerFactory.getLogger(SessionResourceManager.class);
+
+    private final Map<Class, SessionResource> resources = new HashMap<Class, SessionResource>();
+
+    @SuppressWarnings({"unchecked"})
+    public <T extends SessionResource> T getOrCreateResource(Class<T> resourceClass) {
+        T result = (T) resources.get(resourceClass);
+        if (result == null) {
+            try {
+                result = resourceClass.newInstance();
+                resources.put(resourceClass, result);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return result;
+    }
+
+    public boolean hasPendingChanges() {
+        for (SessionResource resource : resources.values()) {
+            if (resource.hasPendingChanges()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void save() {
+        for (SessionResource resource : resources.values()) {
+            resource.save();
+        }
+    }
+
+    public void releaseResources(boolean commit) {
+        RuntimeException ex = null;
+        for (SessionResource resource : resources.values()) {
+            try {
+                resource.releaseResources(commit);
+            } catch (RuntimeException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "Error while releasing resources " + resource + " : " + e.getMessage(),
+                            e);
+                }
+                ex = e;
+            }
+        }
+        if (ex != null) {
+            throw ex;
+        }
+    }
+
+    public boolean hasResources() {
+        for (SessionResource resource : resources.values()) {
+            if (resource.hasResources()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

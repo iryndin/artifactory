@@ -18,8 +18,6 @@ package org.artifactory.jcr.lock;
 
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.jcr.fs.JcrFsItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -30,8 +28,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @date Oct 19, 2008
  */
 public class SessionLockEntry {
-    private static final Logger log = LoggerFactory.getLogger(SessionLockEntry.class);
-
     private final ReentrantReadWriteLock lock;
     private JcrFsItem lockedFsItem;
     private JcrFsItem immutableFsItem;
@@ -85,20 +81,20 @@ public class SessionLockEntry {
             // already done
             return;
         }
-        JcrFsItem item = getFsItem();
         if (readLock != null) {
-            //log.trace("Upgrading from read lock to write lock on '{}'", item);
-            throw new LockingException("Cannot acquire write lock if has read lock for " + item);
+            throw new LockingException(
+                    "Cannot acquire write lock if has read lock for " + getFsItem());
         }
         if (lockedFsItem == null) {
-            throw new LockingException("Cannot write lock an immutable item " + item);
+            throw new LockingException("Cannot write lock an immutable item " + getFsItem());
         }
         acquire("Write", getWriteLock());
     }
 
     private void acquire(String lockName, Lock lock) {
         try {
-            boolean success = lock.tryLock(ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
+            boolean success =
+                    lock.tryLock(ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
             if (!success) {
                 throw new LockingException(lockName + " lock on " + getFsItem() +
                         " not acquired in " + ConstantsValue.lockTimeoutSecs.getLong() +
@@ -149,7 +145,8 @@ public class SessionLockEntry {
 
     public void save() {
         if (!isLockedByMe()) {
-            throw new LockingException("Cannot save item " + getFsItem() + " which not locked by me!");
+            throw new LockingException(
+                    "Cannot saved item " + getFsItem() + " which not locked by me!");
         }
         if (lockedFsItem != null && !lockedFsItem.isDeleted()) {
             if (immutableFsItem != null) {

@@ -95,7 +95,7 @@ public class MockServer {
      * @return
      * @throws IOException
      */
-    public boolean isServerActive() throws IOException {
+    private boolean isServerActive() throws IOException {
 
         GetMethod getMethod = new GetMethod(selectedURL + EXISTENCE_PREFIX);
         int response;
@@ -123,12 +123,7 @@ public class MockServer {
         String xmlConfig = xStream.toXML(test);
 
         //Add test
-        String testName = test.getName();
-        addTest(testName, xmlConfig);
-    }
-
-    public void addTest(String testName, String xmlConfig) {
-        PutMethod putMethod = new PutMethod(getConfigURL(testName));
+        PutMethod putMethod = new PutMethod(getConfigURL(test.getName()));
         try {
             putMethod.setRequestEntity(new StringRequestEntity(xmlConfig, CONTENT_TYPE, ENCODING));
             httpClient.executeMethod(putMethod);

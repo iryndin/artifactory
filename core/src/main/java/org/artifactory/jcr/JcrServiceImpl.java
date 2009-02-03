@@ -41,16 +41,12 @@ import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.config.InternalCentralConfigService;
-import org.artifactory.config.xml.ArtifactoryXmlFactory;
-import org.artifactory.config.xml.EntityResolvingContentHandler;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.io.NonClosingInputStream;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.md.MetadataAware;
 import org.artifactory.jcr.md.MetadataService;
-import org.artifactory.jcr.trash.Trashman;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.index.IndexerJob;
 import org.artifactory.repo.service.InternalRepositoryService;
@@ -61,8 +57,8 @@ import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.tx.SessionResource;
-import org.artifactory.util.ExceptionUtils;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.ExceptionUtils;
+import org.artifactory.utils.PathUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,11 +67,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.jcr.SessionFactoryUtils;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
-import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -86,9 +79,6 @@ import javax.jcr.Workspace;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,7 +86,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Spring based session factory for tx jcr sessions
@@ -153,21 +142,11 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     public JcrSession getManagedSession() {
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            throw new RepositoryRuntimeException("Trying to get session outside transaction scope.");
+            throw new RepositoryRuntimeException("Trying to get a session outside a Tx scope");
         }
         JcrSession session;
         try {
             session = (JcrSession) SessionFactoryUtils.doGetSession(sessionFactory, true);
-        } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException(e);
-        }
-        return session;
-    }
-
-    public JcrSession getUnmanagedSession() {
-        JcrSession session;
-        try {
-            session = (JcrSession) sessionFactory.getSession();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
         }
@@ -240,7 +219,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
      * @param settings
      * @param status
      */
-    public RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings, StatusHolder status) {
+    public RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings,
+            StatusHolder status) {
         JcrFolder folder = repo.getLockedJcrFolder(jcrFolder, true);
         folder.importFrom(settings, status);
         return folder.getRepoPath();
@@ -264,27 +244,31 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             }
             AccessLogger.deployed(repoPath);
         } catch (Exception e) {
-            status.setError("Failed to import file '" + file.getAbsolutePath() + "' into " + jcrFile + ".", e, log);
+            status.setError(
+                    "Failed to import file '" + file.getAbsolutePath() + "' into " + jcrFile + ".", e, log);
         }
         return jcrFile;
     }
 
-    public boolean delete(JcrFsItem fsItem) {
+    public boolean delete(String absPath) {
         JcrSession session = getManagedSession();
-        String absPath = fsItem.getAbsolutePath();
         if (!session.itemExists(absPath)) {
             return false;
         }
-
-        //TODO: [by yl] This event should really be emmitted from the fsitem itself, but is done here for tx propagation
-        fsItem.getLocalRepo().onDelete(fsItem);
+        Node node = (Node) session.getItem(absPath);
+        try {
+            node.remove();
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException("Failed to remove node.", e);
+        }
         return true;
     }
 
     public List<String> getChildrenNames(String absPath) {
         JcrSession session = getManagedSession();
         if (!session.itemExists(absPath)) {
-            throw new RepositoryRuntimeException("Tried to get children of a non exiting node '" + absPath + "'.");
+            throw new RepositoryRuntimeException(
+                    "Tried to get children of a non exiting node '" + absPath + "'.");
         }
         Node node = (Node) session.getItem(absPath);
         List<String> names = new ArrayList<String>();
@@ -301,24 +285,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             throw new RepositoryRuntimeException("Failed to get node's children names.", e);
         }
         return names;
-    }
-
-    public void trash(List<JcrFsItem> items) {
-        try {
-            String tempFolderName = UUID.randomUUID().toString();
-            String trashFolderPath = JcrPath.get().getTrashJcrRootPath() + "/" + tempFolderName;
-            getOrCreateUnstructuredNode(trashFolderPath);
-            JcrSession session = getManagedSession();
-            //Move items to the trash folder
-            for (JcrFsItem item : items) {
-                String path = item.getPath();
-                session.move(path, trashFolderPath + "/" + item.getName());
-            }
-            Trashman trashman = session.getOrCreateResource(Trashman.class);
-            trashman.addTrashedFolder(tempFolderName);
-        } catch (Exception e) {
-            log.error("Could not move items to trash.", e);
-        }
     }
 
     /**
@@ -388,10 +354,10 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         return file;
     }
 
-    public Node getOrCreateUnstructuredNode(String absPath) {
+    public Node getOrCreateUnstructuredNode(String name) {
         JcrSession session = getManagedSession();
         Node root = session.getRootNode();
-        return getOrCreateUnstructuredNode(root, absPath);
+        return getOrCreateUnstructuredNode(root, name);
     }
 
     public Node getOrCreateUnstructuredNode(Node parent, String name) {
@@ -422,58 +388,24 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         jcrFile.exportTo(settings, status);
     }
 
-    /**
-     * Import xml with characters entity resolving
-     */
-    public void importXml(Node xmlNode, InputStream in) throws RepositoryException, IOException {
-        if (!xmlNode.isNew()) {
-            NodeIterator children = xmlNode.getNodes();
-            while (children.hasNext()) {
-                Node child = (Node) children.next();
-                child.remove();
-            }
-        }
-        final String absPath = xmlNode.getPath();
-        JcrSession session = getManagedSession();
-        ContentHandler contentHandler =
-                session.getImportContentHandler(absPath, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
-        EntityResolvingContentHandler resolvingContentHandler = new EntityResolvingContentHandler(contentHandler);
-        NonClosingInputStream ncis = null;
-        try {
-            SAXParserFactory factory = ArtifactoryXmlFactory.getFactory();
-            SAXParser parser = factory.newSAXParser();
-            ncis = new NonClosingInputStream(in);
-            parser.parse(ncis, resolvingContentHandler);
-        } catch (ParserConfigurationException e) {
-            //Here ncis is always null
-            throw new RepositoryException("SAX parser configuration error", e);
-        } catch (Exception e) {
-            //Check for wrapped repository exception
-            if (e instanceof SAXException) {
-                Exception e1 = ((SAXException) e).getException();
-                if (e1 != null && e1 instanceof RepositoryException) {
-                    if (ncis != null) {
-                        ncis.forceClose();
-                    }
-                    throw (RepositoryException) e1;
-                }
-            }
-            log.warn("Failed to parse XML stream to import into '" + absPath + "'.", e);
-        }
-    }
-
     @SuppressWarnings({"unchecked"})
     public void commitWorkingCopy(long sleepBetweenFiles, TaskCallback callback) {
-        File workingCopyDir = ArtifactoryHome.getWorkingCopyDir();
         try {
-            taskService.pauseTasks(IndexerJob.class, false);
+            taskService.pauseTasks(IndexerJob.class, true);
+            File workingCopyDir = ArtifactoryHome.getWorkingCopyDir();
             Collection<File> files = FileUtils.listFiles(workingCopyDir,
                     FileFilterUtils.trueFileFilter(),
                     FileFilterUtils.trueFileFilter());
             if (files.size() == 0) {
-                return;
+                //Remove any left over folders and return
+                try {
+                    FileUtils.cleanDirectory(workingCopyDir);
+                } catch (IOException e) {
+                    log.warn("Could not clean up the working copy directory: " + e.getMessage());
+                }
+            } else {
+                log.info("Committing working copy ({} files)...", files.size());
             }
-            log.info("Committing working copy ({} files)...", files.size());
             int count = 0;
             for (File file : files) {
                 boolean stopped = taskService.blockIfPausedAndShouldBreak();
@@ -481,7 +413,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
                     return;
                 }
                 //if (!task.isCanceled()) { ...
-                String workingCopyAbsPath = file.getAbsolutePath().substring(workingCopyDir.getAbsolutePath().length());
+                String workingCopyAbsPath =
+                        file.getAbsolutePath().substring(workingCopyDir.getAbsolutePath().length());
                 JcrService service = InternalContextHelper.get().getJcrService();
                 boolean committed = service.commitSingleFile(workingCopyAbsPath);
                 if (committed) {
@@ -504,7 +437,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             }
             log.info("Working copy commit done (" + count + " files).");
         } finally {
-            org.artifactory.util.FileUtils.cleanupEmptyDirectories(workingCopyDir);
             //Resume
             taskService.resumeTasks(IndexerJob.class);
         }
@@ -523,12 +455,12 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             try {
                 boolean deleted = jcrFile.extractWorkingCopyFile();
                 if (deleted) {
-                    log.debug("Committed wc file: " + workingCopyAbsPath + " was deleted.");
+                    log.info("Committed wc file: " + workingCopyAbsPath + " was deleted.");
                 } else {
-                    log.debug("Committed wc file: " + workingCopyAbsPath + ".");
+                    log.info("Committed wc file: " + workingCopyAbsPath + ".");
                 }
                 return true;
-            } catch (Exception e) {
+            } catch (RepositoryException e) {
                 log.error("Error during commit of single file " + workingCopyAbsPath, e);
             }
         }
@@ -726,7 +658,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         return new ArtifactCount(jarCount, pomCount);
     }
 
-    public List<DeployableUnit> getDeployableUnitsUnder(RepoPath repoPath) throws RepositoryException {
+    public List<DeployableUnit> getDeployableUnitsUnder(RepoPath repoPath)
+            throws RepositoryException {
         StringBuilder qb = new StringBuilder();
         qb.append("/jcr:root/repositories/");
         qb.append(repoPath.getRepoKey());
@@ -767,7 +700,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             gc.scan();
             gc.stopScan();
             int count = gc.deleteUnused();
-            log.info("Jackrabbit's datastore garbage collector deleted " + count + " unreferenced item(s).");
+            log.info("Jackrabbit's datastore garbage collector deleted " + count +
+                    " unreferenced item(s).");
         } catch (Exception e) {
             if (gc != null) {
                 try {

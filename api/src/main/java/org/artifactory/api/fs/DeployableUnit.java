@@ -29,7 +29,8 @@ public class DeployableUnit implements Serializable {
         String[] pathElements = relPath.split("\\/");
 
         if (pathElements.length < 3) {
-            throw new IllegalArgumentException("Not a valid deployable unit path" + relPath);
+            throw new IllegalArgumentException("Not a valid deployable unit path"
+                    + relPath);
         }
         String version = pathElements[pathElements.length - 1];
         String artifactId = pathElements[pathElements.length - 2];

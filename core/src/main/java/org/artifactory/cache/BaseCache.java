@@ -19,7 +19,6 @@ package org.artifactory.cache;
 import org.artifactory.api.cache.ArtifactoryCache;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -71,21 +70,6 @@ class BaseCache<K, V> implements Map<K, V> {
         return definition;
     }
 
-    public Set<K> keySet() {
-        return cacheData.keySet();
-    }
-
-    /**
-     * @return An unmodifiable copy collection of the map values.
-     */
-    public Collection<V> values() {
-        Map<K, V> result = retrieveSimpleMap();
-        return result.values();
-    }
-
-    /**
-     * @return An unmodifiable copy set of the map entries. 
-     */
     public Set<Entry<K, V>> entrySet() {
         Map<K, V> result = retrieveSimpleMap();
         return result.entrySet();
@@ -116,7 +100,16 @@ class BaseCache<K, V> implements Map<K, V> {
                 cacheData.remove(k);
             }
         }
-        return Collections.unmodifiableMap(result);
+        return result;
+    }
+
+    public Collection<V> values() {
+        Map<K, V> result = retrieveSimpleMap();
+        return result.values();
+    }
+
+    public Set<K> keySet() {
+        return cacheData.keySet();
     }
 
     public void clear() {

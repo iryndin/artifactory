@@ -16,10 +16,9 @@
  */
 package org.artifactory.api.request;
 
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +43,20 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
     }
 
     public boolean isSnapshot() {
-        return MavenNaming.isSnapshot(getPath());
+        return PackagingType.isSnapshot(getPath());
     }
 
     public boolean isMetadata() {
-        return NamingUtils.isMetadata(getPath());
+        boolean metadata = PackagingType.isMetadata(getPath());
+        return metadata;
+    }
+
+    public boolean isResourceProperty() {
+        return PackagingType.isChecksum(getPath());
     }
 
     public boolean isChecksum() {
-        return NamingUtils.isChecksum(getPath());
+        return PackagingType.isChecksum(getPath());
     }
 
     public String getResourcePath() {
@@ -62,7 +66,7 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
             //For metadata get the resource containing the metadata (alwyas a version or an artifact folder
             resourcePath = path.substring(0, path.lastIndexOf("/"));
         } else*/
-        if (isChecksum()) {
+        if (isResourceProperty()) {
             //For checksums search the containing resource
             resourcePath = path.substring(0, path.lastIndexOf("."));
         } else {

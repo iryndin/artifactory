@@ -1,7 +1,5 @@
 package org.artifactory.security.ldap;
 
-import org.artifactory.api.security.UserGroupService;
-import org.artifactory.api.security.UserInfo;
 import org.artifactory.security.SimpleUser;
 import org.artifactory.security.UserGroupManager;
 import org.artifactory.spring.InternalContextHelper;
@@ -15,8 +13,6 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 import org.springframework.security.providers.ldap.LdapAuthenticationProvider;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 
-import java.util.Set;
-
 /**
  * Custom Ldap authentication provider just for creating local users for newly ldap authenticated
  * users.
@@ -29,9 +25,6 @@ public class ArtifactoryLdapAuthenticationProvider extends LdapAuthenticationPro
 
     @Autowired
     private UserGroupManager userGroupManager;
-
-    @Autowired
-    private UserGroupService userGroupservice;
 
     private InternalLdapAutenticator authenticator;
 
@@ -71,7 +64,8 @@ public class ArtifactoryLdapAuthenticationProvider extends LdapAuthenticationPro
         log.debug("'{}' authenticated successfully by ldap server.", userName);
 
         ArtifactoryLdapAuthenticationProvider transactionalMe =
-                InternalContextHelper.get().beanForType(ArtifactoryLdapAuthenticationProvider.class);
+                InternalContextHelper.get()
+                        .beanForType(ArtifactoryLdapAuthenticationProvider.class);
         SimpleUser user = transactionalMe.findOrCreateUser(userName);
 
         // create new authentication response containing the user and it's authorities
@@ -96,13 +90,7 @@ public class ArtifactoryLdapAuthenticationProvider extends LdapAuthenticationPro
             user = userGroupManager.loadUserByUsername(userName);
         } catch (UsernameNotFoundException e) {
             log.debug(String.format("Creating new ldap user '%s' ...", userName));
-            // Creates a new user with invalid password, and user permissions.
-            // The created user cannot update its profile.
-            UserInfo userInfo = new UserInfo(userName, UserInfo.INVALID_PASSWORD, "",
-                    false, true, false, true, true, true);
-            Set<String> defaultGroups = userGroupservice.getNewUserDefaultGroupsNames();
-            userInfo.setGroups(defaultGroups);
-            user = new SimpleUser(userInfo);
+            user = new SimpleUser(userName);
             userGroupManager.createUser(user);
         }
         return user;

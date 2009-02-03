@@ -25,14 +25,15 @@
                     <span wicket:id="includesHelp"/>
 
                     <div class="value">
-                        <select wicket:id="includesSuggest"
+                        <select wicket:id="includesSuggest" class="small-font"
                                 style="height: 22px;"/>
                     </div>
                 </div>
 
-                <div class="field field-sep perrmision-target-field">
+                <div class="field field-sep">
                     <div class="value">
-                        <textarea wicket:id="includesPattern" rows="4">[input]</textarea>
+                        <textarea wicket:id="includesPattern" class="medium"
+                                  rows="4">[input]</textarea>
                     </div>
                 </div>
             </div>
@@ -43,20 +44,21 @@
                     <span wicket:id="excludesHelp"/>
 
                     <div class="value">
-                        <select wicket:id="excludesSuggest"
+                        <select wicket:id="excludesSuggest" class="small-font"
                                 style="height: 22px;"/>
                     </div>
                 </div>
 
-                <div class="field field-sep perrmision-target-field">
+                <div class="field field-sep">
                     <div class="value">
-                        <textarea wicket:id="excludesPattern" rows="4">[input]</textarea>
+                        <textarea wicket:id="excludesPattern" class="medium"
+                                  rows="4">[input]</textarea>
                     </div>
                 </div>
             </div>
 
-            <div class="clear" style="padding-top: 5px;">
-                <div wicket:id="recipients"/>
+            <div class="clear">
+                <div wicket:id="recipients" style="margin: 0px !important;"/>
             </div>
         </div>
 

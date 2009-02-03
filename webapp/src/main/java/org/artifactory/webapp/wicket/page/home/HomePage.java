@@ -29,7 +29,7 @@ public class HomePage extends AuthenticatedPage {
 
     @Override
     protected String getPageName() {
-        return "Welcome";
+        return "Artifactory Home";
     }
 
 }

@@ -17,14 +17,16 @@
 package org.artifactory.api.maven;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.ContentType;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 
 /**
  * User: freds Date: Aug 3, 2008 Time: 11:39:07 AM
@@ -35,13 +37,10 @@ public class MavenArtifactInfo extends MavenUnitInfo {
 
     public static final String ROOT = "artifactory-maven-artifact";
 
-    private String classifier;
-    private String type;
+    private static final String JAR = ContentType.javaArchive.getDefaultExtension();
 
-    /**
-     * String representation of the pom.xml The maven Model class is not used because it isn't Serializable.
-     */
-    private String modelAsString;
+    private final String classifier;
+    private final String type;
 
     public MavenArtifactInfo() {
         super(NA, NA, NA);
@@ -49,7 +48,8 @@ public class MavenArtifactInfo extends MavenUnitInfo {
         this.type = JAR;
     }
 
-    public MavenArtifactInfo(String groupId, String artifactId, String version, String classifier, String type) {
+    public MavenArtifactInfo(String groupId, String artifactId, String version, String classifier,
+            String type) {
         super(groupId, artifactId, version);
         if (PathUtils.hasText(classifier)) {
             this.classifier = classifier;
@@ -76,23 +76,14 @@ public class MavenArtifactInfo extends MavenUnitInfo {
         return classifier;
     }
 
-    public void setClassifier(String classifier) {
-        this.classifier = classifier;
-    }
-
     public boolean hasClassifier() {
-        return classifier != null && !NA.equals(classifier);
+        return !NA.equals(classifier);
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
     public boolean isValid() {
         return super.isValid() && hasVersion();
     }
@@ -100,6 +91,18 @@ public class MavenArtifactInfo extends MavenUnitInfo {
     @Override
     public String getPath() {
         return addPath(new StringBuilder()).toString();
+    }
+
+    public StringBuilder addPath(StringBuilder path) {
+        if (isValid()) {
+            addBasePath(path);
+            path.append("/").append(getArtifactId()).append("-").append(getVersion());
+            if (hasClassifier()) {
+                path.append("-").append(classifier);
+            }
+            path.append(".").append(type);
+        }
+        return path;
     }
 
     @Override
@@ -117,51 +120,56 @@ public class MavenArtifactInfo extends MavenUnitInfo {
         return builder.toString();
     }
 
-    @Override
-    public String toString() {
-        return getGroupId() + ":" + getArtifactId() + ":" + getVersion() +
-                (classifier != null ? (":" + classifier) : "") + ":" + type;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MavenArtifactInfo)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
+
         MavenArtifactInfo info = (MavenArtifactInfo) o;
-        return !(classifier != null ? !classifier.equals(info.classifier) : info.classifier != null) &&
-                type.equals(info.type);
+
+        if (!classifier.equals(info.classifier)) {
+            return false;
+        }
+        return type.equals(info.type);
     }
 
-    @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (classifier != null ? classifier.hashCode() : 0);
+        result = 31 * result + classifier.hashCode();
         result = 31 * result + type.hashCode();
         return result;
     }
 
-    public static MavenArtifactInfo fromRepoPath(RepoPath repoPath) {
-        String groupId, artifactId, version, type = MavenUnitInfo.NA, classifier = MavenUnitInfo.NA;
+    public String toString() {
+        return "MavenArtifactInfo{" +
+                "super=" + super.toString() +
+                ", classifier='" + classifier + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
+
+    public static MavenArtifactInfo buildFromPath(RepoPath repoPath) {
+        String groupId, artifactId, version,
+                type = MavenUnitInfo.NA, classifier = MavenUnitInfo.NA;
 
         String path = repoPath.getPath();
         String name = repoPath.getName();
 
-        //The format of the relative path in maven is a/b/c/artifactId/version/fileName where
+        //The format of the relative path in maven is a/b/c/artifactId/version where
         //groupId="a.b.c". We split the path to elements and analyze the needed fields.
         LinkedList<String> pathElements = new LinkedList<String>();
         StringTokenizer tokenizer = new StringTokenizer(path, "/");
         while (tokenizer.hasMoreTokens()) {
             pathElements.add(tokenizer.nextToken());
         }
-        boolean metaData = NamingUtils.isMetadata(name);
-        boolean checksum = NamingUtils.isChecksum(name);
+        boolean metaData = PackagingType.isMetadata(name);
+        boolean checksum = PackagingType.isChecksum(name);
         //Sanity check, we need groupId, artifactId and version
         if (pathElements.size() < 3) {
             log.warn("Failed to build a MavenArtifactInfo from '" + repoPath + "'. " +
@@ -170,7 +178,7 @@ public class MavenArtifactInfo extends MavenUnitInfo {
         }
 
         //Extract the version, artifactId and groupId
-        int pos = pathElements.size() - 2;  // one before the last path element
+        int pos = pathElements.size() - 2;
         version = pathElements.get(pos--);
         artifactId = pathElements.get(pos--);
         StringBuffer groupIdBuff = new StringBuffer();
@@ -186,9 +194,12 @@ public class MavenArtifactInfo extends MavenUnitInfo {
             boolean snapshot = MavenNaming.isVersionSnapshot(version);
             //Extract the type
             String versionInName = version;
-            if (snapshot && MavenNaming.isVersionUniqueSnapshot(name)) {
+            if (snapshot) {
                 //For uniqueVersion snapshots extract the version pattern for calulating the type
-                versionInName = MavenNaming.getUniqueSnapshotVersionTimestampAndBuildNumber(name);
+                Matcher m = MavenNaming.UNIQUE_SNAPSHOT_NAME_PATTERN.matcher(name);
+                if (m.matches()) {
+                    versionInName = m.group(2);
+                }
             }
             int versionEndIdx = name.lastIndexOf(versionInName) + versionInName.length();
             int typeDotStartIdx = name.indexOf('.', versionEndIdx);
@@ -202,35 +213,5 @@ public class MavenArtifactInfo extends MavenUnitInfo {
             }
         }
         return new MavenArtifactInfo(groupId, artifactId, version, classifier, type);
-    }
-
-    /**
-     * @return The artifact's pom as a String. Might be null.
-     */
-    public String getModelAsString() {
-        return modelAsString;
-    }
-
-    public void setModelAsString(String modelAsString) {
-        this.modelAsString = modelAsString;
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        setClassifier(null);
-        setType(JAR);
-    }
-
-    protected StringBuilder addPath(StringBuilder path) {
-        if (isValid()) {
-            addBasePath(path);
-            path.append("/").append(getArtifactId()).append("-").append(getVersion());
-            if (hasClassifier()) {
-                path.append("-").append(classifier);
-            }
-            path.append(".").append(type);
-        }
-        return path;
     }
 }

@@ -34,7 +34,9 @@ public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
 
     RepoResource getInfo(String path) throws FileExpectedException;
 
-    String getChecksum(String path) throws IOException;
+    String getMetadataProperty(String path) throws IOException;
+
+    String getMetadata(String path) throws IOException;
 
     boolean isLocal();
 

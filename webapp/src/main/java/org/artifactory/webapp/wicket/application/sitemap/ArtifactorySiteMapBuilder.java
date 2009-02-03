@@ -2,29 +2,27 @@ package org.artifactory.webapp.wicket.application.sitemap;
 
 import org.apache.wicket.Page;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.webapp.wicket.page.admin.AdminPage;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.root.SimpleBrowserRootPage;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.BrowseRepoPage;
+import org.artifactory.webapp.wicket.page.config.ConfigHomePage;
 import org.artifactory.webapp.wicket.page.config.general.GeneralConfigPage;
 import org.artifactory.webapp.wicket.page.config.proxy.ProxyConfigPage;
 import org.artifactory.webapp.wicket.page.config.repos.RepositoryConfigPage;
 import org.artifactory.webapp.wicket.page.config.security.LdapKeyListPage;
-import org.artifactory.webapp.wicket.page.config.security.general.SecurityGeneralConfigPage;
-import org.artifactory.webapp.wicket.page.config.services.BackupsListPage;
-import org.artifactory.webapp.wicket.page.config.services.IndexerConfigPage;
+import org.artifactory.webapp.wicket.page.config.services.ServicesConfigPage;
 import org.artifactory.webapp.wicket.page.deploy.DeployArtifactPage;
-import org.artifactory.webapp.wicket.page.deploy.DeployFromZipPage;
 import org.artifactory.webapp.wicket.page.home.HomePage;
+import org.artifactory.webapp.wicket.page.importexport.ImportExportHomePage;
 import org.artifactory.webapp.wicket.page.importexport.repos.ImportExportReposPage;
 import org.artifactory.webapp.wicket.page.importexport.system.ImportExportSystemPage;
+import org.artifactory.webapp.wicket.page.logs.SystemLogsHomePage;
 import org.artifactory.webapp.wicket.page.logs.SystemLogsPage;
 import org.artifactory.webapp.wicket.page.search.ArtifactSearchPage;
+import org.artifactory.webapp.wicket.page.security.SecurityHomePage;
 import org.artifactory.webapp.wicket.page.security.acl.AclsPage;
 import org.artifactory.webapp.wicket.page.security.group.GroupsPage;
 import org.artifactory.webapp.wicket.page.security.user.UsersPage;
-
-import java.util.List;
 
 /**
  * @author Yoav Aharoni
@@ -36,69 +34,57 @@ public class ArtifactorySiteMapBuilder extends SiteMapBuilder {
     public void buildSiteMap() {
 
         SiteMap siteMap = getSiteMap();
-        MenuNode root = new MenuNode("Artifactory", Page.class);
+        PageNode root = new PageNode(Page.class, "Artifactory");
         siteMap.setRoot(root);
 
-        MenuNode homePage = new MenuNode("Home", HomePage.class);
+        PageNode homePage = new PageNode(HomePage.class, "Home");
         root.addChild(homePage);
 
-        MenuNode browseRepoPage = new MenuNode("Browse", BrowseRepoPage.class);
+        PageNode browseRepoPage = new PageNode(BrowseRepoPage.class, "Browse");
         root.addChild(browseRepoPage);
-        browseRepoPage.addChild(new MenuNode("Tree Browser", BrowseRepoPage.class));
-        browseRepoPage.addChild(new MenuNode("Simple Browser", SimpleBrowserRootPage.class));
-        browseRepoPage.addChild(new MenuNode("Search Artifactory", ArtifactSearchPage.class));
+        browseRepoPage.addChild(new PageNode(BrowseRepoPage.class, "Tree Browser"));
+        browseRepoPage.addChild(new PageNode(SimpleBrowserRootPage.class, "Simple Browser"));
+        browseRepoPage.addChild(new PageNode(ArtifactSearchPage.class, "Search Artifactory"));
 
-        DeployArtifactPageNode deployPage = new DeployArtifactPageNode(DeployArtifactPage.class, "Deploy");
+        DeployArtifactPageNode deployPage = new DeployArtifactPageNode("Deploy");
         root.addChild(deployPage);
-        deployPage.addChild(new DeployArtifactPageNode(DeployArtifactPage.class, "Single Artifact"));
-        deployPage.addChild(new DeployArtifactPageNode(DeployFromZipPage.class, "Artifacts Bundle"));
+        deployPage.addChild(new DeployArtifactPageNode("Deploy Artifacts"));
 
-        MenuNode adminPage = new AdminPageNode("Admin");
+        PageNode adminPage = new AdminPageNode("Admin");
         root.addChild(adminPage);
 
-        MenuNode adminConfiguration = new MenuNode("Configuration");
+        PageNode adminConfiguration = new PageNode(ConfigHomePage.class, "Configuration");
         adminPage.addChild(adminConfiguration);
-        adminConfiguration.addChild(new MenuNode("General", GeneralConfigPage.class));
-        adminConfiguration.addChild(new MenuNode("Repositories", RepositoryConfigPage.class));
-        adminConfiguration.addChild(new MenuNode("Proxy", ProxyConfigPage.class));
+        adminConfiguration.addChild(new PageNode(GeneralConfigPage.class, "General"));
+        adminConfiguration.addChild(new PageNode(RepositoryConfigPage.class, "Repositories"));
+        adminConfiguration.addChild(new PageNode(ProxyConfigPage.class, "Proxy"));
+        adminConfiguration.addChild(new PageNode(ServicesConfigPage.class, "Services"));
 
-        MenuNode security = new MenuNode("Security");
+        PageNode security = new PageNode(SecurityHomePage.class, "Security");
         adminPage.addChild(security);
-        security.addChild(new MenuNode("General", SecurityGeneralConfigPage.class));
-        security.addChild(new MenuNode("Users", UsersPage.class));
-        security.addChild(new MenuNode("Groups", GroupsPage.class));
-        security.addChild(new MenuNode("Permissions", AclsPage.class));
-        security.addChild(new MenuNode("LDAP Settings", LdapKeyListPage.class));
+        security.addChild(new PageNode(UsersPage.class, "Users"));
+        security.addChild(new PageNode(GroupsPage.class, "Groups"));
+        security.addChild(new PageNode(AclsPage.class, "Permissions"));
+        security.addChild(new PageNode(LdapKeyListPage.class, "LDAP Settings"));
 
-        MenuNode services = new MenuNode("Services");
-        adminPage.addChild(services);
-        services.addChild(new MenuNode("Backups", BackupsListPage.class));
-        services.addChild(new MenuNode("Indexer", IndexerConfigPage.class));
-
-        MenuNode adminImportExport = new MenuNode("Import & Export");
+        PageNode adminImportExport = new PageNode(ImportExportHomePage.class, "Import & Export");
         adminPage.addChild(adminImportExport);
-        adminImportExport.addChild(new MenuNode("Repositories", ImportExportReposPage.class));
-        adminImportExport.addChild(new MenuNode("System", ImportExportSystemPage.class));
+        adminImportExport.addChild(new PageNode(ImportExportReposPage.class, "Repositories"));
+        adminImportExport.addChild(new PageNode(ImportExportSystemPage.class, "System"));
 
-        MenuNode logs = new MenuNode("Logs");
+        PageNode logs = new PageNode(SystemLogsHomePage.class, "Logs");
         adminPage.addChild(logs);
-        logs.addChild(new MenuNode("System Logs", SystemLogsPage.class));
+        logs.addChild(new PageNode(SystemLogsPage.class, "System Logs"));
     }
 
     private static class DeployArtifactPageNode extends SecuredPageNode {
-        private DeployArtifactPageNode(Class<? extends Page> pageClass, String name) {
-            super(pageClass, name);
+        private DeployArtifactPageNode(String name) {
+            super(DeployArtifactPage.class, name);
         }
 
         @Override
         public boolean isEnabled() {
-            boolean deployPermitted = getAuthorizationService().hasDeployPermissions();
-            boolean hasTargets = false;
-            List<LocalRepoDescriptor> repoDescriptorList = getRepositoryService().getDeployableRepoDescriptors();
-            if (repoDescriptorList != null) {
-                hasTargets = (repoDescriptorList.size() > 0);
-            }
-            return (deployPermitted && hasTargets);
+            return getAuthorizationService().hasDeployPermissions();
         }
     }
 

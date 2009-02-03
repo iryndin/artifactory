@@ -76,7 +76,7 @@ public class ActionableItemTreeNode<T extends ActionableItem> extends DefaultMut
 
     @Override
     public boolean isLeaf() {
-        return leaf || (children != null && children.isEmpty());
+        return leaf;
     }
 
     void setLeaf(boolean leaf) {

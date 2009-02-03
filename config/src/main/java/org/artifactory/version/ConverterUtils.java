@@ -23,7 +23,6 @@ import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 
@@ -54,19 +53,12 @@ public class ConverterUtils {
 
     public static Document parse(String xmlContent) {
         SAXBuilder sb = new SAXBuilder();
+        Document doc;
         try {
-            return sb.build(new StringReader(xmlContent));
+            doc = sb.build(new StringReader(xmlContent));
         } catch (Exception e) {
             throw new RuntimeException("Failed to build dom document", e);
         }
-    }
-
-    public static Document parse(InputStream in) {
-        SAXBuilder sb = new SAXBuilder();
-        try {
-            return sb.build(in);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to build dom document", e);
-        }
+        return doc;
     }
 }

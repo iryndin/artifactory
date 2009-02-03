@@ -16,7 +16,11 @@
  */
 package org.artifactory.webapp.wicket.page.base;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
@@ -28,7 +32,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.parser.XmlTag;
 import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -39,8 +42,10 @@ import org.artifactory.api.config.VersionInfo;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
 import org.artifactory.webapp.wicket.application.ArtifactoryWebSession;
-import org.artifactory.webapp.wicket.application.sitemap.MenuNode;
+import org.artifactory.webapp.wicket.application.sitemap.PageNode;
+import org.artifactory.webapp.wicket.application.test.TestRequestCycle;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
+import org.artifactory.webapp.wicket.common.component.SimplePageLink;
 import org.artifactory.webapp.wicket.common.component.modal.HasModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackDistributer;
@@ -48,10 +53,15 @@ import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackMes
 import org.artifactory.webapp.wicket.common.component.panel.feedback.aggregated.AggregateFeedbackPanel;
 import org.artifactory.webapp.wicket.page.home.HomePage;
 import org.artifactory.webapp.wicket.page.search.ArtifactSearchPage;
+import org.artifactory.webapp.wicket.page.security.login.LoginPage;
+import org.artifactory.webapp.wicket.page.security.login.LogoutPage;
+import org.artifactory.webapp.wicket.page.security.profile.ProfilePage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class BasePage extends WebPage implements HasModalHandler {
+public abstract class BasePage extends WebPage implements IAjaxIndicatorAware, HasModalHandler {
 
     @SpringBean
     private CentralConfigService centralConfig;
@@ -60,12 +70,12 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
     private AuthorizationService authorizationService;
 
     private ModalHandler modalHandler;
+    private Map<String, Integer> ids;
 
     protected BasePage() {
-        init();
-    }
-
-    protected void init() {
+        //TODO: [by yl] Use a better way to test for logout before adding the components, like supporting menu-state
+        //refresh calls after construction
+        testLogout();
         setVersioned(false);
 
         add(new Label("pageTitle", new PropertyModel(this, "pageTitle")));
@@ -78,6 +88,10 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
         addMenu();
         addSearchForm();
         addModalHandler();
+    }
+
+    protected void testLogout() {
+        //Do nothing
     }
 
     private void addFeedback() {
@@ -96,16 +110,10 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
     }
 
     private void addSearchForm() {
-        Form form = new Form("searchForm") {
-            @Override
-            public boolean isVisible() {
-                return isSignedInOrAnonymous();
-            }
-        };
+        Form form = new Form("searchForm");
         add(form);
 
-        final TextField searchTextField = new TextField("search", new Model("")) {
-        };
+        final TextField searchTextField = new TextField("search", new Model(""));
         form.add(searchTextField);
 
         SimpleButton searchButton = new SimpleButton("searchButton", form, "Search") {
@@ -119,53 +127,76 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
         form.add(searchButton);
     }
 
-    protected abstract String getPageName();
-
-    protected Class<? extends BasePage> getMenuPageClass() {
-        return getClass();
-    }
-
-    public ModalHandler getModalHandler() {
-        return modalHandler;
-    }
-
-    public String getPageTitle() {
-        String serverName = centralConfig.getServerName();
-        String pageName = getPageName();
-        return "Artifactory@" + serverName + " :: " + pageName;
-    }
-
-    private void addVersionInfo() {
-        VersionInfo versionInfo = centralConfig.getVersionInfo();
-        String versionText = "Artifactory "
-                + versionInfo.getVersion()
-                + " (rev. " + versionInfo.getRevision() + ")";
-        add(new Label("version", versionText));
-    }
-
     private void addUserInfo() {
+        // Only allow users with updatable profile to change their profile
+
         // Enable only for signed in users
-        add(new LogoutLink("logoutPage", "Log Out"));
+        add(new SimplePageLink("logoutPage", "Log Out", LogoutPage.class) {
+            @Override
+            public boolean isVisible() {
+                return ArtifactoryWebSession.get().isSignedIn() && !authorizationService.isAnonymous();
+            }
+        });
 
         // Enable only if signed in as anonymous
-        add(new LoginLink("loginPage", "Log In"));
+        add(new SimplePageLink("loginPage", "Log In", LoginPage.class) {
+            @Override
+            public boolean isVisible() {
+                return !ArtifactoryWebSession.get().isSignedIn() ||
+                        authorizationService.isAnonymous();
+            }
+        });
 
         // logged in or not logged in
         add(new Label("loggedInLabel", getLoggedInMessage()));
 
         // update profile link
-        add(new EditProfileLink("profilePage"));
+        SimplePageLink profileLink = new SimplePageLink("profilePage", getUserName(), ProfilePage.class) {
+            @Override
+            public boolean isEnabled() {
+                return authorizationService.isUpdatableProfile();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return ArtifactoryWebSession.get().isSignedIn() && !authorizationService.isAnonymous();
+            }
+        };
+        profileLink.setBeforeDisabledLink(getUserName());
+        add(profileLink);
+    }
+
+    public String getUserName() {
+        return getAuthorizationService().currentUsername();
+    }
+
+    public String getLoggedInMessage() {
+        if (!ArtifactoryWebSession.get().isSignedIn() || authorizationService.isAnonymous()) {
+            return "Not logged in";
+        }
+        return "Logged in as";
     }
 
     private void addMenu() {
         RepeatingView menu = new RepeatingView("menuItem");
-        List<MenuNode> menuPages = ArtifactoryApplication.get().getSiteMap().getRoot().getChildren();
-        for (MenuNode pageNode : menuPages) {
+        List<PageNode> menuPages = ArtifactoryApplication.get().getSiteMap().getRoot().getChildren();
+        for (PageNode pageNode : menuPages) {
             menu.add(new MenuItem(menu.newChildId(), pageNode, getMenuPageClass()));
         }
         add(menu);
     }
 
+    protected Class<? extends BasePage> getMenuPageClass() {
+        return getClass();
+    }
+
+    private void addVersionInfo() {
+        // TODO: Need to cache this object
+        VersionInfo versionInfo = centralConfig.getVersionInfo();
+        String versionStr = "Artifactory " + versionInfo.getVersion() +
+                " (rev. " + versionInfo.getRevision() + ")";
+        add(new Label("version", new Model(versionStr)));
+    }
 
     private void addDojo() {
         //Write the dojo debug configuration based on wicket configuration
@@ -186,31 +217,51 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
                 getResponse().write(configJs);
             }
         };
-
-        djConfig.add(new AttributeAppender("src", new AbstractReadOnlyModel() {
-            public Object getObject() {
-                WebRequestCycle webRequestCycle = (WebRequestCycle) getRequestCycle();
-                WebRequest request = webRequestCycle.getWebRequest();
-                return request.getRelativePathPrefixToContextRoot() + "v200/js/dojo/dojo.js";
-            }
-        }, " "));
+        WebRequestCycle webRequestCycle = (WebRequestCycle) getRequestCycle();
+        WebRequest request = webRequestCycle.getWebRequest();
+        String src = request.getRelativePathPrefixToContextRoot() + "130beta6/js/dojo/dojo.js";
+        djConfig.add(new AttributeAppender("src", new Model(src), " "));
         add(djConfig);
     }
 
-    private String getLoggedInMessage() {
-        if (isNotSignedInOrAnonymous()) {
-            return "Not logged in";
+    public ModalHandler getModalHandler() {
+        return modalHandler;
+    }
+
+    public final String getAjaxIndicatorMarkupId() {
+        return "ajaxIndicator";
+    }
+
+    public Map<String, Integer> getIds() {
+        if (ids == null) {
+            ids = new HashMap<String, Integer>();
         }
-        return "Logged in as";
+        return ids;
     }
 
+    @Override
+    protected void componentChanged(Component component, MarkupContainer parent) {
+        super.componentChanged(component, parent);
 
-    private boolean isSignedInOrAnonymous() {
-        return (ArtifactoryWebSession.get().isSignedIn() && !authorizationService.isAnonymous()) ||
-                (authorizationService.isAnonymous() && authorizationService.isAnonAccessEnabled());
+        // todo, i think this better be done with version manager
+        RequestCycle requestCycle = RequestCycle.get();
+        if (requestCycle instanceof TestRequestCycle) {
+            TestRequestCycle cycle = (TestRequestCycle) requestCycle;
+            if (cycle.getAjaxData() != null) {
+                cycle.getAjaxData().componentChanged(component, parent);
+            }
+        }
     }
 
-    private boolean isNotSignedInOrAnonymous() {
-        return !ArtifactoryWebSession.get().isSignedIn() || authorizationService.isAnonymous();
+    public AuthorizationService getAuthorizationService() {
+        return authorizationService;
     }
+
+    public String getPageTitle() {
+        String serverName = centralConfig.getServerName();
+        String pageName = getPageName();
+        return "Artifactory@" + serverName + " :: " + pageName;
+    }
+
+    protected abstract String getPageName();
 }

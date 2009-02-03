@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * The "Compress" command class. If artifactory is using a Derby database, this command will call the compress table
- * procedure. This command is available to Derby only.
+ * The "Compress" command class. If artifactory is using a Derby database, this command will call
+ * the compress table procedure. This command is available to Derby only.
  *
  * @author Noam Tenne
  */
@@ -47,9 +47,8 @@ public class CompressCommand extends BaseCommand implements Command {
     /**
      * Executes the command
      */
-    public int execute() throws Exception {
+    public void execute() throws Exception {
         compress();
-        return 0;
     }
 
     /**

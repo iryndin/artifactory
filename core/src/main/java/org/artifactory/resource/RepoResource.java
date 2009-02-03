@@ -16,7 +16,7 @@
  */
 package org.artifactory.resource;
 
-import org.artifactory.api.fs.RepoResourceInfo;
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.repo.RepoPath;
 
 /**
@@ -28,7 +28,7 @@ public interface RepoResource {
 
     RepoPath getRepoPath();
 
-    RepoResourceInfo getInfo();
+    FileInfo getInfo();
 
     String getParentPath();
 
@@ -36,15 +36,9 @@ public interface RepoResource {
 
     boolean isExpired();
 
-    boolean isMetadata();
-
     boolean hasSize();
 
-    long getSize();
-
-    long getCacheAge();
+    long getAge();
 
     long getLastModified();
-
-    String getMimeType();
 }

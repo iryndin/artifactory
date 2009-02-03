@@ -5,13 +5,10 @@
             into the target repository.
         </p>
 
-        <div class="field field-sep zip-file">
-            <label>
-                Repository zip file
-                <span wicket:id="uploadHelp"/>
-            </label>
+        <div class="field field-sep">
+            <label class="float-left zip-file">Repository zip file</label>
 
-            <div class="value">
+            <div class="value float-left zip-file">
                 <input wicket:id="fileInput" type="file" class="text"/>
             </div>
         </div>
@@ -23,14 +20,15 @@
                 </div>
             </div>
         </button>
+        <span wicket:id="uploadHelp"/>
 
         <span wicket:id="progress">[[ajax upload progressbar]]</span>
     </form>
     <form wicket:id="importForm" class="importForm">
         <div class="field">
-            <label>Target local repository</label>
+            <label class="float-left">Target local repository</label>
 
-            <div class="value">
+            <div class="value float-left">
                 <select wicket:id="targetRepo"/>
             </div>
             <span wicket:id="repoSelectHelp"/>

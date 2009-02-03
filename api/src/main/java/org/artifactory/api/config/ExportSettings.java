@@ -14,16 +14,9 @@ public class ExportSettings extends BaseSettings {
     private boolean ignoreRepositoryFilteringRulesOn = false;
     private boolean createArchive = false;
     private Date time;
-    /**
-     * Flag that indicates if to export m2 compatible meta data
-     */
-    private boolean m2Compatible = false;
-
-    private boolean incremental;
 
     public ExportSettings(File baseDir) {
         super(baseDir);
-        time = new Date();
     }
 
     public ExportSettings(File baseDir, ExportSettings settings) {
@@ -31,8 +24,6 @@ public class ExportSettings extends BaseSettings {
         this.ignoreRepositoryFilteringRulesOn = settings.ignoreRepositoryFilteringRulesOn;
         this.createArchive = settings.createArchive;
         this.time = settings.time;
-        this.m2Compatible = settings.m2Compatible;
-        this.incremental = settings.incremental;
     }
 
     public boolean isIgnoreRepositoryFilteringRulesOn() {
@@ -59,27 +50,4 @@ public class ExportSettings extends BaseSettings {
         this.time = time;
     }
 
-    /**
-     * @return True is the export is incremental. Meaning override target only if exported file or folder is newer.
-     */
-    public boolean isIncremental() {
-        return incremental;
-    }
-
-    /**
-     * Incremental export only writes files and folder that are newer than what's in the target.
-     *
-     * @param incremental   True to use incremental export.
-     */
-    public void setIncremental(boolean incremental) {
-        this.incremental = incremental;
-    }
-
-    public boolean isM2Compatible() {
-        return m2Compatible;
-    }
-
-    public void setM2Compatible(boolean m2Compatible) {
-        this.m2Compatible = m2Compatible;
-    }
 }

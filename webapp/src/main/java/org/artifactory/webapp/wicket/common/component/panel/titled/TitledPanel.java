@@ -16,11 +16,10 @@
  */
 package org.artifactory.webapp.wicket.common.component.panel.titled;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.artifactory.webapp.wicket.common.Titled;
-import org.artifactory.webapp.wicket.common.component.PlaceHolder;
+import org.artifactory.webapp.wicket.common.behavior.CssClass;
 
 /**
  * @author Yoav Aharoni
@@ -41,14 +40,10 @@ public abstract class TitledPanel extends Panel implements Titled {
     private void init() {
         setOutputMarkupId(true);
         add(new TitleLabel(this));
-        add(newToolbar("tool"));
+        add(new CssClass("border-wrapper"));
     }
 
     public String getTitle() {
         return getString(TITLE_KEY, null);
-    }
-
-    protected Component newToolbar(String id) {
-        return new PlaceHolder(id);
     }
 }

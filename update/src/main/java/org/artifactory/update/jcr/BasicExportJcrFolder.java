@@ -50,17 +50,15 @@ public abstract class BasicExportJcrFolder extends ExportJcrFsItem {
      */
     public void exportTo(File exportDir, StatusHolder status) {
         try {
-            Node myNode = getNode();
-            if (myNode.getName().equals(NEXUS_INDEX_DIR)) {
+            if (getNode().getName().equals(NEXUS_INDEX_DIR)) {
                 // no need to export .index directories introduced in 1.3.0-beta-2
                 return;
             }
-            status.setDebug("Exporting JCR Folder " + myNode.getPath(), log);
             exportContent(exportDir);
             exportMetadata(exportDir, true);
 
             //Export child nodes
-            NodeIterator nodeIterator = myNode.getNodes();
+            NodeIterator nodeIterator = getNode().getNodes();
             while (nodeIterator.hasNext()) {
                 Node node = nodeIterator.nextNode();
                 String typeName = node.getPrimaryNodeType().getName();
@@ -71,7 +69,8 @@ public abstract class BasicExportJcrFolder extends ExportJcrFsItem {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to export jcr folder: {}. Skipping folder.", e.getMessage());
+            log.error(String.format("Failed to export jcr folder: %s. Skipping folder.",
+                    e.getMessage()));
             log.debug("Stack trace: ", e);
         }
     }

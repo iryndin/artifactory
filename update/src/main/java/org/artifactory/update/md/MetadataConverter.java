@@ -24,9 +24,4 @@ import org.artifactory.version.converter.XmlConverter;
  */
 public interface MetadataConverter extends XmlConverter {
     String getNewMetadataName();
-
-    /**
-     * @return The metadata type this converters supports.
-     */
-    MetadataType getSupportedMetadataType();
 }

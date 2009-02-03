@@ -16,9 +16,4 @@ public class BorderedModelPanel extends BaseModalPanel {
         add(border);
         border.add(content);
     }
-
-    @Override
-    public String getCookieName() {
-        return null;
-    }
 }

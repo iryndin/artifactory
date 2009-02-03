@@ -23,6 +23,8 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.JobDetailAwareTrigger;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -33,6 +35,9 @@ import java.util.Date;
  * @author yoavl
  */
 public class QuartzTask extends TaskBase {
+    @SuppressWarnings({"UnusedDeclaration"})
+    private static final Logger log = LoggerFactory.getLogger(QuartzTask.class);
+
     public static final String TASK_TOKEN = "TASK_TOKEN";
     public static final String TASK_AUTHENTICATION = "TASK_AUTHENTICATION";
 
@@ -62,15 +67,8 @@ public class QuartzTask extends TaskBase {
         this(command, triggerName, 0, 0);
     }
 
-    /**
-     * Creates a new task.
-     *
-     * @param command      The command to schedule
-     * @param triggerName  Trigger name
-     * @param interval     Interval in milliseconds between executions. 0 means execute only once
-     * @param initialDelay Delay in milliseconds before starting the task for the first time starting from now
-     */
-    public QuartzTask(Class<? extends QuartzCommand> command, String triggerName, int interval, int initialDelay) {
+    public QuartzTask(Class<? extends QuartzCommand> command, String triggerName, int interval,
+            int initialDelay) {
         this(command, new SimpleTrigger(
                 triggerName, "artifactory",
                 new Date(System.currentTimeMillis() + initialDelay), null,

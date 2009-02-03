@@ -2,42 +2,30 @@ package org.artifactory.webapp.wicket.page.config.repos;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
-import org.artifactory.descriptor.repo.HttpRepoDescriptor;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
+import org.artifactory.descriptor.repo.*;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.component.CancelDefaultDecorator;
 import static org.artifactory.webapp.wicket.common.component.CreateUpdateAction.CREATE;
 import static org.artifactory.webapp.wicket.common.component.CreateUpdateAction.UPDATE;
 import org.artifactory.webapp.wicket.common.component.SimpleLink;
-import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalShowLink;
 import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel;
 import org.artifactory.webapp.wicket.common.component.panel.sortedlist.OrderedListPanel;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
-import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
-import org.artifactory.webapp.wicket.page.config.SchemaHelpModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,7 +33,6 @@ import java.util.List;
  *
  * @author Yossi Shaul
  */
-@SuppressWarnings({"OverlyComplexAnonymousInnerClass"})
 @AuthorizeInstantiation(AuthorizationService.ROLE_ADMIN)
 public class RepositoryConfigPage extends AuthenticatedPage {
     private static final Logger log = LoggerFactory.getLogger(RepositoryConfigPage.class);
@@ -104,37 +91,19 @@ public class RepositoryConfigPage extends AuthenticatedPage {
             }
 
             @Override
-            protected BaseModalPanel newUpdateItemPanel(LocalRepoDescriptor itemObject) {
-                return new LocalRepoPanel(UPDATE, itemObject);
-            }
-
-
-            @Override
-            protected Component newToolbar(String id) {
-                return new SchemaHelpBubble(id, getHelpModel("localRepositoriesMap"));
-            }
-
-            @Override
-            protected List<AbstractLink> getItemActions(LocalRepoDescriptor itemObject, String linkId) {
-                List<AbstractLink> links = super.getItemActions(itemObject, linkId);
-                if (getDescriptorForEditing().getLocalRepositoriesMap().size() == 1) {
-                    // don't allow deletion of the last local repository
-                    removeDeleteLink(links);
-                }
+            protected List<? extends AbstractLink> getItemActions(
+                    final LocalRepoDescriptor itemObject, String linkId) {
+                List<AbstractLink> links = new ArrayList<AbstractLink>();
+                links.add(new EditLink(linkId) {
+                    @Override
+                    protected BaseModalPanel getModelPanel() {
+                        return new LocalRepoPanel(UPDATE, itemObject);
+                    }
+                });
+                links.add(new DeleteRepoLink(linkId, itemObject));
                 return links;
             }
-
-            private void removeDeleteLink(List<AbstractLink> links) {
-                Iterator<AbstractLink> linkIterator = links.iterator();
-                while (linkIterator.hasNext()) {
-                    AbstractLink link = linkIterator.next();
-                    if (link instanceof DeleteRepoLink) {
-                        linkIterator.remove();
-                    }
-                }
-            }
         });
-
     }
 
     private void addRemoteReposList() {
@@ -172,17 +141,20 @@ public class RepositoryConfigPage extends AuthenticatedPage {
             }
 
             @Override
-            protected HttpRepoPanel newUpdateItemPanel(RemoteRepoDescriptor itemObject) {
-                return new HttpRepoPanel(UPDATE, (HttpRepoDescriptor) itemObject);
-            }
-
-            @Override
-            protected Component newToolbar(String id) {
-                return new SchemaHelpBubble(id, getHelpModel("remoteRepositoriesMap"));
+            protected List<? extends AbstractLink> getItemActions(
+                    final RemoteRepoDescriptor itemObject, String linkId) {
+                List<AbstractLink> links = new ArrayList<AbstractLink>();
+                links.add(new EditLink(linkId) {
+                    @Override
+                    protected BaseModalPanel getModelPanel() {
+                        return new HttpRepoPanel(UPDATE, (HttpRepoDescriptor) itemObject);
+                    }
+                });
+                links.add(new DeleteRepoLink(linkId, itemObject));
+                return links;
             }
         });
     }
-
 
     private void addVirtualReposList() {
         IModel repoListModel = new RepoListModel<VirtualRepoDescriptor>() {
@@ -219,19 +191,19 @@ public class RepositoryConfigPage extends AuthenticatedPage {
             }
 
             @Override
-            protected BaseModalPanel newUpdateItemPanel(VirtualRepoDescriptor itemObject) {
-                return new VirtualRepoPanel(UPDATE, itemObject);
-            }
-
-            @Override
-            protected Component newToolbar(String id) {
-                return new SchemaHelpBubble(id, getHelpModel("virtualRepositoriesMap"));
+            protected List<? extends AbstractLink> getItemActions(
+                    final VirtualRepoDescriptor itemObject, String linkId) {
+                List<AbstractLink> links = new ArrayList<AbstractLink>();
+                links.add(new EditLink(linkId) {
+                    @Override
+                    protected BaseModalPanel getModelPanel() {
+                        return new VirtualRepoPanel(UPDATE, itemObject);
+                    }
+                });
+                links.add(new DeleteRepoLink(linkId, itemObject));
+                return links;
             }
         });
-    }
-
-    private SchemaHelpModel getHelpModel(String property) {
-        return new SchemaHelpModel(getDescriptorForEditing(), property);
     }
 
     public void refresh(AjaxRequestTarget target) {
@@ -280,50 +252,17 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     }
 
     private abstract static class EditLink extends ModalShowLink {
+
         private EditLink(String linkId) {
             super(linkId, "Edit");
             add(new CssClass("icon-link UpdateAction"));
         }
+
     }
 
     private abstract class RepoListPanel<T extends RepoDescriptor> extends OrderedListPanel<T> {
         protected RepoListPanel(String id, IModel listModel) {
             super(id, listModel);
-        }
-
-        protected abstract BaseModalPanel newUpdateItemPanel(T itemObject);
-
-        @Override
-        protected void populateItem(final ListItem item) {
-            super.populateItem(item);
-            item.add(new AjaxEventBehavior("ondblclick") {
-                @SuppressWarnings({"unchecked"})
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    ModalHandler modalHandler = ModalHandler.getInstanceFor(RepoListPanel.this);
-                    T itemObject = (T) item.getModelObject();
-                    modalHandler.setModalPanel(newUpdateItemPanel(itemObject));
-                    modalHandler.show(target);
-                }
-
-                @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return new CancelDefaultDecorator();
-                }
-            });
-        }
-
-        @Override
-        protected List<AbstractLink> getItemActions(final T itemObject, String linkId) {
-            List<AbstractLink> links = new ArrayList<AbstractLink>();
-            links.add(new EditLink(linkId) {
-                @Override
-                protected BaseModalPanel getModelPanel() {
-                    return newUpdateItemPanel(itemObject);
-                }
-            });
-            links.add(new DeleteRepoLink(linkId, itemObject));
-            return links;
         }
 
         @Override
@@ -351,7 +290,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         protected abstract void saveRepos(List<T> repos);
 
         protected void assertLegalReorderedList(List<? extends RepoDescriptor> newList,
-                Collection<? extends RepoDescriptor> original) {
+                                                Collection<? extends RepoDescriptor> original) {
             log.debug("Original ordered list: {}", original);
             log.debug("New ordered list: {}", newList);
             // make sure that the new reordered list contains the same repositories count and the

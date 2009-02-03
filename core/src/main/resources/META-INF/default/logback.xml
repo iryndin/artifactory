@@ -34,19 +34,6 @@
             <MaxFileSize>5MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    <appender name="IMPORT.EXPORT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${artifactory.home}/logs/import.export.log</File>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%date [%-5level] \(%logger{32}:%line\) %message%n</pattern>
-        </layout>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>${artifactory.home}/logs/import.export.%i.log.zip</FileNamePattern>
-            <maxIndex>20</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
     <root>
         <level value="WARN"/>
         <appender-ref ref="CONSOLE"/>
@@ -90,9 +77,5 @@
     </logger>
     <logger name="org.apache.jackrabbit.extractor.XMLTextExtractor">
         <level value="ERROR"/>
-    </logger>
-    <logger name="org.artifactory.api.common.StatusHolder" additivity="false">
-        <level value="DEBUG"/>
-        <appender-ref ref="IMPORT.EXPORT"/>
     </logger>
 </configuration>

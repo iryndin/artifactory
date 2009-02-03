@@ -35,7 +35,6 @@ package org.artifactory.webapp.wicket.common.component.tree.menu;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -71,8 +70,6 @@ public class ActionsMenuPanel extends Panel {
     public ActionsMenuPanel(String id, final ActionableItemTreeNode node) {
         super(id, new Model(node));
         setOutputMarkupId(true);
-        add(HeaderContributor.forJavaScript(ActionsMenuPanel.class, "ActionsMenuPanel.js"));
-
         //Render the enabled actions for each node
         final ActionableItem actionableItem = node.getUserObject();
         Set<ItemAction> actions = actionableItem.getContextMenuActions();

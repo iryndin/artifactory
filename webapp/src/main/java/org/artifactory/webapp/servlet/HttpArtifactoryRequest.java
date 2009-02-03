@@ -20,7 +20,7 @@ import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryRequestBase;
 import org.artifactory.common.ArtifactoryProperties;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

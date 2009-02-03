@@ -35,7 +35,9 @@ public class StartWebContainer {
      * Main function, starts the jetty server.
      */
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
         Server server = null;
+
         ArtifactoryHome.setHomeDir(new File("webapp/src"));
         System.setProperty(ConstantsValue.devDebugMode.getPropertyName(), "true");
         // create the logger only after artifactory.home is set
@@ -46,6 +48,7 @@ public class StartWebContainer {
             server = new Server();
             xmlConfiguration.configure(server);
             server.start();
+            log.info("Artifactory startup time: " + (System.currentTimeMillis() - start) + " ms");
         } catch (Exception e) {
             log.fatal("Could not start the Jetty server: " + e);
             if (server != null) {

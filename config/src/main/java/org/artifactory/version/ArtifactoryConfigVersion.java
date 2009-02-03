@@ -59,12 +59,6 @@ public enum ArtifactoryConfigVersion {
             new BackupKeyConverter(), new LdapListConverter()),
     OneThreeThree("http://artifactory.jfrog.org/xsd/1.3.3",
             "http://www.jfrog.org/xsd/artifactory-v1_3_3.xsd",
-            ArtifactoryVersion.v130beta61), // no converters from this to next version
-    OneThreeFour("http://artifactory.jfrog.org/xsd/1.3.4",
-            "http://www.jfrog.org/xsd/artifactory-v1_3_4.xsd",
-            ArtifactoryVersion.v130rc1),
-    OneThreeFive("http://artifactory.jfrog.org/xsd/1.3.5",
-            "http://www.jfrog.org/xsd/artifactory-v1_3_5.xsd",
             ArtifactoryVersion.getCurrent());
 
     private final String xsdUri;

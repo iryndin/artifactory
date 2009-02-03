@@ -25,7 +25,7 @@
     <groupId>org.artifactory</groupId>
     <artifactId>artifactory-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0</version>
+    <version>1.3.0-beta-6</version>
     <name>Artifactory</name>
     <url>http://www.jfrog.org/sites/artifactory/latest/</url>
 
@@ -52,7 +52,7 @@
         <sourceforgeId>175347</sourceforgeId>
         <sourceforgeName>artifactory</sourceforgeName>
         <spring.version>2.5.5</spring.version>
-        <spring.security.version>2.0.4</spring.security.version>
+        <spring.security.version>2.0.3</spring.security.version>
         <spring.ldap.version>1.2.1</spring.ldap.version>
         <wicket.version>1.3.5</wicket.version>
         <jetty.version>6.1.14</jetty.version>
@@ -133,7 +133,6 @@
         <module>wagon</module>
         <module>config</module>
         <module>api</module>
-        <module>common</module>
         <module>core</module>
         <module>rest</module>
         <module>webapp</module>
@@ -353,7 +352,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>1.5.6</version>
+                <version>1.5.1</version>
             </dependency>
 
             <dependency>
@@ -574,7 +573,7 @@
             <dependency>
                 <groupId>opensymphony</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.6.3</version>
+                <version>1.6.2</version>
             </dependency>
 
             <dependency>
@@ -710,7 +709,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.3.1</version>
+                <version>1.3</version>
             </dependency>
 
             <dependency>
@@ -926,16 +925,6 @@
                     <version>2.4.3</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.0</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
                     <version>1.0-beta-1.2</version>
@@ -1042,12 +1031,12 @@
                 <repository>
                     <id>jfrog-libs-releases</id>
                     <name>jfrog-libs-releases</name>
-                    <url>https://repo.jfrog.org/artifactory/libs-releases-local</url>
+                    <url>https://www.jfrog.org/artifactory/libs-releases-local</url>
                 </repository>
                 <snapshotRepository>
                     <id>jfrog-libs-snapshots</id>
                     <name>jfrog-libs-snapshots</name>
-                    <url>https://repo.jfrog.org/artifactory/libs-snapshots-local</url>
+                    <url>https://www.jfrog.org/artifactory/libs-snapshots-local</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>
@@ -1057,7 +1046,7 @@
                 <repository>
                     <id>jfrog-releases</id>
                     <name>The jfrog repository for 3rd party releases</name>
-                    <url>http://repo.jfrog.org/artifactory/libs-releases</url>
+                    <url>http://www.jfrog.org/artifactory/libs-releases</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
@@ -1065,7 +1054,7 @@
                 <repository>
                     <id>jfrog-snapshots</id>
                     <name>The jfrog repository for 3rd party snapshots</name>
-                    <url>http://repo.jfrog.org/artifactory/libs-snapshots</url>
+                    <url>http://www.jfrog.org/artifactory/libs-snapshots</url>
                     <releases>
                         <enabled>false</enabled>
                     </releases>
@@ -1075,7 +1064,7 @@
                 <pluginRepository>
                     <id>jfrog-plugins-releases</id>
                     <name>The jfrog repository for plugin releases</name>
-                    <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
+                    <url>http://www.jfrog.org/artifactory/plugins-releases</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
@@ -1083,7 +1072,7 @@
                 <pluginRepository>
                     <id>jfrog-plugins-snapshots</id>
                     <name>The jfrog repository for plugin snapshots</name>
-                    <url>http://repo.jfrog.org/artifactory/plugins-snapshots</url>
+                    <url>http://www.jfrog.org/artifactory/plugins-snapshots</url>
                     <releases>
                         <enabled>false</enabled>
                     </releases>

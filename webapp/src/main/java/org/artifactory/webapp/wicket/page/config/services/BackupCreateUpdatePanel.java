@@ -1,37 +1,36 @@
 package org.artifactory.webapp.wicket.page.config.services;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.CreateUpdatePanel;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
-import org.artifactory.webapp.wicket.common.component.dnd.select.sorted.SortedDragDropSelection;
-import org.artifactory.webapp.wicket.common.component.file.browser.button.FileBrowserButton;
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
 import org.artifactory.webapp.wicket.common.component.file.path.PathMask;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalCloseLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
-import org.artifactory.webapp.wicket.page.config.services.cron.CronNextDatePanel;
+import org.artifactory.webapp.wicket.utils.CronUtils;
 import org.artifactory.webapp.wicket.utils.validation.CronExpValidator;
 import org.artifactory.webapp.wicket.utils.validation.JcrNameValidator;
 import org.artifactory.webapp.wicket.utils.validation.UniqueXmlIdValidator;
 import org.artifactory.webapp.wicket.utils.validation.XsdNCNameValidator;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,7 +38,7 @@ import java.util.List;
  *
  * @author Yossi Shaul
  */
-public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor> {
+class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor> {
 
     @SpringBean
     private CentralConfigService centralConfigService;
@@ -47,91 +46,67 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
     @SpringBean
     private RepositoryService repositoryService;
 
-    @WicketProperty
-    private boolean createIncrementalBackup;
-
-    final TextField retentionHoursField;
-
-    final StyledCheckbox createIncremental;
-
     public BackupCreateUpdatePanel(CreateUpdateAction action, BackupDescriptor backupDescriptor) {
+
         super(action, backupDescriptor);
-        createIncrementalBackup = backupDescriptor.isIncremental();
-        setWidth(550);
+        setWidth(400);
 
         add(form);
 
-        TitledBorder simpleFields = new TitledBorder("simple");
-        form.add(simpleFields);
+        TitledBorder border = new TitledBorder("border");
+        form.add(border);
 
         // Backup key
-        RequiredTextField keyField = new RequiredTextField("key");
-        keyField.setEnabled(isCreate());// don't allow key update
+        RequiredTextField backupKeyField = new RequiredTextField("key");
+        backupKeyField.setEnabled(isCreate());// don't allow key update
         if (isCreate()) {
-            keyField.add(new JcrNameValidator("Invalid backup key '%s'"));
-            keyField.add(new XsdNCNameValidator("Invalid backup key '%s'"));
-            keyField.add(new UniqueXmlIdValidator(getEditingDescriptor()));
+            backupKeyField.add(JcrNameValidator.getInstance());
+            backupKeyField.add(XsdNCNameValidator.getInstance());
+            backupKeyField.add(new UniqueXmlIdValidator(getEditingDescriptor()));
         }
-        simpleFields.add(keyField);
-        simpleFields.add(new SchemaHelpBubble("key.help"));
+        border.add(backupKeyField);
 
-        simpleFields.add(new StyledCheckbox("enabled"));
+        border.add(new StyledCheckbox("enabled"));
 
         final RequiredTextField cronExpField = new RequiredTextField("cronExp");
         cronExpField.add(CronExpValidator.getInstance());
-        simpleFields.add(cronExpField);
-        simpleFields.add(new SchemaHelpBubble("cronExp.help"));
+        border.add(cronExpField);
 
-        simpleFields.add(new CronNextDatePanel("cronNextDatePanel", cronExpField));
-
-        PropertyModel pathModel = new PropertyModel(backupDescriptor, "dir");
-
-        final PathAutoCompleteTextField backupDir = new PathAutoCompleteTextField("dir", pathModel);
+        final PathAutoCompleteTextField backupDir = new PathAutoCompleteTextField("dir");
         backupDir.setMask(PathMask.FOLDERS);
-        simpleFields.add(backupDir);
-        simpleFields.add(new SchemaHelpBubble("dir.help"));
+        border.add(backupDir);
 
+        border.add(new TextField("retentionPeriodHours", Integer.class));
+        border.add(new StyledCheckbox("createArchive"));
 
-        FileBrowserButton browserButton = new FileBrowserButton("browseButton", pathModel) {
-            @Override
-            protected void onOkClicked(AjaxRequestTarget target) {
-                super.onOkClicked(target);
-                target.addComponent(backupDir);
-            }
-        };
-        simpleFields.add(browserButton);
-
-        TitledBorder advancedFields = new TitledBorder("advanced");
-        form.add(advancedFields);
-
-        retentionHoursField = new TextField("retentionPeriodHours", Integer.class);
-        retentionHoursField.setOutputMarkupId(true);
-        advancedFields.add(retentionHoursField);
-        advancedFields.add(new SchemaHelpBubble("retentionPeriodHours.help"));
-
-        advancedFields.add(new StyledCheckbox("createArchive"));
-        advancedFields.add(new SchemaHelpBubble("createArchive.help"));
-
-        createIncremental = new StyledCheckbox("createIncrementalBackup",
-                new PropertyModel(this, "createIncrementalBackup"));
-        createIncremental.setOutputMarkupId(true);
-        createIncremental.setRequired(false);
-        createIncremental.add(new AjaxFormComponentUpdatingBehavior("onclick") {
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                retentionHoursField.setEnabled(!createIncremental.isChecked());
-                if (createIncremental.isChecked()) {
-                    retentionHoursField.setModelObject("0");
-                }
-                target.addComponent(retentionHoursField);
-            }
-        });
-        advancedFields.add(createIncremental);
+        // add all the help bubbles
+        border.add(new SchemaHelpBubble("key.help"));
+        border.add(new SchemaHelpBubble("cronExp.help"));
+        border.add(new SchemaHelpBubble("dir.help"));
+        border.add(new SchemaHelpBubble("retentionPeriodHours.help"));
+        border.add(new SchemaHelpBubble("createArchive.help"));
+        border.add(new SchemaHelpBubble("excludedRepositories.help"));
 
         List<RepoDescriptor> repos = repositoryService.getLocalAndRemoteRepoDescriptors();
-        advancedFields.add(new SortedDragDropSelection<RepoDescriptor>("excludedRepositories", repos));
-        advancedFields.add(new SchemaHelpBubble("excludedRepositories.help"));
+        border.add(new ListMultipleChoice("excludedRepositories", repos));
+        String nextRun = "";
+        if ((cronExpField.getValue() != null) &&
+                (!"".equals(cronExpField.getValue()))) {
+            nextRun = getNextRunTime(cronExpField.getValue());
+        }
+        final Label nextRunLabel = new Label("cronExpNextRun", nextRun);
+        nextRunLabel.setOutputMarkupId(true);
+        border.add(nextRunLabel);
+        SimpleButton calculateButton = new SimpleButton("calculate", form, "Calculate") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                nextRunLabel.setModel(new Model(getNextRunTime(cronExpField.getValue())));
+                target.addComponent(nextRunLabel);
+            }
+        };
+        calculateButton.setDefaultFormProcessing(false);
 
+        border.add(calculateButton);
         // Cancel button
         form.add(new ModalCloseLink("cancel"));
 
@@ -143,7 +118,7 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
 
     private SimpleButton createSubmitButton() {
         String submitCaption = isCreate() ? "Create" : "Save";
-        return new SimpleButton("submit", form, submitCaption) {
+        SimpleButton submit = new SimpleButton("submit", form, submitCaption) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 if (isCreate()) {
@@ -155,14 +130,32 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
                     getPage().info("Backup '" + entity.getKey() + "' successfully updated.");
                 }
                 FeedbackUtils.refreshFeedback(target);
-                ((BackupsListPage) getPage()).refresh(target);
+                ((ServicesConfigPage) getPage()).refresh(target);
                 close(target);
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
+        return submit;
+    }
+
+    private String getNextRunTime(String cronExpression) {
+        String nextRunLabelValue = "The expression is not valid.";
+        if (CronUtils.isValid(cronExpression)) {
+            Date nextExecution = CronUtils.getNextExecution(cronExpression);
+            nextRunLabelValue = formatDate(nextExecution);
+        }
+        return nextRunLabelValue;
+    }
+
+    private String formatDate(Date nextRunDate) {
+        return nextRunDate.toString();
     }
 
     protected MutableCentralConfigDescriptor getEditingDescriptor() {
         return centralConfigService.getDescriptorForEditing();
     }
-
 }

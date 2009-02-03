@@ -22,6 +22,7 @@ import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
@@ -76,17 +77,18 @@ public interface InternalRepositoryService
             RemoteRepo<T> remoteRepo, RepoResource res) throws IOException;
 
     @Lock(transactional = true)
-    RepoResource unexpireIfExists(LocalRepo localCacheRepo, String path);
+    RepoResource unexpireIfExists(LocalRepo<LocalCacheRepoDescriptor> localCacheRepo, String path);
 
     @Lock(transactional = true)
-    ResourceStreamHandle unexpireAndRetrieveIfExists(LocalRepo localCacheRepo, String path) throws IOException;
+    ResourceStreamHandle unexpireAndRetrieveIfExists(
+            LocalRepo<LocalCacheRepoDescriptor> localCacheRepo, String path) throws IOException;
 
     @Lock(transactional = true)
     ResourceStreamHandle getResourceStreamHandle(RealRepo repo, RepoResource res)
             throws IOException, RepoAccessException;
 
     @Lock(transactional = true)
-    String getChecksum(RealRepo repo, String path) throws IOException;
+    String getMetadataProperty(RealRepo repo, String path) throws IOException;
 
     @Lock(transactional = true, readOnly = true)
     void exportTo(ExportSettings settings, StatusHolder status);

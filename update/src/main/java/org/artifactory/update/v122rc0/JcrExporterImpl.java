@@ -36,7 +36,6 @@ public class JcrExporterImpl extends BasicJcrExporter {
     private static final Logger log = LoggerFactory.getLogger(JcrExporterImpl.class);
     public static final String PROP_ARTIFACTORY_MODIFIED_BY = "artifactory:modifiedBy";
 
-    @Override
     protected void exportRepository(File exportDir, Node repoNode, String repoKey,
             StatusHolder status) throws Exception {
         status.setStatus("Exporting repository " + repoKey, log);
@@ -49,9 +48,9 @@ public class JcrExporterImpl extends BasicJcrExporter {
     public static void fillWithGeneralMetadata(ItemInfo itemInfo, Node node) throws RepositoryException {
         // Get metadata in the safest way possible
         if (node.hasProperty(PROP_ARTIFACTORY_MODIFIED_BY)) {
-            itemInfo.setModifiedBy(node.getProperty(PROP_ARTIFACTORY_MODIFIED_BY).getString());
+            itemInfo.getExtension().setModifiedBy(node.getProperty(PROP_ARTIFACTORY_MODIFIED_BY).getString());
         } else {
-            itemInfo.setModifiedBy("export");
+            itemInfo.getExtension().setModifiedBy("export");
         }
         fillTimestamps(itemInfo, node);
     }

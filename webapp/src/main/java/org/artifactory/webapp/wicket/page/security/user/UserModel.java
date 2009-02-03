@@ -28,18 +28,16 @@ import java.util.Set;
 public class UserModel extends ProfileModel {
 
     private String username;
-    private boolean disableInternalPassword;
     private boolean admin;
     private boolean updatableProfile;
     private boolean selected;
     private Set<String> groups;
 
-    public UserModel(Set<String> defaultGroups) {
+    public UserModel() {
         super();
         admin = false;
         updatableProfile = true;
         selected = false;
-        groups = defaultGroups;
     }
 
     public UserModel(UserInfo userInfo) {
@@ -48,8 +46,6 @@ public class UserModel extends ProfileModel {
         this.admin = userInfo.isAdmin();
         this.updatableProfile = userInfo.isUpdatableProfile();
         groups = userInfo.getGroups();
-        // if user we update has invalid password the internal password is disabled
-        disableInternalPassword = UserInfo.INVALID_PASSWORD.equals(userInfo.getPassword());
     }
 
     public String getUsername() {
@@ -90,14 +86,6 @@ public class UserModel extends ProfileModel {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    public boolean isDisableInternalPassword() {
-        return disableInternalPassword;
-    }
-
-    public void setDisableInternalPassword(boolean disableInternalPassword) {
-        this.disableInternalPassword = disableInternalPassword;
     }
 
     /**

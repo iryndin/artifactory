@@ -17,7 +17,6 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
-                <include>artadmin</include>
                 <include>artifactoryctl</include>
                 <include>artifactory.default</include>
             </includes>
@@ -29,6 +28,12 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>**/*.conf</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
                 <include>**/*.exe</include>
             </includes>
         </fileSet>
@@ -74,20 +79,6 @@
                 <exclude>*-sources.jar</exclude>
             </excludes>
         </fileSet>
-
-        <!-- add the cli dependencies to clilib. the cli already prepared the files -->
-        <fileSet>
-            <directory>${project.basedir}/../cli/target/clilib</directory>
-            <outputDirectory>clilib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../cli/target</directory>
-            <outputDirectory>clilib</outputDirectory>
-            <includes>
-                <include>artifactory-cli-${project.version}.jar</include>
-            </includes>
-        </fileSet>
-
     </fileSets>
     <dependencySets>
         <!-- add the artifactory war file to the webapp dir -->

@@ -23,10 +23,9 @@ public class InfoCommand extends UrlBasedCommand implements Command {
      *
      * @throws Exception
      */
-    public int execute() throws Exception {
+    public void execute() throws Exception {
         String systemUri = getURL() + "system";
         get(systemUri, null);
-        return 0;
     }
 
     /**

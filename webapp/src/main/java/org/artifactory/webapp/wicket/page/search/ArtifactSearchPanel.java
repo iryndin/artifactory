@@ -19,7 +19,7 @@ package org.artifactory.webapp.wicket.page.search;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
@@ -40,8 +40,6 @@ import org.artifactory.api.search.SearchResult;
 import org.artifactory.api.search.SearchService;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.webapp.actionable.event.ItemEventTargetComponents;
-import org.artifactory.webapp.wicket.common.ajax.ImmediateAjaxIndicatorDecorator;
-import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.TextContentPanel;
@@ -54,10 +52,8 @@ import org.artifactory.webapp.wicket.common.component.table.SingleSelectionTable
 import org.artifactory.webapp.wicket.common.component.table.columns.ActionsColumn;
 import org.artifactory.webapp.wicket.utils.ListPropertySorter;
 import org.artifactory.webapp.wicket.utils.WebUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,7 +101,7 @@ public class ArtifactSearchPanel extends TitledPanel {
                         result.getSearchResult().getPath();
                 String name = result.getSearchResult().getName();
                 ExternalLink link = new ExternalLink(componentId, href, name);
-                link.add(new CssClass("item-link"));
+                link.add(new AttributeAppender("class", new Model("cellItemLink"), " "));
                 cellItem.add(link);
             }
         });
@@ -117,19 +113,22 @@ public class ArtifactSearchPanel extends TitledPanel {
         columns.add(new PropertyColumn(new Model("Repository"), "searchResult.repoKey",
                 "searchResult.repoKey"));
         final SingleSelectionTable<ActionableSearchResult> table =
-                new SingleSelectionTable<ActionableSearchResult>("results", columns, dataProvider, 20) {
+                new SingleSelectionTable<ActionableSearchResult>("results", columns, dataProvider,
+                        20) {
                     public String getSearchExpression() {
                         return searchControls.getSearch();
                     }
 
                     @Override
-                    protected void onRowSelected(ActionableSearchResult selection, AjaxRequestTarget target) {
+                    protected void onRowSelected(ActionableSearchResult selection,
+                                                 AjaxRequestTarget target) {
                         super.onRowSelected(selection, target);
                         FileInfo fileInfo = selection.getSearchResult().getFileInfo();
                         String fileName = fileInfo.getName();
                         if (isPom(fileName)) {
-                            String content = repoService.getPomContent(fileInfo);
-                            TextContentPanel contentPanel = new TextContentPanel(contentDialog.getContentId());
+                            String content = repoService.getContent(fileInfo);
+                            TextContentPanel contentPanel =
+                                    new TextContentPanel(contentDialog.getContentId());
                             contentPanel.setContent(content);
                             BorderedModelPanel panel = new BorderedModelPanel(contentPanel);
                             panel.setTitle(fileName);
@@ -150,25 +149,19 @@ public class ArtifactSearchPanel extends TitledPanel {
         searchControl.setOutputMarkupId(true);
         form.add(searchControl);
 
-        form.add(new HelpBubble("searchHelp", "Artifact name (wildcards are supported)"));
+        form.add(new HelpBubble("searchHelp", "Artifact name (? wildcards are supported)"));
 
-        SimpleButton searchButton = new SimpleButton("submit", form, "Search") {
+        SimpleButton submit = new SimpleButton("submit", form, "Search") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 dataProvider.fetchResults();
-                table.setCurrentPage(0);    // scroll back to the first page
-                target.addComponent(table);
                 FeedbackUtils.refreshFeedback(target);
-            }
-
-            @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new ImmediateAjaxIndicatorDecorator();
+                target.addComponent(table);
             }
         };
-        form.add(searchButton);
+        form.add(submit);
 
-        form.add(new DefaultButtonBehavior(searchButton));
+        form.add(new DefaultButtonBehavior(submit));
     }
 
     private boolean isPom(String name) {
@@ -198,27 +191,15 @@ public class ArtifactSearchPanel extends TitledPanel {
             // Format the lsat modified date
             if (searchResult.getSearchResult().getLastModifiedString() == null) {
                 long lastModified = searchResult.getSearchResult().getFileInfo().getLastModified();
-                searchResult.getSearchResult().setLastModifiedString(centralConfig.format(lastModified));
+                searchResult.getSearchResult()
+                        .setLastModifiedString(centralConfig.format(lastModified));
             }
             return new Model(searchResult);
         }
 
         private void fetchResults() {
-            List<SearchResult> searchResults;
-            try {
-                searchResults = searchService.searchArtifacts(searchControls);
-            } catch (Exception e) {
-                Session.get().error("There was an error in the search query.");
-                results = Collections.emptyList();
-                return;
-            }
+            List<SearchResult> searchResults = searchService.searchArtifacts(searchControls);
 
-            if (searchResults.isEmpty()) {
-                Session.get().warn(String.format("No Artifacts Found for '%s'.",
-                        HtmlUtils.htmlEscape(searchControls.getSearch())));
-            }/* else {
-                Session.get().info(format("Found %s Artifacts Matching '%s'", searchResults.size(), HtmlUtils.htmlEscape(searchControls.getSearch())));
-            }*/
             int maxResults = ConstantsValue.searchMaxResults.getInt();
             if (searchResults.size() > maxResults) {
                 Session.get().warn("Displaying first " + maxResults +
@@ -235,7 +216,7 @@ public class ArtifactSearchPanel extends TitledPanel {
                 results.add(searchResult);
             }
 
-            //Reset sorting (will default to results order by name)
+            //Reset sorting (will default to results order by score)
             setSort(null);
         }
     }

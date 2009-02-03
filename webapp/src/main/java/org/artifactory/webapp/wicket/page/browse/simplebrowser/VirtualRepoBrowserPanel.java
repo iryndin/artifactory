@@ -17,6 +17,7 @@
 package org.artifactory.webapp.wicket.page.browse.simplebrowser;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
@@ -34,7 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.servlet.AbortWithWebErrorCodeException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.repo.VirtualRepoItem;
@@ -120,7 +121,7 @@ public class VirtualRepoBrowserPanel extends TitledPanel {
                         String key = (String) item.getModelObject();
                         String href = hrefPrefix + "/" + key + "/" + finalDirectoryPath;
                         ExternalLink link = new ExternalLink("repoKey", href, key);
-                        link.add(new CssClass("item-link"));
+                        link.add(new AttributeAppender("class", new Model("cellItemLink"), " "));
                         item.add(link);
                     }
                 };
@@ -182,7 +183,7 @@ public class VirtualRepoBrowserPanel extends TitledPanel {
                 this.path = UP.equals(path) ? path : path + "/";
             } else {
                 this.path = path;
-                ContentType ct = NamingUtils.getContentType(name);
+                ContentType ct = PackagingType.getContentType(name);
                 if (ct.isJarVariant()) {
                     cssClass = "jar";
                 } else if (name.equals(UP)) {

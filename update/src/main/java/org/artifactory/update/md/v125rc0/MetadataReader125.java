@@ -23,15 +23,12 @@ import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.md.MetadataReader;
 import org.artifactory.update.md.MetadataConverter;
 import org.artifactory.update.md.MetadataConverterUtils;
-import org.artifactory.update.md.v130beta6.ChecksumsConverter;
-import org.artifactory.update.md.v130beta6.FolderAdditionalInfoNameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,35 +39,21 @@ public class MetadataReader125 implements MetadataReader {
     private static final Logger log = LoggerFactory.getLogger(MetadataReader125.class);
     private final MetadataConverter folderConverter = new MdFolderConverter();
     private final MetadataConverter fileConverter = new MdFileConverter();
-    private final MetadataConverter statsConverter = new MdStatsConverter();
+    //private final MetadataConverter statsConverter = new MdStatsConverter();
 
     public List<MetadataEntry> getMetadataEntries(File file, ImportSettings settings, StatusHolder status) {
-        if (!file.isFile()) {
-            status.setError("Expecting a file but got a directory: " + file.getAbsolutePath(), log);
-            return Collections.emptyList();
-        }
+        //TODO: Check that the file is a file...
         List<MetadataEntry> result = new ArrayList<MetadataEntry>();
         try {
             String xmlContent = FileUtils.readFileToString(file);
             if (xmlContent.contains("<file>")) {
-                // convert to file metadata
-                String fileXmlContent = MetadataConverterUtils.convertString(fileConverter, xmlContent);
-                ChecksumsConverter checksumsConverter = new ChecksumsConverter();
-                fileXmlContent = MetadataConverterUtils.convertString(checksumsConverter, fileXmlContent);
-                String fileMetadataName = checksumsConverter.getNewMetadataName();
-                result.add(new MetadataEntry(fileMetadataName, fileXmlContent));
-
-                // get the stats data from the original xml content
-                result.add(convert(xmlContent, statsConverter));
+                result.add(convert(xmlContent, fileConverter));
+                // TODO: extract the stat also
             } else if (xmlContent.contains("<folder>")) {
-                xmlContent = MetadataConverterUtils.convertString(this.folderConverter, xmlContent);
-                FolderAdditionalInfoNameConverter folderConverter = new FolderAdditionalInfoNameConverter();
-                xmlContent = MetadataConverterUtils.convertString(folderConverter, xmlContent);
-                String fileMetadataName = folderConverter.getNewMetadataName();
-                result.add(new MetadataEntry(fileMetadataName, xmlContent));
+                result.add(convert(xmlContent, folderConverter));
             } else {
                 status.setError("Failed to import xml metadata from '" +
-                        file.getAbsolutePath() + "' since it does not contain any known XML tag <file> <folder>.",
+                        file.getAbsolutePath() + "' since it does not contains any known XML tag <file> <folder>.",
                         log);
             }
         } catch (IOException e) {

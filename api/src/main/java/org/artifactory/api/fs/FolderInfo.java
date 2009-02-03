@@ -10,26 +10,25 @@ import org.artifactory.api.repo.RepoPath;
 public class FolderInfo extends ItemInfo {
     public static final String ROOT = "artifactory-folder";
 
-    private FolderAdditionaInfo additionalInfo;
+    private FolderExtraInfo extension;
 
     public FolderInfo(RepoPath repoPath) {
         super(repoPath);
-        additionalInfo = new FolderAdditionaInfo();
+        extension = new FolderExtraInfo();
     }
 
     public FolderInfo(FolderInfo info) {
         super(info);
-        additionalInfo = new FolderAdditionaInfo(info.additionalInfo);
+        extension = new FolderExtraInfo(info.getExtension());
     }
 
+    @Override
+    public FolderExtraInfo getExtension() {
+        return extension;
+    }
 
-    /**
-     * Should not be called by clients - for internal use
-     *
-     * @return
-     */
-    public void setAdditionalInfo(FolderAdditionaInfo additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setExtension(FolderExtraInfo extension) {
+        this.extension = extension;
     }
 
     @Override
@@ -39,7 +38,10 @@ public class FolderInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "FolderInfo{" + super.toString() + ", extension=" + additionalInfo + '}';
+        return "FolderInfo{" +
+                super.toString() +
+                ", extension=" + extension +
+                '}';
     }
 
     @Override
@@ -48,38 +50,7 @@ public class FolderInfo extends ItemInfo {
             return false;
         }
         FolderInfo folderInfo = (FolderInfo) info;
-        return this.additionalInfo.isIdentical(folderInfo.additionalInfo) &&
+        return this.extension.isIdentical(folderInfo.extension) &&
                 super.isIdentical(info);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
-    @Override
-    @Deprecated
-    public FolderAdditionaInfo getInernalXmlInfo() {
-        return additionalInfo;
-    }
-
-    public String getCreatedBy() {
-        return additionalInfo.getCreatedBy();
-    }
-
-    public String getModifiedBy() {
-        return additionalInfo.getModifiedBy();
-    }
-
-    public long getLastUpdated() {
-        return additionalInfo.getLastUpdated();
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        additionalInfo.setLastUpdated(lastUpdated);
-    }
-
-    FolderAdditionaInfo getAdditionalInfo() {
-        return additionalInfo;
     }
 }

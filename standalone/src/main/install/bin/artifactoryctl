@@ -5,15 +5,6 @@
 # processname: artifactory
 # pidfile: /var/run/artifactory.pid
 #
-### BEGIN INIT INFO
-# Provides:          artifactory
-# Required-Start:    $remote_fs $syslog $network
-# Required-Stop:     $remote_fs $syslog $network
-# Default-Start:     3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start Artifactory at boot time
-# Description:       Manages the services needed to run Artifactory - a Maven Proxy
-### END INIT INFO 
 # Startup script for artifactory under *nix systems (it works under NT/cygwin too).
 #
 # Configuration files

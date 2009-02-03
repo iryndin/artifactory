@@ -53,17 +53,12 @@ public abstract class BasicExportJcrFile extends ExportJcrFsItem {
                 //Don't bother exporting checksum files - will be recalculated during import
                 return;
             }
-            status.setDebug("Exporting JCR File " + getNode().getPath(), log);
             File targetFile = new File(exportDir, getRelativePath());
-            /*
-            //No need for special export - will be taken care of by the import process
-            if (MavenNaming.isMavenMetadataFileName(targetFile.getName())) {
-                //Special fondling for maven-metadata.xml - export it as the folder metadata
-            }
-            */
             export(targetFile, true);
         } catch (Exception e) {
-            status.setError("Failed to export jcr file: '" + this.getRelativePath() + "'. Skipping file", e, log);
+            status.setError(
+                    "Failed to export jcr file: '" + this.getRelativePath() + "'. Skipping file", e,
+                    log);
         }
     }
 
@@ -165,18 +160,4 @@ public abstract class BasicExportJcrFile extends ExportJcrFsItem {
         return path.endsWith(".sha1") || path.endsWith(".md5") || path.endsWith(".asc");
     }
 
-    protected long getSize(Node resourceNode) throws RepositoryException {
-        if (resourceNode.hasProperty(org.apache.jackrabbit.JcrConstants.JCR_DATA)) {
-            return resourceNode.getProperty(org.apache.jackrabbit.JcrConstants.JCR_DATA).getLength();
-        }
-        return 0;
-    }
-
-    public String getMimeType(Node resourceNode) throws RepositoryException {
-        if (resourceNode.hasProperty(JcrConstants.JCR_MIMETYPE)) {
-            Property prop = resourceNode.getProperty(JcrConstants.JCR_MIMETYPE);
-            return prop.getString();
-        }
-        return null;
-    }
 }

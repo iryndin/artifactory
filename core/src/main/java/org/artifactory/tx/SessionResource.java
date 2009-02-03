@@ -21,11 +21,11 @@ package org.artifactory.tx;
  * @date Sep 22, 2008
  */
 public interface SessionResource {
-    void afterCompletion(boolean commit);
+    void releaseResources(boolean commit);
 
     boolean hasResources();
 
     boolean hasPendingChanges();
 
-    void onSessionSave();
+    void save();
 }

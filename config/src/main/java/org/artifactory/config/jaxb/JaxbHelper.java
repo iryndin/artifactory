@@ -21,7 +21,7 @@ import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
-import org.artifactory.util.FileUtils;
+import org.artifactory.utils.FileUtils;
 import org.artifactory.version.ArtifactoryConfigVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,16 +201,24 @@ public class JaxbHelper<T> {
 
     @SuppressWarnings({"unchecked"})
     public T read(InputStream stream, Class clazz, URL schemaUrl) {
-        T o = null;
+        T o;
         try {
             JAXBContext context = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            if (schemaUrl != null) {
-                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Schema schema = sf.newSchema(schemaUrl);
-                unmarshaller.setSchema(schema);
-            }
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(schemaUrl);
+            unmarshaller.setSchema(schema);
             o = (T) unmarshaller.unmarshal(stream);
+            /*
+            //Should clean whitespaces automatically, but doesn't work:
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setIgnoringElementContentWhitespace(true);
+            dbf.setSchema(schema);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(stream);
+            db.setErrorHandler(new XMLErrorHandler());
+            o = (T) unmarshaller.unmarshal(doc);
+            */
         } catch (Throwable t) {
             throw new RuntimeException("Failed to read object from stream.", t);
         } finally {
@@ -229,6 +237,13 @@ public class JaxbHelper<T> {
                         throws IOException {
                     StreamResult result = new StreamResult(stream);
                     result.setSystemId(namespace);
+                    //result.setSystemId("http://artifactory.org/" + object.getClass().getName());
+                    /*OutputFormat format = new OutputFormat();
+                    XMLResult result = new XMLResult(stream, format);
+                    format.setIndentSize(2);
+                    format.setEncoding("utf-8");
+                    format.setTrimText(false);
+                    format.setNewlines(true);*/
                     return result;
                 }
             });

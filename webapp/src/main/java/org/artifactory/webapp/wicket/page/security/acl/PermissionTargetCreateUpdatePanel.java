@@ -33,7 +33,7 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.utils.AlreadyExistsException;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.CreateUpdatePanel;
@@ -74,7 +74,7 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
             CreateUpdateAction action, PermissionTargetInfo target,
             final Component targetsTable) {
         super(action, target);
-        setWidth(740);
+        setWidth(670);
 
         form.setOutputMarkupId(true);
         add(form);
@@ -94,7 +94,8 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
         addRepositoriesDropDownChoice(border);
 
         StringResourceModel helpMessage = new StringResourceModel("help.patterns", this, null);
-        List<CommonPathPattern> includesExcludesSuggestions = Arrays.asList(CommonPathPattern.values());
+        List<CommonPathPattern> includesExcludesSuggestions =
+                Arrays.asList(CommonPathPattern.values());
 
         addIncludesPatternFields(helpMessage, includesExcludesSuggestions, border);
         addExcludesPatternFields(helpMessage, includesExcludesSuggestions, border);
@@ -123,7 +124,7 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
     }
 
     private void addIncludesPatternFields(StringResourceModel helpMessage,
-            final List<CommonPathPattern> includesExcludesSuggestions, TitledBorder border) {
+                                          final List<CommonPathPattern> includesExcludesSuggestions, TitledBorder border) {
         TextArea includesTa = new TextArea("includesPattern");
         includesTa.setEnabled(isSystemAdmin());
         includesTa.setOutputMarkupId(true);
@@ -140,15 +141,12 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
                     }
                 };
         includesSuggest.add(new UpdatePatternsBehavior(include, includesTa));
-        if (isCreate()) {
-            includesSuggest.setModelObject(CommonPathPattern.ANY);
-        }
         includesSuggest.setEnabled(isSystemAdmin());
         border.add(includesSuggest);
     }
 
     private void addExcludesPatternFields(StringResourceModel helpMessage,
-            final List<CommonPathPattern> includesExcludesSuggestions, TitledBorder border) {
+                                          final List<CommonPathPattern> includesExcludesSuggestions, TitledBorder border) {
         TextArea excludesTa = new TextArea("excludesPattern");
         excludesTa.setEnabled(isSystemAdmin());
         excludesTa.setOutputMarkupId(true);
@@ -226,6 +224,11 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
                 FeedbackUtils.refreshFeedback(target);
                 ModalHandler.closeCurrent(target);
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
         form.add(submit);
         form.add(new DefaultButtonBehavior(submit));
@@ -274,15 +277,10 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
     }
 
     /**
-     * @return True if the current user is a system admin (not just the current permission target admin). Non system
-     *         admins can only change the receipients table.
+     * @return True if the current user is a system admin (not just the current permission target
+     *         admin). Non system admins can only change the receipients table.
      */
     private boolean isSystemAdmin() {
         return authService.isAdmin();
-    }
-
-    @Override
-    public String getCookieName() {
-        return null;
     }
 }

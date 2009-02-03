@@ -16,10 +16,10 @@
  */
 package org.artifactory.update.md.v125rc0;
 
+import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.update.md.MetadataConverter;
 import org.artifactory.update.md.MetadataConverterUtils;
-import org.artifactory.update.md.MetadataType;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -33,22 +33,16 @@ public class MdFolderConverter implements MetadataConverter {
     static final String ARTIFACTORY_NAME = "artifactoryName";
 
     public String getNewMetadataName() {
-        return "artifactory-folder";
-    }
-
-    public MetadataType getSupportedMetadataType() {
-        return MetadataType.folder;
+        return FolderInfo.ROOT;
     }
 
     public void convert(Document doc) {
         Element rootElement = doc.getRootElement();
         rootElement.setName(getNewMetadataName());
         RepoPath repoPath = MetadataConverterUtils.extractRepoPath(rootElement);
-        // In this version the relPath is the father and name need to be added
-        if (rootElement.getChild(ARTIFACTORY_NAME) != null) {
-            String name = rootElement.getChildText(ARTIFACTORY_NAME);
-            repoPath = new RepoPath(repoPath, name);
-        }
+        // In these version the relPath is the father and name need to be added
+        String name = rootElement.getChildText(ARTIFACTORY_NAME);
+        repoPath = new RepoPath(repoPath, name);
         List<Element> toMove = MetadataConverterUtils.extractExtensionFields(rootElement);
         MetadataConverterUtils.addNewContent(rootElement, repoPath, toMove);
         // Not used anymore

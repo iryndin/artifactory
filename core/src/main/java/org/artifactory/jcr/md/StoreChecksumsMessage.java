@@ -31,7 +31,8 @@ public class StoreChecksumsMessage extends WorkMessage {
     private String metadataName;
     private Checksum[] checksums;
 
-    public StoreChecksumsMessage(MetadataAware metadataAware, String metadataName, Checksum[] checksums) {
+    public StoreChecksumsMessage(
+            MetadataAware metadataAware, String metadataName, Checksum[] checksums) {
         super(WorkAction.STORE_CHECKSUMS, metadataAware.getRepoPath());
         this.metadataAware = metadataAware;
 
@@ -42,7 +43,8 @@ public class StoreChecksumsMessage extends WorkMessage {
     @Override
     public void execute() {
         // TODO: Supposed to get a write lock
-        MetadataService metadataService = InternalContextHelper.get().beanForType(MetadataService.class);
+        MetadataService metadataService =
+                InternalContextHelper.get().beanForType(MetadataService.class);
         metadataService.saveChecksums(metadataAware, metadataName, checksums);
     }
 }

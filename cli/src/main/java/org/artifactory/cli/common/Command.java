@@ -14,7 +14,7 @@ public interface Command {
      *
      * @throws Exception
      */
-    int execute() throws Exception;
+    void execute() throws Exception;
 
     /**
      * Returns a certain CLI Option of the command via the option name

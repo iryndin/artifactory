@@ -4,7 +4,9 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebComponent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -21,6 +23,7 @@ import java.io.File;
 public class FileBrowserButton extends Panel {
     private String chRoot;
     private PathHelper pathHelper;
+    private ModalHandler modalWindow;
     private PathMask mask = PathMask.ALL;
 
     public FileBrowserButton(String id) {
@@ -53,6 +56,16 @@ public class FileBrowserButton extends Panel {
     protected void init() {
         chRoot = new File(chRoot == null ? "/" : chRoot).getAbsolutePath();
         add(HeaderContributor.forCss(FileBrowserPanel.class, "style/filebrowser.css"));
+        modalWindow = new ModalHandler("modalWindow");
+        modalWindow.setInitialWidth(600);
+        modalWindow.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                onCancelClicked(target);
+                return true;
+            }
+        });
+        add(modalWindow);
+
         add(new BrowseLink("browseLink"));
     }
 
@@ -64,12 +77,12 @@ public class FileBrowserButton extends Panel {
     }
 
     protected void onShowBrowserClicked(AjaxRequestTarget target) {
-        FileBrowserPanel fileBrowserPanel = new MyFileBrowserPanel();
+        FileBrowserPanel fileBrowserPanel = new MyFileBrowserPanel(modalWindow.getContentId());
         fileBrowserPanel.setMask(mask);
 
-        ModalHandler modalHandler = ModalHandler.getInstanceFor(this);
-        modalHandler.setModalPanel(fileBrowserPanel);
-        modalHandler.show(target);
+        modalWindow.setContent(fileBrowserPanel);
+        modalWindow.setTitle(fileBrowserPanel.getTitle());
+        modalWindow.show(target);
     }
 
     public PathMask getMask() {
@@ -109,29 +122,28 @@ public class FileBrowserButton extends Panel {
     }
 
     private class MyFileBrowserPanel extends FileBrowserPanel {
-        private MyFileBrowserPanel() {
-            super(new DelegetedModelModel(), pathHelper);
+        private MyFileBrowserPanel(String id) {
+            super(id, new DelegetedModelModel(), pathHelper);
             setChRoot(chRoot);
-        }
-
-        @Override
-        public void onCloseButtonClicked(AjaxRequestTarget target) {
-            super.onCloseButtonClicked(target);
-            FileBrowserButton.this.onCancelClicked(target);
         }
 
         @Override
         protected void onCancelClicked(AjaxRequestTarget target) {
             super.onCancelClicked(target);
             FileBrowserButton.this.onCancelClicked(target);
-            close(target);
+            closeFileBrowser(target);
         }
 
         @Override
         protected void onOkClicked(AjaxRequestTarget target) {
             super.onOkClicked(target);
             FileBrowserButton.this.onOkClicked(target);
-            close(target);
+            closeFileBrowser(target);
+        }
+
+        private void closeFileBrowser(AjaxRequestTarget target) {
+            modalWindow.close(target);
+            modalWindow.setContent(new WebMarkupContainer(modalWindow.getContentId()));
         }
     }
 }

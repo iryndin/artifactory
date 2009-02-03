@@ -27,9 +27,7 @@ import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.repo.LocalRepo;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -42,15 +40,16 @@ import java.util.List;
  */
 public interface JcrRepoService {
     @Lock(transactional = true)
-    JcrFile importStream(JcrFolder parentFolder, String name, long lastModified, InputStream in);
-
-    void importXml(Node xmlNode, InputStream in) throws RepositoryException, IOException;
-
-    @Lock(transactional = true)
-    JcrFile importFileViaWorkingCopy(JcrFolder parentFolder, File file, ImportSettings settings, StatusHolder status);
+    JcrFile importStream(
+            JcrFolder parentFolder, String name, long lastModified, InputStream in);
 
     @Lock(transactional = true)
-    RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings, StatusHolder status);
+    JcrFile importFileViaWorkingCopy(
+            JcrFolder parentFolder, File file, ImportSettings settings, StatusHolder status);
+
+    @Lock(transactional = true)
+    RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings,
+            StatusHolder status);
 
     @Lock(transactional = true)
     JcrFsItem getFsItem(RepoPath repoPath, LocalRepo repo);
@@ -68,7 +67,8 @@ public interface JcrRepoService {
     @Lock(transactional = true, readOnly = true)
     List<JcrFsItem> getChildren(JcrFolder folder, boolean withLock);
 
-    boolean delete(JcrFsItem fsItem);
+    @Lock(transactional = true)
+    boolean delete(String absPath);
 
     /**
      * Copied from JcrService. TODO: Check how to remove the duplication
@@ -103,6 +103,4 @@ public interface JcrRepoService {
 
     @Lock(transactional = true)
     List<String> getChildrenNames(String absPath);
-
-    void trash(List<JcrFsItem> items);
 }

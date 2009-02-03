@@ -16,8 +16,8 @@ public class IndexerJob extends QuartzCommand {
     @Override
     protected void onExecute(JobExecutionContext context) throws JobExecutionException {
         ArtifactoryContext artifactoryContext = ContextHelper.get();
-        IndexerService indexer = artifactoryContext.beanForType(IndexerService.class);
+        IndexerManager indexerManager = artifactoryContext.beanForType(IndexerManager.class);
         Date fireTime = context.getFireTime();
-        indexer.index(fireTime);
+        indexerManager.index(fireTime);
     }
 }

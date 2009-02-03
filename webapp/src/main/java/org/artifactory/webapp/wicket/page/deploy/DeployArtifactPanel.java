@@ -17,7 +17,7 @@
 package org.artifactory.webapp.wicket.page.deploy;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.maven.MavenArtifactInfo;
+import org.artifactory.api.repo.DeployableArtifact;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.webapp.wicket.common.component.FileUploadForm;
 import org.artifactory.webapp.wicket.common.component.FileUploadParentPanel;
@@ -37,7 +37,7 @@ public class DeployArtifactPanel extends TitledPanel implements FileUploadParent
     @SpringBean
     private RepositoryService repositoryService;
 
-    private MavenArtifactInfo artifactInfo;
+    private DeployableArtifact deployableArtifact;
 
     private ArtifactForm artifactForm;
 
@@ -59,7 +59,7 @@ public class DeployArtifactPanel extends TitledPanel implements FileUploadParent
         uploadBorder.add(uploadForm);
 
         //Add the artifact details
-        artifactInfo = new MavenArtifactInfo();
+        deployableArtifact = new DeployableArtifact();
         artifactForm = new ArtifactForm("artifactForm", this);
         artifactForm.enable(false);
 
@@ -84,26 +84,26 @@ public class DeployArtifactPanel extends TitledPanel implements FileUploadParent
     }
 
     public void onFileSaved() {
-        artifactInfo = artifactInfoFromUploadedFile();
-        artifactForm.update(artifactInfo);
+        deployableArtifact = deployableArtifactFromUploadedFile();
+        artifactForm.update(deployableArtifact);
     }
 
     //Analyze the uploadedFile
-    private MavenArtifactInfo artifactInfoFromUploadedFile() {
-        artifactInfo.invalidate();
+    private DeployableArtifact deployableArtifactFromUploadedFile() {
+        deployableArtifact.invalidate();
         //Try to guess the properties from pom/jar content
         try {
-            artifactInfo = repositoryService.getArtifactInfo(getUploadedFile());
+            deployableArtifact = repositoryService.getDeployableArtifact(getUploadedFile());
         } catch (Exception e) {
             String msg = "Unable to analyze uploaded file content. Cause: " + e.getMessage();
             log.debug(msg, e);
             error(msg);
         }
-        return artifactInfo;
+        return deployableArtifact;
     }
 
-    MavenArtifactInfo getDeployableArtifact() {
-        return artifactInfo;
+    DeployableArtifact getDeployableArtifact() {
+        return deployableArtifact;
     }
 
     File getUploadedFile() {

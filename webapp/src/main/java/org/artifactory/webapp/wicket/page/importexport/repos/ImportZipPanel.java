@@ -23,7 +23,7 @@ import org.apache.wicket.RequestCycle;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.webapp.wicket.common.component.FileUploadForm;
 import org.artifactory.webapp.wicket.common.component.FileUploadParentPanel;
-import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
+import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +48,11 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
 
         //Add upload form with ajax progress bar
         uploadForm = new FileUploadForm("uploadForm", this);
-        uploadForm.add(new HelpBubble("uploadHelp", getUploadHelpText()));
+        uploadForm.add(new SchemaHelpBubble("uploadHelp", "", getUploadHelpText()));
         add(uploadForm);
 
         getImportForm().setVisible(false);
-        getImportForm().add(new HelpBubble("repoSelectHelp", getRepoSelectHelpText()));
+        getImportForm().add(new SchemaHelpBubble("repoSelectHelp", "", getRepoSelectHelpText()));
     }
 
     private String getUploadHelpText() {

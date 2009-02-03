@@ -7,7 +7,6 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.validation.validator.NumberValidator;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.webapp.wicket.common.behavior.AjaxCallConfirmationDecorator;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
@@ -17,7 +16,6 @@ import org.artifactory.webapp.wicket.common.component.links.TitledAjaxLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledActionPanel;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
-import org.artifactory.webapp.wicket.utils.validation.DateFormatValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +37,8 @@ public class GeneralSettingsPanel extends TitledActionPanel {
         initPanelModel();
 
         add(new TextField("serverName"));
-        RequiredTextField uploadSizeField = new RequiredTextField("fileUploadMaxSizeMb");
-        uploadSizeField.add(NumberValidator.range(0, Integer.MAX_VALUE));
-        add(uploadSizeField);
-        RequiredTextField dateFormatField = new RequiredTextField("dateFormat");
-        dateFormatField.add(new DateFormatValidator());
-        add(dateFormatField);
+        add(new RequiredTextField("fileUploadMaxSizeMb", Integer.class));
+        add(new RequiredTextField("dateFormat"));
         add(new StyledCheckbox("offlineMode"));
 
         add(new SchemaHelpBubble("serverName.help"));
@@ -104,6 +98,11 @@ public class GeneralSettingsPanel extends TitledActionPanel {
                 // reload the central config
                 initPanelModel();
                 target.addComponent(GeneralSettingsPanel.this);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
             }
         };
     }

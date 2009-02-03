@@ -52,9 +52,6 @@ public class BaseSettings implements Serializable {
         this.failIfEmpty = settings.failIfEmpty;
     }
 
-    /**
-     * @return Base directory of the operation (target directory of the export or source directory of an import)
-     */
     public File getBaseDir() {
         return baseDir;
     }
@@ -67,9 +64,6 @@ public class BaseSettings implements Serializable {
         this.includeMetadata = includeMetadata;
     }
 
-    /**
-     * @return List of repositories to do export or import on. Empty if needs to export or import all.
-     */
     public List<LocalRepoDescriptor> getRepositories() {
         return repositories;
     }

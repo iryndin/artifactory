@@ -19,16 +19,20 @@ package org.artifactory.webapp.wicket.common.component.panel.titled;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
+import org.artifactory.webapp.wicket.common.Titled;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 
 /**
- * This panel behaves like a TitledPanel with additional buttons panel at the bottom right, outside of the grey border.
+ * This panel behaves like a TitledPanel with additional buttons panel at the bottom right,
+ * outside of the grey border.
  *
  * @author Yossi Shaul
  */
-public abstract class TitledActionPanel extends TitledPanel {
+public abstract class TitledActionPanel extends Panel implements Titled {
+    protected static final String TITLE_KEY = "panel.title";
 
     private RepeatingView buttonsContainer;
 
@@ -43,8 +47,14 @@ public abstract class TitledActionPanel extends TitledPanel {
     }
 
     private void init() {
-        buttonsContainer = new RepeatingView("buttons");
+        setOutputMarkupId(true);
+        add(new TitleLabel(this));
+        buttonsContainer = new RepeatingView("myButton");
         add(buttonsContainer);
+    }
+
+    public String getTitle() {
+        return "";
     }
 
     /**
@@ -58,8 +68,8 @@ public abstract class TitledActionPanel extends TitledPanel {
     }
 
     /**
-     * Adds a button to the buttons list on the bottom left of the panel. The buttons will be displayed in the order
-     * they were added.
+     * Adds a button to the buttons list on the bottom left of the panel.
+     * The buttons will be displayed in the order they were added.
      *
      * @param button The button to add.
      */
@@ -68,8 +78,8 @@ public abstract class TitledActionPanel extends TitledPanel {
     }
 
     /**
-     * Adds a button to the buttons list on the bottom left of the panel. The buttons will be displayed in the order
-     * they were added.
+     * Adds a button to the buttons list on the bottom left of the panel.
+     * The buttons will be displayed in the order they were added.
      *
      * @param button The button to add.
      */
@@ -79,9 +89,5 @@ public abstract class TitledActionPanel extends TitledPanel {
 
     private void addButton(Component button) {
         buttonsContainer.add(button);
-    }
-
-    public RepeatingView getButtonsContainer() {
-        return buttonsContainer;
     }
 }

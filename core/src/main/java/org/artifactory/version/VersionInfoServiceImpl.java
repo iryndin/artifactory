@@ -1,23 +1,13 @@
 package org.artifactory.version;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
-import org.artifactory.api.version.ArtifactoryVersioning;
-import org.artifactory.api.version.VersionHolder;
 import org.artifactory.api.version.VersionInfoService;
 import org.artifactory.common.ConstantsValue;
-import org.artifactory.descriptor.repo.ProxyDescriptor;
-import org.artifactory.schedule.TaskService;
-import org.artifactory.schedule.quartz.QuartzTask;
-import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.HttpClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,19 +28,17 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     /**
      * Key to use in version information cache
      */
-    static final String CACHE_KEY = "versioning";
+    private final String CACHE_KEY = "versioning";
     /**
      * An instance of the cache service
      */
     @Autowired
     private CacheService cacheService;
 
-    @Autowired
-    private TaskService taskService;
-
     private final String PARAM_VM_VERSION = "java.vm.version";
     private final String PARAM_OS_ARCH = "os.arch";
     private final String PARAM_OS_NAME = "os.name";
+    private final String SERVICE_UNAVAILABLE = "NA";
 
     /**
      * {@inheritDoc}
@@ -64,7 +52,10 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     }
 
     /**
-     * {@inheritDoc}
+     * Get latest revision number
+     *
+     * @param release True - to get the latest stable revision, False - to get the latest revision of any kind
+     * @return String Latest revision number
      */
     public String getLatestRevision(Map<String, String> headersMap, boolean release) {
         ArtifactoryVersioning versioning = getVersioning(headersMap);
@@ -75,42 +66,25 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public String getLatestVersionFromCache(boolean release) {
-        ArtifactoryVersioning cachedversioning = getVersioningFromCache();
-        if (cachedversioning != null) {
-            return release ? cachedversioning.getRelease().getVersion() : cachedversioning.getLatest().getVersion();
-        } else {
-            return SERVICE_UNAVAILABLE;
-        }
-    }
-
-    /**
      * Retrieves the versioning info (either cached, or remote if needed)
      *
      * @param headersMap A map of the needed headers
      * @return ArtifactoryVersioning - Latest version info
      */
     private ArtifactoryVersioning getVersioning(Map<String, String> headersMap) {
-        ArtifactoryVersioning versioning = getVersioningFromCache();
+        Map<Object, ArtifactoryVersioning> cache = cacheService.getCache(ArtifactoryCache.versioning);
+        ArtifactoryVersioning versioning = cache.get(CACHE_KEY);
         if (versioning == null) {
-            synchronized (this) {
-                if (getVersioningFromCache() == null && !taskService.hasTaskOfType(VersioningRetrieverJob.class)) {
-                    // get the version asynchronouosly from the remote server
-                    QuartzTask versioningRetriever = new QuartzTask(VersioningRetrieverJob.class, 0);
-                    versioningRetriever.addAttribute("headers", headersMap);
-                    versioningRetriever.setSingleton(true);
-                    taskService.startTask(versioningRetriever);
-                }
+            try {
+                versioning = getRemote(headersMap);
+            } catch (Exception e) {
+                VersionHolder versionHolder = new VersionHolder(SERVICE_UNAVAILABLE,
+                        SERVICE_UNAVAILABLE, SERVICE_UNAVAILABLE, SERVICE_UNAVAILABLE);
+                versioning = new ArtifactoryVersioning(versionHolder, versionHolder);
             }
-            versioning = createServiceUnavailableVersioning();
+            cache.put(CACHE_KEY, versioning);
         }
         return versioning;
-    }
-
-    private ArtifactoryVersioning getVersioningFromCache() {
-        return getCache().get(CACHE_KEY);
     }
 
     /**
@@ -119,7 +93,8 @@ public class VersionInfoServiceImpl implements VersionInfoService {
      * @param headersMap A map of the needed headers
      * @return ArtifactoryVersioning - Latest version info
      */
-    public ArtifactoryVersioning getRemoteVersioning(Map<String, String> headersMap) {
+    private ArtifactoryVersioning getRemote(Map<String, String> headersMap) {
+        HttpClient httpClient = new HttpClient();
         GetMethod getMethod = new GetMethod(URL);
         NameValuePair[] httpMethodParams = new NameValuePair[]{
                 new NameValuePair(ConstantsValue.artifactoryVersion.getPropertyName(),
@@ -132,32 +107,18 @@ public class VersionInfoServiceImpl implements VersionInfoService {
         //Append headers
         setHeader(getMethod, headersMap, "User-Agent");
         setHeader(getMethod, headersMap, "Referer");
-
-        HttpClient client = new HttpClient();
-        HttpClientParams clientParams = client.getParams();
-        // Set the socket data timeout
-        clientParams.setSoTimeout(15000);
-        // Set the connection timeout
-        clientParams.setConnectionManagerTimeout(1500);
-
-        // Don't retry
-        clientParams.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(0, false));
-
-        //Update the proxy settings
-        ProxyDescriptor proxy = InternalContextHelper.get().getCentralConfig().getDescriptor().getDefaultProxy();
-        HttpClientUtils.configureProxy(client, proxy);
-
         String returnedInfo = null;
         try {
-            client.executeMethod(getMethod);
+            httpClient.executeMethod(getMethod);
             if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
                 returnedInfo = getMethod.getResponseBodyAsString();
             }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
-        if (("".equals(returnedInfo)) || (returnedInfo == null)) {
-            throw new RuntimeException("Requested field was not found.");
+        if (("".equals(returnedInfo)) ||
+                (returnedInfo == null)) {
+            throw new RuntimeException("Requested field was not found");
         }
         return VersionParser.parse(returnedInfo);
     }
@@ -168,13 +129,4 @@ public class VersionInfoServiceImpl implements VersionInfoService {
             getMethod.setRequestHeader(headerKey, headerVal);
         }
     }
-
-    private Map<Object, ArtifactoryVersioning> getCache() {
-        return cacheService.getCache(ArtifactoryCache.versioning);
-    }
-
-    private ArtifactoryVersioning createServiceUnavailableVersioning() {
-        return new ArtifactoryVersioning(VersionHolder.VERSION_UNAVAILABLE, VersionHolder.VERSION_UNAVAILABLE);
-    }
-
 }

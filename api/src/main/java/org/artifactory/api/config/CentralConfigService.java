@@ -25,7 +25,8 @@ import java.text.DateFormat;
 /**
  * User: freds Date: Aug 3, 2008 Time: 6:22:39 PM
  */
-public interface CentralConfigService extends DescriptorAware<CentralConfigDescriptor>, ImportableExportable {
+public interface CentralConfigService
+        extends DescriptorAware<CentralConfigDescriptor>, ImportableExportable {
     DateFormat getDateFormatter();
 
     void reload();

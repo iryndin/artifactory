@@ -19,6 +19,8 @@ package org.artifactory.webapp.wicket.common.component.help;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -38,8 +40,7 @@ public class HelpBubble extends Label {
     /**
      * Protected constructor for explicitly for a class which overrides the class and would
      * Like to supply the model independantly
-     *
-     * @param id Wicket id
+     * @param id    Wicket id
      */
     protected HelpBubble(String id) {
         super(id);
@@ -62,7 +63,11 @@ public class HelpBubble extends Label {
     }
 
     protected void addHeaderJavascript() {
-        add(HeaderContributor.forJavaScript(HelpBubble.class, "HelpBubble.js"));
+        add(new HeaderContributor(new IHeaderContributor() {
+            public void renderHead(IHeaderResponse response) {
+                response.renderJavascript("dojo.require(\"dijit.Tooltip\");", "dijit.Tooltip");
+            }
+        }));
     }
 
     @Override

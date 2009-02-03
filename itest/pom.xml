@@ -10,7 +10,7 @@
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.3.0-beta-6</version>
     </parent>
 
     <dependencies>
@@ -63,42 +63,11 @@
     </dependencies>
 
     <build>
-        <finalName>artifactory-itest</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assemble/assembly.xml</descriptor>
-                    </descriptors>
-                    <finalName>artifactory-itest-${version}</finalName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.artifactory.test.mock.StartDummyRepo</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
                 </configuration>
             </plugin>
         </plugins>

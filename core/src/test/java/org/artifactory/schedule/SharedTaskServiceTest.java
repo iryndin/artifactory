@@ -50,33 +50,33 @@ public class SharedTaskServiceTest extends TaskServiceTestBase {
 
     @Test
     public void testPause() throws Exception {
-        Thread.sleep(200);
+        Thread.sleep(2000);
         log.debug("######### PAUSING #########");
         taskService.pauseTask(task.getToken(), true);
         log.debug("######### PAUSED #########");
-        Thread.sleep(200);
+        Thread.sleep(2000);
         log.debug("######### RESUMED #########");
         taskService.resumeTask(task.getToken());
-        Thread.sleep(200);
+        Thread.sleep(2000);
         log.debug("######### STOPPING #########");
         taskService.stopTask(task.getToken(), true);
         log.debug("######### STOPPED #########");
-        Thread.sleep(200);
+        Thread.sleep(2000);
         log.debug("######### RESUMING #########");
         taskService.resumeTask(task.getToken());
         log.debug("######### RESUMED #########");
-        Thread.sleep(200);
+        Thread.sleep(2000);
     }
 
     @Test(invocationCount = 12, threadPoolSize = 12)
     public void testConcurrentServiceAccess() throws Exception {
         taskService.pauseTask(task.getToken(), true);
-        Thread.sleep(200);
+        Thread.sleep(1000);
         taskService.resumeTask(task.getToken());
-        Thread.sleep(200);
+        Thread.sleep(1000);
         taskService.stopTask(task.getToken(), true);
-        Thread.sleep(200);
+        Thread.sleep(1000);
         taskService.resumeTask(task.getToken());
-        Thread.sleep(200);
+        Thread.sleep(1000);
     }
 }

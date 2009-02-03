@@ -30,10 +30,8 @@ import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
-import org.apache.maven.embedder.PlexusLoggerAdapter;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.maven.wagon.Wagon;
-import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
@@ -44,7 +42,6 @@ import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.util.FieldUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -62,7 +59,8 @@ import java.util.List;
 public class Maven {
     private static final Logger log = LoggerFactory.getLogger(Maven.class);
 
-    public static final File LOCAL_REPO_DIR = new File(System.getProperty("java.io.tmpdir"), "artifactory-local-repo");
+    public static final File LOCAL_REPO_DIR =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-local-repo");
 
     private PlexusContainer container;
     private MavenEmbedder maven;
@@ -116,7 +114,6 @@ public class Maven {
             container.addComponentDescriptor(artifactMetadataSourceDesc);
             //container.createAndAutowire(mavenMetadataSourceName);
             container.createComponentInstance(artifactMetadataSourceDesc);
-            manipulateComponentLoggers();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start maven embedder.", e);
         }
@@ -142,33 +139,36 @@ public class Maven {
         return artifactResolutionResult;
     }
 
-    public void deploy(File file, Artifact artifact, final LocalRepo repo) throws ArtifactDeploymentException {
+    public void deploy(File file, Artifact artifact, final LocalRepo repo)
+            throws ArtifactDeploymentException {
         File repoDir = null;
         try {
             //Deploy to a jcr repo
             ArtifactRepositoryFactory repositoryFactory = getArtifactRepositoryFactory();
-            File dir = org.artifactory.util.FileUtils.createRandomDir(
+            File dir = org.artifactory.utils.FileUtils.createRandomDir(
                     ArtifactoryHome.getTmpUploadsDir(), repo.getKey() + ".");
             String tempDirUrl = dir.toURI().toURL().toString();
             boolean uniqueSnapshotVersions = repo.getSnapshotVersionBehavior().equals(SnapshotVersionBehavior.UNIQUE);
-            ArtifactRepository localRepository = repositoryFactory.createDeploymentArtifactRepository(
-                    repo.getKey(), tempDirUrl, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
+            ArtifactRepository localRepository =
+                    repositoryFactory.createDeploymentArtifactRepository(
+                            repo.getKey(), tempDirUrl, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
             repoDir = new File(localRepository.getBasedir());
             String url = "jcr:";
-            ArtifactRepository deploymentRepository = repositoryFactory.createDeploymentArtifactRepository(
-                    repo.getKey(), url, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
+            ArtifactRepository deploymentRepository =
+                    repositoryFactory.createDeploymentArtifactRepository(
+                            repo.getKey(), url, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
             //Do the actual deployment
             ArtifactDeployer deployer = getDeployer();
             deployer.deploy(file, artifact, deploymentRepository, localRepository);
         } catch (Exception e) {
-            throw new ArtifactDeploymentException(e);
+            throw new ArtifactDeploymentException("Failed to deploy file '" + file + "'.", e);
         } finally {
             //Cleanup local repository
             if (repoDir != null) {
                 try {
                     FileUtils.forceDelete(repoDir);
                 } catch (IOException e) {
-                    log.warn("Failed to delete temp repo directory'{}'.", repoDir.getPath());
+                    log.warn("Failed to delete temp repo directory'" + repoDir.getPath() + "'.", e);
                 }
             }
         }
@@ -216,17 +216,10 @@ public class Maven {
         return (ArtifactCollector) lookup(ArtifactCollector.class.getName());
     }
 
-    public Artifact createArtifact(MavenArtifactInfo artifactInfo) {
-        String groupId = artifactInfo.getGroupId();
-        String artifactId = artifactInfo.getArtifactId();
-        String version = artifactInfo.getVersion();
-        String classifier = artifactInfo.getClassifier();
-        String type = artifactInfo.getType();
-        return createArtifact(groupId, artifactId, version, classifier, type);
-    }
-
-    public Artifact createArtifact(String groupId, String artifactId, String version, String classifier, String type) {
-        Artifact artifact = maven.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
+    public Artifact createArtifact(
+            String groupId, String artifactId, String version, String classifier, String type) {
+        Artifact artifact =
+                maven.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
         artifact.setRelease(!MavenNaming.isVersionSnapshot(version));
         return artifact;
     }
@@ -254,11 +247,5 @@ public class Maven {
         } catch (ComponentLookupException e) {
             throw new RuntimeException("Failed to find plexus component '" + key + "'.");
         }
-    }
-
-    private void manipulateComponentLoggers() {
-        WagonManager wagonManager = getWagonManager();
-        PlexusLoggerAdapter logger = (PlexusLoggerAdapter) FieldUtils.getProtectedFieldValue("logger", wagonManager);
-        logger.setThreshold(org.codehaus.plexus.logging.Logger.LEVEL_ERROR);
     }
 }

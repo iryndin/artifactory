@@ -1,30 +1,9 @@
 var ModalHandler = {};
 
 ModalHandler.onPopup = function() {
-    ModalHandler.resizeCurrent();
-
-    Wicket.Window.current.center();
-
-    document.onkeyup = function (e) {
-        var event = e ? e : window.event;
-
-        var EscKey = 27;
-        var modal = Wicket.Window.current;
-        if (event.keyCode == EscKey && modal && !modal.closing) {
-            modal.close();
-        }
-    };
-};
-
-ModalHandler.onError = function() {
     var modal = Wicket.Window.current;
-    if (!modal.wasResized) {
-        window.setTimeout(ModalHandler.resizeCurrent, 100);
-    }
-};
 
-ModalHandler.resizeCurrent = function() {
-    var modal = Wicket.Window.current;
+    // set dimentions
     var width = modal.settings.width;
     var height = modal.settings.height;
 
@@ -43,14 +22,42 @@ ModalHandler.resizeCurrent = function() {
 
     modal.window.style.width = width + modal.settings.widthUnit;
     modal.content.style.height = height + modal.settings.heightUnit;
+
+    // centering the window
+    var center = ( Wicket.Window.getViewportHeight() - height) / 2;
+    center = Math.max(center, 5);
+    modal.window.style.top = center + modal.settings.heightUnit;
+
+    document.onkeyup = function (e) {
+        var event = e ? e : window.event;
+
+        var EscKey = 27;
+        if (event.keyCode == EscKey) {
+            Wicket.Window.close();
+        }
+    };
 };
 
 ModalHandler.onClose = function() {
     window.onkeypress = null;
-};
+}
 
-Wicket.Window.prototype.resizing = function() {
-    Wicket.Window.current.wasResized = true;
+ModalHandler.autoSize = function() {
+    var modal = Wicket.Window.current;
+    if (!modal) {
+        return;
+    }
+
+    // set dimentions
+    var height = modal.settings.height;
+    if (height == 0) {
+        height = modal.content.scrollHeight;
+    }
+
+    var maxHeight = Wicket.Window.getViewportHeight();
+    if (height > maxHeight) height = maxHeight;
+
+    modal.content.style.height = height + modal.settings.heightUnit;
 };
 
 /**
@@ -127,26 +134,4 @@ function(idWindow, idClassElement, idCaption, idContent, idTop, idTopLeft, idTop
     "</div>";
 
     return s;
-};
-
-Wicket.Window.prototype.superClose = Wicket.Window.prototype.close;
-Wicket.Window.prototype.checkedClose = function() {
-    if (this.closing) {
-        this.closing = false;
-        this.superClose(true);
-    }
-};
-
-Wicket.Window.prototype.close = function() {
-    var me = this;
-    me.checkedClose();
-    me.closing = true;
-
-    dojo.fadeOut({
-        node: me.window,
-        duration: 220,
-        onEnd: function() {
-            me.checkedClose();
-        }
-    }).play();
-};
+}

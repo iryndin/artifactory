@@ -67,7 +67,8 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
     @WicketProperty
     private String testPassword;
 
-    public LdapCreateUpdatePanel(CreateUpdateAction action, LdapSetting ldapDescriptor, LdapsListPanel ldapsListPanel) {
+    public LdapCreateUpdatePanel(CreateUpdateAction action, LdapSetting ldapDescriptor,
+                                 LdapsListPanel ldapsListPanel) {
         super(action, ldapDescriptor);
         setWidth(494);
 
@@ -80,7 +81,7 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
         RequiredTextField ldapKeyField = new RequiredTextField("key");
         ldapKeyField.setEnabled(isCreate());// don't allow key update
         if (isCreate()) {
-            ldapKeyField.add(new XsdNCNameValidator("Invalid LDAP key '%s'"));
+            ldapKeyField.add(XsdNCNameValidator.getInstance());
             ldapKeyField.add(new UniqueXmlIdValidator(getEditingDescriptor()));
         }
         border.add(ldapKeyField);
@@ -119,17 +120,21 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
             searchPattern = new SearchPattern();
         }
 
-        borderDn.add(new TextField("searchFilter", new PropertyModel(searchPattern, "searchFilter")));
-        borderDn.add(new SchemaHelpBubble("searchFilter.help", new SchemaHelpModel(searchPattern, "searchFilter")));
+        borderDn.add(new TextField("searchFilter",
+                new PropertyModel(searchPattern, "searchFilter")));
+        borderDn.add(new SchemaHelpBubble("searchFilter.help",
+                new SchemaHelpModel(searchPattern, "searchFilter")));
 
         borderDn.add(new TextField("searchBase", new PropertyModel(searchPattern, "searchBase")));
-        borderDn.add(new SchemaHelpBubble("searchBase.help", new SchemaHelpModel(searchPattern, "searchBase")));
+        borderDn.add(new SchemaHelpBubble("searchBase.help",
+                new SchemaHelpModel(searchPattern, "searchBase")));
 
-        borderDn.add(new StyledCheckbox("searchSubTree", new PropertyModel(searchPattern, "searchSubTree")));
-        borderDn.add(new SchemaHelpBubble("searchSubTree.help", new SchemaHelpModel(searchPattern, "searchSubTree")));
+        borderDn.add(new StyledCheckbox(
+                "searchSubTree", new PropertyModel(searchPattern, "searchSubTree")));
 
         borderDn.add(new TextField("managerDn", new PropertyModel(searchPattern, "managerDn")));
-        borderDn.add(new SchemaHelpBubble("managerDn.help", new SchemaHelpModel(searchPattern, "managerDn")));
+        borderDn.add(new SchemaHelpBubble("managerDn.help",
+                new SchemaHelpModel(searchPattern, "managerDn")));
 
         PasswordTextField managerPasswordField = new PasswordTextField(
                 "managerPassword", new PropertyModel(searchPattern, "managerPassword"));
@@ -162,7 +167,6 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
     private SimpleButton createSubmitButton(final LdapsListPanel ldapsListPanel) {
         String submitCaption = isCreate() ? "Create" : "Save";
         SimpleButton submit = new SimpleButton("submit", form, submitCaption) {
-            @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 LdapSetting ldapSetting = (LdapSetting) form.getModelObject();
                 if (!validateAndUpdateLdapSettings(ldapSetting)) {
@@ -182,13 +186,16 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
                 target.addComponent(ldapsListPanel);
                 ModalHandler.closeCurrent(target);
             }
+
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
         return submit;
     }
 
     private SimpleButton createTestConnectionButton(final LdapsListPanel ldapsListPanel) {
         SimpleButton submit = new SimpleButton("testLdap", form, "Test Connection") {
-            @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 LdapSetting ldapSetting = (LdapSetting) form.getModelObject();
                 if (!validateAndUpdateLdapSettings(ldapSetting)) {
@@ -210,6 +217,11 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
                     info(status.getStatusMsg());
                 }
 
+                FeedbackUtils.refreshFeedback(target);
+            }
+
+
+            protected void onError(AjaxRequestTarget target, Form form) {
                 FeedbackUtils.refreshFeedback(target);
             }
         };

@@ -8,7 +8,7 @@ import org.apache.wicket.model.Model;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import static org.artifactory.webapp.wicket.common.component.panel.links.LinksPanel.LINK_ID;
 import org.artifactory.webapp.wicket.common.component.table.SortableTable;
-import org.artifactory.webapp.wicket.common.component.table.columns.panel.links.LinksColumnPanel;
+import org.artifactory.webapp.wicket.common.component.table.columns.panel.LinksColumnPanel;
 
 import java.util.Collection;
 

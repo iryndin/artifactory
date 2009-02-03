@@ -86,10 +86,10 @@ public class UpdateUtils {
         }
         //Replace permissions: repo:ANY -> repo:**, repo:x/y->repo/x/y/**
         PermissionTargetInfo permissionTarget = null;
-        if (ANY.equals(path) || PermissionTargetInfo.ANY_PATH.equals(path)) {
+        if ("ANY".equals(path)) {
             path = PermissionTargetInfo.ANY_PATH;
             // If repoKey is ANY the name is now Anything
-            if (ANY.equals(repoKey)) {
+            if ("ANY".equals(repoKey)) {
                 permissionTarget = new PermissionTargetInfo(
                         PermissionTargetInfo.ANY_PERMISSION_TARGET_NAME,
                         PermissionTargetInfo.ANY_REPO, PermissionTargetInfo.ANY_PATH, null
@@ -166,7 +166,7 @@ public class UpdateUtils {
         }
 
         // If it is local repository add the -local
-        if (!ANY.equals(newRepoKey) && !newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
+        if (!newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
             newRepoKey = newRepoKey + LOCAL_SUFFIX;
         }
 

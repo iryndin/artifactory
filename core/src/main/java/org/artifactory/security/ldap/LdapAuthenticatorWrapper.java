@@ -8,7 +8,7 @@ import org.artifactory.descriptor.security.ldap.LdapSetting;
 import org.artifactory.descriptor.security.ldap.SearchPattern;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Wrapper for the LDAP bind authenticator. Used to authenticate users against ldap and as a factory for the security
- * context and actual authenticator.
+ * Wrapper for the LDAP bind authenticator. Used to authenticate users against ldap and as a factory
+ * for the security context and actual authenticator.
  *
  * @author Yossi Shaul
  */

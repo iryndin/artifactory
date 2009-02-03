@@ -21,15 +21,12 @@ import java.util.List;
  * @author Yoav Aharoni
  */
 public class SortableTable extends DataTable {
-    private ISortableDataProvider dataProvider;
-
     public SortableTable(String id, final List<IColumn> columns, ISortableDataProvider dataProvider, int rowsPerPage) {
         this(id, columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
     }
 
     public SortableTable(String id, final IColumn[] columns, ISortableDataProvider dataProvider, int rowsPerPage) {
         super(id, columns, dataProvider, rowsPerPage);
-        this.dataProvider = dataProvider;
         setOutputMarkupId(true);
         setVersioned(false);
         add(new CssClass("data-table"));
@@ -47,8 +44,12 @@ public class SortableTable extends DataTable {
         notifyColumnsAttached();
     }
 
-    public final ISortableDataProvider getDataProvider() {
-        return dataProvider;
+    private void notifyColumnsAttached() {
+        for (IColumn column : getColumns()) {
+            if (column instanceof AttachColumnListener) {
+                ((AttachColumnListener) column).onColumnAttached(this);
+            }
+        }
     }
 
     @SuppressWarnings({"RefusedBequest"})
@@ -76,14 +77,6 @@ public class SortableTable extends DataTable {
         super.onComponentTag(tag);
         tag.put("cellpadding", "0");
         tag.put("cellspacing", "0");
-    }
-
-    private void notifyColumnsAttached() {
-        for (IColumn column : getColumns()) {
-            if (column instanceof AttachColumnListener) {
-                ((AttachColumnListener) column).onColumnAttached(this);
-            }
-        }
     }
 
     private class AddCssVisitor implements IVisitor {

@@ -3,21 +3,20 @@ package org.artifactory.webapp.wicket.application.sitemap;
 import org.apache.wicket.Page;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
 
 /**
  * @author Yoav Aharoni
  */
-public abstract class SecuredPageNode extends MenuNode {
+public abstract class SecuredPageNode extends PageNode {
     @SpringBean
     private AuthorizationService authorizationService;
 
-    @SpringBean
-    private RepositoryService repositoryService;
+    protected SecuredPageNode() {
+    }
 
     protected SecuredPageNode(Class<? extends Page> pageClass, String name) {
-        super(name, pageClass);
+        super(pageClass, name);
     }
 
     {
@@ -26,10 +25,6 @@ public abstract class SecuredPageNode extends MenuNode {
 
     public AuthorizationService getAuthorizationService() {
         return authorizationService;
-    }
-
-    public RepositoryService getRepositoryService() {
-        return repositoryService;
     }
 
     @Override

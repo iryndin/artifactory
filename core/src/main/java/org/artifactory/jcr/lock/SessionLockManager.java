@@ -30,7 +30,7 @@ public class SessionLockManager implements SessionResource {
      *
      * @param commit true if committed
      */
-    public void afterCompletion(boolean commit) {
+    public void releaseResources(boolean commit) {
         if (LockingHelper.hasLockManager()) {
             if (commit) {
                 LockingAdvice.getLockManager().updateCache();
@@ -48,7 +48,7 @@ public class SessionLockManager implements SessionResource {
         return LockingHelper.hasLockManager() && LockingAdvice.getLockManager().hasPendingChanges();
     }
 
-    public void onSessionSave() {
+    public void save() {
         if (LockingHelper.hasLockManager()) {
             LockingAdvice.getLockManager().save();
         }

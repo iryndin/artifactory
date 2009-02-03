@@ -4,7 +4,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptorBuilder;
-import org.artifactory.api.mime.ChecksumType;
+import org.artifactory.io.checksum.ChecksumType;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrZipFile;
 import org.artifactory.repo.LocalRepo;

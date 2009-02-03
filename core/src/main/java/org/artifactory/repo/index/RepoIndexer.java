@@ -73,9 +73,12 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         //Unplexus
         FieldUtils.setProtectedFieldValue("indexer", this, new DefaultIndexerEngine());
         DefaultScanner scanner = new DefaultScanner();
-        DefaultArtifactContextProducer artifactContextProducer = new DefaultArtifactContextProducer();
-        FieldUtils.setProtectedFieldValue("artifactContextProducer", scanner, artifactContextProducer);
-        FieldUtils.setProtectedFieldValue("al", artifactContextProducer, new ExtensionBasedLocator(repo, ".jar"));
+        DefaultArtifactContextProducer artifactContextProducer =
+                new DefaultArtifactContextProducer();
+        FieldUtils.setProtectedFieldValue(
+                "artifactContextProducer", scanner, artifactContextProducer);
+        FieldUtils.setProtectedFieldValue("al", artifactContextProducer,
+                new ExtensionBasedLocator(repo, ".jar"));
         FieldUtils.setProtectedFieldValue("pl", artifactContextProducer, new PomLocator(repo));
         FieldUtils.setProtectedFieldValue("ml", artifactContextProducer, new MetadataLocator(repo));
         FieldUtils.setProtectedFieldValue("scanner", this, scanner);
@@ -101,7 +104,7 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         String repoKey = repo.getKey();
         JcrFolder repoDir = repo.getRootFolder();
         //Use a file based dir with a temp file to conserve memory
-        File dir = org.artifactory.util.FileUtils.createRandomDir(
+        File dir = org.artifactory.utils.FileUtils.createRandomDir(
                 ArtifactoryHome.getTmpDir(), "artifactory.index." + repoKey + ".");
         Directory indexDir = FSDirectory.getDirectory(dir);
         List<IndexCreator> indexCreators = new ArrayList<IndexCreator>(1);
@@ -167,7 +170,8 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         int numDocs = reader.numDocs();
         for (int i = 0; i < numDocs; i++) {
             Document doc = reader.document(i);
-            System.err.println(i + " " + doc.get(ArtifactInfo.UINFO) + " : " + doc.get(ArtifactInfo.PACKAGING));
+            System.err.println(i + " " + doc.get(ArtifactInfo.UINFO) + " : " +
+                    doc.get(ArtifactInfo.PACKAGING));
         }
     }
 }

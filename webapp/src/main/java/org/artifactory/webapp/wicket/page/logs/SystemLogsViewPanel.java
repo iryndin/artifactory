@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import static java.util.Arrays.asList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class SystemLogsViewPanel extends Panel {
      * Link object for downloading the system log file
      */
     private DownloadLink downloadLink =
-            new DownloadLink("systemLogsLink", systemLogFile);
+            new DownloadLink("systemLogsLink", systemLogFile, "artifactory.log");
 
     /**
      * Label to display the dash between the download path and link
@@ -68,11 +67,6 @@ public class SystemLogsViewPanel extends Panel {
     private Label contentLabel = new Label("systemLogsContent", "");
 
     /**
-     * Label to display file last modified and view last updated times
-     */
-    private Label lastUpdateLabel = new Label("lastUpdate", "");
-
-    /**
      * Pointer to indicate the last position the log file was read from
      */
     private long lastPointer;
@@ -80,7 +74,7 @@ public class SystemLogsViewPanel extends Panel {
     /**
      * List containing log file names
      */
-    private static final List<String> LOGS = asList("artifactory.log", "access.log", "import.export.log");
+    private static final List<String> LOGS = asList("artifactory.log", "access.log");
 
     /**
      * Main constructor
@@ -94,7 +88,6 @@ public class SystemLogsViewPanel extends Panel {
         addSystemLogsSize();
         addSystemLogsLink();
         addSystemLogsContent();
-        addLastUpdate();
 
         // add the timer behavior to the page and make it update both components
         add(new AbstractAjaxTimerBehavior(Duration.seconds(ConstantsValue.logsRefreshRateSecs.getInt())) {
@@ -154,7 +147,6 @@ public class SystemLogsViewPanel extends Panel {
         target.addComponent(pathLabel);
         target.addComponent(sizeLabel);
         target.addComponent(linkLabel);
-        target.addComponent(lastUpdateLabel);
     }
 
     /**
@@ -186,14 +178,6 @@ public class SystemLogsViewPanel extends Panel {
     }
 
     /**
-     * Add a label with the log file and view update times
-     */
-    private void addLastUpdate() {
-        add(lastUpdateLabel);
-        lastUpdateLabel.setOutputMarkupId(true);
-    }
-
-    /**
      * A a label to display the content of the system log file (last 100K)
      */
     private void addSystemLogsContent() {
@@ -220,7 +204,7 @@ public class SystemLogsViewPanel extends Panel {
         }
         pathLabel.setModelObject(getLogPathCaption());
         long size = systemLogFile.length();
-        setLogInfo();
+        setLogSizeAndLink();
         if (lastPointer == size) {
             return "";
         }
@@ -270,25 +254,17 @@ public class SystemLogsViewPanel extends Panel {
     }
 
     /**
-     * Sets the attributes of the log size, download links and update times according to the log availability
+     * Sets the attributes of the log size and download links according to the log availability
      */
-    private void setLogInfo() {
+    private void setLogSizeAndLink() {
         if (!systemLogFile.exists()) {
             dashLabel.setModelObject("");
             sizeLabel.setModelObject("");
             linkLabel.setModelObject("");
-            lastUpdateLabel.setModelObject("");
         } else {
             dashLabel.setModelObject(" - ");
             sizeLabel.setModelObject("(" + FileUtils.byteCountToDisplaySize(systemLogFile.length()) + ")");
             linkLabel.setModelObject("Download");
-            StringBuilder sb = new StringBuilder();
-            Date logLastModified = new Date(systemLogFile.lastModified());
-            Date viewLastUpdate = new Date(System.currentTimeMillis());
-            sb.append("File last modified: ").append(logLastModified).append(". ");
-            sb.append("View last updated: ").append(viewLastUpdate).append(".");
-            lastUpdateLabel.setModelObject(sb.toString());
-            downloadLink.setModel(new Model(systemLogFile));
         }
     }
 }

@@ -17,7 +17,7 @@
 package org.artifactory.request;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.mime.PackagingType;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.request.ArtifactoryResponse;
 import org.artifactory.common.ResourceStreamHandle;
@@ -36,7 +36,8 @@ import java.io.InputStream;
 public final class RequestResponseHelper {
     private static final Logger log = LoggerFactory.getLogger(RequestResponseHelper.class);
 
-    public static void sendBodyResponse(ArtifactoryResponse response, RepoResource res, ResourceStreamHandle handle)
+    public static void sendBodyResponse(
+            ArtifactoryResponse response, RepoResource res, ResourceStreamHandle handle)
             throws IOException {
         try {
             updateResponseFromRepoResource(response, res);
@@ -48,7 +49,8 @@ public final class RequestResponseHelper {
         }
     }
 
-    public static void sendBodyResponse(ArtifactoryResponse response, RepoPath repoPath, String content)
+    public static void sendBodyResponse(
+            ArtifactoryResponse response, RepoPath repoPath, String content)
             throws IOException {
         if (content == null) {
             RuntimeException exception = new RuntimeException("Cannot send null response");
@@ -59,7 +61,7 @@ public final class RequestResponseHelper {
         InputStream is = new ByteArrayInputStream(bytes);
         try {
             String path = repoPath.getPath();
-            String mimeType = NamingUtils.getMimeTypeByPathAsString(path);
+            String mimeType = RequestResponseHelper.getMimeType(path);
             response.setContentType(mimeType);
             response.setContentLength(bytes.length);
             response.setLastModified(System.currentTimeMillis());
@@ -78,6 +80,10 @@ public final class RequestResponseHelper {
         response.sendOk();
     }
 
+    public static String getMimeType(String path) {
+        return PackagingType.getMimeTypeByPathAsString(path);
+    }
+
     public static void sendNotModifiedResponse(
             ArtifactoryResponse response, RepoResource res) throws IOException {
         if (log.isDebugEnabled()) {
@@ -87,8 +93,9 @@ public final class RequestResponseHelper {
         response.sendError(HttpStatus.SC_NOT_MODIFIED, null, log);
     }
 
-    private static void updateResponseFromRepoResource(ArtifactoryResponse response, RepoResource res) {
-        String mimeType = res.getMimeType();
+    private static void updateResponseFromRepoResource(
+            ArtifactoryResponse response, RepoResource res) {
+        String mimeType = RequestResponseHelper.getMimeType(res.getRepoPath().getPath());
         response.setContentType(mimeType);
         response.setContentLength((int) res.getInfo().getSize());
         response.setLastModified(res.getInfo().getLastModified());

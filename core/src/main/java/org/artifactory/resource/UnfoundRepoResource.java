@@ -18,7 +18,7 @@ package org.artifactory.resource;
 
 import org.artifactory.api.repo.RepoPath;
 
-public class UnfoundRepoResource extends FileResource {
+public class UnfoundRepoResource extends SimpleRepoResource {
     private final String reason;
 
     public UnfoundRepoResource(RepoPath repoPath, String reason) {

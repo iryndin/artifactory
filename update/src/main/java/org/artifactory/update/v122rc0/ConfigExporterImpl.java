@@ -83,7 +83,8 @@ public class ConfigExporterImpl implements ConfigExporter {
             FileOutputStream os = new FileOutputStream(
                     new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE));
             try {
-                versionProps.store(os, "Exported properties from DB of " + VersionsHolder.getOriginalVersion());
+                versionProps.store(os,
+                        "Exported properties from DB of " + VersionsHolder.getOriginalVersion());
             } finally {
                 IOUtils.closeQuietly(os);
             }

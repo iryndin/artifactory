@@ -29,7 +29,7 @@ public class MimeTableTest {
 
     @Test
     public void xmlAppTest() {
-        ContentType ct = NamingUtils.getContentType(new File("/tmp/anXmlFile.xml"));
+        ContentType ct = PackagingType.getContentType(new File("/tmp/anXmlFile.xml"));
         Assert.assertNotNull(ct);
         Assert.assertTrue(ct.isXml());
         Assert.assertEquals(ct.getMimeType(), "application/xml");

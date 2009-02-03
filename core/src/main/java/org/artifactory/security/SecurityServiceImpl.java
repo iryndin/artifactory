@@ -45,7 +45,7 @@ import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.update.utils.BackupUtils;
-import org.artifactory.util.PathMatcher;
+import org.artifactory.utils.PathMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -68,7 +68,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -142,11 +141,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
     public boolean isAnonAccessEnabled() {
         SecurityDescriptor security = centralConfig.getDescriptor().getSecurity();
         return security != null && security.isAnonAccessEnabled();
-    }
-
-    public boolean isAuthenticated() {
-        Authentication authentication = getAuthentication();
-        return isAuthenticated(authentication);
     }
 
     public boolean isAdmin() {
@@ -285,25 +279,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return groupsInfo;
     }
 
-    public Set<GroupInfo> getNewUserDefaultGroups() {
-        List<GroupInfo> allGroups = getAllGroups();
-        Set<GroupInfo> defaultGroups = new HashSet<GroupInfo>();
-        for (GroupInfo group : allGroups) {
-            if (group.isNewUserDefault()) {
-                defaultGroups.add(group);
-            }
-        }
-        return defaultGroups;
-    }
-
-    public Set<String> getNewUserDefaultGroupsNames() {
-        Set<GroupInfo> defaultGroups = getNewUserDefaultGroups();
-        Set<String> defaultGroupsNames = new HashSet<String>(defaultGroups.size());
-        for (GroupInfo group : defaultGroups) {
-            defaultGroupsNames.add(group.getGroupName());
-        }
-        return defaultGroupsNames;
-    }
 
     public void addUsersToGroup(String groupName, List<String> usernames) {
         for (String username : usernames) {
@@ -593,8 +568,8 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
 
     private void createAnonymousUser() {
         SimpleUser anonUser;
-        anonUser = new SimpleUser(UserInfo.ANONYMOUS, DigestUtils.md5Hex(""), null, false, true, false, true,
-                true, true);
+        anonUser = new SimpleUser(UserInfo.ANONYMOUS, DigestUtils.md5Hex(""), null, true, true,
+                true, true, false, false);
         boolean created = userGroupManager.createUser(anonUser);
         if (created) {
             aclManager.createAnythingPermision(anonUser);
@@ -673,16 +648,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
             String password) {
         LdapConnectionTester ldapTester = new LdapConnectionTester();
         return ldapTester.testLdapConnection(ldapSetting, username, password);
-    }
-
-    public boolean isPasswordEncryptionEnabled() {
-        CentralConfigDescriptor cc = centralConfig.getDescriptor();
-        return cc.getSecurity().getPasswordSettings().isEncryptionEnabled();
-    }
-
-    public boolean userPasswordMatches(String passwordToCheck) {
-        Authentication authentication = getAuthentication();
-        return authentication != null && passwordToCheck.equals(authentication.getCredentials());
     }
 
     private static boolean isAdmin(Authentication authentication) {

@@ -8,6 +8,5 @@ var Collapsable = {
             container.collapsed = true;
             container.className = 'collapsible-wrapper collapsed';
         }
-        return false;
     }
 }

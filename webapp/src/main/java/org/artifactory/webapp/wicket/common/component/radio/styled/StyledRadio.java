@@ -1,10 +1,7 @@
 package org.artifactory.webapp.wicket.common.component.radio.styled;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -17,14 +14,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.Objects;
 import org.artifactory.webapp.wicket.common.Titled;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.behavior.DelegateEventBehavior;
 
 /**
  *
  */
 public class StyledRadio extends LabeledWebMarkupContainer implements Titled {
     private Radio radio;
-    private Component button;
 
     public StyledRadio(String id) {
         super(id);
@@ -44,20 +39,7 @@ public class StyledRadio extends LabeledWebMarkupContainer implements Titled {
         radio.setOutputMarkupId(true);
         add(radio);
 
-        button = new RadioButton("button");
-        add(button);
-    }
-
-    @Override
-    public Component add(IBehavior behavior) {
-        if (AjaxEventBehavior.class.isAssignableFrom(behavior.getClass())) {
-            AjaxEventBehavior ajaxEventBehavior = (AjaxEventBehavior) behavior;
-            button.add(new DelegateEventBehavior(ajaxEventBehavior.getEvent(), radio));
-            radio.add(ajaxEventBehavior);
-            return this;
-        }
-
-        return super.add(behavior);
+        add(new RadioButton("button"));
     }
 
     @SuppressWarnings({"MethodOnlyUsedFromInnerClass"})

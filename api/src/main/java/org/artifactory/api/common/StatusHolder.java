@@ -119,7 +119,8 @@ public class StatusHolder implements Serializable {
         addError(statusMsg, CODE_INTERNAL_ERROR, null, logger, true);
     }
 
-    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable, Logger logger, boolean warn) {
+    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable,
+            Logger logger, boolean warn) {
         StatusEntry result;
         if (warn) {
             result = new StatusEntry(statusCode, StatusEntryLevel.WARNING, statusMsg, throwable);
@@ -147,40 +148,37 @@ public class StatusHolder implements Serializable {
         return result;
     }
 
-    @SuppressWarnings({"OverlyComplexMethod"})
     protected void logEntry(StatusEntry entry, Logger logger) {
-        boolean isExternalLogActive = (logger != null);
-        String statusMessage = entry.getStatusMessage();
-        if (entry.isWarning()) {
-            log.warn(statusMessage);
-            if (isExternalLogActive && logger.isWarnEnabled()) {
-                logger.warn(statusMessage);
-            }
-        } else if (entry.isError()) {
+        if (logger == null) {
+            logger = log;
+        }
+        if (entry.isError()) {
             Throwable throwable = entry.getException();
-            if (isVerbose()) {
-                log.error(statusMessage, throwable);
+            if (entry.isWarning()) {
+                logger.warn(entry.getStatusMessage(), throwable);
+            } else if (isVerbose() || logger.isDebugEnabled()) {
+                logger.error(entry.getStatusMessage(), throwable);
             } else {
-                log.error(statusMessage);
-            }
-            if (isExternalLogActive && logger.isErrorEnabled()) {
-                if (isVerbose()) {
-                    logger.error(statusMessage, throwable);
+                if (throwable != null) {
+                    logger.error(
+                            entry.getStatusMessage() + ": " + throwable.getMessage());
                 } else {
-                    logger.error(statusMessage);
+                    logger.error(entry.getStatusMessage());
                 }
             }
-        } else if (entry.isDebug()) {
-            if (isVerbose()) {
-                log.debug(statusMessage);
-            }
-            if (isExternalLogActive && logger.isDebugEnabled()) {
-                logger.debug(statusMessage);
-            }
         } else {
-            log.info(statusMessage);
-            if (isExternalLogActive && logger.isInfoEnabled()) {
-                logger.info(statusMessage);
+            if (entry.isDebug()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(entry.getStatusMessage());
+                } else if (isVerbose()) {
+                    // TODO: If isVerbose() set my log to debug level
+                }
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info(entry.getStatusMessage());
+                } else if (isVerbose()) {
+                    // TODO: If isVerbose() set my log to debug level
+                }
             }
         }
     }
@@ -232,7 +230,6 @@ public class StatusHolder implements Serializable {
         activateLogging = true;
     }
 
-    @Override
     public String toString() {
         return "StatusHolder{" +
                 "activateLogging=" + activateLogging +

@@ -16,8 +16,6 @@
  */
 package org.artifactory.io.checksum;
 
-import org.artifactory.api.mime.ChecksumType;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,14 +27,17 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Checksum {
 
+    private final String name;
     private final ChecksumType type;
     private final MessageDigest digest;
     private String checksum;
 
     /**
+     * @param name A name used for creating a checksum file with the result
      * @param type The checksum type
      */
-    public Checksum(ChecksumType type) {
+    public Checksum(String name, ChecksumType type) {
+        this.name = name;
         this.type = type;
         String algorithm = type.alg();
         try {
@@ -47,12 +48,20 @@ public class Checksum {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ChecksumType getType() {
         return type;
     }
 
     public String getChecksum() {
         return checksum;
+    }
+
+    public String getFileName() {
+        return name + type.ext();
     }
 
     public InputStream asInputStream() throws UnsupportedEncodingException {

@@ -19,7 +19,6 @@ package org.artifactory.api.security;
 import org.artifactory.api.repo.Lock;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: freds Date: Aug 5, 2008 Time: 6:50:30 PM
@@ -48,16 +47,6 @@ public interface UserGroupService {
     void deleteGroup(String groupname);
 
     List<GroupInfo> getAllGroups();
-
-    /**
-     * @return A set of all the groups that should be added by default to newly created users.
-     */
-    Set<GroupInfo> getNewUserDefaultGroups();
-
-    /**
-     * @return A set of all the groups names that should be added by default to newly created users.
-     */
-    Set<String> getNewUserDefaultGroupsNames();
 
     /**
      * Updates a users group. Group name update is not allowed.

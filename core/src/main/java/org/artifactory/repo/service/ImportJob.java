@@ -34,18 +34,19 @@ import org.slf4j.LoggerFactory;
 public class ImportJob extends QuartzCommand {
     private static final Logger log = LoggerFactory.getLogger(ImportJob.class);
 
-    public static final String REPO_KEY = "repoKey";
-    public static final String DELETE_REPO = "deleteRepo";
+    public static final String REPO_KEY = "RepoKey";
+    public static final String DELETE_REPO = "DeleteRepo";
 
-    @Override
     protected void onExecute(JobExecutionContext callbackContext) {
         StatusHolder status = null;
         try {
             JobDataMap jobDataMap = callbackContext.getJobDetail().getJobDataMap();
             String repoKey = (String) jobDataMap.get(REPO_KEY);
             RepoPath deleteRepo = (RepoPath) jobDataMap.get(DELETE_REPO);
-            ImportSettings settings = (ImportSettings) jobDataMap.get(ImportSettings.class.getName());
-            status = (StatusHolder) jobDataMap.get(StatusHolder.class.getName());
+            ImportSettings settings = (ImportSettings)
+                    jobDataMap.get(ImportSettings.class.getName());
+            status = (StatusHolder)
+                    jobDataMap.get(StatusHolder.class.getName());
             InternalRepositoryService repositoryService =
                     InternalContextHelper.get().beanForType(InternalRepositoryService.class);
             if (repoKey != null) {
@@ -55,14 +56,8 @@ public class ImportJob extends QuartzCommand {
                     if (deleteRepo != null) {
                         status.setStatus("Fully removing repository '" + deleteRepo + "'.", log);
                         repositoryService.undeploy(deleteRepo);
-                        status.setStatus("Repository '" + deleteRepo + "' fully deleted.", log);
-                        try {
-                            // Wait 2 seconds for the DB to delete the files..
-                            // Bug in Jackrabbit/Derby:
-                            // A lock could not be obtained within the time requested, state/code: 40XL1/30000
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            status.setError(e.getMessage(), e, log);
+                        if (!status.isError()) {
+                            status.setStatus("Repository '" + deleteRepo + "' fully deleted.", log);
                         }
                     }
                     repositoryService.importRepo(repoKey, settings, status);
@@ -72,9 +67,9 @@ public class ImportJob extends QuartzCommand {
             }
         } catch (RuntimeException e) {
             if (status != null) {
-                status.setError("Error occured during import: " + e.getMessage(), e, log);
+                status.setError("Received Unhandled Exception", e, log);
             } else {
-                log.error("Error occured during import", e);
+                log.error("Received Unhandled Exception", e);
             }
         }
     }

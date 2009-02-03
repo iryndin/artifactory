@@ -51,7 +51,8 @@ public interface AuthorizationService {
     boolean canDeploy(RepoPath path);
 
     /**
-     * @return True if the current user has admin permissions on a target info that includes this path..
+     * @return True if the current user has admin permissions on a target info that includes this
+     *         path..
      */
     boolean canAdmin(RepoPath path);
 
@@ -120,6 +121,4 @@ public interface AuthorizationService {
      * @return The current logged in username.
      */
     String currentUsername();
-
-    boolean isAuthenticated();
 }

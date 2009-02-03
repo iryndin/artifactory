@@ -23,6 +23,9 @@ import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
 import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadWebRequest;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.pages.AccessDeniedPage;
+import org.apache.wicket.markup.html.pages.InternalErrorPage;
+import org.apache.wicket.markup.html.pages.PageExpiredErrorPage;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.settings.ISecuritySettings;
 import org.apache.wicket.util.time.Duration;
@@ -30,14 +33,10 @@ import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.webapp.spring.ArtifactorySpringComponentInjector;
 import org.artifactory.webapp.wicket.application.sitemap.ArtifactorySiteMapBuilder;
-import org.artifactory.webapp.wicket.application.sitemap.MenuNode;
+import org.artifactory.webapp.wicket.application.sitemap.PageNode;
 import org.artifactory.webapp.wicket.application.sitemap.SiteMap;
 import org.artifactory.webapp.wicket.application.sitemap.SiteMapBuilder;
-import org.artifactory.webapp.wicket.page.base.BasePage;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
-import org.artifactory.webapp.wicket.page.error.AccessDeniedPage;
-import org.artifactory.webapp.wicket.page.error.InternalErrorPage;
-import org.artifactory.webapp.wicket.page.error.PageExpiredErrorPage;
 import org.artifactory.webapp.wicket.page.error.SessionExpiredPage;
 import org.artifactory.webapp.wicket.page.home.HomePage;
 import org.artifactory.webapp.wicket.page.security.login.LoginPage;
@@ -69,6 +68,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
     @Override
     protected void init() {
         super.init();
+
         setup();
         buildSiteMap();
         mountPages();
@@ -85,15 +85,12 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
         getRequestCycleSettings().setTimeout(Duration.hours(5));
 
         getApplicationSettings().setPageExpiredErrorPage(SessionExpiredPage.class);
-        getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
-        getApplicationSettings().setAccessDeniedPage(AccessDeniedPage.class);
-        getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
-
-        getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
         getMarkupSettings().setCompressWhitespace(true);
         getMarkupSettings().setStripComments(true);
+
+//        if (getConfigurationType().equals(DEPLOYMENT)) {
         getMarkupSettings().setStripWicketTags(true);
-        getMarkupSettings().setStripXmlDeclarationFromOutput(false);
+//        }
     }
 
     private void setupListeners() {
@@ -123,7 +120,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
         mountPage(LogoutPage.class);
         mountPage(ProfilePage.class);
 
-        for (MenuNode pageNode : siteMap.getPages()) {
+        for (PageNode pageNode : siteMap.getPages()) {
             if (pageNode.getUrl() != null) {
                 mountBookmarkablePage(pageNode.getUrl(), pageNode.getPageClass());
             } else {
@@ -175,7 +172,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
     }
 
     @Override
-    public Class<? extends BasePage> getHomePage() {
+    public Class getHomePage() {
         return HomePage.class;
     }
 

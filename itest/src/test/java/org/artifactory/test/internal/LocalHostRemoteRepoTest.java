@@ -97,6 +97,7 @@ public class LocalHostRemoteRepoTest extends ArtifactoryTestBase {
     private static final String MOMO = "momo";
     private static final String SLOW_MOMO = "slowMomo";
     private static final Random RANDOM = new Random(System.currentTimeMillis());
+    private static final String APPLICATION_XML = "application/xml";
     private static final String APPLICATION_ZIP = "application/zip";
     private MockTest momoTest;
     private MockTest slowMomoTest;
@@ -200,4 +201,5 @@ public class LocalHostRemoteRepoTest extends ArtifactoryTestBase {
     String getConfigName() {
         return "localhost-repo";
     }
+
 }

@@ -3,7 +3,6 @@ package org.artifactory.test.internal;
 import org.artifactory.api.repo.ArtifactCount;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.JcrSession;
-import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.utils.JcrNodeTraversal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +56,8 @@ public class JcrServiceITest extends ArtifactoryTestBase {
         assertEquals(iterator.getSize(), 4, "Expecting 4 repos");
 
         Node repoNode = iterator.nextNode();
-        assertEquals(getStringProperty(repoNode, "jcr:primaryType"), JcrFolder.NT_ARTIFACTORY_FOLDER);
-        assertEquals(repoNode.getPrimaryNodeType().getName(), JcrFolder.NT_ARTIFACTORY_FOLDER);
+        assertEquals(getStringProperty(repoNode, "jcr:primaryType"), "artifactory:folder");
+        assertEquals(repoNode.getPrimaryNodeType().getName(), "artifactory:folder");
         assertEquals(getStringProperty(repoNode, "artifactory:name"), "");
     }
 

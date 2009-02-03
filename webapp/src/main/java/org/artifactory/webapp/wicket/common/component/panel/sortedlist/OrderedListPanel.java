@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,7 +23,7 @@ import org.artifactory.webapp.wicket.common.component.links.SimpleTitledLink;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalShowLink;
 import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
-import org.artifactory.webapp.wicket.common.component.table.columns.panel.links.LinksColumnPanel;
+import org.artifactory.webapp.wicket.common.component.table.columns.panel.LinksColumnPanel;
 import org.artifactory.webapp.wicket.common.component.template.HtmlTemplate;
 
 import java.io.Serializable;
@@ -91,7 +90,7 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         // add hidden text field
         HiddenField textField = new HiddenField("listIndices", new IndicesModel());
         textField.setOutputMarkupId(true);
-        textField.add(newOnOrderChangeEventBehavior("onOrderChanged"));
+        textField.add(new OnOrderChangedEventBehavior());
         add(textField);
 
         // add init script
@@ -140,10 +139,6 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         target.appendJavascript(format("dojo.byId('%s')._panel.resetIndices();", get("items").getMarkupId()));
     }
 
-    protected IBehavior newOnOrderChangeEventBehavior(String event) {
-        return new OnOrderChangedEventBehavior(event);
-    }
-
     private class DndTypeModel extends AbstractReadOnlyModel {
         @Override
         public Object getObject() {
@@ -185,8 +180,8 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
     }
 
     public class OnOrderChangedEventBehavior extends AjaxFormComponentUpdatingBehavior {
-        private OnOrderChangedEventBehavior(String event) {
-            super(event);
+        private OnOrderChangedEventBehavior() {
+            super("onOrderChanged");
         }
 
         @Override

@@ -63,13 +63,11 @@ public class CacheServiceImpl implements InternalCacheService {
         log.debug("Creating global caches");
         for (ArtifactoryCache cacheDef : ArtifactoryCache.values()) {
             if (cacheDef.getCacheType() == CacheType.GLOBAL) {
-                // on reload the caches are cleaned so only add if not exists
-                if (!caches.containsKey(cacheDef)) {
-                    caches.put(cacheDef, new BaseCache(cacheDef));
-                }
+                caches.put(cacheDef, new BaseCache(cacheDef));
             }
         }
-        CentralConfigDescriptor descriptor = InternalContextHelper.get().getCentralConfig().getDescriptor();
+        CentralConfigDescriptor descriptor =
+                InternalContextHelper.get().getCentralConfig().getDescriptor();
         Set<String> localRepoKeys = descriptor.getLocalRepositoriesMap().keySet();
         for (String repoKey : localRepoKeys) {
             log.debug("Creating local repo caches for {}", repoKey);
@@ -80,6 +78,7 @@ public class CacheServiceImpl implements InternalCacheService {
                 descriptor.getRemoteRepositoriesMap().values();
         for (RemoteRepoDescriptor repo : remoteRepoKeys) {
             // First the local cache repo has the same caches than a real repo
+            // TODO: Find a better place for this constant
             String repoKey = repo.getKey() + LocalCacheRepo.PATH_SUFFIX;
             log.debug("Creating local repo caches for {}", repoKey);
             Map<ArtifactoryCache, Map> localCaches = createRealRepoCaches();

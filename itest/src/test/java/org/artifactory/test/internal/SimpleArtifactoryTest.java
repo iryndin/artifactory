@@ -27,7 +27,8 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
         //lc.getLogger(HttpRepo.class).setLevel(Level.DEBUG);
 
         MockTest test = new MockTest("momo");
-        test.addPath(new MockPathTest(LOG4J_1_2_14_JAR, "application/octet-stream", "/mock/repo1/" + LOG4J_1_2_14_JAR));
+        test.addPath(new MockPathTest(LOG4J_1_2_14_JAR,
+                "application/octet-stream", "/mock/repo1/" + LOG4J_1_2_14_JAR));
         mockServer.addTest(test);
     }
 
@@ -35,9 +36,11 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
     public void simpleJarDownload() throws Exception {
         log.debug("Thread started concurrent simpleJarDownload");
         DownloadService downloadService = context.beanForType(DownloadService.class);
-        ArtifactoryRequestStub request = new ArtifactoryRequestStub(LOG4J_1_2_14_JAR);
+        ArtifactoryRequestStub request = new ArtifactoryRequestStub(
+                LOG4J_1_2_14_JAR);
         ArtifactoryResponseStub response = new ArtifactoryResponseStub();
         downloadService.process(request, response);
+
         Assert.assertTrue(response.isSuccessful(),
                 "Failure status: " + response.getStatus() + " reason:" + response.getReason());
         Assert.assertTrue(response.getContentLength() > 0);
@@ -45,15 +48,19 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
         Assert.assertEquals(response.getContentType(), "application/zip");
     }
 
-    @Test(invocationCount = 4, threadPoolSize = 1, description = "Upload of same release file")
+    @Test(invocationCount = 4, threadPoolSize = 1,
+            description = "Upload of same release file")
     public void simpleReleaseUpload() throws Exception {
-        RepoPath repoPath = new RepoPath("ext-releases-local", "test/test/1.0/test-1.0.jar");
+        RepoPath repoPath = new RepoPath(
+                "ext-releases-local", "test/test/1.0/test-1.0.jar");
         upload(repoPath);
     }
 
-    @Test(invocationCount = 4, threadPoolSize = 1, description = "Upload of same snapshot file")
+    @Test(invocationCount = 4, threadPoolSize = 1,
+            description = "Upload of same snapshot file")
     public void simpleSnapshotUpload() throws Exception {
-        RepoPath repoPath = new RepoPath("ext-snapshots-local", "test/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.jar");
+        RepoPath repoPath = new RepoPath(
+                "ext-snapshots-local", "test/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.jar");
         upload(repoPath);
     }
 

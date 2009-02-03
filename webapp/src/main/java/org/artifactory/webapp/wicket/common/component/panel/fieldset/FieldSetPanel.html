@@ -1,28 +1,9 @@
 <wicket:panel>
-    <div class="fieldset-border-wrapper">
-        <div class="fieldset-border-top">
-            <div class="fieldset-border-bottom">
-                <div class="fieldset-border-left">
-                    <div class="fieldset-border-right">
-                        <div class="fieldset-border-top-left">
-                            <div class="fieldset-border-top-right">
-                                <div class="fieldset-border-bottom-left">
-                                    <div class="fieldset-border-bottom-right">
-                                        <h2 class="fieldset-border-title">
-                                            <span wicket:id="title"/>
-                                            <span wicket:id="tool"/>
-                                        </h2>
+    <fieldset>
+        <legend wicket:id="title"/>
 
-                                        <div class="fieldset-border-content">
-                                            <wicket:child/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="collapsible">
+            <wicket:child/>
         </div>
-    </div>
+    </fieldset>
 </wicket:panel>

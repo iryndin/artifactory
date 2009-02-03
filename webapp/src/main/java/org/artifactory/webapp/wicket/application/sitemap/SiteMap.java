@@ -10,46 +10,43 @@ import java.util.Map;
  * @author Yoav Aharoni
  */
 public class SiteMap {
-    private Map<Class<? extends Page>, MenuNode> pagesCache = new HashMap<Class<? extends Page>, MenuNode>();
-    private MenuNode root;
+    private Map<Class<? extends Page>, PageNode> pagesCache = new HashMap<Class<? extends Page>, PageNode>();
+    private PageNode root;
 
-    public Collection<MenuNode> getPages() {
+    public Collection<PageNode> getPages() {
         return pagesCache.values();
     }
 
-    public MenuNode getPageNode(Class<? extends Page> pageClass) {
+    public PageNode getPageNode(Class<? extends Page> pageClass) {
         return pagesCache.get(pageClass);
     }
 
-    public MenuNode getRoot() {
+    public PageNode getRoot() {
         return root;
     }
 
-    public void setRoot(MenuNode root) {
+    public void setRoot(PageNode root) {
         this.root = root;
     }
 
-    public void visitPageNodes(MenuNode node, MenuNodeVisitor visitor) {
+    public void visitPageNodes(PageNode node, PageVisitor visitor) {
         if (node == null) {
             return;
         }
         visitor.visit(node);
-        for (MenuNode child : node.getChildren()) {
+        for (PageNode child : node.getChildren()) {
             visitPageNodes(child, visitor);
         }
     }
 
-    public void visitPageNodes(MenuNodeVisitor visitor) {
+    public void visitPageNodes(PageVisitor visitor) {
         visitPageNodes(getRoot(), visitor);
     }
 
     public void cachePageNodes() {
-        visitPageNodes(new MenuNodeVisitor() {
-            public void visit(MenuNode node) {
-                Class<? extends Page> pageClass = node.getPageClass();
-                if (pageClass != null) {
-                    pagesCache.put(pageClass, node);
-                }
+        visitPageNodes(new PageVisitor() {
+            public void visit(PageNode node) {
+                pagesCache.put(node.getPageClass(), node);
             }
         });
     }

@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public abstract class TaskBase implements Task {
+    @SuppressWarnings({"UnusedDeclaration"})
     private static final Logger log = LoggerFactory.getLogger(TaskBase.class);
 
     private State state;
@@ -170,7 +171,7 @@ public abstract class TaskBase implements Task {
         }
     }
 
-    public Class<? extends TaskCallback> getType() {
+    public Class getType() {
         return callbackType;
     }
 
@@ -222,7 +223,7 @@ public abstract class TaskBase implements Task {
      * Weather the task with this callback type should be unique on the tast service. I.e. not other tasks with the same
      * type should ever be running.
      *
-     * @return True if this task should be unique
+     * @return
      */
     public boolean isSingleton() {
         return singleton;
@@ -239,7 +240,7 @@ public abstract class TaskBase implements Task {
      */
     boolean waitForCompletion() {
         if (!isSingleExecution()) {
-            throw new UnsupportedOperationException("Does not support waitForCompletion on cyclic tasks.");
+            throw new UnsupportedOperationException("Does not support waitForCompletion on cyclic task.");
         }
         boolean completed = false;
         lockState();
@@ -248,7 +249,8 @@ public abstract class TaskBase implements Task {
                 //Wait forever (100 times more than timeout) until it finished the current execution
                 int tries = TRIES_UNTIL_COMPLETION;
                 while (!(completed = executed && (state == State.STOPPED || state == State.CANCELED))) {
-                    boolean success = this.completed.await(ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
+                    boolean success = this.completed.await(
+                            ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
                     if (success) {
                         completed = true;
                         break;
@@ -304,7 +306,8 @@ public abstract class TaskBase implements Task {
         }
     }
 
-    private <V> V guardedTransitionToState(State newState, boolean waitForNextStep, Callable<V> callable) {
+    private <V> V guardedTransitionToState(State newState, boolean waitForNextStep,
+            Callable<V> callable) {
         V result = null;
         if (state == newState) {
             return result;
@@ -353,7 +356,8 @@ public abstract class TaskBase implements Task {
     private void guardedSetState(State newState) {
         boolean validNewState = state.canTransitionTo(newState);
         if (!validNewState) {
-            throw new IllegalArgumentException("Cannot transition from " + this.state + " to " + newState + ".");
+            throw new IllegalArgumentException(
+                    "Cannot transition from " + this.state + " to " + newState + ".");
         }
         log.trace("Changing state: {}-->{}", this.state, newState);
         state = newState;
@@ -422,7 +426,8 @@ public abstract class TaskBase implements Task {
 
     @Override
     public String toString() {
-        return ClassUtils.getShortName(getType()) + "#" + token;
+        return "TaskBase{type=" + ClassUtils.getShortName(getType()) + ", token='" + token + '\'' +
+                '}';
     }
 
     public enum State {

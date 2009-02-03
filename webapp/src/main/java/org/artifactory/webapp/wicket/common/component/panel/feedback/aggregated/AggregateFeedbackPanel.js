@@ -1,27 +1,27 @@
 function FeedbackMessage(message, level) {
-    this.message = message;
-    this.level = level;
+	this.message = message;
+	this.level = level;
 }
 
 var AggregateFeedbackPanel = {
     onClear: function(panelId) {
-        var panel = dojo.byId(panelId);
+        var panel = get(panelId);
         dojo._setOpacity(panel, 0);
     },
 
     onShow: function(panelId) {
-        var panel = dojo.byId(panelId);
+        var panel = get(panelId);
 
         // count messages & get max width
         var count = {
             ERROR: 0,
             WARNING: 0,
             INFO: 0
-        };
+        }
 
         var width = 0;
         var messages = panel.getElementsByTagName('li');
-        dojo.forEach(messages, function(li) {
+        foreach(messages, function(li) {
             count[li.level]++;
             width = Math.max(width, li.firstChild.offsetWidth);
         });
@@ -30,7 +30,7 @@ var AggregateFeedbackPanel = {
         var title = AggregateFeedbackPanel.getTitle(count);
         if (title) {
             // give same width to all messages
-            dojo.forEach(messages, function(li) {
+            foreach(messages, function(li) {
                 li.firstChild.style.width = width + 'px';
             });
 
@@ -39,17 +39,18 @@ var AggregateFeedbackPanel = {
             div.className = 'feedback-title feedback-title-' + title.level;
             div.innerHTML = '<span>' + title.message + '</span>';
             var ul = panel.firstChild;
-            ul.className += ' aggregate-feedback feedback-' + title.level;
+            ul.className += ' aggregate-feedback feedback-' + title.level
             panel.insertBefore(div, ul);
         }
 
         // scroll to messages
         setTimeout(function() {
-            DomUtils.scrollIntoView(panel);
+            panel.scrollIntoView();
         }, 100);
 
         // notify effect
-        dojo.fadeIn({node: panel, duration: 500}).play();
+        var notify = dojo.fadeIn({node: panel,duration: 500}).play();
+        notify.play();
     },
 
     getTitle: function(count) {
@@ -60,7 +61,7 @@ var AggregateFeedbackPanel = {
             return new FeedbackMessage(count.INFO + " messages:", 'INFO');
         }
         if (count.WARNING > 1) {
-            return new FeedbackMessage("Please notice the following warnings:", 'WARNING');
+            return new FeedbackMessage(count.INFO + " warnings:", 'WARNING');
         }
         return null;
     }

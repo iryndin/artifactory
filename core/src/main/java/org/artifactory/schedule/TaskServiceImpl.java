@@ -23,13 +23,11 @@ import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.schedule.JcrGarbageCollector;
 import org.artifactory.jcr.schedule.WorkingCopyCommitter;
-import org.artifactory.jcr.trash.EmptyTrashJob;
 import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,13 +42,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Service
 public class TaskServiceImpl implements TaskService {
+    @SuppressWarnings({"UnusedDeclaration"})
     private final static Logger log = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     private ConcurrentMap<String, TaskBase> activeTasksByToken = new ConcurrentHashMap<String, TaskBase>();
 
     public void init() {
         //Start the initial tasks
-        //Check if we use File Data Store, then activate the Garbage collector
+        // Check if we use File Data Store, then activate the Garbage collector
         InternalArtifactoryContext ctx = InternalContextHelper.get();
         JcrService jcr = ctx.getJcrService();
         if (((RepositoryImpl) jcr.getRepository()).getDataStore() instanceof FileDataStore) {
@@ -64,35 +63,24 @@ public class TaskServiceImpl implements TaskService {
                 new QuartzTask(WagonManagerTempArtifactsCleaner.class, 900000);
         wagonManagerTempArtifactsCleanerTask.setSingleton(true);
         startTask(wagonManagerTempArtifactsCleanerTask);
-        //run the wc committer once
-        QuartzTask workingCopyCommitterTask = new QuartzTask(WorkingCopyCommitter.class, 0, 30000);
+        //run the wc committer every 20 minutes
+        QuartzTask workingCopyCommitterTask = new QuartzTask(WorkingCopyCommitter.class, 1200000, 30000);
         workingCopyCommitterTask.setSingleton(true);
         startTask(workingCopyCommitterTask);
-        //Empty whatever is left in the trash
-        QuartzTask emptyTrashTask = new QuartzTask(EmptyTrashJob.class, "EmptyTrashOnStartup", 0, 30000);
-        startTask(emptyTrashTask);
+    }
+
+    public void reload(CentralConfigDescriptor oldDescriptor) {
     }
 
     public void destroy() {
         stopTasks(null, true);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{InternalCacheService.class, JcrService.class};
-    }
-
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-    }
-
     public String startTask(TaskBase task) {
         String token = task.getToken();
-        if (task.isSingleton()) {
-            //Reject duplicate singleton tasks - by type + check atomically during insert that we are not rescheduling
-            //the same task instance
-            if (hasTaskOfType(task.getType()) || activeTasksByToken.putIfAbsent(token, task) != null) {
-                throw new IllegalStateException("Cannot start a singleton task more than once (" + task + ").");
-            }
+        if (task.isSingleton() && activeTasksByToken.putIfAbsent(token, task) != null) {
+            //Reject duplicate singleton tasks
+            throw new IllegalStateException("Cannot start a singleton task more than once (" + task + ").");
         } else if (activeTasksByToken.put(token, task) != null) {
             log.warn("Overriding an active task with the same token {}.", task);
         }
@@ -162,8 +150,11 @@ public class TaskServiceImpl implements TaskService {
 
     public boolean waitForTaskCompletion(String token) {
         TaskBase task = getInternalActiveTask(token);
-        //Check for null since task may have already been canceled
-        return task == null || task.waitForCompletion();
+        if (task == null) {
+            // may be already canceled
+            return true;
+        }
+        return task.waitForCompletion();
     }
 
     public boolean blockIfPausedAndShouldBreak() {
@@ -181,27 +172,19 @@ public class TaskServiceImpl implements TaskService {
         InternalContextHelper.get().addReloadableBean(TaskService.class);
     }
 
+    @SuppressWarnings({"unchecked"})
+    public Class<? extends ReloadableBean>[] initAfter() {
+        return new Class[]{InternalCacheService.class, JcrService.class};
+    }
+
     public TaskBase getInternalActiveTask(String token) {
         if (token == null) {
             throw new IllegalArgumentException("Could not find task with null token");
         }
         TaskBase task = activeTasksByToken.get(token);
         if (task == null) {
-            LoggingUtils.warnOrDebug(log,
-                    "Could not locate active task with token " + token + ". Task may have been canceled.");
+            log.warn("Could not locate active task with toke {}. Taks may have been canceled.", token);
         }
         return task;
-    }
-
-    public boolean hasTaskOfType(Class<? extends TaskCallback> callbackType) {
-        if (callbackType == null) {
-            return false;
-        }
-        for (TaskBase task : activeTasksByToken.values()) {
-            if (ClassUtils.isAssignable(callbackType, task.getType())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

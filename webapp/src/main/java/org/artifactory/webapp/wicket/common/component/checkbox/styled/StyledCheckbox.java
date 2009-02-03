@@ -1,9 +1,6 @@
 package org.artifactory.webapp.wicket.common.component.checkbox.styled;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -14,15 +11,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.artifactory.webapp.wicket.common.Titled;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.behavior.DelegateEventBehavior;
 
 /**
  *
  */
 public class StyledCheckbox extends FormComponentPanel implements Titled {
     private CheckBox checkbox;
-    private Component button;
-    private String title = null;
 
     public StyledCheckbox(String id) {
         super(id);
@@ -43,35 +37,15 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
             public boolean isEnabled() {
                 return super.isEnabled() && StyledCheckbox.this.isEnabled();
             }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                if (isEnabled()) {
-                    tag.put("onclick", "StyledCheckbox.update(this);");
-                }
-            }
         };
         checkbox.setOutputMarkupId(true);
         add(checkbox);
 
-        button = new CheckboxButton("button");
-        add(button);
+        add(new CheckboxButton("button"));
     }
 
-    @Override
-    public Component add(IBehavior behavior) {
-        if (AjaxEventBehavior.class.isAssignableFrom(behavior.getClass())) {
-            AjaxEventBehavior ajaxEventBehavior = (AjaxEventBehavior) behavior;
-            button.add(new DelegateEventBehavior(ajaxEventBehavior.getEvent(), checkbox));
-            checkbox.add(ajaxEventBehavior);
-            return this;
-        }
-
-        return super.add(behavior);
-    }
-
-    public boolean isChecked() {
+    @SuppressWarnings({"MethodOnlyUsedFromInnerClass"})
+    private boolean isChecked() {
         return Boolean.TRUE.equals(getModelObject());
     }
 
@@ -98,23 +72,17 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
     }
 
     public String getTitle() {
-        if (title == null) {
-            Object label = null;
-            if (getLabel() != null) {
-                label = getLabel().getObject();
-            }
+        Object label = null;
 
-            if (label == null) {
-                label = getLocalizer().getString(getId(), getParent(), getId());
-            }
-            title = label.toString();
+        if (getLabel() != null) {
+            label = getLabel().getObject();
         }
-        return title;
-    }
 
-    public StyledCheckbox setTitle(String title) {
-        this.title = title;
-        return this;
+        if (label == null) {
+            label = getLocalizer().getString(getId(), getParent(), getId());
+        }
+
+        return label.toString();
     }
 
     @Override
@@ -133,17 +101,11 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
             tag.put("for", checkbox.getMarkupId());
 
             if (!isEnabled()) {
-                if (isChecked()) {
-                    tag.put("class", "styled-checkbox styled-checkbox-disabled-checked");
-                } else {
-                    tag.put("class", "styled-checkbox styled-checkbox-disabled-unchecked");
-                }
+                tag.put("class", "styled-checkbox styled-checkbox-disabled");
+            } else if (isChecked()) {
+                tag.put("class", "styled-checkbox styled-checkbox-checked");
             } else {
-                if (isChecked()) {
-                    tag.put("class", "styled-checkbox styled-checkbox-checked");
-                } else {
-                    tag.put("class", "styled-checkbox styled-checkbox-unchecked");
-                }
+                tag.put("class", "styled-checkbox styled-checkbox-unchecked");
             }
 
             if (StyledCheckbox.this.isEnabled()) {

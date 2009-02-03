@@ -1,14 +1,5 @@
 <wicket:extend>
     <div>
-        <div class="browse-repo-panel" wicket:id="browseRepoPanel"/>
+        <div class="win_browser" wicket:id="browseRepoPanel"/>
     </div>
-
-    <script wicket:id="scrollScript" type="text/javascript">
-        dojo.addOnLoad(function() {
-            var selectedNodes = dojo.query('#treeContentPane .row-selected');
-            if (selectedNodes.length) {
-                DomUtils.scrollIntoView(selectedNodes[0]);
-            }
-        });
-    </script>
 </wicket:extend>

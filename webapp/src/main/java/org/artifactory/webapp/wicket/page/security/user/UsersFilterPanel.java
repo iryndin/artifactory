@@ -1,16 +1,18 @@
 package org.artifactory.webapp.wicket.page.security.user;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
-import org.artifactory.webapp.wicket.common.component.panel.fieldset.FieldSetPanel;
+import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ import java.util.List;
  *
  * @author Yossi Shaul
  */
-public class UsersFilterPanel extends FieldSetPanel {
+public class UsersFilterPanel extends Panel {
     @SpringBean
     private UserGroupService userGroupService;
 
@@ -32,8 +34,13 @@ public class UsersFilterPanel extends FieldSetPanel {
     public UsersFilterPanel(String id, final UsersPanel usersListPanel) {
         super(id);
 
+        add(new Label("title", getTitle()));
+
+        TitledBorder border = new TitledBorder("border", "fieldset-border");
+        add(border);
+
         Form form = new Form("usersFilterForm");
-        add(form);
+        border.add(form);
 
         form.add(new TextField("usernameFilter", new PropertyModel(this, "usernameFilter")));
 

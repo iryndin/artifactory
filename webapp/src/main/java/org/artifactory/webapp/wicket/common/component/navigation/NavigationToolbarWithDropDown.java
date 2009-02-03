@@ -23,7 +23,8 @@ public class NavigationToolbarWithDropDown extends AbstractToolbar {
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
-        span.add(new AttributeModifier("colspan", true, new Model(String.valueOf(table.getColumns().length))));
+        span.add(new AttributeModifier("colspan", true, new Model(String
+                .valueOf(table.getColumns().length))));
 
         span.add(newPagingNavigator("navigator", table));
         span.add(newNavigatorLabel("navigatorLabel"));

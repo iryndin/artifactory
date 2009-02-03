@@ -51,7 +51,7 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
     public ProxyCreateUpdatePanel(CreateUpdateAction action, ProxyDescriptor proxyDescriptor,
                                   ProxiesListPanel proxiesListPanel) {
         super(action, proxyDescriptor);
-        setWidth(380);
+        setWidth(350);
 
         add(form);
 
@@ -62,8 +62,8 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         RequiredTextField proxyKeyField = new RequiredTextField("key");
         proxyKeyField.setEnabled(isCreate());// don't allow key update
         if (isCreate()) {
-            proxyKeyField.add(new JcrNameValidator("Invalid proxy key '%s'."));
-            proxyKeyField.add(new XsdNCNameValidator("Invalid proxy key '%s'."));
+            proxyKeyField.add(JcrNameValidator.getInstance());
+            proxyKeyField.add(XsdNCNameValidator.getInstance());
             proxyKeyField.add(new UniqueXmlIdValidator(getEditingDescriptor()));
         }
         border.add(proxyKeyField);
@@ -97,21 +97,26 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
 
     private SimpleButton createSubmitButton(final ProxiesListPanel proxiesListPanel) {
         String submitCaption = isCreate() ? "Create" : "Save";
-        return new SimpleButton("submit", form, submitCaption) {
+        SimpleButton submit = new SimpleButton("submit", form, submitCaption) {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 if (isCreate()) {
                     getEditingDescriptor().addProxy(entity);
                     centralConfigService.saveEditedDescriptorAndReload();
-                    getPage().info("Proxy '" + entity.getKey() + "' successfully created.");
+                    info("Proxy '" + entity.getKey() + "' successfully created.");
                 } else {
                     centralConfigService.saveEditedDescriptorAndReload();
-                    getPage().info("Proxy '" + entity.getKey() + "' successfully updated.");
+                    info("Proxy '" + entity.getKey() + "' successfully updated.");
                 }
                 FeedbackUtils.refreshFeedback(target);
                 target.addComponent(proxiesListPanel);
                 ModalHandler.closeCurrent(target);
             }
+
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
+        return submit;
     }
 
     protected MutableCentralConfigDescriptor getEditingDescriptor() {
