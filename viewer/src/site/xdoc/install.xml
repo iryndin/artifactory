@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+    <properties>
+        <title>Installation Help</title>
+        <author email="drorbr@gmail.com">Dror Bereznitsky</author>
+    </properties>
+
+    <body>
+        <section name="Basic Information">
+            <p>
+                Artifactory Dependency Viewer system requirements:
+            </p>
+            <ol>
+                <li>A valid
+                    <b>JDK 1.5+</b>
+                    installed on the client.
+                </li>
+            </ol>
+        </section>
+    </body>
+</document>
