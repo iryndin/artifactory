@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Importing, Exporting and Deploying Artifacts</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Import/Export">
+            <span>
+                <p>
+                    The Import/Export feature enables to "dump" and "reload" a local repository to
+                    and from a standard Maven 2 file-based repository layout:
+                    groupId/artifactId/version/file.
+                    <br/>
+                </p>
+            </span>
+            <span>
+                <img src="images/ArtifactoryLocalImportExport.png"/>
+            </span>
+            <p>
+                Using the Import/Export feature you can create multiples trees of
+                artifacts (3rdp-releases, plugins-releases, libs-releases, ...)
+                with exactly what you need (POM, jars, ear, zip, classifier, ...)
+                and then import each tree into a specific local repository.
+                <br/>
+            </p>
+            <p>
+                ATTENTION: It is not recommended to bulk import artifacts from Maven's user local
+                repository, since such repositories hold different metadata than deploym,ent
+                repositories. If, however, you attempt to make such an import, make sure to remove
+                any local metadata files (such as maven-metadata-central.xml).
+                <br/>
+                Nevertheless, It is strongly advised to import only from deployment repositories.
+                <br/>
+            </p>
+            <p>
+                NOTE: Since a long running database transaction will be created, it is
+                sometimes easier (even necessary) to import into the same local repository different
+                blocks of artifacts.
+                <br/>
+            </p>
+            <p>
+                Since the beginning of Artifactory, the Import/Export feature was used to migrate
+                repositories from earlier versions.
+                <br/>
+            </p>
+        </section>
+        <section name="Deploying with Maven Deploy Plugin">
+            <p>
+                You can use the maven deploy plugin directly with a command like:
+                <source>mvn deploy:deploy-file -DrepositoryId=my-artifactory \
+                    -Durl=http://localhost:8080/artifactory/libs-snapshots@repo \
+                    -DgroupId=test -DartifactId=test -Dversion=1.0-SNAPSHOT -Dpackaging=jar \
+                    -Dfile=test.jar
+                </source>
+                NOTE: the repositoryId my-artifactory should be a server id declared in maven settings.xml.
+                You will get a 401 error if there is no valid username/password provided for deploying to
+                Artifactory.
+                <br/>
+            </p>
+            <p>
+                If you want to use another wagon (like dav for example), you can run the above command
+                in the same directory where this dummy pom.xml sits:
+                <source><![CDATA[
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory.deploy-test</groupId>
+    <artifactId>aye</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>snapshots</id>
+            <url>dav:http://localhost:8080/artifactory/local-repo@repo</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
+    </build>
+</project>
+                ]]></source>
+            </p>
+        </section>
+    </body>
+</document>

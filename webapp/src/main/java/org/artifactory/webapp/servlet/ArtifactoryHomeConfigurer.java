@@ -16,7 +16,7 @@
  */
 package org.artifactory.webapp.servlet;
 
-import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.ArtifactoryHome;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -28,23 +28,17 @@ import javax.servlet.ServletContextListener;
 public class ArtifactoryHomeConfigurer implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent event) {
-        if (ArtifactoryHome.getEtcDir() == null) {
-            // Artifactory home not initialized
-            ArtifactoryHome.findArtifactoryHome(new ServletLogger(event.getServletContext()));
-            ArtifactoryHome.create();
+        ServletContext servletContext = event.getServletContext();
+        servletContext.log("Determining " + ArtifactoryHome.SYS_PROP + "...");
+        servletContext.log("Looking for \"-D" + ArtifactoryHome.SYS_PROP +
+                "=<path>\" vm parameter.");
+        String home = System.getProperty(ArtifactoryHome.SYS_PROP);
+        if (home == null) {
+            servletContext.log("Could not find vm parameter. Defaulting to user.dir...");
+            home = System.getProperty("user.dir", ".");
+            System.setProperty(ArtifactoryHome.SYS_PROP, home);
         }
-    }
-
-    private static class ServletLogger implements ArtifactoryHome.SimpleLog {
-        private final ServletContext servletContext;
-
-        private ServletLogger(ServletContext servletContext) {
-            this.servletContext = servletContext;
-        }
-
-        public void log(String message) {
-            servletContext.log(message);
-        }
+        ArtifactoryHome.create();
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
