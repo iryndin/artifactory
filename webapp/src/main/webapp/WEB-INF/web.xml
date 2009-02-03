@@ -1,43 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
--->
-<web-app
-        xmlns="http://java.sun.com/xml/ns/j2ee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-        version="2.4">
+<!DOCTYPE web-app PUBLIC '-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN'
+        'http://java.sun.com/dtd/web-app_2_3.dtd'>
+
+<web-app>
     <display-name>artifactory-webapp</display-name>
 
     <distributable/>
 
     <context-param>
-        <description>Absolute file URL (e.g. "file:C:/logback.xml) of the Logback config file.</description>
-        <param-name>logbackConfigLocation</param-name>
-        <param-value>file:${artifactory.home}/etc/logback.xml</param-value>
+        <param-name>artifactory.config.location</param-name>
+        <param-value>/WEB-INF/artifactory.config.xml</param-value>
+        <description>Controls where artifactory loads its configuration from</description>
     </context-param>
 
     <context-param>
-        <description>Interval between config file refresh checks, in milliseconds. If not specified,
-            no refresh checks will happen, which avoids starting logback watchdog thread.
-        </description>
-        <param-name>logbackRefreshInterval</param-name>
-        <param-value>5000</param-value>
+        <param-name>configuration</param-name>
+        <!--<param-value>development</param-value>-->
+        <param-value>deployment</param-value>
+        <description>Wicket run mode</description>
     </context-param>
 
     <filter>
@@ -48,108 +28,38 @@
     <filter>
         <filter-name>RepoFilter</filter-name>
         <filter-class>org.artifactory.webapp.servlet.RepoFilter</filter-class>
-        <init-param>
-            <param-name>nonUIPathPrefixes</param-name>
-            <param-value>jcr,api</param-value>
-        </init-param>
-        <init-param>
-            <param-name>UIPathPrefixes</param-name>
-            <param-value>webapp,v200,favicon.ico</param-value>
-        </init-param>
-        <init-param>
-            <param-name>usePathInfo</param-name>
-            <param-value>false</param-value>
-        </init-param>
     </filter>
 
     <filter>
         <filter-name>WicketFilter</filter-name>
-        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
-        <!--<filter-class>org.artifactory.webapp.servlet.ArtifactoryReloadingFilter</filter-class>-->
-        <init-param>
-            <description>Wicket run mode</description>
-            <param-name>configuration</param-name>
-            <param-value>deployment</param-value>
-        </init-param>
+        <filter-class>wicket.protocol.http.WicketFilter</filter-class>
         <init-param>
             <param-name>applicationClassName</param-name>
-            <param-value>org.artifactory.webapp.wicket.application.ArtifactoryApplication</param-value>
+            <param-value>org.artifactory.webapp.wicket.ArtifactoryApp</param-value>
+        </init-param>
+        <init-param>
+            <param-name>filterPath</param-name>
+            <param-value>webapp</param-value>
         </init-param>
     </filter>
 
     <filter-mapping>
         <filter-name>AccessFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>RepoFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>WicketFilter</filter-name>
         <url-pattern>/webapp/*</url-pattern>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <listener>
-        <listener-class>org.artifactory.webapp.servlet.ArtifactoryHomeConfigurer</listener-class>
+        <listener-class>org.artifactory.webapp.servlet.Lifecycle</listener-class>
     </listener>
-
-    <listener>
-        <listener-class>org.artifactory.webapp.servlet.LogbackConfigListener</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>org.artifactory.webapp.servlet.ArtifactoryContextConfigurer</listener-class>
-    </listener>
-
-    <session-config>
-        <!-- 1 hour -->
-        <session-timeout>60</session-timeout>
-    </session-config>
-
-    <servlet>
-        <servlet-name>Artifactory Webdav Servlet</servlet-name>
-        <servlet-class>org.artifactory.webapp.servlet.webdav.ArtifactoryWebdavServlet</servlet-class>
-        <init-param>
-            <param-name>resource-path-prefix</param-name>
-            <param-value>/jcr</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Jersey Web Application</servlet-name>
-        <servlet-class>org.artifactory.rest.servlet.ArtifactoryRestServlet</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
-            <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.artifactory.rest.common.RestAuthorizationFilter</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.artifactory.rest</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>Artifactory Webdav Servlet</servlet-name>
-        <url-pattern>/jcr/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Jersey Web Application</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>
 
 </web-app>

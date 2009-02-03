@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <title><span wicket:id="pageTitle">Page Title</span></title>
+    <!--
+    <script type="text/javascript" src="js/gradient.js"></script>
+    -->
+</wicket:head>
+
+<body>
+<wicket:extend>
+    <div class="side">
+        <a wicket:id="browsePage" class="contentLink">Browse the repository</a><br/>
+        <a wicket:id="locatePage" id="locate" class="contentLink">Search for an
+            artifact</a><br/>
+        <a wicket:id="deployPage" class="contentLink">Deploy an artifact</a><br/>
+        <a wicket:id="importExportPage" class="contentLink">Import or export</a><br/>
+        <a wicket:id="logoutPage" class="contentLink">Sign out</a><br/>
+    </div>
+    <div class="main-wrapper">
+        <div class="main">
+            <wicket:child/>
+        </div>
+    </div>
+</wicket:extend>
+</body>
+
+</html>
