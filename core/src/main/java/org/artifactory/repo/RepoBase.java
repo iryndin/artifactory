@@ -16,77 +16,175 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.jcr.md.MetadataService;
-import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.resource.ArtifactResource;
+import org.artifactory.resource.RepoResource;
+import org.codehaus.plexus.util.SelectorUtils;
+import org.codehaus.plexus.util.StringUtils;
 
-public abstract class RepoBase<T extends RepoDescriptor> implements Repo<T> {
-    private T descriptor;
-    private InternalRepositoryService repositoryService;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.io.File;
 
-    protected RepoBase(InternalRepositoryService repositoryService) {
-        this.repositoryService = repositoryService;
-    }
+@XmlType(name = "RepoType", propOrder = {"key", "description", "blackedOut",
+        "handleReleases", "handleSnapshots", "includesPattern", "excludesPattern"})
+public abstract class RepoBase implements Repo {
 
-    protected RepoBase(InternalRepositoryService repositoryService, T descriptor) {
-        this(repositoryService);
-        setDescriptor(descriptor);
-    }
+    @SuppressWarnings({"UnusedDeclaration"})
+    private static final org.apache.log4j.Logger LOGGER =
+            org.apache.log4j.Logger.getLogger(RepoBase.class);
 
-    public void setDescriptor(T descriptor) {
-        this.descriptor = descriptor;
-    }
+    public static final File TEMP_FOLDER =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
 
-    public T getDescriptor() {
-        return descriptor;
-    }
+    private String key;
+    private String description;
+    private boolean handleReleases = true;
+    private boolean handleSnapshots = true;
+    private String includesPattern;
+    private String excludesPattern;
+    private boolean blackedOut;
 
-    public InternalRepositoryService getRepositoryService() {
-        return repositoryService;
-    }
+    @XmlTransient
+    private String[] includes;
+    @XmlTransient
+    private String[] excludes;
 
+    @XmlElement(required = true)
     public String getKey() {
-        return descriptor.getKey();
+        return key;
     }
 
+    @XmlElement(defaultValue = "default description", required = false)
     public String getDescription() {
-        return descriptor.getDescription();
+        return description;
     }
 
-    public boolean isReal() {
-        return getDescriptor().isReal();
+    @XmlElement(defaultValue = "true", required = false)
+    public boolean isHandleReleases() {
+        return handleReleases;
     }
 
-    @Override
-    public String toString() {
-        return getKey();
+    public void setHandleReleases(boolean handleReleases) {
+        this.handleReleases = handleReleases;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    @XmlElement(defaultValue = "true", required = false)
+    public boolean isHandleSnapshots() {
+        return handleSnapshots;
+    }
+
+    public void setHandleSnapshots(boolean handleSnapshots) {
+        this.handleSnapshots = handleSnapshots;
+    }
+
+    @XmlElement(defaultValue = "**/*", required = false)
+    public String getIncludesPattern() {
+        return includesPattern;
+    }
+
+    public void setIncludesPattern(String includesPattern) {
+        this.includesPattern = includesPattern;
+        if (!StringUtils.isEmpty(includesPattern)) {
+            includes = StringUtils.split(includesPattern, ",");
+            for (int i = 0; i < includes.length; i++) {
+                String include = includes[i].replace('\\', '/');
+                includes[i] = include;
+            }
+        }
+    }
+
+    @XmlElement(defaultValue = "", required = false)
+    public String getExcludesPattern() {
+        return excludesPattern;
+    }
+
+    public void setExcludesPattern(String excludesPattern) {
+        this.excludesPattern = excludesPattern;
+        if (!StringUtils.isEmpty(excludesPattern)) {
+            excludes = StringUtils.split(excludesPattern, ",");
+            for (int i = 0; i < excludes.length; i++) {
+                String exclude = excludes[i].replace('\\', '/');
+                excludes[i] = exclude;
+            }
+        }
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @XmlElement(defaultValue = "false", required = false)
+    public boolean isBlackedOut() {
+        return blackedOut;
+    }
+
+    public void setBlackedOut(boolean blackedOut) {
+        this.blackedOut = blackedOut;
+    }
+
+    public abstract boolean isLocal();
+
+    public boolean accept(String path) {
+        if (excludes != null) {
+            for (String exclude : excludes) {
+                boolean match = SelectorUtils.match(exclude, path);
+                if (match) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(this + " excludes pattern (" + excludesPattern
+                                + ") rejected path '" + path + "'.");
+                    }
+                    return false;
+                }
+            }
+        }
+        if (includes != null) {
+            for (String include : includes) {
+                boolean match = SelectorUtils.match(include, path);
+                if (match) {
+                    return true;
+                }
+            }
+        } else {
             return true;
         }
-        if (!(o instanceof RepoBase)) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(this + " includes pattern (" + includesPattern
+                    + ") did not accept path '" + path + "'.");
+        }
+        return false;
+    }
+
+    public boolean handle(ArtifactResource res) {
+        boolean snapshot = res.isSnapshot();
+        boolean valid = res.isValid();
+        if (snapshot && !handleSnapshots) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(this + " rejected '" + res.getPath() + "': not handling snapshots.");
+            }
+            return false;
+        } else if (!snapshot && valid && !handleReleases) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(this + " rejected '" + res.getPath() + "': not handling releases.");
+            }
             return false;
         }
-        RepoBase base = (RepoBase) o;
-        return descriptor.equals(base.descriptor);
+        return true;
     }
 
-    @Override
-    public int hashCode() {
-        return descriptor.hashCode();
-    }
+    /**
+     * Gets the info from the physical repository (local or remote) without caching
+     *
+     * @param path
+     * @return
+     */
+    protected abstract RepoResource retrieveInfo(String path);
 
-    protected final AuthorizationService getAuthorizationService() {
-        // TODO: Analyze the optimization if made as a member
-        return InternalContextHelper.get().getAuthorizationService();
-    }
-
-    protected final MetadataService getMetadataService() {
-        return InternalContextHelper.get().beanForType(MetadataService.class);
+    public String toString() {
+        return key;
     }
 }

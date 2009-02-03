@@ -16,8 +16,11 @@
  */
 package org.artifactory.maven;
 
+import org.apache.log4j.Logger;
+import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferEventSupport;
+import org.apache.maven.wagon.resource.Resource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,16 +31,20 @@ import java.io.IOException;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class TransferProgressReportingInputStream extends FileInputStream {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(TransferProgressReportingInputStream.class);
 
     private TransferEventSupport eventSupport;
     private TransferEvent event;
 
-    public TransferProgressReportingInputStream(File file, TransferEventSupport eventSupport,
-            TransferEvent event)
+    public TransferProgressReportingInputStream(
+            File file, Resource resource, Wagon wagon, TransferEventSupport eventSupport)
             throws FileNotFoundException {
         super(file);
         this.eventSupport = eventSupport;
-        this.event = event;
+        event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_PROGRESS,
+                TransferEvent.REQUEST_PUT);
+        event.setLocalFile(file);
     }
 
     public int read(byte b[]) throws IOException {
@@ -56,11 +63,5 @@ public class TransferProgressReportingInputStream extends FileInputStream {
             eventSupport.fireTransferProgress(event, b, retValue);
         }
         return retValue;
-    }
-
-    @Override
-    public synchronized void reset() throws IOException {
-        super.reset();
-        eventSupport.fireTransferStarted(event);
     }
 }

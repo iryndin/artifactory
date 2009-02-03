@@ -16,109 +16,50 @@
  */
 package org.artifactory.security;
 
-import org.artifactory.api.security.UserInfo;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.util.Assert;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.userdetails.User;
+import org.acegisecurity.userdetails.UserDetails;
+import org.apache.log4j.Logger;
 
 /**
- * Simple user - comparisson is done only by user name. This class is immutable and will return new
- * instances when getters are called.
+ * Simple user - comparisson is done only by user name Created by IntelliJ IDEA. User: yoavl
  */
-public class SimpleUser implements UserDetails, Comparable {
+public class SimpleUser extends User implements Comparable {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(SimpleUser.class);
 
-    public final static GrantedAuthority[] USER_GAS =
-            new GrantedAuthority[]{new GrantedAuthorityImpl(SecurityServiceImpl.ROLE_USER)};
-    public final static GrantedAuthority[] ADMIN_GAS =
-            new GrantedAuthority[]{new GrantedAuthorityImpl(SecurityServiceInternal.ROLE_ADMIN),
-                    new GrantedAuthorityImpl(SecurityServiceImpl.ROLE_USER)};
+    private boolean updatableProfile = true;
 
-    private UserInfo userInfo;
-
-    private GrantedAuthority[] authorities;
-
-    public SimpleUser(String username, String password, String email, boolean admin, boolean enabled,
-            boolean updatableProfile, boolean accountNonExpired, boolean credentialsNonExpired,
-            boolean accountNonLocked) {
-        this(new UserInfo(username, password, email, admin, enabled,
-                updatableProfile, accountNonExpired, credentialsNonExpired, accountNonLocked));
+    public SimpleUser(String username, String password, boolean enabled, boolean accountNonExpired,
+            boolean credentialsNonExpired, boolean accountNonLocked, boolean updatableProfile,
+            GrantedAuthority[] authorities) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired,
+                accountNonLocked, authorities);
+        this.updatableProfile = updatableProfile;
     }
 
-    public SimpleUser(UserInfo userInfo) {
-        this.userInfo = userInfo;
-        setAuthorities(isAdmin() ? ADMIN_GAS : USER_GAS);
+    public SimpleUser(String username) {
+        super(username, "", true, true, true, true, new GrantedAuthority[]{});
     }
 
-    /**
-     * @return A new instance of the underlying UserInfo.
-     */
-    public UserInfo getDescriptor() {
-        return new UserInfo(userInfo);
-    }
-
-    private void setAuthorities(GrantedAuthority[] authorities) {
-        Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
-        // Ensure array iteration order is predictable (as per UserDetails.getAuthorities()
-        // contract and SEC-xxx)
-        SortedSet<GrantedAuthority> sorter = new TreeSet<GrantedAuthority>();
-        for (int i = 0; i < authorities.length; i++) {
-            Assert.notNull(authorities[i], "Granted authority element " + i +
-                            " is null - GrantedAuthority[] cannot contain any null elements");
-            sorter.add(authorities[i]);
-        }
-
-        this.authorities = sorter.toArray(new GrantedAuthority[sorter.size()]);
-    }
-
-    public GrantedAuthority[] getAuthorities() {
-        return authorities;
-    }
-
-    public String getPassword() {
-        return userInfo.getPassword();
-    }
-
-    public String getUsername() {
-        return userInfo.getUsername();
-    }
-
-    public boolean isAccountNonExpired() {
-        return userInfo.isAccountNonExpired();
-    }
-
-    public boolean isAccountNonLocked() {
-        return userInfo.isAccountNonLocked();
-    }
-
-    public boolean isCredentialsNonExpired() {
-        return userInfo.isCredentialsNonExpired();
-    }
-
-    public boolean isEnabled() {
-        return userInfo.isEnabled();
-    }
-
-    public String getEmail() {
-        return userInfo.getEmail();
-    }
-
-    public boolean isAdmin() {
-        return userInfo.isAdmin();
+    public SimpleUser(UserDetails recipient) {
+        super(recipient.getUsername(),
+                recipient.getPassword(),
+                recipient.isEnabled(),
+                recipient.isAccountNonExpired(),
+                recipient.isCredentialsNonExpired(),
+                recipient.isAccountNonLocked(),
+                recipient.getAuthorities());
     }
 
     public boolean isUpdatableProfile() {
-        return userInfo.isUpdatableProfile();
+        return updatableProfile;
     }
 
-    public ArtifactorySid toArtifactorySid() {
-        return new ArtifactorySid(getUsername());
+    public void setUpdatableProfile(boolean updatableProfile) {
+        this.updatableProfile = updatableProfile;
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -131,12 +72,10 @@ public class SimpleUser implements UserDetails, Comparable {
 
     }
 
-    @Override
     public int hashCode() {
         return getUsername().hashCode();
     }
 
-    @Override
     public String toString() {
         return getUsername();
     }
