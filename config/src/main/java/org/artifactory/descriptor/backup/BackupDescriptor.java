@@ -20,15 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,23 +128,6 @@ public class BackupDescriptor implements Descriptor {
     }
 
     public List<RealRepoDescriptor> getExcludedRepositories() {
-        /**
-         * Even though there should not be any virtual repos in the list, it is checked again as a safety net
-         */
-        List erased = new ArrayList(excludedRepositories);
-        for (int i = 0; i < erased.size(); i++) {
-            Object anErased = erased.get(i);
-            RepoDescriptor descriptorToCheck = (RepoDescriptor) anErased;
-            if (!descriptorToCheck.isReal()) {
-                String virtualRepoKey = descriptorToCheck.getKey();
-                List<RepoDescriptor> repositories = ((VirtualRepoDescriptor) descriptorToCheck).getRepositories();
-                for (RepoDescriptor descriptor : repositories) {
-                    if ((descriptor.isReal()) || (virtualRepoKey.contains(descriptor.getKey()))) {
-                        excludedRepositories.set(i, (RealRepoDescriptor) descriptor);
-                    }
-                }
-            }
-        }
         return excludedRepositories;
     }
 

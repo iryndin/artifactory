@@ -29,7 +29,6 @@ import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,7 +63,7 @@ public class TaskServiceImpl implements TaskService {
                 new QuartzTask(WagonManagerTempArtifactsCleaner.class, 900000);
         wagonManagerTempArtifactsCleanerTask.setSingleton(true);
         startTask(wagonManagerTempArtifactsCleanerTask);
-        //run the wc committer once
+        //run the wc committer once in 30 seconds
         QuartzTask workingCopyCommitterTask = new QuartzTask(WorkingCopyCommitter.class, 0, 30000);
         workingCopyCommitterTask.setSingleton(true);
         startTask(workingCopyCommitterTask);
@@ -187,14 +186,13 @@ public class TaskServiceImpl implements TaskService {
         }
         TaskBase task = activeTasksByToken.get(token);
         if (task == null) {
-            LoggingUtils.warnOrDebug(log,
-                    "Could not locate active task with token " + token + ". Task may have been canceled.");
+            log.warn("Could not locate active task with toke {}. Taks may have been canceled.", token);
         }
         return task;
     }
 
-    public boolean hasTaskOfType(Class<? extends TaskCallback> callbackType) {
-        if (callbackType == null) {
+    private boolean hasTaskOfType(Class<? extends TaskCallback> callbackType) {
+        if (callbackType != null) {
             return false;
         }
         for (TaskBase task : activeTasksByToken.values()) {

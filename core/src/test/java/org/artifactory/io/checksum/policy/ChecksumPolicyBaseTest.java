@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 /**
- * Base class for the checksum policies tests. Mainly to enforce certain tests for all the policies.
+ * Base class for the checksum policies tests.
+ * Mainly to enforce certain tests for all the policies.
  *
  * @author Yossi Shaul
  */
@@ -26,7 +27,7 @@ public abstract class ChecksumPolicyBaseTest {
 
     abstract ChecksumPolicy getPolicy();
 
-    abstract void checksumsMatch();
+    abstract void checksumsMatches();
 
     abstract void noOriginalChecksum();
 

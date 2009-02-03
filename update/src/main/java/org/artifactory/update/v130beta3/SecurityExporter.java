@@ -48,7 +48,8 @@ import java.util.List;
  * @date Aug 14, 2008
  */
 public class SecurityExporter implements ImportableExportable {
-    private static final Logger log = LoggerFactory.getLogger(SecurityExporter.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(SecurityExporter.class);
 
     private static final String ACLS_KEY = "acls";
     private static final String OCM_CLASSNAME = "ocm:classname";

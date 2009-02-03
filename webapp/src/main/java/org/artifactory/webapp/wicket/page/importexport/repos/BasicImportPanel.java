@@ -63,9 +63,6 @@ public class BasicImportPanel extends TitledPanel {
     @WicketProperty
     private boolean verbose;
 
-    @WicketProperty
-    private boolean includeMetadata;
-
     private Form importForm;
 
     public BasicImportPanel(String id) {
@@ -114,7 +111,6 @@ public class BasicImportPanel extends TitledPanel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
-                    status.reset();
                     //If we chose "All" import all local repositories, else import a single repo
                     File folder = importFromPath;
                     status.setVerbose(verbose);
@@ -124,7 +120,6 @@ public class BasicImportPanel extends TitledPanel {
                     importSettings.setCopyToWorkingFolder(copyFiles);
                     importSettings.setUseSymLinks(useSymLinks);
                     importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
                     if (ImportExportReposPage.ALL_REPOS.equals(targetRepoKey)) {
                         repositoryService.importAll(importSettings, status);
                     } else {
@@ -133,7 +128,7 @@ public class BasicImportPanel extends TitledPanel {
                     List<StatusEntry> warnings = status.getWarnings();
                     if (!warnings.isEmpty()) {
                         warn(warnings.size() +
-                                " warnings were produced during the import. Please see the import/export log for more details.");
+                                " Warnings where produced during the import. Please see the import/export log for more details.");
                     }
                     if (status.isError()) {
                         errorImportFeedback(status);

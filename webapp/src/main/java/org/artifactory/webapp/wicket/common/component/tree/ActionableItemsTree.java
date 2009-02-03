@@ -188,7 +188,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
     }
 
     @Override
-    public void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
+    protected void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
         super.onJunctionLinkClicked(target, node);
         boolean expanded = isNodeExpanded(node);
         ActionableItemTreeNode actionableItemTreeNode = (ActionableItemTreeNode) node;

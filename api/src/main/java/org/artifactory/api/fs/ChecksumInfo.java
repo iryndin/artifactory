@@ -55,7 +55,7 @@ public class ChecksumInfo implements Serializable {
         this.actual = actual;
     }
 
-    public boolean checksumsMatch() {
+    public boolean checksumsMatches() {
         return original != null && actual != null && (isMarkedAsTrusted() || actual.equals(original));
     }
 

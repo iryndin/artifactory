@@ -10,13 +10,14 @@ import java.util.Map;
 public interface VersionInfoService {
 
     /**
-     * Indicates that the remote versioning service is unavailable It might be down, blocked or not connected yet
+     * Indicates that the remote versioning service is unavailable
+     * It might be down, blocked or not connected yet
      */
     static final String SERVICE_UNAVAILABLE = "NA";
 
+
     /**
-     * Get latest version number. If not yet retrieved from the remote server return SERVICE_UNAVAILABLE and retrieve
-     * the versioning in a background task.
+     * Get latest version number
      *
      * @param headersMap a map of the original http headers
      * @param release    True to get the latest stable version, False to get the latest version of any kind @return
@@ -25,8 +26,7 @@ public interface VersionInfoService {
     public String getLatestVersion(Map<String, String> headersMap, boolean release);
 
     /**
-     * Get latest revision number. If not yet retrieved from the remote server return SERVICE_UNAVAILABLE and retrieve
-     * the versioning in a background task.
+     * Get latest revision number
      *
      * @param headersMap a map of the original http headers
      * @param release    True - to get the latest stable revision, False - to get the latest revision of any kind
@@ -37,14 +37,9 @@ public interface VersionInfoService {
     /**
      * Get latest version number from the cache. If doesn't exist will return NA.
      *
-     * @param release True to get the latest stable version, False to get the latest version of any kind
+     * @param release    True to get the latest stable version, False to get the latest version of any kind
      * @return String Latest version number
      */
     public String getLatestVersionFromCache(boolean release);
 
-    /**
-     * @param headersMap Client http header params
-     * @return Artifactory versioning info from the remove jfrog service.
-     */
-    ArtifactoryVersioning getRemoteVersioning(Map<String, String> headersMap);
 }

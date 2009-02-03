@@ -711,7 +711,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     @SuppressWarnings({"OverlyComplexMethod"})
     private void fillJcrData(Node resourceNode, String name, InputStream in, long lastModified,
-            FileInfo info, boolean updateInfo) throws RepositoryException {
+                             FileInfo info, boolean updateInfo) throws RepositoryException {
 
         //Check if needs to create checksum and not checksum file
         log.debug("Calculating checksums for '{}'.", name);
@@ -729,7 +729,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         // apply the checksum policy
         LocalRepo repository = getLocalRepo();
         ChecksumPolicy policy = repository.getChecksumPolicy();
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
+        Set<ChecksumInfo> checksumInfos = info.getInernalXmlInfo().getChecksums();
         boolean passes = policy.verify(checksumInfos);
         if (!passes) {
             throw new ChecksumPolicyException(policy, checksumInfos, name);
@@ -765,7 +765,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 checksumInfo.setActual(calculatedChecksum);
                 // original checksum migh be null
                 String originalChecksum = checksumInfo.getOriginal();
-                if (!checksumInfo.checksumsMatch()) {
+                if (!checksumInfo.checksumsMatches()) {
                     log.debug("Checksum mismatch {}. original: {} calculated: {}",
                             new String[]{checksumType.toString(), originalChecksum, calculatedChecksum});
                 }

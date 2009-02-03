@@ -34,7 +34,8 @@ public abstract class TaskCallback<C> {
     @SuppressWarnings({"UnusedDeclaration"})
     private static final Logger log = LoggerFactory.getLogger(TaskCallback.class);
 
-    private static final InheritableThreadLocal<String> currentTaskToken = new InheritableThreadLocal<String>();
+    private static final InheritableThreadLocal<String> currentTaskToken =
+            new InheritableThreadLocal<String>();
 
     public static String currentTaskToken() {
         return currentTaskToken.get();
@@ -83,11 +84,6 @@ public abstract class TaskCallback<C> {
             //Notify listeners that we are done
             if (activeTask != null) {
                 activeTask.completed();
-                if (activeTask.isSingleExecution()) {
-                    TaskService taskService = getTaskService();
-                    //Cancel the active task
-                    taskService.cancelTask(token, true);
-                }
             } else {
                 log.warn("After execute: Could not locate active task with toke {}. Taks may have been canceled.",
                         token);

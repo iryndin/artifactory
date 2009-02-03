@@ -38,7 +38,6 @@ import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
@@ -51,20 +50,12 @@ import org.artifactory.webapp.actionable.event.ItemEventTargetComponents;
 import org.artifactory.webapp.actionable.model.GlobalRepoActionableItem;
 import org.artifactory.webapp.actionable.model.HierarchicActionableItem;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
-import org.artifactory.webapp.wicket.common.component.panel.shortcutkey.KeyEventHandler;
-import org.artifactory.webapp.wicket.common.component.panel.shortcutkey.KeyListener;
-import org.artifactory.webapp.wicket.common.component.panel.shortcutkey.KeyReleasedEvent;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
 import org.artifactory.webapp.wicket.common.component.tree.ActionableItemTreeNode;
 import org.artifactory.webapp.wicket.common.component.tree.ActionableItemsProvider;
 import org.artifactory.webapp.wicket.common.component.tree.ActionableItemsTree;
 import org.artifactory.webapp.wicket.common.component.tree.menu.ActionsMenuPanel;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import static java.awt.event.KeyEvent.*;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -143,136 +134,6 @@ public class BrowseRepoPanel extends TitledPanel implements ActionableItemsProvi
             }
         };
         add(tree);
-
-        addKeyEventHandler();
-    }
-
-    private void addKeyEventHandler() {
-        KeyEventHandler keyEventHandler = new KeyEventHandler("keyEventHandler");
-        keyEventHandler.setVisible(false);
-        add(keyEventHandler);
-
-        keyEventHandler.addKeyListener(new KeyListener() {
-            public void keyReleased(KeyReleasedEvent e) {
-                TreeNode selectedNode = getSelectedNode();
-                if (selectedNode == null) {
-                    return;
-                }
-
-                ITreeState state = tree.getTreeState();
-                boolean expanded = state.isNodeExpanded(selectedNode);
-                if (!expanded && !selectedNode.isLeaf() && selectedNode.getAllowsChildren()) {
-                    state.expandNode(selectedNode);
-                    tree.onJunctionLinkClicked(e.getTarget(), selectedNode);
-                    e.getTarget().addComponent(tree);
-                } else {
-                    selectNode(selectedNode, getNextTreeNode(selectedNode), e.getTarget());
-                }
-            }
-        }, VK_RIGHT, VK_ADD);
-
-        keyEventHandler.addKeyListener(new KeyListener() {
-            public void keyReleased(KeyReleasedEvent e) {
-                TreeNode selectedNode = getSelectedNode();
-                if (selectedNode == null) {
-                    return;
-                }
-
-                ITreeState state = tree.getTreeState();
-                boolean expanded = state.isNodeExpanded(selectedNode);
-                if (expanded) {
-                    state.collapseNode(selectedNode);
-                    tree.onJunctionLinkClicked(e.getTarget(), selectedNode);
-                    e.getTarget().addComponent(tree);
-                } else {
-                    selectNode(selectedNode, getPrevTreeNode(selectedNode), e.getTarget());
-                }
-            }
-        }, VK_LEFT, VK_SUBTRACT);
-
-        keyEventHandler.addKeyListener(new KeyListener() {
-            public void keyReleased(KeyReleasedEvent e) {
-                TreeNode selectedNode = getSelectedNode();
-                if (selectedNode != null) {
-                    selectNode(selectedNode, getPrevTreeNode(selectedNode), e.getTarget());
-                }
-
-            }
-        }, VK_UP);
-
-        keyEventHandler.addKeyListener(new KeyListener() {
-            public void keyReleased(KeyReleasedEvent e) {
-                TreeNode selectedNode = getSelectedNode();
-                if (selectedNode != null) {
-                    selectNode(selectedNode, getNextTreeNode(selectedNode), e.getTarget());
-                }
-            }
-        }, VK_DOWN);
-    }
-
-    private void selectNode(TreeNode selectedNode, TreeNode newSelection, AjaxRequestTarget target) {
-        ITreeState state = tree.getTreeState();
-        if (selectedNode != null && newSelection != null) {
-            state.selectNode(selectedNode, false);
-            state.selectNode(newSelection, true);
-            target.addComponent(tree);
-        }
-    }
-
-    private TreeNode getNextTreeNode(TreeNode node) {
-        ITreeState state = tree.getTreeState();
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
-        if (parent == null) {
-            return null;
-        }
-        if (!node.isLeaf() && node.getAllowsChildren() && state.isNodeExpanded(node)) {
-            return node.getChildAt(0);
-        }
-
-        TreeNode nextNode = parent.getChildAfter(node);
-        if (nextNode == null) {
-            return getNextParent(parent);
-        }
-        return nextNode;
-    }
-
-    private TreeNode getNextParent(DefaultMutableTreeNode node) {
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
-        if (parent == null) {
-            return null;
-        }
-        TreeNode nextNode = parent.getChildAfter(node);
-        if (nextNode == null) {
-            return getNextParent(parent);
-        }
-        return nextNode;
-    }
-
-    private TreeNode getPrevTreeNode(TreeNode node) {
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
-        if (parent == null) {
-            return null;
-        }
-
-        TreeNode prevNode = parent.getChildBefore(node);
-        if (prevNode != null) {
-            return prevNode;
-        }
-
-        DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModelObject();
-        if (parent == treeModel.getRoot()) {
-            return null;
-        }
-        return parent;
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public TreeNode getSelectedNode() {
-        Collection<TreeNode> selectedNodes = tree.getTreeState().getSelectedNodes();
-        if (selectedNodes.isEmpty()) {
-            return null;
-        }
-        return selectedNodes.iterator().next();
     }
 
     public HierarchicActionableItem getRoot() {

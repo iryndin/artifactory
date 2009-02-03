@@ -98,7 +98,7 @@ public class ArtifactoryLdapAuthenticationProvider extends LdapAuthenticationPro
             log.debug(String.format("Creating new ldap user '%s' ...", userName));
             // Creates a new user with invalid password, and user permissions.
             // The created user cannot update its profile.
-            UserInfo userInfo = new UserInfo(userName, UserInfo.INVALID_PASSWORD, "",
+            UserInfo userInfo = new UserInfo(userName, SimpleUser.INVALID_PASSWORD, "",
                     false, true, false, true, true, true);
             Set<String> defaultGroups = userGroupservice.getNewUserDefaultGroupsNames();
             userInfo.setGroups(defaultGroups);

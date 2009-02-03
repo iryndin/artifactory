@@ -16,10 +16,7 @@ fi
 curDir=`dirname $0`
 curDir=`cd $curDir; pwd`
 
-$curDir/install.sh || ( echo "Could not execute standard install script $curDir/install.sh" && exit 1 )
-
-echo "" >> /etc/artifactory/default
-echo "export CATALINA_PID=/var/run/artifactory.pid" >> /etc/artifactory/default
+$curDir/install.sh
 
 tomFiles=$curDir/../misc/tomcat
 cp -i $tomFiles/artifactory /etc/init.d/artifactory
@@ -40,14 +37,3 @@ if [ ! -d $TOMCAT_HOME/temp ];then
         mkdir $TOMCAT_HOME/temp  
 fi
 chown -R artifactory $TOMCAT_HOME/temp	
-
-if [ "x$1" = "xmod_jk" ]; then
-    cp $tomFiles/artifactory.conf /etc/httpd/conf.d
-fi
-
-echo "All commands executed."
-echo "Please check /etc/artifactory, $TOMCAT_HOME and $ARTIFACTORY_HOME folders"
-echo "Please check /etc/init.d/artifactory startup script, and /etc/httpd/conf.d/artifactory.conf for mod_jk conf"
-echo "To activate artifactory run (httpd if using mod_jk):"
-echo "> service artifactory start"
-echo "> service httpd reload"

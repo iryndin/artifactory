@@ -56,7 +56,7 @@ public interface RepositoryService extends ImportableExportable {
 
     @Lock(transactional = true)
     void deploy(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo, boolean forceDeployPom,
-                File uploadedFile) throws RepoAccessException;
+            File uploadedFile) throws RepoAccessException;
 
     void deployBundle(File bundle, RepoDescriptor targetRepo, StatusHolder status);
 
@@ -171,9 +171,5 @@ public interface RepositoryService extends ImportableExportable {
      *
      * @return List<LocalRepoDescriptor> - List of deploy-permitted local repos
      */
-    List<LocalRepoDescriptor> getDeployableRepoDescriptors();
-
-    boolean isRepoPathHandled(RepoPath repoPath);
-
-    boolean isRepoPathAccepted(RepoPath repoPath);
+    public List<LocalRepoDescriptor> getDeployableRepoDescriptors();
 }

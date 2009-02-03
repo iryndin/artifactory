@@ -191,7 +191,7 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
             public Object getObject() {
                 WebRequestCycle webRequestCycle = (WebRequestCycle) getRequestCycle();
                 WebRequest request = webRequestCycle.getWebRequest();
-                return request.getRelativePathPrefixToContextRoot() + "v200/js/dojo/dojo.js";
+                return request.getRelativePathPrefixToContextRoot() + "130rc2/js/dojo/dojo.js";
             }
         }, " "));
         add(djConfig);

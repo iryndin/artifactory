@@ -58,7 +58,7 @@
         </init-param>
         <init-param>
             <param-name>UIPathPrefixes</param-name>
-            <param-value>webapp,v200,favicon.ico</param-value>
+            <param-value>webapp,130rc2,favicon.ico</param-value>
         </init-param>
     </filter>
 

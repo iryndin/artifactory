@@ -94,12 +94,11 @@ public class WelcomeBorder extends TitledBorder {
         latestLabel.setOutputMarkupId(true);
         CentralConfigDescriptor configDescriptor = centralConfigService.getDescriptor();
         if (!configDescriptor.isOfflineMode()) {
-            // try to get the latest version from the cache with a non-blocking call
-            final Map<String, String> headersMap = WebUtils.getHeadersMap();
-            String latestVersion = versionInfoService.getLatestVersion(headersMap, true);
+            // first try to get the latest version from the cache (we don't want to block)
+            String latestVersion = versionInfoService.getLatestVersionFromCache(true);
             if (VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
-                // send ajax refresh in 5 second and update the latest version with the result
-                latestLabel.add(new AbstractAjaxTimerBehavior(Duration.seconds(5)) {
+                // send ajax refresh in 1 second and update the latest version with the result
+                latestLabel.add(new AbstractAjaxTimerBehavior(Duration.seconds(1)) {
                     @Override
                     protected IAjaxCallDecorator getAjaxCallDecorator() {
                         return new NoAjaxIndicatorDecorator();
@@ -108,7 +107,8 @@ public class WelcomeBorder extends TitledBorder {
                     @Override
                     protected void onTimer(AjaxRequestTarget target) {
                         stop(); // try only once
-                        String latestVersion = versionInfoService.getLatestVersionFromCache(true);
+                        Map<String, String> headersMap = WebUtils.getHeadersMap();
+                        String latestVersion = versionInfoService.getLatestVersion(headersMap, true);
                         if (!VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
                             latestLabel.setModelObject(buildLatestversionString(latestVersion));
                             target.addComponent(latestLabel);

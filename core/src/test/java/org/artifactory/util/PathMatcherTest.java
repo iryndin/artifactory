@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,25 +39,13 @@ public class PathMatcherTest {
     }
 
     public void matchWithExcludesOnly() {
-        List<String> includes = Collections.emptyList();
-        List<String> excludes = Arrays.asList("apath", "**/my/test/path", "commons-*", "main/*");
-        assertTrue(PathMatcher.matches("apat", includes, excludes));
+        // only excludes and no includes should exclude everything
+        List<String> includes = Arrays.asList("");
+        List<String> excludes = Arrays.asList("apath", "**/my/test/path");
         assertFalse(PathMatcher.matches("apath", includes, excludes));
-        assertTrue(PathMatcher.matches("apath2", includes, excludes));
-        assertFalse(PathMatcher.matches("commons-codec", includes, excludes));
-        assertTrue(PathMatcher.matches("main.123", includes, excludes));
-        assertTrue(PathMatcher.matches("apath/deep", includes, excludes));
+        assertFalse(PathMatcher.matches("apath2", includes, excludes));
         assertFalse(PathMatcher.matches("this/is/my/test/path", includes, excludes));
-        assertTrue(PathMatcher.matches("this/is/my/test/path/andmore", includes, excludes));
-    }
-
-    public void matchExcludesAndIncludes() {
-        List<String> includes = Arrays.asList("org/**", "com/**", "net/**");
-        List<String> excludes = Arrays.asList("org/apache/**", "commons-*");
-        assertTrue(PathMatcher.matches("org/codesulting", includes, excludes));
-        assertTrue(PathMatcher.matches("com/test/123", includes, excludes));
-        assertFalse(PathMatcher.matches("org/apache/bla", includes, excludes));
-        assertFalse(PathMatcher.matches("commons-lang", includes, excludes));
+        assertFalse(PathMatcher.matches("this/is/my/test/path/andmore", includes, excludes));
     }
 
     public void excludesTakesPrecedenceOverIncludes() {

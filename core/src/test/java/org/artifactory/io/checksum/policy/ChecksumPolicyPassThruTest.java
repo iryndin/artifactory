@@ -24,7 +24,7 @@ public class ChecksumPolicyPassThruTest extends ChecksumPolicyBaseTest {
     }
 
     @Override
-    public void checksumsMatch() {
+    public void checksumsMatches() {
         boolean ok = policy.verifyChecksum(matchedChecksums);
         Assert.assertTrue(ok, "Policy should pass if checksums are same");
     }

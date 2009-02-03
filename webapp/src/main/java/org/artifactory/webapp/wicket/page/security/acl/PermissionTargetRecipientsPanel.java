@@ -27,13 +27,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.security.AclInfo;
-import org.artifactory.api.security.AclService;
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.api.security.GroupInfo;
-import org.artifactory.api.security.PermissionTargetInfo;
-import org.artifactory.api.security.UserGroupService;
-import org.artifactory.api.security.UserInfo;
+import org.artifactory.api.security.*;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.component.panel.actionable.StyledTabbedPanel;
 import org.artifactory.webapp.wicket.common.component.panel.fieldset.FieldSetPanel;
@@ -120,12 +114,7 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
                 return new SubPanel(panelId, false);
             }
         });
-        StyledTabbedPanel permissionsTabs = new StyledTabbedPanel("permissionsTabs", tabs);
-        if (groupsDataProvider.getGroups().isEmpty()) {
-            // change the default displayed tab to users if there are no groups
-            permissionsTabs.setSelectedTab(1);
-        }
-
+        final StyledTabbedPanel permissionsTabs = new StyledTabbedPanel("permissionsTabs", tabs);
         add(permissionsTabs);
     }
 
@@ -169,17 +158,8 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
             protected boolean isEnabled(AceInfoRow row) {
                 String currentUsername = authService.currentUsername();
                 String username = row.getPrincipal();
-                if (username.equals(currentUsername)) {
-                    //Do not allow admin user to change (revoke) his admin bit
-                    return false;
-                }
-
-                if (username.equalsIgnoreCase(UserInfo.ANONYMOUS)) {
-                    // Do not admin permissions to the anonymous user
-                    return false;
-                }
-
-                return true;
+                //Do not allow admin user to change (revoke) his admin bit
+                return !username.equals(currentUsername);
             }
         });
         columns.add(new AjaxCheckboxColumn<AceInfoRow>("Delete", "delete", "delete") {
@@ -213,7 +193,8 @@ public class PermissionTargetRecipientsPanel extends FieldSetPanel {
             }
         });
 
-        PermissionTargetAceInfoRowDataProvider dataProvider = isGroup ? groupsDataProvider : usersDataProvider;
+        PermissionTargetAceInfoRowDataProvider dataProvider =
+                isGroup ? groupsDataProvider : usersDataProvider;
 
         SortableTable table = new SortableTable("recipients", columns, dataProvider, 5);
         //Recipients header

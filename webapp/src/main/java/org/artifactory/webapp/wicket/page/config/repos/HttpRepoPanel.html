@@ -93,6 +93,15 @@
             </div>
         </div>
 
+        <div class="field float-right field-sep">
+            <label>Socket Timeout</label>
+            <span wicket:id="socketTimeoutMillis.help"/>
+
+            <div class="value">
+                <input wicket:id="socketTimeoutMillis" type="text" class="text"/>
+            </div>
+        </div>
+
         <div class="field field-sep">
             <label>Checksum Policy</label>
             <span wicket:id="checksumPolicyType.help"/>
@@ -102,34 +111,16 @@
             </div>
         </div>
 
-        <div class="field field-sep">
-            <label>Max Unique Snapshots</label>
-            <span wicket:id="maxUniqueSnapshots.help"/>
-
-            <div class="value">
-                <input wicket:id="maxUniqueSnapshots" type="text" class="text"/>
-            </div>
-        </div>
-
         <div class="field float-right field-sep">
-            <label>Retrieval Cache Period</label>
-            <span wicket:id="retrievalCachePeriodSecs.help"/>
+            <label>Failed Retrieval Cache Period</label>
+            <span wicket:id="failedRetrievalCachePeriodSecs.help"/>
 
             <div class="value">
-                <input wicket:id="retrievalCachePeriodSecs" type="text" class="text"/>
+                <input wicket:id="failedRetrievalCachePeriodSecs" type="text" class="text"/>
             </div>
         </div>
 
         <div class="field field-sep">
-            <label>Socket Timeout</label>
-            <span wicket:id="socketTimeoutMillis.help"/>
-
-            <div class="value">
-                <input wicket:id="socketTimeoutMillis" type="text" class="text"/>
-            </div>
-        </div>
-
-        <div class="field float-right field-sep">
             <label>Missed Retrieval Cache Period</label>
             <span wicket:id="missedRetrievalCachePeriodSecs.help"/>
 
@@ -139,11 +130,11 @@
         </div>
 
         <div class="field field-sep">
-            <label>Failed Retrieval Cache Period</label>
-            <span wicket:id="failedRetrievalCachePeriodSecs.help"/>
+            <label>Max Unique Snapshots</label>
+            <span wicket:id="maxUniqueSnapshots.help"/>
 
             <div class="value">
-                <input wicket:id="failedRetrievalCachePeriodSecs" type="text" class="text"/>
+                <input wicket:id="maxUniqueSnapshots" type="text" class="text"/>
             </div>
         </div>
 

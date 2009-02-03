@@ -104,9 +104,13 @@ public class ArtifactForm extends Form {
                     FeedbackUtils.refreshFeedback(target);
                 } catch (Exception e) {
                     log.warn("Failed to deploy artifact", e);
-                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(e,
-                            RepoAccessException.class, IllegalArgumentException.class);
-                    error(cause.getMessage());
+                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(
+                            e, RepoAccessException.class,
+                            IllegalArgumentException.class);
+
+                    String msg = "Failed to deploy artifact '" + artifactInfo + "'. Cause: " +
+                            cause.getMessage();
+                    error(msg);
                     FeedbackUtils.refreshFeedback(target);
                 } finally {
                     enable(false);
@@ -123,7 +127,13 @@ public class ArtifactForm extends Form {
     private void addTargetRepoDropDown() {
         PropertyModel targetRepoModel = new PropertyModel(this, "targetRepo");
         List<LocalRepoDescriptor> deployableRepos = getDeployableRepos();
-        final RepoDescriptor defaultTarget = deployableRepos.get(0);
+        final RepoDescriptor defaultTarget;
+        if (deployableRepos.size() > 0) {
+            defaultTarget = deployableRepos.get(0);
+        } else { //BUG
+            defaultTarget = new LocalRepoDescriptor();
+        }
+
         DropDownChoice targetRepo =
                 new DropDownChoice("targetRepo", targetRepoModel, deployableRepos) {
                     @Override

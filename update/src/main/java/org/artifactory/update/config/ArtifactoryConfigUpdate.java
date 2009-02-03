@@ -79,10 +79,9 @@ public class ArtifactoryConfigUpdate {
         factory.setNamespaceAware(true);
         Document document = factory.newDocumentBuilder().parse(currentConfigFile);
 
-        Map<String, Element> localRepoKeys = getRepoKeys(document, "localRepositories", true);
-        Map<String, Element> remoteRepoKeys = getRepoKeys(document, REMOTE_REPOSITORIES, true);
-        Map<String, Element> virtualRepoKeys = getRepoKeys(document, VIRTUAL_REPOSITORIES, true);
-        Map<String, Element> excludedRepoKeys = getRepoKeys(document, "excludedRepositories", false);
+        Map<String, Element> localRepoKeys = getRepoKeys(document, "localRepositories");
+        Map<String, Element> remoteRepoKeys = getRepoKeys(document, REMOTE_REPOSITORIES);
+        Map<String, Element> virtualRepoKeys = getRepoKeys(document, VIRTUAL_REPOSITORIES);
 
         // Check if we already did the work of repo reorg
         boolean alreadyDone = true;
@@ -124,23 +123,15 @@ public class ArtifactoryConfigUpdate {
 
         // First rename all local repo to localKey-local
         Set<String> keys = localRepoKeys.keySet();
-        Set<String> excludedKeys = excludedRepoKeys.keySet();
         boolean localRepositoryNameChanged = false;
         for (String localRepoKey : keys) {
             if (!localRepoKey.endsWith(UpdateUtils.LOCAL_SUFFIX)) {
                 // First rename the xml key element
                 Element localRepoEl = localRepoKeys.get(localRepoKey);
                 String newLocalRepoKey = localRepoKey + UpdateUtils.LOCAL_SUFFIX;
-                getKeyTag(localRepoEl, KEY_TAG).setTextContent(newLocalRepoKey);
+                getKeyTag(localRepoEl).setTextContent(newLocalRepoKey);
                 log.info(String.format("Renaming local repo %s to %s",
                         localRepoKey, newLocalRepoKey));
-                //If the changed local key exists in the backup excludes list, rename it too
-                if (excludedKeys.contains(localRepoKey)) {
-                    Element excludedElement = excludedRepoKeys.get(localRepoKey);
-                    Node firstChild = excludedElement.getFirstChild();
-                    firstChild.setTextContent(newLocalRepoKey);
-                }
-
                 localRepositoryNameChanged = true;
                 // local repositories already named with the -local prefix
                 // it is done there because we also need the new name as the value
@@ -159,7 +150,6 @@ public class ArtifactoryConfigUpdate {
                 }*/
             }
         }
-
         if (localRepositoryNameChanged) {
             displayMessageOnLocalRepositoryRename();
         }
@@ -242,7 +232,7 @@ public class ArtifactoryConfigUpdate {
         }
     }
 
-    private static Map<String, Element> getRepoKeys(Document document, String tagname, boolean getByKeyTag) {
+    private static Map<String, Element> getRepoKeys(Document document, String tagname) {
         Map<String, Element> repoKeys = new HashMap<String, Element>();
         NodeList repositoriesTag = document.getElementsByTagName(tagname);
         if (repositoriesTag.getLength() == 0) {
@@ -255,26 +245,13 @@ public class ArtifactoryConfigUpdate {
                 Node node = repos.item(i);
                 if (node instanceof Element) {
                     Element element = (Element) node;
-                    //If the repo key should be under the <key> tag
-                    if (getByKeyTag) {
-                        Element keyTag = getKeyTag(element, KEY_TAG);
-                        if (keyTag == null) {
-                            log.warn("No key found for " + tagname + " repository " + element);
-                        } else {
-                            String key = keyTag.getTextContent();
-                            repoKeys.put(key, element);
-                            builder.append(" ").append(key);
-                        }
-                    } else { //If the repo key is in a different location (excludes for example)
-                        Node firstChild = element.getFirstChild();
-                        if ((firstChild == null) || (firstChild.getTextContent() == null) ||
-                                ("".equals(firstChild.getTextContent()))) {
-                            log.warn("No key found for " + tagname + " repository " + element);
-                        } else {
-                            String key = firstChild.getTextContent();
-                            repoKeys.put(key, element);
-                            builder.append(" ").append(key);
-                        }
+                    Element keyTag = getKeyTag(element);
+                    if (keyTag == null) {
+                        log.warn("No key found for " + tagname + " repository " + element);
+                    } else {
+                        String key = keyTag.getTextContent();
+                        repoKeys.put(key, element);
+                        builder.append(" ").append(key);
                     }
                 }
             }
@@ -285,8 +262,8 @@ public class ArtifactoryConfigUpdate {
         return repoKeys;
     }
 
-    private static Element getKeyTag(Element element, String keyTagName) {
-        NodeList list = element.getElementsByTagName(keyTagName);
+    private static Element getKeyTag(Element element) {
+        NodeList list = element.getElementsByTagName(KEY_TAG);
         if (list.getLength() == 0) {
             return null;
         }

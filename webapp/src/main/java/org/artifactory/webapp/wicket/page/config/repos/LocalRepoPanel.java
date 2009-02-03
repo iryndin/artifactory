@@ -47,12 +47,8 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
 
         final TextField maxUniqueSnapshots = new TextField("maxUniqueSnapshots", Integer.class) {
             @Override
-            public boolean isEnabled() {
-                boolean toEnable = isUniqueSelected();
-                if (toEnable) {
-                    setModelObject(0);
-                }
-                return toEnable;
+            public boolean isVisible() {
+                return isUniqueSelected();
             }
         };
         maxUniqueSnapshots.add(NumberValidator.range(0, Integer.MAX_VALUE));
@@ -60,14 +56,24 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
         maxUniqueSnapshots.setOutputMarkupPlaceholderTag(true);
         maxUniqueSnapshots.setOutputMarkupId(true);
         advanced.add(maxUniqueSnapshots);
-        Label maxUniqueSnapshotsLabel = new Label("maxUniqueSnapshotsLabel", "Max Unique Snapshots");
+        final Label maxUniqueSnapshotsLabel = new Label("maxUniqueSnapshotsLabel", "Max Unique Snapshots") {
+            @Override
+            public boolean isVisible() {
+                return isUniqueSelected();
+            }
+        };
         maxUniqueSnapshotsLabel.setOutputMarkupPlaceholderTag(true);
         maxUniqueSnapshotsLabel.setOutputMarkupId(true);
         advanced.add(maxUniqueSnapshotsLabel);
         advanced.add(new TextArea("includesPattern"));
         advanced.add(new TextArea("excludesPattern"));
 
-        SchemaHelpBubble maxUniqueSnapshotsHelp = new SchemaHelpBubble("maxUniqueSnapshots.help");
+        final SchemaHelpBubble maxUniqueSnapshotsHelp = new SchemaHelpBubble("maxUniqueSnapshots.help") {
+            @Override
+            public boolean isVisible() {
+                return isUniqueSelected();
+            }
+        };
         maxUniqueSnapshotsHelp.setOutputMarkupPlaceholderTag(true);
         maxUniqueSnapshotsHelp.setOutputMarkupId(true);
         advanced.add(maxUniqueSnapshotsHelp);
@@ -81,6 +87,8 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.addComponent(maxUniqueSnapshots);
+                target.addComponent(maxUniqueSnapshotsLabel);
+                target.addComponent(maxUniqueSnapshotsHelp);
             }
         });
         snapshotVersionDropDown.setChoiceRenderer(new SnapshotVersionChoiceRenderer());
@@ -95,9 +103,8 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
     }
 
     private boolean isUniqueSelected() {
-        LocalRepoDescriptor descriptor = getRepoDescriptor();
-        boolean isUnique = UNIQUE.equals(descriptor.getSnapshotVersionBehavior());
-        boolean isDeployer = DEPLOYER.equals(descriptor.getSnapshotVersionBehavior());
+        boolean isUnique = UNIQUE.equals(getRepoDescriptor().getSnapshotVersionBehavior());
+        boolean isDeployer = DEPLOYER.equals(getRepoDescriptor().getSnapshotVersionBehavior());
         return (isUnique || isDeployer);
     }
 

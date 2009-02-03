@@ -6,10 +6,7 @@
         </p>
 
         <div class="field field-sep zip-file">
-            <label>
-                Repository zip file
-                <span wicket:id="uploadHelp"/>
-            </label>
+            <label>Repository zip file</label>
 
             <div class="value">
                 <input wicket:id="fileInput" type="file" class="text"/>
@@ -23,6 +20,7 @@
                 </div>
             </div>
         </button>
+        <span wicket:id="uploadHelp"/>
 
         <span wicket:id="progress">[[ajax upload progressbar]]</span>
     </form>

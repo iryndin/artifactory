@@ -30,6 +30,10 @@ import java.util.TreeSet;
  * instances when getters are called.
  */
 public class SimpleUser implements UserDetails, Comparable {
+    /**
+     * Used this empty non-hashed string as an invalid password.
+     */
+    public static String INVALID_PASSWORD = "";
 
     public final static GrantedAuthority[] USER_GAS =
             new GrantedAuthority[]{new GrantedAuthorityImpl(SecurityServiceImpl.ROLE_USER)};

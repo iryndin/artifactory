@@ -6,8 +6,7 @@ if not exist "%JAVA_HOME%\bin\java.exe" set _JAVACMD=java.exe
 if "%_JAVACMD%" == "" set _JAVACMD="%JAVA_HOME%\bin\java.exe"
 
 set CLI_DIR=%~dp0..
-set LIB_DIR=%~dp0\..\clilib
-set LOGS_DIR=%~dp0\..\logs
+set LIB_DIR=clilib
 set CLASSPATH=.
 
 for %%a in (%LIB_DIR%\*.*) do call :process %%~nxa
@@ -19,7 +18,7 @@ goto :end
 
 :next
 
-%_JAVACMD% -Dcli.logs.dir="%LOGS_DIR%" -cp "%CLASSPATH%" org.artifactory.cli.main.ArtifactoryCli %*
+%_JAVACMD% -cp "%CLASSPATH%" org.artifactory.cli.main.ArtifactoryCli %*
 echo on
 
 @endlocal

@@ -72,15 +72,15 @@ public class DeployFromZipPanel extends TitledPanel implements FileUploadParentP
      */
     private String getDeployHelp() {
         StringBuilder sb = new StringBuilder();
-        sb.append("When deploying an artifacts bundle, the file structure within the archive you select should be\n");
-        sb.append("similar to:\n");
-        sb.append("SELECTED_ARCHIVE.zip\n");
+        sb.append("Selects the zip archive that contains the artifacts. When deploying archived artifacts,\n");
+        sb.append("The file structure within the archive you select should be similar to:\n");
+        sb.append("SELECTED_ARCHIVE\n");
         sb.append(" |\n");
-        sb.append(" |--org\n");
-        sb.append(" |--|--apache\n");
+        sb.append(" |--LIB_DIR_1\n");
         sb.append("\n");
-        sb.append("Please note that artifacts need to be stored in the archive in a Maven repository structure,\n");
-        sb.append("with no extra folders between the archive root and the artifact's first group directory.");
+        sb.append("Please note, that since the deployer will be guessing artifact details via the folder structure,\n");
+        sb.append("It is best to store the artifacts within the archive in a Maven repository folder structure\n");
+        sb.append("With no extra folders between the archive root, and the artifact's first group directory.");
         return sb.toString();
     }
 

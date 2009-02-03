@@ -50,7 +50,6 @@ public class ImportRepoPanel extends BasicImportPanel {
         importFromPathTf.setMask(PathMask.FOLDERS);
         importFromPathTf.setRequired(true);
         importFromPathTf.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 updateCheckboxes(target);
             }
@@ -62,7 +61,6 @@ public class ImportRepoPanel extends BasicImportPanel {
         copyCheckbox.setEnabled(false);
         copyCheckbox.setRequired(false);
         copyCheckbox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
-            @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 if (copyCheckbox.isChecked() && canUseSymLink()) {
                     symLinkCheckbox.setEnabled(true);
@@ -94,9 +92,6 @@ public class ImportRepoPanel extends BasicImportPanel {
         form.add(new HelpBubble("verboseHelp", "Hint: You can monitor the log in the 'System Logs' page."));
         form.add(copyCheckbox);
         form.add(symLinkCheckbox);
-
-        form.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        form.add(new HelpBubble("includeMetadataHelp", "Include Artifactory-specific metadata as part of the export."));
     }
 
     private String getRepoSelectHelpText() {

@@ -8,7 +8,6 @@ import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.stat.StatsInfo;
-import org.artifactory.update.md.MetadataReaderBaseTest;
 import org.testng.Assert;
 import static org.testng.Assert.*;
 import org.testng.annotations.BeforeClass;
@@ -25,7 +24,7 @@ import java.util.Set;
  * @author Yossi Shaul
  */
 @Test
-public class MetadataReader130beta3Test extends MetadataReaderBaseTest {
+public class MetadataReader130beta3Test {
     private XStream xstream;
 
     @BeforeClass
@@ -61,8 +60,7 @@ public class MetadataReader130beta3Test extends MetadataReaderBaseTest {
         assertNotNull(entries);
         assertEquals(entries.size(), 2, "Two matadata entries are expected - file and stats");
 
-        MetadataEntry fileInfoEntry = getMetadataByName(entries, FileInfo.ROOT);
-        FileInfo fileInfo = (FileInfo) xstream.fromXML(fileInfoEntry.getXmlContent());
+        FileInfo fileInfo = (FileInfo) xstream.fromXML(entries.get(0).getXmlContent());
         Set<ChecksumInfo> checksums = fileInfo.getChecksums();
         Assert.assertNotNull(checksums);
         Assert.assertEquals(checksums.size(), 2);
@@ -70,9 +68,7 @@ public class MetadataReader130beta3Test extends MetadataReaderBaseTest {
         Assert.assertEquals(fileInfo.getMd5(), "f1298dace833ceafd88f6cd6acc26c64");
 
         // just make sure the stats is readable
-        MetadataEntry statsInfoEntry = getMetadataByName(entries, StatsInfo.ROOT);
-        StatsInfo statsInfo = (StatsInfo) xstream.fromXML(statsInfoEntry.getXmlContent());
-        assertEquals(statsInfo.getDownloadCount(), 1);
+        StatsInfo statsInfo = (StatsInfo) xstream.fromXML(entries.get(1).getXmlContent());
     }
 
     private File getMetadataDirectory(String path) {

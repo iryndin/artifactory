@@ -1,13 +1,11 @@
 package org.artifactory.cli.common;
 
 import com.thoughtworks.xstream.XStream;
-import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -23,18 +21,13 @@ import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 /**
  * Extends the BaseCommand class to act as a super class for commands that need URL handling (import, export, etc')
@@ -162,13 +155,7 @@ public abstract class UrlBasedCommand extends BaseCommand {
 
     protected static byte[] get(String uri, int expectedStatus,
             String expectedMediaType, boolean printStream) throws Exception {
-        GetMethod method;
-        try {
-            method = new GetMethod(uri);
-        } catch (IllegalStateException ise) {
-            throw new RemoteCommandException("\nAn error has occurred while trying to resolve the given url: " +
-                    uri + "\n" + ise.getMessage());
-        }
+        GetMethod method = new GetMethod(uri);
 
         executeMethod(uri, method, expectedStatus, expectedMediaType);
 
@@ -187,10 +174,8 @@ public abstract class UrlBasedCommand extends BaseCommand {
 
     private static void checkStatus(String uri, int expectedStatus, int status) {
         if (status != expectedStatus) {
-            throw new RemoteCommandException("\nUnexpected response status for request: " + uri + "\n" +
-                    "Expected status: " + expectedStatus + " (" + HttpStatus.getStatusText(expectedStatus) + ")" +
-                    "\n" +
-                    "Received status: " + status + " (" + HttpStatus.getStatusText(status) + ")" + "\n");
+            throw new RuntimeException("HTTP status code was " + status + " and should be " +
+                    expectedStatus + " for request on " + uri);
         }
     }
 
@@ -258,25 +243,7 @@ public abstract class UrlBasedCommand extends BaseCommand {
 
     private static void executeMethod(String uri, HttpMethod method, int expectedStatus,
             String expectedMediaType) throws Exception {
-        int status;
-        try {
-            status = getHttpClient(uri).executeMethod(method);
-        } catch (SSLException ssle) {
-            throw new RemoteCommandException("\nThe host you are trying to reach does not support SSL.");
-        } catch (ConnectTimeoutException cte) {
-            throw new RemoteCommandException("\n" + cte.getMessage());
-        } catch (UnknownHostException uhe) {
-            throw new RemoteCommandException("\nThe host of the specified URL: " + uri + " could not be found.\n" +
-                    "Please make sure you have specified the correct path. The default should be:\n" +
-                    "http://myhost:8081/artifactory/api/system");
-        } catch (ConnectException ce) {
-            throw new RemoteCommandException("\nThe specified host paramater is invalid. " +
-                    "The format should be - host:port.\n" + "For example: localhost:8081");
-        } catch (NoRouteToHostException nrthe) {
-            throw new RemoteCommandException("\nThe host could not be reached.\n" +
-                    "Please make sure that the address is valid and that the port is open (firewall, router, etc').");
-        }
-
+        int status = getHttpClient(uri).executeMethod(method);
         checkStatus(uri, expectedStatus, status);
         Header mediaType = method.getResponseHeader("content-type");
         String contentType = mediaType.getValue();
@@ -293,24 +260,11 @@ public abstract class UrlBasedCommand extends BaseCommand {
         //Set the socket data timeout
         int to = 900000;
         if (CliOption.timeout.isSet()) {
-            String timeout = CliOption.timeout.getValue();
-            try {
-                to = Integer.parseInt(timeout) * 1000;
-            } catch (NumberFormatException nfe) {
-                throw new RemoteCommandException(
-                        "\nThe timeout length you have entered: " + timeout + " - is invalid.\n" +
-                                "Please enter a positive integer for a timeout value in seconds.");
-            }
+            to = Integer.parseInt(CliOption.timeout.getValue()) * 1000;
         }
         clientParams.setSoTimeout(to);
         if (CliOption.username.isSet()) {
-            String host;
-            try {
-                host = new URL(url).getHost();
-            } catch (MalformedURLException mue) {
-                throw new RemoteCommandException("\nAn error has occurred while trying to resolve the given url: " +
-                        url + "\n" + mue.getMessage());
-            }
+            String host = new URL(url).getHost();
             clientParams.setAuthenticationPreemptive(true);
             Credentials creds = new UsernamePasswordCredentials(
                     CliOption.username.getValue(),

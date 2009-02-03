@@ -49,7 +49,8 @@ var AggregateFeedbackPanel = {
         }, 100);
 
         // notify effect
-        dojo.fadeIn({node: panel, duration: 500}).play();
+        var notify = dojo.fadeIn({node: panel,duration: 500}).play();
+        notify.play();
     },
 
     getTitle: function(count) {

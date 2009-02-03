@@ -34,7 +34,6 @@ import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledChec
 import org.artifactory.webapp.wicket.common.component.file.browser.button.FileBrowserButton;
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
 import org.artifactory.webapp.wicket.common.component.file.path.PathMask;
-import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
 import org.slf4j.Logger;
@@ -58,9 +57,6 @@ public class ExportSystemPanel extends TitledPanel {
     @WicketProperty
     private boolean m2Compatible;
 
-    @WicketProperty
-    private boolean includeMetadata;
-
     public ExportSystemPanel(String string) {
         super(string);
         Form exportForm = new Form("exportForm");
@@ -83,30 +79,25 @@ public class ExportSystemPanel extends TitledPanel {
         browserButton.setMask(PathMask.FOLDERS);
         exportForm.add(browserButton);
 
-        exportForm.add(new StyledCheckbox("m2Compatible", new PropertyModel(this, "m2Compatible")));
-        exportForm.add(new HelpBubble("m2CompatibleHelp",
-                "Include Maven 2 repository metadata and checksum files as part of the export"));
-        exportForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        exportForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export.\n" +
-                        "(Maven 2 metadata is unaffected by this setting)"));
+        exportForm.add(new StyledCheckbox("m2Compatible",
+                new PropertyModel(this, "m2Compatible")));
 
         //Create a zip archive (slow!)
-        exportForm.add(new StyledCheckbox("createArchive", new PropertyModel(this, "createArchive")));
+        exportForm.add(new StyledCheckbox("createArchive",
+                new PropertyModel(this, "createArchive")));
 
         final MultiStatusHolder status = new MultiStatusHolder();
+
         SimpleButton exportButton = new SimpleButton("export", exportForm, "Export") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 ArtifactoryContext context = ContextHelper.get();
                 try {
-                    status.reset();
                     ExportSettings settings = new ExportSettings(exportToPath);
                     settings.setCreateArchive(createArchive);
                     settings.setFailFast(false);
                     settings.setVerbose(false);
                     settings.setFailIfEmpty(true);
-                    settings.setIncludeMetadata(includeMetadata);
                     settings.setM2Compatible(m2Compatible);
                     context.exportTo(settings, status);
                     List<StatusEntry> warnings = status.getWarnings();

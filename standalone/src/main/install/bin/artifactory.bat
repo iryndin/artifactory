@@ -11,7 +11,7 @@ if not exist "%JAVA_HOME%\bin\java.exe" set _JAVACMD=java.exe
 if "%_JAVACMD%" == "" set _JAVACMD="%JAVA_HOME%\bin\java.exe"
 
 set ARTIFACTORY_HOME=%~dp0..
-set LIB_DIR=%ARTIFACTORY_HOME%\lib
+set LIB_DIR=..\lib
 set CLASSPATH=%ARTIFACTORY_HOME%\artifactory.jar
 
 for %%a in (%LIB_DIR%\*.*) do call :process %%~nxa

@@ -20,7 +20,7 @@ public class ChecksumPolicyFail extends ChecksumPolicyBase {
             log.warn("Rejecting original {} null checksum", checksumInfo.getType());
             return false;
         }
-        if (!checksumInfo.checksumsMatch()) {
+        if (!checksumInfo.checksumsMatches()) {
             log.warn("Checksum mismatch: {}", checksumInfo);
             return false;
         }

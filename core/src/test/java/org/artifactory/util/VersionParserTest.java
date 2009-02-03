@@ -1,7 +1,7 @@
 package org.artifactory.util;
 
 import org.apache.commons.io.IOUtils;
-import org.artifactory.api.version.ArtifactoryVersioning;
+import org.artifactory.version.ArtifactoryVersioning;
 import org.artifactory.version.VersionParser;
 import org.testng.annotations.Test;
 

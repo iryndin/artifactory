@@ -231,7 +231,7 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
     }
 
     public JcrRepoService getJcrRepoService() {
-        return beanForType(JcrRepoService.class);
+        return beanForType(JcrRepoService.class);        
     }
 
     public void importFrom(ImportSettings settings, StatusHolder status) {
@@ -242,8 +242,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         // First check the version of the folder imported
         ArtifactoryVersion backupVersion = BackupUtils.findVersion(settings.getBaseDir());
         // We don't support import from 125 and before
-        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125;
-        if (backupVersion.before(supportFrom)) {
+        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125u1;
+        if (backupVersion.beforeOrEqual(supportFrom)) {
             throw new IllegalArgumentException("Folder " + settings.getBaseDir().getAbsolutePath() +
                     " contain an export from a version older than " + supportFrom.getValue() + ".\n" +
                     "Please use Artifactory Command Line command dump to import from theses versions!");

@@ -2,6 +2,7 @@ package org.artifactory.webapp.wicket.page.security.user;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.security.AuthorizationService;
@@ -30,6 +31,7 @@ public class UsersTable extends ListPanel<UserModel> {
     private AuthorizationService authorizationService;
 
     private UsersTableDataProvider dataProvider;
+    private IModel selectAllModel;
 
     public UsersTable(String id, UsersTableDataProvider dataProvider) {
         super(id, dataProvider);
@@ -48,9 +50,12 @@ public class UsersTable extends ListPanel<UserModel> {
 
     @Override
     protected void addColumns(List<IColumn> columns) {
-        columns.add(new SelectAllCheckboxColumn<UserModel>("", "selected", null));
+        SelectAllCheckboxColumn<UserModel> checkboxColumn = new SelectAllCheckboxColumn<UserModel>("", "selected", null);
+        selectAllModel = new Model(false);
+        checkboxColumn.setSelectAllModel(selectAllModel);
+        columns.add(checkboxColumn);
         columns.add(new UserColumn(new Model("User name")));
-        columns.add(new BooleanColumn(new Model("Admin"), "admin", "admin"));
+        columns.add(new BooleanColumn(new Model("Admin"), "adminString", "admin"));
     }
 
     @Override
@@ -83,6 +88,7 @@ public class UsersTable extends ListPanel<UserModel> {
 
     public void refreshUsersList(AjaxRequestTarget target) {
         dataProvider.recalcUsersList();
+        selectAllModel.setObject(false);
         target.addComponent(this);
     }
 

@@ -1,5 +1,10 @@
 <wicket:extend>
     <div wicket:id="virtualRepoFields" class="virtual-repo-fields">
+        <div>
+            <input wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts" type="checkbox" class="text"/>
+            <span wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts.help"/>
+        </div>
+
         <div class="field field-sep">
             <label>Repositories</label>
             <span wicket:id="repositories.help"/>
@@ -18,11 +23,6 @@
                     <span wicket:id="key"></span>
                 </div>
             </div>
-        </div>
-
-        <div class="field field-sep">
-            <input wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts" type="checkbox" class="text"/>
-            <span wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts.help"/>
         </div>
     </div>
 </wicket:extend>

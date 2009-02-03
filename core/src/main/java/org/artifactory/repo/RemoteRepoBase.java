@@ -334,15 +334,8 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
         try {
             InputStream is = handle.getInputStream();
             String fileContent = IOUtils.toString(is);
-            //Remove whitespaces at the end
-            fileContent = fileContent.trim();
-            //Check for 'MD5 (name) = CHECKSUM'
-            int prefixPos = fileContent.indexOf(")= ");
-            if (prefixPos != -1) {
-                fileContent = fileContent.substring(prefixPos + 3);
-            }
-            //We don't simply returns the file content since some checksum files have more
-            //characters at the end of the checksum file.
+            // We don't simply returns the file content since some chacksum files has more
+            // characters at the end of the checksum file.
             String checksum = StringUtils.split(fileContent)[0];
             return checksum;
         } finally {

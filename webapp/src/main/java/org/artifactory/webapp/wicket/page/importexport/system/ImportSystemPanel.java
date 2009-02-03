@@ -68,9 +68,6 @@ public class ImportSystemPanel extends TitledPanel {
     @WicketProperty
     private boolean verbose;
 
-    @WicketProperty
-    private boolean includeMetadata;
-
     final StyledCheckbox copyCheckbox;
     final StyledCheckbox symLinkCheckbox;
 
@@ -110,10 +107,6 @@ public class ImportSystemPanel extends TitledPanel {
         importForm.add(verboseCheckbox);
         importForm.add(new HelpBubble("verboseHelp", "HINT: You can monitor the log in the 'System Logs' page."));
 
-        importForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        importForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export."));
-
         copyCheckbox.setEnabled(false);
         copyCheckbox.setRequired(false);
         copyCheckbox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
@@ -146,7 +139,6 @@ public class ImportSystemPanel extends TitledPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                status.reset();
                 //If the path denotes an archive extract it first, else use the directory
                 de.schlichtherle.io.File file = new de.schlichtherle.io.File(importFromPath);
                 File importFromFolder = null;
@@ -184,7 +176,6 @@ public class ImportSystemPanel extends TitledPanel {
                     importSettings.setUseSymLinks(useSymLinks);
                     importSettings.setFailIfEmpty(true);
                     importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
                     context.importFrom(importSettings, status);
                     List<StatusEntry> warnings = status.getWarnings();
                     if (!warnings.isEmpty()) {

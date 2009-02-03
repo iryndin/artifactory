@@ -25,8 +25,6 @@ import java.util.Set;
 @XStreamAlias("user")
 public class UserInfo implements Info {
     public static final String ANONYMOUS = "anonymous";
-    /** Users with invalid password can only authenticate externally */
-    public static String INVALID_PASSWORD = "";
 
     private String username;
     private String password;

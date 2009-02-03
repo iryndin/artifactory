@@ -151,7 +151,7 @@
                         <xs:annotation>
                             <xs:documentation source="description">
                                 Whether the repository is blacked-out. A blacked-out repository does not
-                                participate in artifact resolution, nor does its local cache.
+                                participate in artifact resolution, nor dies its local cache.
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>

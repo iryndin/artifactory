@@ -58,7 +58,6 @@
                 <repositoryRef>repo1</repositoryRef>
                 <repositoryRef>java.net.m2</repositoryRef>
                 <repositoryRef>java.net.m1</repositoryRef>
-                <repositoryRef>jboss</repositoryRef>
                 <repositoryRef>codehaus</repositoryRef>
             </excludedRepositories>
         </backup>
@@ -139,6 +138,7 @@
             <key>repo1</key>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <url>http://repo1.maven.org/maven2</url>
         </remoteRepository>
         <remoteRepository>
@@ -146,7 +146,7 @@
             <description>java.net Maven2 Format</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
-            <excludesPattern>commons-*,org/apache/**</excludesPattern>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <url>http://download.java.net/maven/2</url>
         </remoteRepository>
         <remoteRepository>
@@ -154,24 +154,14 @@
             <description>java.net Maven1 Format</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
-            <excludesPattern>org/**,com/**,net/**</excludesPattern>
             <type>maven1</type>
             <url>http://download.java.net/maven/1</url>
-        </remoteRepository>
-        <remoteRepository>
-            <key>jboss</key>
-            <description>jboss</description>
-            <handleReleases>true</handleReleases>
-            <handleSnapshots>false</handleSnapshots>
-            <includesPattern>org/jboss/**,org/richfaces/**</includesPattern>
-            <url>http://repository.jboss.com/maven2</url>
         </remoteRepository>
         <remoteRepository>
             <key>codehaus</key>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
-            <includesPattern>org/**,com/**,net/**</includesPattern>
-            <excludesPattern>org/apache/**,commons-*</excludesPattern>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <url>http://repository.codehaus.org</url>
         </remoteRepository>
         <!--
@@ -181,6 +171,11 @@
             <handleSnapshots>false</handleSnapshots>
             <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <url>http://dist.codehaus.org</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>ibiblio</key>
+            <excludesPattern>org/artifactory/**</excludesPattern>
+            <url>http://www.ibiblio.org/maven2</url>
         </remoteRepository>
         <remoteRepository>
             <key>apache-m2-snapshots</key>
@@ -254,7 +249,6 @@
             <key>remote-repos</key>
             <artifactoryRequestsCanRetrieveRemoteArtifacts>true</artifactoryRequestsCanRetrieveRemoteArtifacts>
             <repositories>
-                <repositoryRef>jboss</repositoryRef>
                 <repositoryRef>java.net.m2</repositoryRef>
                 <repositoryRef>java.net.m1</repositoryRef>
                 <repositoryRef>repo1</repositoryRef>

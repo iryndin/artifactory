@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
@@ -41,7 +42,6 @@ import org.artifactory.api.search.SearchService;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.webapp.actionable.event.ItemEventTargetComponents;
 import org.artifactory.webapp.wicket.common.ajax.ImmediateAjaxIndicatorDecorator;
-import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.TextContentPanel;
@@ -105,7 +105,7 @@ public class ArtifactSearchPanel extends TitledPanel {
                         result.getSearchResult().getPath();
                 String name = result.getSearchResult().getName();
                 ExternalLink link = new ExternalLink(componentId, href, name);
-                link.add(new CssClass("item-link"));
+                link.add(new AttributeAppender("class", new Model("cellItemLink"), " "));
                 cellItem.add(link);
             }
         });

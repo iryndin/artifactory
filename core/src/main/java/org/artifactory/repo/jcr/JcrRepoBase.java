@@ -35,7 +35,6 @@ import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.repo.exception.FolderExpectedException;
-import org.artifactory.api.repo.exception.ItemNotFoundException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
@@ -62,11 +61,7 @@ import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepoBase;
 import org.artifactory.repo.interceptor.LocalRepoInterceptor;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.resource.ArtifactResource;
-import org.artifactory.resource.FileResource;
-import org.artifactory.resource.MetadataResource;
-import org.artifactory.resource.RepoResource;
-import org.artifactory.resource.UnfoundRepoResource;
+import org.artifactory.resource.*;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalContextHelper;
@@ -78,11 +73,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -354,10 +345,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         if (item == null) {
             return new UnfoundRepoResource(repoPath, "file not found");
         }
-        if (item.isDeleted() || !item.exists()) {
-            item.setDeleted(true);
-            throw new ItemNotFoundException("File " + repoPath + " was deleted during download!");
-        }
         RepoResource localRes;
         //When requesting a property/metadata return a special resouce class that contains the parent node
         //path and the metadata name.
@@ -406,29 +393,25 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         log.debug("Transferring {} directly to user from {}.", res, this);
         String relPath = res.getRepoPath().getPath();
         //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getJcrFsItem(relPath);
+        JcrFsItem jcrFsItem = getJcrFsItem(relPath);
         //If resource does not exist throw an IOException
-        if (item == null) {
+        if (jcrFsItem == null) {
             throw new IOException("Could not get resource stream. Path not found: " + res + ".");
-        }
-        if (item.isDeleted() || !item.exists()) {
-            item.setDeleted(true);
-            throw new ItemNotFoundException("Could not get resource stream. Item " + item + " was deleted!");
         }
         ResourceStreamHandle handle;
         if (res.isMetadata()) {
             String medtadataName = res.getInfo().getName();
-            String xmlMetdata = item.getXmlMetdata(medtadataName);
+            String xmlMetdata = jcrFsItem.getXmlMetdata(medtadataName);
             if (xmlMetdata == null) {
                 throw new IOException("Could not get resource stream. Stream not found: " + res + ".");
             } else {
                 handle = new StringResourceStreamHandle(xmlMetdata);
             }
-        } else if (item.isFile()) {
-            JcrFile jcrFile = (JcrFile) item;
+        } else if (jcrFsItem.isFile()) {
+            JcrFile jcrFile = (JcrFile) jcrFsItem;
             final InputStream is = jcrFile.getStream();
             if (is == null) {
-                throw new IOException("Could not get resource stream. Stream not found: " + item + ".");
+                throw new IOException("Could not get resource stream. Stream not found: " + jcrFsItem + ".");
             }
             //Update the stats
             getRepositoryService().publish(new StatsMessage(jcrFile));
@@ -502,11 +485,11 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         }
         LockingHelper.readLock(rootLockEntry);
         File dir = settings.getBaseDir();
-        status.setStatus("Exporting repository '" + getKey() + "' to '" + dir.getAbsolutePath() + "'.", log);
+        status.setStatus("Exporting repository '" + getKey() + "' to '" + dir + "'.", log);
         try {
             FileUtils.forceMkdir(dir);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create export directory '" + dir.getAbsolutePath() + "'.", e);
+            throw new RuntimeException("Failed to create export directory '" + dir + "'.", e);
         }
         JcrFolder folder = getRootFolder();
         folder.exportTo(settings, status);
@@ -733,13 +716,12 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         if (result != null) {
             return result;
         }
-        T original = item;
-        if (!original.isMutable()) {
+        if (!item.isMutable()) {
             // Do a copy constructor to start modifying it
-            item = creator.newFsItem(original, this);
+            item = creator.newFsItem(item, this);
         }
         // Create a lock entry with new item
-        LockEntry lockEntry = new LockEntry(getLockEntry(original), item);
+        LockEntry lockEntry = new LockEntry(getLockEntry(item), item);
         // acquire the write lock
         LockingHelper.writeLock(lockEntry);
         return item;

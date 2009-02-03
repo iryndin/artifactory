@@ -27,13 +27,13 @@ public enum CommandDefinition {
             "Get system information"),
     export(
             ExportCommand.class,
-            "Export a running artifactory instance data into host destination path",
-            "host destination path"),
+            "Export a running artifactory instance data to destination path",
+            "destination path"),
     imp(
             ImportCommand.class,
             "import",
-            "Import full system from host path",
-            "host path"),
+            "Import full system from import path",
+            "import from path"),
     dump(
             DumpCommand.class,
             "Dump the database of an older version of an offline artifactory instance to the latest export format",

@@ -40,8 +40,8 @@ public class MockHandler extends DefaultHandler {
      * @see org.mortbay.jetty.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, int)
      */
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
-            throws IOException, ServletException {
+    public void handle(String target, HttpServletRequest request, HttpServletResponse response,
+                       int dispatch) throws IOException, ServletException {
 
         String pathInfo = request.getPathInfo();
 
@@ -67,7 +67,7 @@ public class MockHandler extends DefaultHandler {
     }
 
     private void handleConfig(HttpServletRequest request, HttpServletResponse response,
-            String pathInfo) throws IOException {
+                              String pathInfo) throws IOException {
         //If the path start with the configuration prefix means the user wants to configure a test
         if (!pathInfo.endsWith(CONFIG_PREFIX)) {
             //If the path does not end with the configuration prefix (when it does, the user has
@@ -106,7 +106,8 @@ public class MockHandler extends DefaultHandler {
         }
     }
 
-    private void handleStats(HttpServletRequest request, HttpServletResponse response, String pathInfo)
+    private void handleStats(HttpServletRequest request, HttpServletResponse response,
+                             String pathInfo)
             throws IOException {
         if ("GET".equalsIgnoreCase(request.getMethod())) {
 
@@ -131,8 +132,8 @@ public class MockHandler extends DefaultHandler {
         }
     }
 
-    private void initializeTest(HttpServletRequest request, HttpServletResponse response, String pathInfo)
-            throws IOException {
+    private void initializeTest(HttpServletRequest request, HttpServletResponse response,
+                                String pathInfo) throws IOException {
         // look for it in the collection
         MockTest parentTest = allTests.get(getServerNameFromPath(pathInfo));
         MockPathTest pathTest = searchMockPathTest(parentTest, pathInfo);
@@ -200,7 +201,7 @@ public class MockHandler extends DefaultHandler {
      * Responds to the user's testing request
      */
     private PathStats sendResponse(HttpServletRequest request,
-            HttpServletResponse response, MockPathTest pathTest) throws IOException {
+                                   HttpServletResponse response, MockPathTest pathTest) throws IOException {
         PathStats pathStats = new PathStats(pathTest.returnCode, request.getMethod());
 
         response.setStatus(pathTest.returnCode);
@@ -306,51 +307,29 @@ public class MockHandler extends DefaultHandler {
                     //Set default byte offset and check if we need to postpone
                     int offset = 0;
                     if (pathTest.timeToTakeForData != 0) {
-                        int timePerDataPiece = pathTest.timePerDataPiece;
 
                         //Calculate how many bytes to transfer in each iteration
-                        int numberOfIterations = (pathTest.timeToTakeForData / timePerDataPiece);
-                        if (numberOfIterations == 0) {
-                            numberOfIterations = Math.min(pathTest.timeToTakeForData, timePerDataPiece);
-                        }
-                        int bytesPerIteration = byteLimit / numberOfIterations;
+                        int bytesPerThreeSecs = (byteLimit * 3) / pathTest.timeToTakeForData;
 
-                        for (int i = 0; i < pathTest.timeToTakeForData && byteLimit > bytesPerIteration;
-                             i += timePerDataPiece) {
+                        for (int i = 0;
+                             i < pathTest.timeToTakeForData && byteLimit > bytesPerThreeSecs;
+                             i += 3) {
 
                             //Write limited amount of bytes
-                            outputStream.write(byteBuffer, offset, bytesPerIteration);
+                            outputStream.write(byteBuffer, offset, bytesPerThreeSecs);
                             outputStream.flush();
-                            offset += bytesPerIteration;
-                            byteLimit -= bytesPerIteration;
+                            offset += bytesPerThreeSecs;
+                            byteLimit -= bytesPerThreeSecs;
 
-                            //Wait for X seconds
+                            //Wait for 3 seconds
                             try {
-                                Thread.sleep((timePerDataPiece * 1000));
+                                Thread.sleep(3000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                                 return new PathStats(HttpStatus.SC_INTERNAL_SERVER_ERROR,
                                         request.getMethod());
                             }
                         }
-                    }
-
-                    // If need some cut close brutally (Broken Pipe)
-                    if (cutStream) {
-                        //Causes a read timeout on the client
-                        try {
-                            Thread.sleep(20000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        //HttpConnection.getCurrentConnection().getInputStream().skip(Integer.MAX_VALUE);
-                        return null;
-                        /*SocketException socketException = new SocketException("Broken pipe");
-                        //IOException ioException = new IOException();
-                        //ioException.initCause(socketException);
-                        throw new EofException("BAD");
-                        *//*outputStream.close();
-                        throw socketException;*//**/
                     }
 
                     //Write leftover bytes and flush response
@@ -361,6 +340,11 @@ public class MockHandler extends DefaultHandler {
                     sendError(response, HttpStatus.SC_NOT_FOUND,
                             "The requested file was not found in the supplied URL.");
                     return new PathStats(HttpStatus.SC_NOT_FOUND, request.getMethod());
+                }
+
+                // If need some cut close brutally (Broken Pipe)
+                if (cutStream) {
+                    outputStream.close();
                 }
             }
         } else {
@@ -429,7 +413,6 @@ public class MockHandler extends DefaultHandler {
     /**
      * Sends the user an error message with a customizable status and message
      *
-     * @param outputStream
      * @param message
      * @throws IOException
      */
