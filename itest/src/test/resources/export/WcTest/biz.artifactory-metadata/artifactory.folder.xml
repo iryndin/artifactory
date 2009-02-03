@@ -1,6 +1,0 @@
-<artifactory.folder>
-    <repoKey>repo1-cache</repoKey>
-    <relPath>biz</relPath>
-    <created>1220183113612</created>
-    <modifiedBy>admin</modifiedBy>
-</artifactory.folder>

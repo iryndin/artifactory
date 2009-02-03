@@ -1,20 +1,15 @@
 package org.artifactory.repo.derby;
 
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.name.QName;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
- * User: freds Date: Jun 14, 2007 Time: 10:58:02 AM
+ * User: freds
+ * Date: Jun 14, 2007
+ * Time: 10:58:02 AM
  */
 public class DerbyDBTest {
     enum JcrTable {
@@ -30,12 +25,12 @@ public class DerbyDBTest {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             String artHome = System.getProperty("artifactory.home");
             dbConn = DriverManager.getConnection("jdbc:derby:" + artHome + "/data/jcr/db");
-            //            printTableColumns(dbConn);
+//            printTableColumns(dbConn);
             printTableSizes(dbConn);
             Statement stat = dbConn.createStatement();
             stat.setMaxRows(20);
-            //            listRepFSEntry(stat);
-            //            listDefaultNode(stat);
+//            listRepFSEntry(stat);
+//            listDefaultNode(stat);
             listDefaultProp(stat, false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,13 +62,11 @@ public class DerbyDBTest {
         }
     }
 
-    private static void listDefaultProp(Statement stat, boolean deleteLocks)
-            throws SQLException, IOException {
+    private static void listDefaultProp(Statement stat, boolean deleteLocks) throws SQLException, IOException {
         boolean foundLocks = false;
         ResultSet rs;
 
-        String sql = "select * from DEFAULT_PROP where prop_id='" + NameConstants.JCR_LOCKISDEEP +
-                "' or prop_id='" + NameConstants.JCR_LOCKOWNER + "'";
+        String sql = "select * from DEFAULT_PROP where prop_id='" + QName.JCR_LOCKISDEEP + "' or prop_id='" + QName.JCR_LOCKOWNER + "'";
         System.out.println("SQL Query " + sql);
         rs = stat.executeQuery(sql);
         while (rs.next()) {
@@ -94,17 +87,14 @@ public class DerbyDBTest {
         if (deleteLocks && foundLocks) {
             // The entries with property named QName.JCR_LOCKOWNER and QName.JCR_LOCKISDEEP
             // Should be set to null to remove all locks
-            stat.executeUpdate(
-                    "delete default_prop where prop_id='" + NameConstants.JCR_LOCKISDEEP +
-                            "' or prop_id='" + NameConstants.JCR_LOCKOWNER + "'");
+            stat.executeUpdate("delete default_prop where prop_id='" + QName.JCR_LOCKISDEEP + "' or prop_id='" + QName.JCR_LOCKOWNER + "'");
         }
     }
 
     private static void listRepFSEntry(Statement stat) throws SQLException, IOException {
         ResultSet rs = stat.executeQuery("select * from rep_fsentry");
         while (rs.next()) {
-            System.out.println(
-                    "" + rs.getObject("FSENTRY_PATH") + ":" + rs.getObject("FSENTRY_NAME"));
+            System.out.println("" + rs.getObject("FSENTRY_PATH") + ":" + rs.getObject("FSENTRY_NAME"));
             Blob blob = rs.getBlob("FSENTRY_DATA");
             if (!rs.wasNull() && blob != null) {
                 InputStream is = blob.getBinaryStream();
