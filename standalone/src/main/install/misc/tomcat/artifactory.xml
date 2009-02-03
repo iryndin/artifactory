@@ -1,4 +1,0 @@
-<Context path="/artifactory" docBase="${artifactory.home}/webapps/artifactory.war" debug="0">
-    <Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
-</Context>
-

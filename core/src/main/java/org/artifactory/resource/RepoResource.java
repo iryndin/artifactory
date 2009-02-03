@@ -1,50 +1,31 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.artifactory.resource;
 
-import org.artifactory.api.fs.RepoResourceInfo;
-import org.artifactory.api.repo.RepoPath;
+import org.artifactory.cache.Cacheable;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- * A class used for encapsulating the result of a resource request against a repo
- *
- * @author yoavl
+ * Created by IntelliJ IDEA. User: yoavl
  */
-public interface RepoResource {
+public interface RepoResource extends Cacheable, Serializable {
+    String NA = "NA";
 
-    RepoPath getRepoPath();
+    String getRelPath();
 
-    RepoResourceInfo getInfo();
+    String getRelDirPath();
 
-    String getParentPath();
+    String getName();
 
-    boolean isFound();
+    Date getLastModified();
 
-    boolean isExpired();
+    long getLastModifiedTime();
 
-    boolean isMetadata();
-
-    boolean hasSize();
+    String getRepoKey();
 
     long getSize();
 
-    long getCacheAge();
+    boolean isFound();
 
-    long getLastModified();
-
-    String getMimeType();
+    String getAbsPath();
 }

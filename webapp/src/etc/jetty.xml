@@ -18,7 +18,7 @@
         </New>
     </Set>
 
-    <!-- ==============po============================================= -->
+    <!-- =========================================================== -->
     <!-- Set connectors                                              -->
     <!-- =========================================================== -->
     <!-- One of each type!                                           -->
@@ -40,15 +40,6 @@
         </Array>
     </Set>
 
-    <!-- AJP13 Connector configuration -->
-    <!--<Call name="addConnector">
-        <Arg>
-            <New class="org.mortbay.jetty.ajp.Ajp13SocketConnector">
-                <Set name="port">8010</Set>
-            </New>
-        </Arg>
-    </Call>-->
-
     <!-- ======================================================= -->
     <!-- Configure a Context                                     -->
     <!-- ======================================================= -->
@@ -58,8 +49,7 @@
         </Call>
         <Call name="setWar">
             <!-- Careful not to reformat the following line - may break jetty -->
-            <Arg><SystemProperty name="jetty.home" default="."/>/webapp/src/main/webapp
-            </Arg>
+            <Arg><SystemProperty name="jetty.home" default="."/>/main/webapp</Arg>
         </Call>
     </New>
 
@@ -74,17 +64,12 @@
                         <New id="contexts"
                              class="org.mortbay.jetty.handler.ContextHandlerCollection">
                             <Call name="addHandler">
-                                <Arg>
-                                    <Ref id="artifactory"/>
-                                </Arg>
+                                <Arg><Ref id="artifactory"/></Arg>
                             </Call>
                         </New>
                     </Item>
                     <Item>
                         <New id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
-                    </Item>
-                    <Item>
-                        <New id="requestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
                     </Item>
                 </Array>
             </Set>
@@ -112,12 +97,12 @@
     <!-- =========================================================== -->
     <!-- Configure Request Log                                       -->
     <!-- =========================================================== -->
-    <Ref id="requestLog">
+    <!--<Ref id="requestLog">
         <Set name="requestLog">
             <New id="requestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
                 <Arg>
-                    <SystemProperty name="jetty.logs"
-                                    default="./webapp/src/logs"/>/yyyy_mm_dd.request.log
+                    <SystemProperty name="jetty.logs" default="./logs"/>
+                    /yyyy_mm_dd.request.log
                 </Arg>
                 <Set name="retainDays">90</Set>
                 <Set name="append">true</Set>
@@ -125,7 +110,7 @@
                 <Set name="LogTimeZone">GMT</Set>
             </New>
         </Set>
-    </Ref>
+    </Ref>-->
 
     <!-- =========================================================== -->
     <!-- extra options                                               -->

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Configuration Help</title>
+    </properties>
+
+    <meta name="keyword" content="maven, mvn, proxy, deployment"/>
+
+    <body>
+        <section name="Configuration Files">
+            <p>
+                All artifactory configuration files should be located under etc of the ARTIFACTORY_HOME.
+                On Linux it is usually a soft link to /etc/artifactory.
+                This folder should contain the following files:</p>
+            <table>
+                <tr><td>File Name</td> <td>Description</td> </tr>
+                <tr>
+                    <td>jetty.xml</td>
+                    <td>The standard jetty configuration file,
+                    that can be tuned by adding the AJP connector, for example.</td>
+                </tr>
+                <tr>
+                    <td>log4j.properties</td>
+                    <td>The standard log4j configuration file,
+                    that can (should ;-) be tuned for changing default level from INFO to ERROR.</td>
+                </tr>
+                <tr>
+                    <td>artifactory.config.xml</td>
+                    <td>The artifactory configuration file, that will be read only when artifactory starts,
+                        and that contains the definitions of all artifactory local and remote repositories.
+                        This XML files is based on well documentated XML Schema availiable
+                        <a href="/xsd/artifactory.xsd">here</a>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Artifactory folders">
+            <p>Under the Artifactory homeyou willfind the following subfolders:</p>
+            <table>
+                <tr><td>Folder Name</td> <td>Description</td> </tr>
+                <tr>
+                    <td>bin</td>
+                    <td>All scripts for running and installing artifactory</td>
+                </tr>
+                <tr>
+                    <td>lib</td>
+                    <td>Jetty jars and any other jars you wish to add to jetty classpath</td>
+                </tr>
+                <tr>
+                    <td>webapps</td>
+                    <td>Standard jetty folder for war files that will deployed by jetty.
+                        By default the jetty.xml provided deploys only artifactory.war under this folder.
+                        There is no auto-deploy.
+                    </td>
+                </tr>
+                <tr>
+                    <td>artifactory.jar</td>
+                    <td>A simple java jar containing only the Main startup class.</td>
+                </tr>
+                <tr>
+                    <td>etc</td>
+                    <td>The folder with all artifactory configuration files for jetty,
+                        log4j and of course artifactory itself.
+                        Under Linux it is usually a link to /etc/artifactory and
+                        contains a file "default" for the service variables.</td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td>The folder where all logs files will go. By default the jetty
+                        console will go to logs/consoleout.log. This folder should exists and be writable
+                        when starting artifactory since log4j cannot create folder dynamically.
+                        Under Linux it is usually a link to /var/log/artifactory.</td>
+                </tr>
+                <tr>
+                    <td>repos</td>
+                    <td>The folder where artifactory own DB and the repositories databases will be created.
+                        Theses databases are Derby DB files. Artifactory will create these DB files based
+                        on its configuration and so the folder may not exists when artifactory starts.
+                        Under Linux it is usual to link this folder to /var/data/artifactory or /srv/artifactory/repos.
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup</td>
+                    <td>The folder where artifactory scheduled backup will be done.
+                        The backups are flat export of all files in all local repositories.
+                        Under Linux it is usual to link this folder to /var/backup/artifactory.
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>
