@@ -18,23 +18,44 @@ package org.artifactory.repo;
 
 import org.apache.maven.model.Model;
 import org.artifactory.api.config.ImportableExportable;
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.repo.RepoPath;
+import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
+import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.resource.ArtifactResource;
 import org.artifactory.resource.RepoResource;
 
-import javax.jcr.Node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 public interface LocalRepo<T extends LocalRepoDescriptor>
-        extends RealRepo<T>, ImportableExportable, JcrFsItemFactory {
+        extends RealRepo<T>, ImportableExportable {
+
+    /**
+     * Retrieve a File System object item for the path. No lock of the item is done.
+     *
+     * @param relPath relative Path in this repo
+     * @return the file system item never null
+     * @throws org.artifactory.api.repo.exception.RepositoryRuntimeException
+     *          if the node does not exists or other repository errors
+     */
+    JcrFsItem getFsItem(String relPath);
+
+    /**
+     * Return a JcrFile object if the node exists and is a File, null otherwise. This method will do
+     * a transactional lock and test.
+     *
+     * @param relPath relative Path in this repo
+     * @return the file item if ok, null otherwise
+     * @throws org.artifactory.api.repo.exception.RepositoryRuntimeException
+     *          if some repository errors happens
+     */
+    JcrFile getLockedJcrFile(String relPath) throws FileExpectedException;
 
     JcrFolder getRootFolder();
 
@@ -46,9 +67,9 @@ public interface LocalRepo<T extends LocalRepoDescriptor>
 
     String getPomContent(ArtifactResource pa);
 
-    RepoResource saveResource(RepoResource res, InputStream stream) throws IOException;
+    void saveResource(RepoResource res, InputStream stream) throws IOException;
 
-    void undeploy(RepoPath repoPath);
+    void undeploy(String relPath);
 
     String getRepoRootPath();
 
@@ -62,11 +83,7 @@ public interface LocalRepo<T extends LocalRepoDescriptor>
 
     List<String> getChildrenNames(String relPath);
 
-    void updateCache(JcrFsItem fsItem);
+    JcrFile getJcrFile(String relPath) throws FileExpectedException;
 
-    String getAbsolutePath(Node node);
-
-    ChecksumPolicy getChecksumPolicy();
-
-    void onDelete(JcrFsItem fsItem);
+    FileInfo getFileInfo(String relPath) throws FileExpectedException;
 }

@@ -29,7 +29,8 @@
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.3.0-beta-5</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <build>
@@ -54,23 +55,8 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warSourceExcludes>
-                        excluded/**,js/**/*uncompressed.js,js/**/*commented.*
+                        js-excluded/**,js/**/*uncompressed.js,js/**/*commented.*
                     </warSourceExcludes>
-                </configuration>
-            </plugin>
-            <!-- also generate the classes jar to be used for testing -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <classifier>classes</classifier>
                 </configuration>
             </plugin>
         </plugins>
@@ -79,7 +65,7 @@
     <dependencies>
         <dependency>
             <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-common</artifactId>
+            <artifactId>artifactory-api</artifactId>
             <version>${parent.version}</version>
         </dependency>
 
@@ -108,18 +94,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-jcr-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-webdav</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
         </dependency>
 
         <dependency>
@@ -154,25 +135,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <!-- (overriden) compile scope to allow programmatic configuration -->
-            <scope>compile</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-webdav</artifactId>
         </dependency>
 
         <dependency>
@@ -181,16 +160,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-
-        <!-- for cron expressions validation -->
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
     </dependencies>
 </project>
 

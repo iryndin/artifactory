@@ -5,7 +5,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -24,15 +25,15 @@ public class TestDummyRepo {
     @BeforeClass
     public void setup() throws IOException {
         // Start the server in my test
-        //LoggerFactory.getLogger(StartDummyRepo.class).setLevel(Level.DEBUG);
+        Logger.getLogger(StartDummyRepo.class).setLevel(Level.DEBUG);
         StartDummyRepo.main(null);
 
         // Send him data
-        test = new MockTest(TEST_DUMMY, "C:\\");
-        //test.getPaths().add(new MockPathTest("ok1", "application/octet-stream",
-        //        "/mock/repo1/log4j/log4j/1.2.14/log4j-1.2.14.jar", 3, 9, 1000));
-        //test.getPaths().add(new MockPathTest("ok2", "text/xml", "/mock/jetty.xml"));
-        //test.getPaths().add(new MockPathTest("nok", 404, "Not Found"));
+        test = new MockTest(TEST_DUMMY);
+        test.getPaths().add(new MockPathTest("ok1", "application/octet-stream",
+                "/mock/repo1/log4j/log4j/1.2.14/log4j-1.2.14.jar", 3, 9, 1000));
+        test.getPaths().add(new MockPathTest("ok2", "text/xml", "/mock/jetty.xml"));
+        test.getPaths().add(new MockPathTest("nok", 404, "Not Found"));
 
 //        String[] artifacts = LocalHostRemoteRepoTest.artifacts;
 //        for (String artifact : artifacts) {
@@ -60,17 +61,13 @@ public class TestDummyRepo {
             configuration.setHost(rootUrl);
             httpClient.setHostConfiguration(configuration);
 */
-        //for (MockPathTest pathTest : test.getPaths()) {
-        //    GetMethod getMethod = new GetMethod(rootUrl + pathTest.path);
-        //    httpClient.executeMethod(getMethod);
-        //    Assert.assertEquals(getMethod.getStatusCode(), pathTest.returnCode);
+        for (MockPathTest pathTest : test.getPaths()) {
+            GetMethod getMethod = new GetMethod(rootUrl + pathTest.path);
+            httpClient.executeMethod(getMethod);
+            Assert.assertEquals(getMethod.getStatusCode(), pathTest.returnCode);
 //            if (pathTest.contentType != null) {
 //                Assert.assertEquals(getMethod.getResponseHeader("content/type").getValue(),pathTest.contentType);
 //            }
-//        }
-
-        HeadMethod getMethod = new HeadMethod(rootUrl + "settings.jar");
-        httpClient.executeMethod(getMethod);
-        Assert.assertEquals(getMethod.getStatusCode(), 200);
+        }
     }
 }

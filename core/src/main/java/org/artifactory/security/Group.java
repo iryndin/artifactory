@@ -58,15 +58,6 @@ public class Group implements OcmStorable, Serializable {
         info.setDescription(description);
     }
 
-    @Field(jcrDefaultValue = "false")
-    public boolean isNewUserDefault() {
-        return info.isNewUserDefault();
-    }
-
-    public void setNewUserDefault(boolean newUserDefault) {
-        info.setNewUserDefault(newUserDefault);
-    }
-
     public GroupInfo getInfo() {
         return info;
     }
@@ -99,7 +90,6 @@ public class Group implements OcmStorable, Serializable {
         return "Group{" +
                 "name='" + getGroupName() + '\'' +
                 ", description=" + getDescription() +
-                ", new user default=" + isNewUserDefault() +
                 '}';
     }
 

@@ -60,8 +60,4 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
     public boolean isReal() {
         return false;
     }
-
-    public boolean removeRepository(RepoDescriptor repo) {
-        return repositories.remove(repo);
-    }
 }

@@ -20,13 +20,14 @@ import org.artifactory.api.security.AclService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.api.security.UserGroupService;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.PostInitializingBean;
 
 /**
  * @author yoavl
  */
-public interface SecurityServiceInternal extends ReloadableBean,
+public interface SecurityServiceInternal extends PostInitializingBean,
         AuthorizationService, UserGroupService, AclService, SecurityService {
+    String FILE_NAME = "security.xml";
 
     String USER_UNKNOWN = "unknown";
 

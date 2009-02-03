@@ -16,45 +16,38 @@
  */
 package org.artifactory.webapp.servlet;
 
-
-import org.artifactory.api.context.ContextHelper;
-import org.artifactory.util.PathUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.utils.PathUtils;
+import org.artifactory.webapp.wicket.ArtifactoryWebSession;
 import org.springframework.security.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * User: freds Date: Aug 13, 2008 Time: 10:56:25 AM
  */
 public class RequestUtils {
-    private static final Logger log = LoggerFactory.getLogger(RequestUtils.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(RequestUtils.class);
 
-    private static final Set<String> NON_UI_PATH_PREFIXES = new HashSet<String>();
-    private static final Set<String> UI_PATH_PREFIXES = new HashSet<String>();
-    public static final String LAST_USER_KEY = "artifactory:lastUserId";
-    public static final String WEBAPP_URL_PATH_PREFIX = "webapp";
-    private static boolean USE_PATH_INFO = false;
-    private static final Set<String> WEBDAV_METHODS = new HashSet<String>() {{
-        add("propfind");
-        add("mkcol");
-        add("delete");
-        add("options");
-    }};
+    public static final Set<String> REPO_PATH_PREFIXES = new HashSet<String>();
+    public static final Set<String> NON_UI_PATH_PREFIXES = new HashSet<String>();
+    public static final Set<String> UI_PATH_PREFIXES = new HashSet<String>();
 
-    public static void setNonUiPathPrefixes(Collection<String> uriPathPrefixes) {
-        NON_UI_PATH_PREFIXES.clear();
+    public static void addRepoPathPrefixes(Collection<String> uriPathPrefixes) {
+        REPO_PATH_PREFIXES.addAll(uriPathPrefixes);
+    }
+
+    public static void addNonUiPathPrefixes(Collection<String> uriPathPrefixes) {
         NON_UI_PATH_PREFIXES.addAll(uriPathPrefixes);
     }
 
-    public static void setUiPathPrefixes(Collection<String> uriPathPrefixes) {
-        UI_PATH_PREFIXES.clear();
+    public static void addUiPathPrefixes(Collection<String> uriPathPrefixes) {
         UI_PATH_PREFIXES.addAll(uriPathPrefixes);
     }
 
@@ -71,7 +64,7 @@ public class RequestUtils {
     }
 
     protected static boolean isRepoRequest(String servletPath) {
-        String pathPrefix = PathUtils.getPathFirstPart(servletPath);
+        String pathPrefix = PathUtils.getPathPrefix(servletPath);
         if (pathPrefix == null || pathPrefix.length() == 0) {
             return false;
         }
@@ -84,25 +77,23 @@ public class RequestUtils {
         //Check that is a repository prefix with support for old repo sytax
         String repoPrefix = pathPrefix.endsWith("@repo") ?
                 pathPrefix.substring(0, pathPrefix.length() - 5) : pathPrefix;
-        List<String> allRepos = ContextHelper.get().getRepositoryService().getAllRepoKeys();
-        if (!allRepos.contains(repoPrefix)) {
-            log.error("Request " + servletPath + " should be a repo request and does not match any repo key");
+        if (!REPO_PATH_PREFIXES.contains(repoPrefix)) {
+            LOGGER.error("Request " + servletPath +
+                    " should be a repo request and does not match any repo key");
             return false;
         }
         return true;
     }
 
     public static String getServletContextUrl(HttpServletRequest httpRequest) {
-        return httpRequest.getScheme() + "://" +
+        final String url = httpRequest.getScheme() + "://" +
                 httpRequest.getServerName() + ":" +
                 httpRequest.getServerPort() +
                 httpRequest.getContextPath();
+        return url;
     }
 
     public static boolean isWebdavRequest(HttpServletRequest request) {
-        if (WEBDAV_METHODS.contains(request.getMethod().toLowerCase())) {
-            return true;
-        }
         String wagonProvider = request.getHeader("X-wagon-provider");
         return wagonProvider != null && wagonProvider.contains("webdav");
     }
@@ -114,7 +105,7 @@ public class RequestUtils {
         if (isWicketRequest(request)) {
             return true;
         }
-        String pathPrefix = PathUtils.getPathFirstPart(getServletPathFromRequest(request));
+        String pathPrefix = PathUtils.getPathPrefix(request.getServletPath());
         return isUiPathPrefix(pathPrefix);
     }
 
@@ -135,7 +126,8 @@ public class RequestUtils {
 
     public static boolean isAuthHeaderPresent(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
-        return header != null && header.startsWith("Basic ");
+        boolean authExists = header != null && header.startsWith("Basic ");
+        return authExists;
     }
 
     public static Authentication getAuthentication(HttpServletRequest request) {
@@ -143,58 +135,18 @@ public class RequestUtils {
         if (session == null) {
             return null;
         }
-        return (Authentication) session.getAttribute(LAST_USER_KEY);
+        Authentication authentication =
+                (Authentication) session.getAttribute(ArtifactoryWebSession.LAST_USER_KEY);
+        return authentication;
     }
 
-    public static boolean setAuthentication(HttpServletRequest request, Authentication authentication,
-            boolean createSession) {
+    public static boolean setAuthentication(HttpServletRequest request,
+            Authentication authentication, boolean createSession) {
         HttpSession session = request.getSession(createSession);
         if (session == null) {
             return false;
         }
-        session.setAttribute(LAST_USER_KEY, authentication);
+        session.setAttribute(ArtifactoryWebSession.LAST_USER_KEY, authentication);
         return true;
-    }
-
-    public static void removeAuthentication(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(LAST_USER_KEY);
-        }
-    }
-
-    /**
-     * Sets the value which indicates if to use path info instead of servlet path in getServletPathFromRequest method
-     *
-     * @param usePathInfo True if to prefr path info over servlet path
-     */
-    public static void setUsePathInfo(boolean usePathInfo) {
-        USE_PATH_INFO = usePathInfo;
-    }
-
-    /**
-     * Returns the servlet path from the request, in accordance to the boolean value of USE_PATH_INFO which Decides if
-     * to try and use getPathInfo() instead of getServletPath().
-     *
-     * @param req The recieved request
-     * @return String - Servlet path
-     */
-    public static String getServletPathFromRequest(HttpServletRequest req) {
-        if (USE_PATH_INFO) {
-            //Websphere returns the path in the getPathInfo()
-            String path = req.getPathInfo();
-            //path == null so no Websphere
-            if (path == null) {
-                return req.getServletPath();
-            }
-
-            if (path.length() == 0) {
-                path = "/" + WEBAPP_URL_PATH_PREFIX;
-            }
-
-            return path;
-        } else {
-            return req.getServletPath();
-        }
     }
 }

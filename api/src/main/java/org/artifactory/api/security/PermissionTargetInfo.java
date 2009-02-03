@@ -18,7 +18,7 @@ package org.artifactory.api.security;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.artifactory.api.common.Info;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.util.ArrayList;
 import java.util.List;

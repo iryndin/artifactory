@@ -1,58 +1,64 @@
 package org.artifactory.api.fs;
 
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.Info;
 import org.artifactory.api.repo.RepoPath;
+import org.artifactory.utils.PathUtils;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public abstract class ItemInfo implements Info {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ItemInfo.class);
 
     public static final String METADATA_FOLDER = ".artifactory-metadata";
 
-    private final RepoPath repoPath;
-    private final String name;
+    private String repoKey;
+    private String relPath;
     private long created;
-    protected long lastModified;
+    private String modifiedBy;
 
-    protected ItemInfo(RepoPath repoPath) {
-        if (repoPath == null) {
-            throw new IllegalArgumentException("RepoPath cannot be null");
-        }
-        this.repoPath = repoPath;
-        this.name = repoPath.getName();
-        this.created = System.currentTimeMillis();
-        this.lastModified = System.currentTimeMillis();
+    public ItemInfo() {
     }
 
     protected ItemInfo(ItemInfo info) {
-        this(info.getRepoPath());
-        this.created = info.getCreated();
-        this.lastModified = info.getLastModified();
+        update(info);
     }
 
-    protected ItemInfo(ItemInfo info, RepoPath repoPath) {
-        this(repoPath);
+    public void update(ItemInfo info) {
+        this.repoKey = info.getRepoKey();
+        this.relPath = info.getRelPath();
         this.created = info.getCreated();
-        this.lastModified = info.getLastModified();
+        this.modifiedBy = info.getModifiedBy();
     }
 
     public RepoPath getRepoPath() {
-        return repoPath;
+        return new RepoPath(repoKey, relPath);
     }
 
     public abstract boolean isFolder();
 
+    public abstract String getRootName();
+
     public String getName() {
-        return name;
+        return PathUtils.getName(relPath);
     }
 
     public String getRepoKey() {
-        return repoPath.getRepoKey();
+        return repoKey;
+    }
+
+    public void setRepoKey(String repoKey) {
+        this.repoKey = repoKey;
     }
 
     public String getRelPath() {
-        return repoPath.getPath();
+        return relPath;
+    }
+
+    public void setRelPath(String relPath) {
+        this.relPath = relPath;
     }
 
     public long getCreated() {
@@ -63,12 +69,12 @@ public abstract class ItemInfo implements Info {
         this.created = created;
     }
 
-    public long getLastModified() {
-        return lastModified;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     @Override
@@ -76,44 +82,28 @@ public abstract class ItemInfo implements Info {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ItemInfo)) {
             return false;
         }
+        ItemInfo item = (ItemInfo) o;
+        return relPath.equals(item.relPath) && repoKey.equals(item.repoKey);
 
-        ItemInfo info = (ItemInfo) o;
-
-        return repoPath.equals(info.repoPath);
     }
 
     @Override
     public int hashCode() {
-        return repoPath.hashCode();
+        int result;
+        result = repoKey.hashCode();
+        result = 31 * result + relPath.hashCode();
+        return result;
     }
 
-    @Override
     public String toString() {
         return "ItemInfo{" +
-                "repoPath=" + repoPath +
+                "repoKey='" + repoKey + '\'' +
+                ", relPath='" + relPath + '\'' +
                 ", created=" + created +
-                ", lastModified=" + lastModified +
+                ", modifiedBy='" + modifiedBy + '\'' +
                 '}';
     }
-
-    public boolean isIdentical(ItemInfo info) {
-        return this.lastModified == info.lastModified &&
-                this.name.equals(info.name) &&
-                this.repoPath.equals(info.repoPath) &&
-                this.created == info.created;
-    }
-
-    public void setModifiedBy(String name) {
-        getInernalXmlInfo().setModifiedBy(name);
-    }
-
-    /**
-     * Should not be called by clients - always use direct accessors
-     *
-     * @return
-     */
-    public abstract ItemAdditionalInfo getInernalXmlInfo();
 }

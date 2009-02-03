@@ -16,7 +16,6 @@ public class TestFileIO {
         String tmpFileName = System.getProperty("java.io.tmpdir");
         assertNotNull(tmpFileName);
         File tmpFolder = new File(tmpFileName);
-        tmpFolder.deleteOnExit();
         assertTrue(tmpFolder.exists());
         File testFolder = new File(tmpFolder, "FolderTest-" + System.currentTimeMillis());
         assertFalse(testFolder.exists());

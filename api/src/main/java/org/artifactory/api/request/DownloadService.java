@@ -24,5 +24,6 @@ import java.io.IOException;
  * User: freds Date: Aug 3, 2008 Time: 7:57:48 PM
  */
 public interface DownloadService {
-    void process(ArtifactoryRequest request, ArtifactoryResponse response) throws IOException, FileExpectedException;
+    void process(ArtifactoryRequest request, ArtifactoryResponse response)
+            throws IOException, FileExpectedException;
 }

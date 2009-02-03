@@ -24,26 +24,21 @@ import java.io.Serializable;
  */
 public class StatusEntry implements Serializable {
     private final int statusCode;
-    private final StatusEntryLevel level;
+    private final boolean error;
     private final String statusMessage;
     private final Throwable exception;
 
     public StatusEntry(int statusCode, String statusMessage) {
-        this(statusCode, StatusEntryLevel.INFO, statusMessage, null);
+        this(statusCode, false, statusMessage, null);
     }
 
     public StatusEntry(int statusCode, String statusMessage, Throwable exception) {
-        this(statusCode, StatusEntryLevel.ERROR, statusMessage, exception);
+        this(statusCode, true, statusMessage, exception);
     }
 
-    public StatusEntry(int statusCode, StatusEntryLevel level, String statusMessage,
-            Throwable exception) {
-        if (level == null) {
-            throw new IllegalArgumentException(
-                    "Cannot create status entry '" + statusMessage + "' with null level");
-        }
+    public StatusEntry(int statusCode, boolean error, String statusMessage, Throwable exception) {
         this.statusCode = statusCode;
-        this.level = level;
+        this.error = error;
         this.statusMessage = statusMessage;
         this.exception = exception;
     }
@@ -60,22 +55,14 @@ public class StatusEntry implements Serializable {
         return exception;
     }
 
-    public boolean isWarning() {
-        return level.isWarning();
-    }
-
     public boolean isError() {
-        return level.isError() || exception != null;
-    }
-
-    public boolean isDebug() {
-        return level.isDebug();
+        return error || exception != null;
     }
 
     public String toString() {
         return "StatusMessage{" +
                 "statusCode=" + statusCode +
-                ", level=" + level.name() +
+                ", error=" + error +
                 ", statusMsg='" + statusMessage + '\'' +
                 ", exception=" + exception +
                 '}';

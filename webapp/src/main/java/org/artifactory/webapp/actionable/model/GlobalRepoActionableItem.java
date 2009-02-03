@@ -32,15 +32,13 @@
 
 package org.artifactory.webapp.actionable.model;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.webapp.actionable.ActionableItemBase;
-import org.artifactory.webapp.actionable.RepoAwareActionableItem;
-import org.artifactory.webapp.wicket.utils.CssClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,16 +48,18 @@ import java.util.List;
  */
 public class GlobalRepoActionableItem extends ActionableItemBase
         implements HierarchicActionableItem {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private static final Logger LOGGER = Logger.getLogger(ActionableItemBase.class);
 
     public String getDisplayName() {
         return "";
     }
 
-    public String getCssClass() {
-        return CssClass.root.cssClass();
+    public String getIconRes() {
+        return "/images/root.png";
     }
 
-    public Panel newItemDetailsPanel(String id) {
+    public Panel createDisplayPanel(String id) {
         return new EmptyPanel(id);
     }
 

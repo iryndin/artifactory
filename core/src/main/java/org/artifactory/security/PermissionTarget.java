@@ -19,6 +19,7 @@ package org.artifactory.security;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.apache.jackrabbit.util.Text;
+import org.apache.log4j.Logger;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.util.StringUtils;
@@ -34,6 +35,8 @@ import java.util.List;
  */
 @Node
 public class PermissionTarget implements ObjectIdentity {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(PermissionTarget.class);
 
     public static final PermissionTarget ANY_PERMISSION_TARGET =
             new PermissionTarget(PermissionTargetInfo.ANY_PERMISSION_TARGET_NAME,

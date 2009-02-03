@@ -32,50 +32,73 @@
 
 package org.artifactory.webapp.actionable.model;
 
-import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
-import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
+import org.apache.commons.collections15.OrderedMap;
+import org.apache.log4j.Logger;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.artifactory.api.common.PackagingType;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
-import org.artifactory.webapp.actionable.action.DownloadAction;
-import org.artifactory.webapp.actionable.action.ItemAction;
-import org.artifactory.webapp.actionable.action.RemoveAction;
-import org.artifactory.webapp.actionable.action.ViewAction;
-import org.artifactory.webapp.actionable.action.ZapAction;
-import org.artifactory.webapp.wicket.common.component.panel.actionable.StatsTabPanel;
-import org.artifactory.webapp.wicket.common.component.panel.actionable.maven.PomViewTabPanel;
-import org.artifactory.webapp.wicket.utils.CssClass;
-
-import java.util.List;
-import java.util.Set;
+import org.artifactory.utils.MimeTypes;
+import org.artifactory.webapp.actionable.ItemAction;
+import org.artifactory.webapp.actionable.ItemActionEvent;
+import static org.artifactory.webapp.actionable.model.ActionDescriptor.*;
+import org.artifactory.webapp.wicket.component.TextContentPanel;
+import org.artifactory.webapp.wicket.utils.WebUtils;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public class FileActionableItem extends RepoAwareActionableItemBase {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private static final Logger LOGGER = Logger.getLogger(ActionableItemBase.class);
 
     private FileInfo file;
-    private ItemAction downloadAction;
-    private ItemAction viewAction;
-    private ItemAction removeAction;
-    private ItemAction zapAction;
 
-    public FileActionableItem(FileInfo file) {
+    public FileActionableItem(final FileInfo file) {
         super(file);
         this.file = file;
-        Set<ItemAction> actions = getActions();
-        downloadAction = new DownloadAction();
-        actions.add(downloadAction);
-        viewAction = new ViewAction();
-        actions.add(viewAction);
-        removeAction = new RemoveAction();
-        actions.add(removeAction);
-        zapAction = new ZapAction();
-        actions.add(zapAction);
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
+        actions.put(DOWNLOAD, new ItemAction(DOWNLOAD.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+                FileInfo fileInfo = FileActionableItem.this.getFile();
+                RepoPath repoPath = fileInfo.getRepoPath();
+                String downloadUrl = WebUtils.getWicketServletContextUrl()
+                        + "/" + repoPath.getRepoKey() + "/" + repoPath.getPath();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Download URL is " + downloadUrl);
+                }
+                AjaxRequestTarget target = e.getTarget();
+                target.prependJavascript("window.location='" + downloadUrl + "';");
+            }
+        });
+        actions.put(VIEW, new ItemAction(VIEW.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+                String content = getRepoService().getContent(getFile());
+                ModalWindow textContentViewer = (ModalWindow) e.getTargetComponents().get(0);
+                TextContentPanel contentPanel =
+                        new TextContentPanel(textContentViewer.getContentId());
+                contentPanel.setContent(content);
+                textContentViewer.setContent(contentPanel);
+                AjaxRequestTarget target = e.getTarget();
+                textContentViewer.show(target);
+            }
+        });
+        actions.put(REMOVE, new RemoveItemAction() {
+            @Override
+            protected void remove() {
+                undeploy();
+            }
+        });
+        actions.put(ZAP, new ItemAction(ZAP.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+                zap();
+            }
+        });
     }
 
     public FileInfo getFile() {
@@ -89,64 +112,43 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
         return getFile().getName();
     }
 
-    public String getCssClass() {
+    public String getIconRes() {
         String path = getRepoPath().getPath();
-        return CssClass.getFileCssClass(path).cssClass();
-    }
-
-    @Override
-    public void addTabs(List<ITab> tabs) {
-        super.addTabs(tabs);
-        boolean showTabs = shouldShowTabs();
-        if (showTabs) {
-            return;
+        if (MimeTypes.isJarVariant(path)) {
+            return "/images/jar.png";
+        } else if (path.endsWith(".pom")) {
+            return "/images/pom.png";
+        } else {
+            return "/images/doc.png";
         }
-        //Has stats
-        tabs.add(new AbstractTab(new Model("Stats")) {
-            @Override
-            public Panel getPanel(String panelId) {
-                return new StatsTabPanel(panelId, FileActionableItem.this);
-            }
-        });
-
-        if (isPomFile()) {
-            // add pom view panel
-            tabs.add(new AbstractTab(new Model("Pom View")) {
-                @Override
-                public Panel getPanel(String panelId) {
-                    return new PomViewTabPanel(panelId, FileActionableItem.this);
-                }
-            });
-        }
-
     }
 
     public void filterActions(AuthorizationService authService) {
         RepoPath repoPath = getFile().getRepoPath();
-        boolean canAdmin = authService.canAdmin(repoPath);
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
+        boolean canDeploy = authService.canDeploy(repoPath);
         boolean canDelete = authService.canDelete(repoPath);
         if (!canDelete) {
-            removeAction.setEnabled(false);
+            actions.get(REMOVE).setEnabled(false);
         }
-        if (!canAdmin) {
-            zapAction.setEnabled(false);
+        if (!canDeploy) {
+            actions.get(ZAP).setEnabled(false);
         } else if (!getRepo().isCache()) {
-            zapAction.setEnabled(false);
+            actions.get(ZAP).setEnabled(false);
         }
-        if (!isPomFile()) {
+        if (!getFile().getName().endsWith(".pom")) {
             //HACK
-            viewAction.setEnabled(false);
+            actions.get(VIEW).setEnabled(false);
         }
-        downloadAction.setEnabled(true);
     }
 
-    private boolean isPomFile() {
-        return getFile().getName().endsWith(".pom");
-    }
-
-    private boolean shouldShowTabs() {
-        //Hack - dont display anything for checksums or metadata
+    public boolean hasStatsInfo() {
+        //Hack
         String name = getDisplayName();
-        return NamingUtils.isChecksum(name) || NamingUtils.isMetadata(name);
+        if (PackagingType.isChecksum(name) || PackagingType.isMavenMetadata(name)) {
+            return false;
+        }
+        return true;
     }
+
 }

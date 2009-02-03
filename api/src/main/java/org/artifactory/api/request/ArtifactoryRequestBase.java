@@ -16,16 +16,13 @@
  */
 package org.artifactory.api.request;
 
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
+import org.apache.log4j.Logger;
+import org.artifactory.api.common.PackagingType;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static final Logger log = LoggerFactory.getLogger(ArtifactoryRequestBase.class);
+    private static final Logger LOGGER = Logger.getLogger(ArtifactoryRequestBase.class);
 
     private RepoPath repoPath;
 
@@ -44,46 +41,43 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
     }
 
     public boolean isSnapshot() {
-        return MavenNaming.isSnapshot(getPath());
+        return PackagingType.isSnapshot(getPath());
     }
 
-    public boolean isMetadata() {
-        return NamingUtils.isMetadata(getPath());
+    public boolean isMetaData() {
+        return PackagingType.isMavenMetadata(getPath());
+    }
+
+    public boolean isResourceProperty() {
+        return PackagingType.isChecksum(getPath());
     }
 
     public boolean isChecksum() {
-        return NamingUtils.isChecksum(getPath());
+        return PackagingType.isChecksum(getPath());
     }
 
-    public String getResourcePath() {
-        String path = getPath();
-        String resourcePath;
-        /*if (isMetadata()) {
-            //For metadata get the resource containing the metadata (alwyas a version or an artifact folder
-            resourcePath = path.substring(0, path.lastIndexOf("/"));
-        } else*/
-        if (isChecksum()) {
-            //For checksums search the containing resource
-            resourcePath = path.substring(0, path.lastIndexOf("."));
-        } else {
-            resourcePath = path;
-        }
-        return resourcePath;
+    public boolean isPom() {
+        return PackagingType.isPom(getPath());
     }
 
     public String getName() {
         String path = getPath();
-        return PathUtils.getName(path);
+        int dirEndIdx = path.lastIndexOf('/');
+        if (dirEndIdx != -1) {
+            return path.substring(dirEndIdx + 1);
+        } else {
+            return path;
+        }
     }
 
     public String getDir() {
         String path = getPath();
         int dirEndIdx = path.lastIndexOf('/');
-        if (dirEndIdx == -1) {
+        if (dirEndIdx != -1) {
+            return path.substring(0, dirEndIdx);
+        } else {
             return null;
         }
-
-        return path.substring(0, dirEndIdx);
     }
 
     public boolean isNewerThanResource(long resourceLastModified) {
@@ -97,16 +91,17 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
         if (modificationTime < 0) {
             //These headers are not filled by mvn lw-http wagon (doesn't call "getIfNewer")
             if (getLastModified() < 0 && getIfModifiedSince() < 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Neither If-Modified-Since nor Last-Modified are set");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Neither If-Modified-Since nor Last-Modified are set");
                 }
                 return -1;
             }
-            if (getLastModified() >= 0 && getIfModifiedSince() >= 0 && getLastModified() != getIfModifiedSince()) {
-                if (log.isDebugEnabled()) {
-                    log.warn(
-                            "If-Modified-Since (" + getIfModifiedSince() + ") AND Last-Modified (" + getLastModified() +
-                                    ") both set and unequal");
+            if (getLastModified() >= 0 && getIfModifiedSince() >= 0
+                    && getLastModified() != getIfModifiedSince()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.warn("If-Modified-Since (" + getIfModifiedSince()
+                            + ") AND Last-Modified ("
+                            + getLastModified() + ") both set and unequal");
                 }
 
             }

@@ -17,7 +17,7 @@
 package org.artifactory.spring;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.config.ExportSettings;
@@ -27,29 +27,19 @@ import org.artifactory.api.context.ArtifactoryContextThreadBinder;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.SecurityService;
-import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ArtifactoryProperties;
-import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
+import org.artifactory.keyval.KeyVals;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.schedule.TaskService;
-import org.artifactory.update.utils.BackupUtils;
-import org.artifactory.version.ArtifactoryVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,28 +48,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContext
         implements InternalArtifactoryContext {
-    private static final Logger log = LoggerFactory.getLogger(ArtifactoryApplicationContext.class);
+    private final static Logger LOGGER =
+            Logger.getLogger(ArtifactoryApplicationContext.class);
     public static final String CURRENT_TIME_EXPORT_DIR_NAME = "current";
-    private Set<Class<? extends ReloadableBean>> toInitialize = new HashSet<Class<? extends ReloadableBean>>();
+    private JcrService jcr;
+    private Set<Class<? extends PostInitializingBean>> toInitialize =
+            new HashSet<Class<? extends PostInitializingBean>>();
     private boolean ready = false;
     private ConcurrentHashMap<Class, Object> beansForType = new ConcurrentHashMap<Class, Object>();
-    private List<ReloadableBean> reloadableBeans;
-    private long started;
 
     public ArtifactoryApplicationContext(String configLocation) throws BeansException {
         super(new String[]{configLocation}, false, null);
-        started = System.currentTimeMillis();
         refresh();
     }
 
     public ArtifactoryApplicationContext(String[] configLocations) throws BeansException {
         super(configLocations, false, null);
-        started = System.currentTimeMillis();
         refresh();
-    }
-
-    public long getUptime() {
-        return System.currentTimeMillis() - started;
     }
 
     public CentralConfigService getCentralConfig() {
@@ -94,119 +79,72 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         return beanForType(AuthorizationService.class);
     }
 
-    public TaskService getTaskService() {
-        return beanForType(TaskService.class);
-    }
-
     public RepositoryService getRepositoryService() {
         return beanForType(InternalRepositoryService.class);
     }
 
-    public void addReloadableBean(Class<? extends ReloadableBean> beanClass) {
+    public void addPostInit(Class<? extends PostInitializingBean> beanClass) {
         toInitialize.add(beanClass);
     }
 
     @Override
     public void refresh() throws BeansException, IllegalStateException {
         try {
-            // TODO: Check concurrency issue during reload/refresh
-            ready = false;
             beansForType.clear();
+            ready = false;
             ArtifactoryContextThreadBinder.bind(this);
             super.refresh();
-            reloadableBeans = new ArrayList<ReloadableBean>(toInitialize.size());
-            Set<Class<? extends ReloadableBean>> toInit = new HashSet<Class<? extends ReloadableBean>>(toInitialize);
-            for (Class<? extends ReloadableBean> beanClass : toInitialize) {
-                orderReloadableBeans(toInit, beanClass);
-            }
-            log.debug("Reloadable list of beans: {}", reloadableBeans);
-            for (ReloadableBean reloadableBean : reloadableBeans) {
-                String beanIfc = getInterfaceName(reloadableBean);
-                log.info("Initializing " + beanIfc);
-                reloadableBean.init();
-                log.debug("Initialized " + beanIfc);
+            Set<Class<? extends PostInitializingBean>> toInit =
+                    new HashSet<Class<? extends PostInitializingBean>>(toInitialize);
+            for (Class<? extends PostInitializingBean> beanClass : toInitialize) {
+                initPostBean(toInit, beanClass);
             }
             ready = true;
-            log.info("Artifactory application context ready.");
+            LOGGER.info("Artifactory application context ready.");
         } finally {
             ArtifactoryContextThreadBinder.unbind();
         }
     }
 
-    public void init() {
-        // Nothing
-    }
-
-    public Class<? extends ReloadableBean>[] initAfter() {
-        throw new IllegalStateException("The context cannot be part of dependency ordering");
-    }
-
-    @Override
-    public void destroy() {
-        ready = false;
-        ArtifactoryContextThreadBinder.bind(this);
-        try {
-            if (reloadableBeans != null && !reloadableBeans.isEmpty()) {
-                log.debug("Destroying beans: {}", reloadableBeans);
-                for (int i = reloadableBeans.size() - 1; i >= 0; i--) {
-                    ReloadableBean bean = reloadableBeans.get(i);
-                    String beanIfc = getInterfaceName(bean);
-                    log.info("Destroying " + beanIfc);
-                    try {
-                        bean.destroy();
-                    } catch (Exception e) {
-                        log.error("Exception while destroying " + beanIfc);
-                    }
-                    log.debug("Destroyed " + beanIfc);
-                }
-            }
-        } finally {
-            super.destroy();
-            ArtifactoryContextThreadBinder.unbind();
-        }
-    }
-
-    private String getInterfaceName(ReloadableBean bean) {
-        return bean.getClass().getInterfaces()[0].getName();
-    }
-
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-        ready = false;
-        log.debug("Reloading beans: {}", reloadableBeans);
-        for (ReloadableBean reloadableBean : reloadableBeans) {
-            String beanIfc = getInterfaceName(reloadableBean);
-            log.info("Reloading " + beanIfc);
-            reloadableBean.reload(oldDescriptor);
-            log.debug("Reloaded " + beanIfc);
-        }
-        ready = true;
-    }
-
-    private void orderReloadableBeans(Set<Class<? extends ReloadableBean>> toInit,
-            Class<? extends ReloadableBean> beanClass) {
+    private void initPostBean(Set<Class<? extends PostInitializingBean>> toInit,
+            Class<? extends PostInitializingBean> beanClass) {
         if (!toInit.contains(beanClass)) {
             // Already done
             return;
         }
-        ReloadableBean initializingBean = beanForType(beanClass);
-        Class<? extends ReloadableBean>[] dependUpon = initializingBean.initAfter();
-        for (Class<? extends ReloadableBean> doBefore : dependUpon) {
-            if (!doBefore.isInterface()) {
-                throw new IllegalStateException(
-                        "Cannot order bean with implementation class.\n" +
-                                " Please provide an interface extending " +
-                                ReloadableBean.class.getName());
-            }
-            orderReloadableBeans(toInit, doBefore);
+        PostInitializingBean initializingBean = beanForType(beanClass);
+        Class<? extends PostInitializingBean>[] dependUpon = initializingBean.initAfter();
+        for (Class<? extends PostInitializingBean> doBefore : dependUpon) {
+            initPostBean(toInit, doBefore);
         }
         // Avoid double init
         if (toInit.remove(beanClass)) {
-            reloadableBeans.add(initializingBean);
+            LOGGER.info("Initializing " + beanClass);
+            initializingBean.init();
+            LOGGER.debug("Initialized " + beanClass);
         }
     }
 
     public boolean isReady() {
         return ready;
+    }
+
+    private ImportableExportable getSafeBean(String beanName) {
+        ImportableExportable bean = null;
+        try {
+            bean = (ImportableExportable) getBeanFactory().getBean(beanName);
+        } catch (BeansException e) {
+            String message = "Cannot find bean '" + beanName + "' in safe mode!";
+            LOGGER.warn(message);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(message, e);
+            }
+        }
+        return bean;
+    }
+
+    public KeyVals getKeyVal() {
+        return beanForType(KeyVals.class);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -227,56 +165,46 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
     }
 
     public JcrService getJcrService() {
-        return beanForType(JcrService.class);
-    }
-
-    public JcrRepoService getJcrRepoService() {
-        return beanForType(JcrRepoService.class);
+        if (jcr == null) {
+            jcr = beanForType(JcrService.class);
+        }
+        return jcr;
     }
 
     public void importFrom(ImportSettings settings, StatusHolder status) {
-        status.setStatus("### Beginning full system import ###", log);
-        // First sync status and settings
-        status.setFailFast(settings.isFailFast());
-        status.setVerbose(settings.isVerbose());
-        // First check the version of the folder imported
-        ArtifactoryVersion backupVersion = BackupUtils.findVersion(settings.getBaseDir());
-        // We don't support import from 125 and before
-        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125;
-        if (backupVersion.before(supportFrom)) {
-            throw new IllegalArgumentException("Folder " + settings.getBaseDir().getAbsolutePath() +
-                    " contain an export from a version older than " + supportFrom.getValue() + ".\n" +
-                    "Please use Artifactory Command Line command dump to import from theses versions!");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("### Beginning full system import ###");
         }
-        settings.setExportVersion(backupVersion);
-
         getCentralConfig().importFrom(settings, status);
-        getRepositoryService().importFrom(settings, status);
         getSecurityService().importFrom(settings, status);
-        status.setStatus("### Full system import finished ###", log);
+        getKeyVal().importFrom(settings, status);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("### Full system import finished ###");
+        }
     }
 
     public void exportTo(ExportSettings settings, StatusHolder status) {
-        // First sync status and settings
-        status.setFailFast(settings.isFailFast());
-        status.setVerbose(settings.isVerbose());
-        log.info("Beginning full system export...");
-        status.setStatus("Creating export directory", log);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Beginning full system export...");
+        }
+        status.setStatus("Creating export directory", LOGGER);
         String timestamp;
-        boolean incremental = settings.isIncremental();
-        if (!incremental) {
+        Date time = settings.getTime();
+        boolean inPlace;
+        if (time != null) {
             DateFormat formatter = new SimpleDateFormat("yyyyMMdd.HHmmss");
-            timestamp = formatter.format(settings.getTime());
+            timestamp = formatter.format(time);
+            inPlace = false;
         } else {
             timestamp = CURRENT_TIME_EXPORT_DIR_NAME;
+            inPlace = true;
         }
         File baseDir = settings.getBaseDir();
 
         //Only create a temp dir when not doing in-place backup (time == null), otherwise do
         //in-place and make sure all exports except repositories delete their target or write to temp before exporting
         File tmpExportDir;
-        if (incremental) {
-            //Will alwyas be baseDir/CURRENT_TIME_EXPORT_DIR_NAME
+        if (inPlace) {
             tmpExportDir = new File(baseDir, timestamp);
             try {
                 FileUtils.forceMkdir(tmpExportDir);
@@ -284,7 +212,9 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                 throw new RuntimeException("Failed to create in place " +
                         tmpExportDir.getAbsolutePath() + " backup dir.", e);
             }
-            status.setStatus("Using in place export directory '" + tmpExportDir.getAbsolutePath() + "'.", log);
+            status.setStatus(
+                    "Using in place export directory '" + tmpExportDir.getAbsolutePath() + "'.",
+                    LOGGER);
         } else {
             tmpExportDir = new File(baseDir, timestamp + ".tmp");
             //Make sure the directory does not already exist
@@ -292,37 +222,30 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                 FileUtils.deleteDirectory(tmpExportDir);
             } catch (IOException e) {
                 throw new IllegalArgumentException(
-                        "Failed to delete temp export directory: " + tmpExportDir.getAbsolutePath(), e);
+                        "Failed to delete temp export directory: " + tmpExportDir.getAbsolutePath(),
+                        e);
             }
             try {
                 FileUtils.forceMkdir(tmpExportDir);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create temp backup dir.", e);
             }
-            status.setStatus("Created temp export directory '" + tmpExportDir.getAbsolutePath() + "'.", log);
+            status.setStatus(
+                    "Created temp export directory '" + tmpExportDir.getAbsolutePath() + "'.",
+                    LOGGER);
         }
         //Export the repositories to the temp dir
         ExportSettings exportSettings = new ExportSettings(tmpExportDir, settings);
         CentralConfigService centralConfig = getCentralConfig();
         centralConfig.exportTo(exportSettings, status);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
         //Security export
         exportSecurity(exportSettings, status);
-        if (status.isError() && settings.isFailFast()) {
-            return;
+        //Keyvals export
+        exportKeyVals(exportSettings, status);
+        if (inPlace && settings.isCreateArchive()) {
+            LOGGER.warn("Cannot create archive for an in place backup.");
         }
-        //artifactory.properties export
-        exportArtifactoryProperties(exportSettings, status);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
-        exportSystemProperties(exportSettings, status);
-        if (incremental && settings.isCreateArchive()) {
-            log.warn("Cannot create archive for an in place backup.");
-        }
-        if (!incremental) {
+        if (!inPlace) {
             //Create an archive if necessary
             if (settings.isCreateArchive()) {
                 createArchive(status, timestamp, baseDir, tmpExportDir);
@@ -332,31 +255,35 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         } else {
             status.setCallback(tmpExportDir);
         }
-        status.setStatus("Full system export completed successfully.", log);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Full system export completed successfully.");
+        }
     }
 
-    private void moveTmpToBackupDir(StatusHolder status, String timestamp, File baseDir, File tmpExportDir) {
+    private void moveTmpToBackupDir(StatusHolder status, String timestamp, File baseDir,
+            File tmpExportDir) {
         //Delete any exiting final export dir
         File exportDir = new File(baseDir, timestamp);
         try {
             FileUtils.deleteDirectory(exportDir);
         } catch (IOException e) {
-            log.warn("Failed to delete existing final export directory.", e);
+            LOGGER.warn("Failed to delete existing final export directory.", e);
         }
         //Switch the directories
         boolean success = tmpExportDir.renameTo(exportDir);
         if (!success) {
-            log.error("Failed to move '" + tmpExportDir + "' to '" + exportDir + "'.");
+            LOGGER.error("Failed to move '" + tmpExportDir + "' to '" + exportDir + "'.");
         }
         status.setCallback(exportDir);
     }
 
     private void createArchive(StatusHolder status, String timestamp, File baseDir,
             File tmpExportDir) {
-        status.setStatus("Creating archive...", log);
+        status.setStatus("Creating archive...", LOGGER);
         File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
+        new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
         try {
-            new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
+            de.schlichtherle.io.File.umount();
         } catch (Exception e) {
             throw new RuntimeException("Failed to create system export archive.", e);
         } finally {
@@ -364,67 +291,41 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             try {
                 FileUtils.deleteDirectory(tmpExportDir);
             } catch (IOException e) {
-                log.warn("Failed to delete temp export directory.", e);
+                LOGGER.warn("Failed to delete temp export directory.", e);
             }
         }
-
-        // From now on use only java.io.File for the file actions!
-
         //Delete any exiting final archive
-        File archive = new File(baseDir, timestamp + ".zip");
-        if (archive.exists()) {
-            boolean deleted = archive.delete();
-            if (!deleted) {
-                log.warn("Failed to delete existing final export archive.");
-            }
+        File archive = new de.schlichtherle.io.File(baseDir, timestamp + ".zip");
+        try {
+            FileUtils.forceDelete(archive);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to delete existing final export archive.", e);
         }
-        //Rename the archive file
-        File tmpArchiveFile = new File(tmpArchive.getAbsolutePath());
-        boolean success = tmpArchiveFile.renameTo(archive);
+        //Switch the files
+        boolean success = tmpArchive.renameTo(archive);
         if (!success) {
-            log.error("Failed to move '{}' to '{}'.", tmpArchiveFile.getPath(), archive.getPath());
+            LOGGER.error("Failed to move '" + tmpArchive.getPath() + "' to '" +
+                    archive.getPath() + "'.");
         }
         status.setCallback(archive.getAbsoluteFile());
     }
 
-    private void exportArtifactoryProperties(ExportSettings settings, StatusHolder status) {
-        File artifactoryPropFile = ArtifactoryHome.getArtifactoryPropertiesFile();
-        if (artifactoryPropFile.exists()) {
-            try {
-                FileUtils.copyFileToDirectory(artifactoryPropFile, settings.getBaseDir());
-            } catch (IOException e) {
-                status.setError("Failed to copy artifactory.properties file", e, log);
-            }
+    private void exportKeyVals(ExportSettings exportSettings, StatusHolder status) {
+        ImportableExportable keyVal = getSafeBean("keyVal");
+        if (keyVal != null) {
+            keyVal.exportTo(exportSettings, status);
         } else {
-            status.setStatus("No KeyVal defined no export done", log);
-        }
-    }
-
-    private void exportSystemProperties(ExportSettings settings, StatusHolder status) {
-        FileOutputStream targetOutputStream = null;
-        try {
-            File dumpTargetFile = new File(settings.getBaseDir(),
-                    ArtifactoryHome.ARTIFACTORY_SYSTEM_PROPERTIES_FILE);
-            targetOutputStream = new FileOutputStream(dumpTargetFile);
-            ArtifactoryProperties.get().store(targetOutputStream);
-        } catch (IOException e) {
-            status.setError("Failed to dump artifactory.system.properties file", e, log);
-        } finally {
-            IOUtils.closeQuietly(targetOutputStream);
+            status.setStatus("No KeyVal defined no export done", LOGGER);
         }
     }
 
     private void exportSecurity(ExportSettings settings, StatusHolder status) {
         ImportableExportable security = getSecurityService();
         if (security != null) {
-            status.setStatus("Exporting security...", log);
+            status.setStatus("Exporting security...", LOGGER);
             security.exportTo(settings, status);
         } else {
-            status.setStatus("No security defined no export done", log);
+            status.setStatus("No security defined no export done", LOGGER);
         }
-    }
-
-    public List<ReloadableBean> getBeans() {
-        return reloadableBeans;
     }
 }

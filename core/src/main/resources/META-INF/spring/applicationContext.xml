@@ -4,6 +4,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:tool="http://www.springframework.org/schema/tool"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
             http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -12,7 +13,9 @@
             http://www.springframework.org/schema/tool
             http://www.springframework.org/schema/tool/spring-tool-2.5.xsd
             http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+            http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 
     <!-- Causes system propeties to be used -->
     <bean id="propertyPlaceholderConfigurer"
@@ -35,30 +38,14 @@
     <context:component-scan base-package="org.artifactory"/>
 
     <!-- enable the configuration of transactional behavior based on annotations -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <tx:annotation-driven proxy-target-class="true"/>
 
-    <bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
-        <property name="transactionInterceptor" ref="txInterceptor"/>
+    <bean id="keyVal" class="org.artifactory.keyval.KeyVals">
+        <property name="version" value="${artifactory.version}"/>
+        <property name="revision" value="${artifactory.revision}"/>
     </bean>
 
-    <bean id="txInterceptor"
-          class="org.springframework.transaction.interceptor.TransactionInterceptor">
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="transactionAttributeSource">
-            <bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource">
-            </bean>
-        </property>
-    </bean>
-
-    <bean class="org.artifactory.jcr.lock.LockingAdviceAdvisor"/>
-
-    <bean id="alwaysOnTxInterceptor"
-          class="org.springframework.transaction.interceptor.TransactionInterceptor"
-          lazy-init="true">
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="transactionAttributeSource">
-            <bean class="org.springframework.transaction.interceptor.MatchAlwaysTransactionAttributeSource"/>
-        </property>
-    </bean>
-
+    <import resource="jcr.xml"/>
+    <import resource="scheduling.xml"/>
+    <import resource="security.xml"/>
 </beans>

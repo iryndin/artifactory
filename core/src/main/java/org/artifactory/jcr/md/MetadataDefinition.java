@@ -25,42 +25,20 @@ import java.lang.reflect.Constructor;
  * @date Sep 3, 2008
  */
 public class MetadataDefinition implements Info {
-    /**
-     * The key of this definition
-     */
     private final String metadataName;
-    /**
-     * A Java class that can be marshall/unmarshall with XStream to this metadata XML stream
-     */
     private final Class xstreamClass;
-    /**
-     * If true the XML stream will be saved under the JCR metadata folder container. If false, this metadata is
-     * transient in memory
-     */
-    private final boolean persistent;
-    /**
-     * Valid with xStreamClass not null only. When editing, the cache will activate the copy constructor before
-     * editing.
-     */
     private final Constructor copyConstructor;
-    /**
-     * If false, it means this metadata is transparently (store/load) managed without special business logic.
-     * The basic folder and file info are set to true here.
-     */
-    private final boolean internal;
 
     public MetadataDefinition(String metadataName) {
-        this(metadataName, null, true, false);
+        this(metadataName, null);
     }
 
-    public MetadataDefinition(String metadataName, Class xstreamClass, boolean persistent, boolean internal) {
+    public MetadataDefinition(String metadataName, Class xstreamClass) {
         if (metadataName == null) {
             throw new IllegalArgumentException("Metadata definition name cannot be null");
         }
         this.xstreamClass = xstreamClass;
         this.metadataName = metadataName;
-        this.persistent = persistent;
-        this.internal = internal;
         try {
             if (xstreamClass != null) {
                 this.copyConstructor = xstreamClass.getDeclaredConstructor(xstreamClass);
@@ -81,35 +59,24 @@ public class MetadataDefinition implements Info {
         return xstreamClass;
     }
 
-    public boolean hasXStream() {
-        return xstreamClass != null;
-    }
-
     public Constructor getCopyConstructor() {
         return copyConstructor;
     }
 
-    public boolean isPersistent() {
-        return persistent;
-    }
-
-    public boolean isInternal() {
-        return internal;
-    }
-
     public Object newInstance() {
-        if (!hasXStream()) {
+        if (xstreamClass == null) {
             return null;
         }
         try {
             return xstreamClass.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot create new metadata value of class " + xstreamClass, e);
+            throw new RuntimeException("Cannot create new metadata value of class " + xstreamClass,
+                    e);
         }
     }
 
     public Object newInstance(Object metadataValue) {
-        if (!hasXStream()) {
+        if (xstreamClass == null) {
             return null;
         }
         try {

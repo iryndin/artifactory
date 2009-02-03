@@ -52,7 +52,6 @@
         exclude certain repositories from being backed up
         -->
         <excludedRepositories>
-            <repositoryRef>libs-releases</repositoryRef>
             <repositoryRef>repo1</repositoryRef>
             <repositoryRef>codehaus-snapshots</repositoryRef>
             <repositoryRef>java.net</repositoryRef>

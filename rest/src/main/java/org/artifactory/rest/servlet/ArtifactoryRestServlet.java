@@ -16,43 +16,82 @@
  */
 package org.artifactory.rest.servlet;
 
+import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.sun.jersey.spi.spring.container.servlet.SpringComponentProvider;
+import com.sun.jersey.spi.inject.Injectable;
+import com.sun.jersey.spi.inject.InjectableProvider;
+import com.sun.jersey.spi.service.ComponentContext;
+import com.sun.jersey.spi.service.ComponentProvider;
+import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.context.ArtifactoryContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.artifactory.api.context.ContextHelper;
+import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.api.security.AclService;
+import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.api.security.SecurityService;
+import org.artifactory.api.security.UserGroupService;
+import org.artifactory.rest.common.SpringAutowired;
 
 import javax.servlet.ServletConfig;
+import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
- * We use our own rest servlet for the initialization using ArtifactoryContext.
- *
- * @author Yossi Shaul
+ * User: freds Date: Aug 13, 2008 Time: 3:14:57 PM
  */
 public class ArtifactoryRestServlet extends ServletContainer {
-    private final static Logger log = LoggerFactory.getLogger(ArtifactoryRestServlet.class);
-
     @Override
     protected void configure(ServletConfig config, ResourceConfig rc,
             WebApplication application) {
         super.configure(config, rc, application);
+
+        Set<Object> pi = rc.getProviderInstances();
+        pi.add(getSpringBeanInjector(AuthorizationService.class));
+        pi.add(getSpringBeanInjector(CentralConfigService.class));
+        pi.add(getSpringBeanInjector(UserGroupService.class));
+        pi.add(getSpringBeanInjector(AclService.class));
+        pi.add(getSpringBeanInjector(RepositoryService.class));
+        pi.add(getSpringBeanInjector(ArtifactoryContext.class));
+        pi.add(getSpringBeanInjector(SecurityService.class));
     }
 
-    @Override
-    protected void initiate(ResourceConfig rc, WebApplication wa) {
-        try {
-            ArtifactoryContext artifactoryContext =
-                    (ArtifactoryContext) getServletContext().getAttribute(
-                            "org.springframework.web.context.WebApplicationContext.ROOT");
+    public static <T> SpringBeanInjector<T> getSpringBeanInjector(Class<T> beanInterface) {
+        return new SpringBeanInjector<T>(beanInterface);
+    }
 
-            wa.initiate(rc, new SpringComponentProvider(
-                    (ConfigurableApplicationContext) artifactoryContext));
-        } catch (RuntimeException e) {
-            log.error("Exception in initialization of the Rest servlet");
-            throw e;
+    public static class SpringBeanInjector<T>
+            implements InjectableProvider<SpringAutowired, Type>, Injectable<T> {
+        private Class<T> type;
+
+        public SpringBeanInjector(Class<T> t) {
+            this.type = t;
+        }
+
+        public ComponentProvider.Scope getScope() {
+            return ComponentProvider.Scope.PerRequest;
+        }
+
+        public Injectable getInjectable(ComponentContext ic,
+                SpringAutowired autowired, Type type) {
+            if (type.equals(this.type)) {
+                return this;
+            } else {
+                return null;
+            }
+        }
+
+        public T getValue(HttpContext context) {
+            /*
+            (ArtifactoryContext) context
+                    .getAttribute("org.springframework.web.context.ROOT");
+            */
+            ArtifactoryContext springContext = ContextHelper.get();
+            if (springContext == null) {
+                return null;
+            }
+            return springContext.beanForType(type);
         }
     }
 }

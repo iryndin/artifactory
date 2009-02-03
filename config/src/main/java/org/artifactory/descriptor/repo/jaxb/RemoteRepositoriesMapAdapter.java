@@ -18,6 +18,7 @@ package org.artifactory.descriptor.repo.jaxb;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.HttpRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
@@ -31,8 +32,11 @@ import java.util.List;
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class RemoteRepositoriesMapAdapter extends
+public class RemoteRepositoriesMapAdapter
+        extends
         XmlAdapter<RemoteRepositoriesMapAdapter.Wrappper, OrderedMap<String, RemoteRepoDescriptor>> {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(RemoteRepositoriesMapAdapter.class);
 
 
     public OrderedMap<String, RemoteRepoDescriptor> unmarshal(Wrappper wrapper)

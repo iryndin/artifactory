@@ -17,43 +17,37 @@
 package org.artifactory.descriptor.backup;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @XmlType(name = "BackupType",
-        propOrder = {"key", "enabled",
-                "dir", "cronExp", "retentionPeriodHours", "createArchive", "excludedRepositories"})
-public class BackupDescriptor implements Descriptor {
+        propOrder = {"dir", "cronExp", "inPlace", "retentionPeriodHours", "createArchive",
+                "excludedRepositories"})
+public class BackupDescriptor implements Serializable {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(BackupDescriptor.class);
 
     private static final long serialVersionUID = 1L;
 
     public static final int DEFAULT_RETENTION_PERIOD_HOURS = 168;//7 days
 
-    @XmlID
-    @XmlElement(required = true)
-    private String key;
-
-    @XmlElement(defaultValue = "true")
-    private boolean enabled = true;
-
-    @XmlElement(required = true)
+    private String dir;
     private String cronExp;
 
-    private File dir;
+    @XmlElement(defaultValue = "false")
+    private boolean inPlace;
 
     @XmlElement(defaultValue = DEFAULT_RETENTION_PERIOD_HOURS + "")
     private int retentionPeriodHours = DEFAULT_RETENTION_PERIOD_HOURS;
@@ -69,41 +63,33 @@ public class BackupDescriptor implements Descriptor {
     @XmlTransient
     private File backupDir;
 
-    public String getKey() {
-        return key;
-    }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public File getDir() {
+    public String getDir() {
         return dir;
     }
 
-    public void setDir(File dir) {
+    public void setDir(String dir) {
         this.dir = dir;
     }
 
     public File getBackupDir() {
         if (backupDir == null) {
             if (dir == null) {
-                backupDir = new File(ArtifactoryHome.getBackupDir(), key);
+                try {
+                    backupDir = ArtifactoryHome.getOrCreateSubDir("backup");
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(
+                            "Failed to create backup directory: " + backupDir.getAbsolutePath(), e);
+                }
             } else {
-                backupDir = dir;
+                backupDir = new File(dir);
                 try {
                     FileUtils.forceMkdir(backupDir);
                 } catch (IOException e) {
-                    throw new IllegalArgumentException("Backup directory provided in configuration: '" +
-                            backupDir.getAbsolutePath() + "' cannot be created or is not a directory.");
+                    throw new IllegalArgumentException(
+                            "Backup directory provided in configuration: '" +
+                                    backupDir.getAbsolutePath() +
+                                    "' cannot be created or is not a directory.");
                 }
             }
         }
@@ -118,6 +104,14 @@ public class BackupDescriptor implements Descriptor {
         this.cronExp = cronExp;
     }
 
+    public boolean isInPlace() {
+        return inPlace;
+    }
+
+    public void setInPlace(boolean inPlace) {
+        this.inPlace = inPlace;
+    }
+
     public int getRetentionPeriodHours() {
         return retentionPeriodHours;
     }
@@ -125,6 +119,7 @@ public class BackupDescriptor implements Descriptor {
     public void setRetentionPeriodHours(int retentionPeriodHours) {
         this.retentionPeriodHours = retentionPeriodHours;
     }
+
 
     public boolean isCreateArchive() {
         return createArchive;
@@ -135,23 +130,6 @@ public class BackupDescriptor implements Descriptor {
     }
 
     public List<RealRepoDescriptor> getExcludedRepositories() {
-        /**
-         * Even though there should not be any virtual repos in the list, it is checked again as a safety net
-         */
-        List erased = new ArrayList(excludedRepositories);
-        for (int i = 0; i < erased.size(); i++) {
-            Object anErased = erased.get(i);
-            RepoDescriptor descriptorToCheck = (RepoDescriptor) anErased;
-            if (!descriptorToCheck.isReal()) {
-                String virtualRepoKey = descriptorToCheck.getKey();
-                List<RepoDescriptor> repositories = ((VirtualRepoDescriptor) descriptorToCheck).getRepositories();
-                for (RepoDescriptor descriptor : repositories) {
-                    if ((descriptor.isReal()) || (virtualRepoKey.contains(descriptor.getKey()))) {
-                        excludedRepositories.set(i, (RealRepoDescriptor) descriptor);
-                    }
-                }
-            }
-        }
         return excludedRepositories;
     }
 
@@ -159,11 +137,4 @@ public class BackupDescriptor implements Descriptor {
         this.excludedRepositories = excludedRepositories;
     }
 
-    public boolean removeExcludedRepository(RealRepoDescriptor realRepo) {
-        return excludedRepositories.remove(realRepo);
-    }
-
-    public boolean isIncremental() {
-        return retentionPeriodHours <= 0;
-    }
 }

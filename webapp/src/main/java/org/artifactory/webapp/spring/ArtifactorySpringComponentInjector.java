@@ -16,6 +16,7 @@
  */
 package org.artifactory.webapp.spring;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +28,8 @@ import javax.servlet.ServletContext;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class ArtifactorySpringComponentInjector extends SpringComponentInjector {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ArtifactorySpringComponentInjector.class);
 
     public ArtifactorySpringComponentInjector(WebApplication webapp) {
         //We override the logic of locating the application context since the default logic checks

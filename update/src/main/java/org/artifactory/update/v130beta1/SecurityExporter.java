@@ -17,6 +17,7 @@
 package org.artifactory.update.v130beta1;
 
 import org.apache.jackrabbit.util.Text;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
@@ -24,14 +25,11 @@ import org.artifactory.api.config.ImportableExportable;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AceInfo;
 import org.artifactory.api.security.AclInfo;
-import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.update.jcr.JcrPathUpdate;
 import org.artifactory.update.jcr.JcrSessionProvider;
 import org.artifactory.update.utils.UpdateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -48,7 +46,7 @@ import java.util.List;
  */
 public class SecurityExporter implements ImportableExportable {
     private static final Logger log =
-            LoggerFactory.getLogger(SecurityExporter.class);
+            Logger.getLogger(SecurityExporter.class);
 
     private static final String ACLS_KEY = "acls";
     private static final String OCM_CLASSNAME = "ocm:classname";
@@ -77,7 +75,7 @@ public class SecurityExporter implements ImportableExportable {
         List<UserInfo> users = getAllUsers();
         status.setStatus("Extracting all ACLs", log);
         List<AclInfo> acls = getAllAcls();
-        UpdateUtils.exportSecurityData(settings.getBaseDir(), users, acls, new ArrayList<GroupInfo>());
+        UpdateUtils.exportSecurityData(settings.getBaseDir(), users, acls);
         status.setStatus("Security settings successfully exported", log);
     }
 
@@ -97,11 +95,7 @@ public class SecurityExporter implements ImportableExportable {
                     PermissionTargetInfo permissionTarget = UpdateUtils
                             .createFromObjectIdentity(Text.unescape(objectIdentity));
                     AclInfo acl = new AclInfo(permissionTarget);
-                    if (node.hasProperty("updatedBy")) {
-                        acl.setUpdatedBy(node.getProperty("updatedBy").getString());
-                    } else {
-                        acl.setUpdatedBy("export");
-                    }
+                    acl.setUpdatedBy(node.getProperty("updatedBy").getString());
                     result.add(acl);
                     NodeIterator children = node.getNodes();
                     while (children.hasNext()) {

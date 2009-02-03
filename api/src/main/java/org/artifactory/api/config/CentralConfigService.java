@@ -18,25 +18,21 @@ package org.artifactory.api.config;
 
 import org.artifactory.descriptor.DescriptorAware;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 
 import java.text.DateFormat;
 
 /**
  * User: freds Date: Aug 3, 2008 Time: 6:22:39 PM
  */
-public interface CentralConfigService extends DescriptorAware<CentralConfigDescriptor>, ImportableExportable {
+public interface CentralConfigService
+        extends DescriptorAware<CentralConfigDescriptor>, ImportableExportable {
     DateFormat getDateFormatter();
 
     void reload();
-
-    void saveEditedDescriptorAndReload();
 
     String getServerName();
 
     String format(long date);
 
     VersionInfo getVersionInfo();
-
-    MutableCentralConfigDescriptor getDescriptorForEditing();
 }

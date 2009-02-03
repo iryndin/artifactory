@@ -1,6 +1,7 @@
 package org.artifactory.backup;
 
-import org.artifactory.schedule.quartz.QuartzCommand;
+import org.apache.log4j.Logger;
+import org.artifactory.schedule.ArtifactoryJob;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.quartz.JobExecutionContext;
@@ -11,15 +12,18 @@ import java.util.Date;
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class BackupJob extends QuartzCommand {
+public class BackupJob extends ArtifactoryJob {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(BackupJob.class);
 
     @Override
-    protected void onExecute(JobExecutionContext jobContext) throws JobExecutionException {
+    protected void onExecute(JobExecutionContext jobContext)
+            throws JobExecutionException {
         final int backupIndex = jobContext.getJobDetail().getJobDataMap().getInt("index");
         InternalArtifactoryContext context = InternalContextHelper.get();
-        InternalBackupService backup = context.beanForType(InternalBackupService.class);
+        BackupServiceImpl backup = context.beanForType(BackupServiceImpl.class);
         Date fireTime = jobContext.getFireTime();
-        boolean success = backup.backupSystem(context, backupIndex);
+        boolean success = backup.backupSystem(fireTime, context, backupIndex);
         if (success) {
             //If backup was successful continue with old backups cleanup
             backup.cleanupOldBackups(fireTime, backupIndex);

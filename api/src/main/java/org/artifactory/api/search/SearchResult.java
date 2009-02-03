@@ -1,6 +1,7 @@
 package org.artifactory.api.search;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.Info;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
@@ -12,6 +13,8 @@ import java.io.File;
  */
 @XStreamAlias("searchResult")
 public class SearchResult implements Info {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(SearchResult.class);
 
     private final FileInfo fileInfo;
     private final MavenArtifactInfo artifact;

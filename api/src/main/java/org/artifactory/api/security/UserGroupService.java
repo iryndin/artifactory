@@ -16,10 +16,7 @@
  */
 package org.artifactory.api.security;
 
-import org.artifactory.api.repo.Lock;
-
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: freds Date: Aug 5, 2008 Time: 6:50:30 PM
@@ -36,28 +33,15 @@ public interface UserGroupService {
 
     void updateUser(UserInfo user);
 
-    @Lock(transactional = true)
     boolean createUser(UserInfo user);
 
-    @Lock(transactional = true)
     void deleteUser(String username);
 
     List<UserInfo> getAllUsers(boolean includeAdmins);
 
-    @Lock(transactional = true)
     void deleteGroup(String groupname);
 
     List<GroupInfo> getAllGroups();
-
-    /**
-     * @return A set of all the groups that should be added by default to newly created users.
-     */
-    Set<GroupInfo> getNewUserDefaultGroups();
-
-    /**
-     * @return A set of all the groups names that should be added by default to newly created users.
-     */
-    Set<String> getNewUserDefaultGroupsNames();
 
     /**
      * Updates a users group. Group name update is not allowed.
@@ -66,7 +50,6 @@ public interface UserGroupService {
      */
     void updateGroup(GroupInfo groupInfo);
 
-    @Lock(transactional = true)
     boolean createGroup(GroupInfo groupInfo);
 
     /**
@@ -75,7 +58,6 @@ public interface UserGroupService {
      * @param groupName The group's unique name.
      * @param usernames The list of usernames.
      */
-    @Lock(transactional = true)
     void addUsersToGroup(String groupName, List<String> usernames);
 
     /**
@@ -84,7 +66,6 @@ public interface UserGroupService {
      * @param groupName The group name
      * @param usernames The list of usernames
      */
-    @Lock(transactional = true)
     void removeUsersFromGroup(String groupName, List<String> usernames);
 
     /**

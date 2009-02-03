@@ -16,56 +16,32 @@
 */
 package org.artifactory.api.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public class StatusHolder implements Serializable {
-    private static final Logger log = LoggerFactory.getLogger(StatusHolder.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(StatusHolder.class);
 
     protected static final String MSG_IDLE = "Idle.";
-    public static final int CODE_OK = 200;
-    public static final int CODE_INTERNAL_ERROR = 500;
+    protected static final int CODE_OK = 200;
+    protected static final int CODE_INTERNAL_ERROR = 500;
 
     private boolean activateLogging;
     private StatusEntry statusEntry;
-    private File callback;
-    private StatusEntry lastError = null;
-    private boolean failFast = false;
-    private boolean verbose = false;
+    private Object callback;
 
     public StatusHolder() {
-        statusEntry = new StatusEntry(CODE_OK, StatusEntryLevel.DEBUG, MSG_IDLE, null);
+        statusEntry = new StatusEntry(CODE_OK, false, MSG_IDLE, null);
         activateLogging = true;
-    }
-
-    public void setFailFast(boolean failFast) {
-        this.failFast = failFast;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    public boolean isFailFast() {
-        return failFast;
-    }
-
-    public boolean isVerbose() {
-        return verbose;
     }
 
     public StatusEntry getStatusEntry() {
         return statusEntry;
-    }
-
-    public StatusEntry getLastError() {
-        return lastError;
     }
 
     public final void setDebug(String statusMsg, Logger logger) {
@@ -80,27 +56,30 @@ public class StatusHolder implements Serializable {
         addStatus(statusMsg, statusCode, logger, false);
     }
 
-    protected StatusEntry addStatus(String statusMsg, int statusCode, Logger logger,
-            boolean debug) {
-        StatusEntry result;
-        if (debug) {
-            result = new StatusEntry(statusCode, StatusEntryLevel.DEBUG, statusMsg, null);
-        } else {
-            result = new StatusEntry(statusCode, statusMsg);
+    protected void addStatus(String statusMsg, int statusCode, Logger logger, boolean debug) {
+        statusEntry = new StatusEntry(statusCode, statusMsg);
+        if (logger == null) {
+            logger = LOGGER;
         }
         if (activateLogging) {
-            logEntry(result, logger);
+            if (debug) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(statusMsg);
+                }
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info(statusMsg);
+                }
+            }
         }
-        statusEntry = result;
-        return result;
     }
 
-    public void setError(String statusMsg, Logger logger) {
-        setError(statusMsg, CODE_INTERNAL_ERROR, null, logger);
+    public void setError(String statusMsg) {
+        setError(statusMsg, CODE_INTERNAL_ERROR, null, null);
     }
 
-    public void setError(String statusMsg, int statusCode, Logger logger) {
-        setError(statusMsg, statusCode, null, logger);
+    public void setError(String statusMsg, int statusCode) {
+        setError(statusMsg, statusCode, null, null);
     }
 
     public void setError(String status, Throwable throwable, Logger logger) {
@@ -115,106 +94,48 @@ public class StatusHolder implements Serializable {
         addError(statusMsg, statusCode, throwable, logger, false);
     }
 
-    public void setWarning(String statusMsg, Logger logger) {
-        addError(statusMsg, CODE_INTERNAL_ERROR, null, logger, true);
-    }
-
-    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable, Logger logger, boolean warn) {
-        StatusEntry result;
-        if (warn) {
-            result = new StatusEntry(statusCode, StatusEntryLevel.WARNING, statusMsg, throwable);
-        } else {
-            result = new StatusEntry(statusCode, StatusEntryLevel.ERROR, statusMsg, throwable);
-            lastError = result;
-        }
-        if (isActivateLogging()) {
-            logEntry(result, logger);
-        }
-        statusEntry = result;
-        if (!warn && isFailFast()) {
-            if (throwable != null) {
-                if (throwable instanceof RuntimeException) {
-                    throw (RuntimeException) throwable;
-                } else if (throwable instanceof Error) {
-                    throw (Error) throwable;
-                } else {
-                    throw new RuntimeException("Fail fast exception for " + statusEntry.getStatusMessage(), throwable);
-                }
+    protected void addError(String statusMsg, int statusCode, Throwable throwable, Logger logger,
+            boolean warn) {
+        statusEntry = new StatusEntry(statusCode, true, statusMsg, throwable);
+        if (activateLogging) {
+            if (logger == null) {
+                logger = LOGGER;
+            }
+            if (warn) {
+                logger.warn(statusMsg, throwable);
+            } else if (logger.isDebugEnabled()) {
+                logger.error(statusMsg, throwable);
             } else {
-                throw new RuntimeException("Fail fast exception for " + statusEntry.getStatusMessage());
-            }
-        }
-        return result;
-    }
-
-    @SuppressWarnings({"OverlyComplexMethod"})
-    protected void logEntry(StatusEntry entry, Logger logger) {
-        boolean isExternalLogActive = (logger != null);
-        String statusMessage = entry.getStatusMessage();
-        if (entry.isWarning()) {
-            log.warn(statusMessage);
-            if (isExternalLogActive && logger.isWarnEnabled()) {
-                logger.warn(statusMessage);
-            }
-        } else if (entry.isError()) {
-            Throwable throwable = entry.getException();
-            if (isVerbose()) {
-                log.error(statusMessage, throwable);
-            } else {
-                log.error(statusMessage);
-            }
-            if (isExternalLogActive && logger.isErrorEnabled()) {
-                if (isVerbose()) {
-                    logger.error(statusMessage, throwable);
+                if (throwable != null) {
+                    logger.error(statusMsg + ": " + throwable.getMessage());
                 } else {
-                    logger.error(statusMessage);
+                    logger.error(statusMsg);
                 }
-            }
-        } else if (entry.isDebug()) {
-            if (isVerbose()) {
-                log.debug(statusMessage);
-            }
-            if (isExternalLogActive && logger.isDebugEnabled()) {
-                logger.debug(statusMessage);
-            }
-        } else {
-            log.info(statusMessage);
-            if (isExternalLogActive && logger.isInfoEnabled()) {
-                logger.info(statusMessage);
             }
         }
     }
 
     public String getStatusMsg() {
-        if (lastError != null) {
-            return lastError.getStatusMessage();
-        }
         return statusEntry.getStatusMessage();
     }
 
-    public File getCallback() {
+    public Object getCallback() {
         return callback;
     }
 
-    public void setCallback(File callback) {
+    public void setCallback(Object callback) {
         this.callback = callback;
     }
 
     public boolean isError() {
-        return lastError != null;
+        return statusEntry.isError();
     }
 
     public Throwable getException() {
-        if (lastError != null) {
-            return lastError.getException();
-        }
         return statusEntry.getException();
     }
 
     public int getStatusCode() {
-        if (lastError != null) {
-            return lastError.getStatusCode();
-        }
         return statusEntry.getStatusCode();
     }
 
@@ -227,12 +148,10 @@ public class StatusHolder implements Serializable {
     }
 
     public void reset() {
-        lastError = null;
-        statusEntry = new StatusEntry(CODE_OK, StatusEntryLevel.DEBUG, MSG_IDLE, null);
+        statusEntry = new StatusEntry(CODE_OK, false, MSG_IDLE, null);
         activateLogging = true;
     }
 
-    @Override
     public String toString() {
         return "StatusHolder{" +
                 "activateLogging=" + activateLogging +

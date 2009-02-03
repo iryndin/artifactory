@@ -17,9 +17,8 @@
 package org.artifactory.io;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.common.ResourceStreamHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -31,7 +30,8 @@ import java.io.InputStream;
  * Created by IntelliJ IDEA. User: yoav
  */
 public class TempFileStreamHandle implements ResourceStreamHandle {
-    private static final Logger log = LoggerFactory.getLogger(NonClosingInputStream.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(NonClosingInputStream.class);
 
     private final File tmpFile;
     private final InputStream is;
@@ -49,7 +49,7 @@ public class TempFileStreamHandle implements ResourceStreamHandle {
         IOUtils.closeQuietly(is);
         boolean deleted = tmpFile.delete();
         if (!deleted) {
-            log.warn("Failed to delete temporary file '" + tmpFile.getPath() + "'.");
+            LOGGER.warn("Failed to delete temporary file '" + tmpFile.getPath() + "'.");
         }
     }
 }

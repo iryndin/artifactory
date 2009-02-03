@@ -18,6 +18,7 @@ package org.artifactory.repo.virtual;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
+import org.apache.log4j.Logger;
 import org.artifactory.api.repo.VirtualRepoItem;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
@@ -31,8 +32,6 @@ import org.artifactory.repo.RemoteRepo;
 import org.artifactory.repo.Repo;
 import org.artifactory.repo.RepoBase;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ import java.util.TreeMap;
 
 public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         implements Repo<VirtualRepoDescriptor> {
-    private static final Logger log = LoggerFactory.getLogger(VirtualRepo.class);
+    private final static Logger LOGGER = Logger.getLogger(VirtualRepo.class);
 
     private OrderedMap<String, LocalRepo> localRepositoriesMap =
             new ListOrderedMap<String, LocalRepo>();
@@ -82,9 +81,9 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
     }
 
     /**
-     * Must be called after all repositories were built because we save references to other repositories.
+     * Must be called after all repositories were built because we save references to other
+     * repositories.
      */
-    @SuppressWarnings({"unchecked"})
     public void init() {
         //Split the repositories into local, remote and virtual
         List<RepoDescriptor> repositories = getDescriptor().getRepositories();
@@ -105,8 +104,10 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         }
     }
 
+
     /**
-     * Another init method to assemble the search repositories. Must be called after the init() method!
+     * Another init method to assemble the search repositories. Must be called after the init()
+     * method!
      */
     public void initSearchRepositoryLists() {
         deeplyAssembleSearchRepositoryLists(
@@ -204,7 +205,8 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
     /**
      * Gets a local or cache repository by key
      *
-     * @param key The key for a cache can either be the remote repository one or the cache one(ends with "-cache")
+     * @param key The key for a cache can either be the remote repository one or the cache one(ends
+     *            with "-cache")
      * @return
      */
     public LocalRepo localOrCachedRepositoryByKey(String key) {
@@ -256,7 +258,7 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
             if (!repo.itemExists(path)) {
                 continue;
             }
-            JcrFolder dir = (JcrFolder) repo.getJcrFsItem(path);
+            JcrFolder dir = (JcrFolder) repo.getFsItem(path);
             List<JcrFsItem> items = dir.getItems();
             for (JcrFsItem item : items) {
                 String itemPath = item.getRelativePath();
@@ -307,7 +309,7 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
                         virtualRepoKeys += ", ";
                     }
                 }
-                log.warn(
+                LOGGER.warn(
                         "Repositories list assembly has been truncated to avoid recursive loop " +
                                 "on the virtual repo '" + key +
                                 "'. Already processed virtual repositories: " + virtualRepoKeys +

@@ -35,14 +35,11 @@ public interface RemoteRepo<T extends RemoteRepoDescriptor> extends RealRepo<T> 
     /**
      * Retrieves a resource from the remote repository
      *
+     * @param relPath
      * @return A handle for the remote resource
+     * @throws IOException
      */
     ResourceStreamHandle retrieveResource(String relPath) throws IOException;
-
-    /**
-     * Retrieves a resource remotely if the remote resource was found and is newer
-     */
-    ResourceStreamHandle conditionalRetrieveResource(String relPath) throws IOException;
 
     long getFailedRetrievalCachePeriodSecs();
 
@@ -50,17 +47,12 @@ public interface RemoteRepo<T extends RemoteRepoDescriptor> extends RealRepo<T> 
 
     void clearCaches();
 
-    /**
-     * Removes a path from the repository caches (missed and failed)
-     *
-     * @param path The path to remove from the cache. The path is relative path from the repository root.
-     * @param removeSubPaths    If true will also remove any sub paths from the caches.
-     */
-    void removeFromCaches(String path, boolean removeSubPaths);
+    void removeFromCaches(String path);
 
     boolean isOffline();
 
     RemoteRepoType getType();
 
-    ResourceStreamHandle downloadAndSave(RepoResource res, RepoResource targetResource) throws IOException;
+    ResourceStreamHandle downloadAndSave(RepoResource res, RepoResource targetResource)
+            throws IOException;
 }

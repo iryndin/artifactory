@@ -31,6 +31,12 @@
 
     <bean id="maven" class="org.artifactory.maven.Maven"/>
 
+    <bean id="keyVal" class="org.artifactory.keyval.KeyVals">
+        <constructor-arg ref="dataSource"/>
+        <property name="version" value="${artifactory.version}"/>
+        <property name="revision" value="${artifactory.revision}"/>
+    </bean>
+
     <import resource="scheduling.xml"/>
     <import resource="security.xml"/>
 </beans>

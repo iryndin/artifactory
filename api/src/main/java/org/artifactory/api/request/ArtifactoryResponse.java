@@ -16,7 +16,7 @@
  */
 package org.artifactory.api.request;
 
-import org.slf4j.Logger;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,10 @@ import java.io.PrintWriter;
 public interface ArtifactoryResponse {
     void setException(Exception exception);
 
-    enum Status {
-        UNSET, SUCCESS, FAILURE
+
+    public static enum Success {
+        unset, success, failure
+
     }
 
     void setLastModified(long lastModified);
@@ -37,7 +39,7 @@ public interface ArtifactoryResponse {
 
     void setContentType(String contentType);
 
-    OutputStream getOutputStream() throws IOException;
+    public OutputStream getOutputStream() throws IOException;
 
     PrintWriter getWriter() throws IOException;
 
