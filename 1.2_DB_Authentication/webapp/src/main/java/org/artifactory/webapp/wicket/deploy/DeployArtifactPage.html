@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+        dojo.require("dojo.widget.Menu2");
+        dojo.require("dojo.widget.Checkbox");
+    </script>
+    <script type="text/javascript">
+        function cancel() {
+            var callbackUrl = dojo.byId("cancel").getAttribute("callbackUrl");
+            wicketAjaxPost(callbackUrl);
+            return true;
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="css/upload.css"/>
+</wicket:head>
+
+<body>
+<wicket:extend>
+    <h2 class="pageSubContentTitle">Artifact Deployer</h2>
+
+    <form wicket:id="uploadForm">
+        <div class="formHeader">
+            <span class="noticeMessage">
+                Upload a deployable artifact file, edit the artifact details and then deploy it.
+            </span>
+            Artifact File
+        </div>
+        <input wicket:id="fileInput" type="file"/>
+        <input type="submit" value="Upload!"/>
+        <span wicket:id="progress">[[ajax upload progressbar]]</span>
+    </form>
+    <div>
+        <span wicket:id="uploadFeedback"/>
+    </div>
+
+    <form wicket:id="artifactForm" id="artifactForm">
+        <div class="formHeader">Artifact Properties</div>
+        <table class="formBody" style="width: 100%;">
+            <tr style="border-right:0px">
+                <td class="formLabel" style="border-right:0px">GroupId</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="group" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">ArtifactId</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="artifact" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">Version</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="version" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">Classifier</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="classifier" type="text" class="medium"
+                           dojoType="ValidationTextBox"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">Packaging</td>
+                <td width="100%" style="border-right:0px">
+                    <select wicket:id="packaging"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">Use Jar POM/Generate default POM
+                </td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="deployPom" type="checkbox" dojoType="Checkbox"
+                           widgetId="deployPom"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel" style="border-right:0px">Target local repository</td>
+                <td width="100%" style="border-right:0px">
+                    <select wicket:id="targetRepo"/>
+                </td>
+            </tr>
+        </table>
+        <table style="border:0px">
+            <tr align="center">
+                <td style="width: 7em;width:50%;border:none" align="right">
+                    <button dojoType="Button" wicket:id="cancel" id="cancel">
+                        Cancel
+                    </button>
+                </td>
+                <td style="width: 7em;width:50%;border:none" align="left">
+                    <button dojoType="Button" wicket:id="artifactSubmit" widgetId="artifactSubmit"
+                            onClick="dojo.byId('artifactForm').submit();">
+                        Deploy
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</wicket:extend>
+</body>
+</html>

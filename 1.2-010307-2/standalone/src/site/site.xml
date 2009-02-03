@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<project name="Artifactory Standalone">
+    <skin>
+        <groupId>org.jfrog.maven.skins</groupId>
+        <artifactId>jfrog-sf</artifactId>
+        <version>1.0.5</version>
+    </skin>
+    <bannerLeft>
+        <name>jfrog</name>
+        <src>/images/logos/jfrog.png</src>
+        <href>http://www.jfrog.org/</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>Artifactory Standalone</name>
+    </bannerRight>
+    <poweredBy>
+        <logo name="Wicket" href="http://wicket.sourceforge.net/" img="images/logos/wicket-logo.png"/>
+        <logo name="Jackrabbit" href="http://jackrabbit.apache.org/" img="images/logos/jackrabbitlogo.gif"/>
+    </poweredBy>
+    <body>
+        <breadcrumbs>
+            <item href="http://www.jfrog.org/" name="jfrog"/>
+            <item href="http://www.jfrog.org/sites/artifactory/1.2" name="Artifactory 1.2"/>
+            <item href="http://www.jfrog.org/sites/artifactory/1.2/artifactory-standalone"
+                  name="Artifactory Standalone"/>
+        </breadcrumbs>
+        <links>
+            <item name="Live Demo" href="http://www.jfrog.org/artifactory/"/>
+            <item name="Wicket" href="http://wicket.sourceforge.net/"/>
+        </links>
+
+        <menu name="Overview">
+            <item name="Introduction" href="../introduction.html"/>
+            <item name="Configuration Help" href="../configuration.html"/>
+            <item name="Installation Help" href="../install.html"/>
+            <!--
+            <item name="Maven Repository Settings" href="repositorySettings.html" />
+            <item name="Usage" href="usage.html" />
+            -->
+        </menu>
+        <menu name="Modules">
+            <item name="Artifactory Core" href="../artifactory-core/index.html"/>
+            <item name="Artifactory Webapp" href="../artifactory-webapp/index.html"/>
+            <item name="Artifactory Standalone" href="../artifactory-standalone/index.html"/>
+            <item name="Artifactory Wagon" href="../artifactory-wagon/index.html"/>
+        </menu>
+        ${reports}
+    </body>
+</project>

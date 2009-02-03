@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <title></title>
+</head>
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Dialog");
+    </script>
+    <script type="text/javascript">
+        var dlg;
+        function init(e) {
+            dlg = dojo.widget.byId("contentDialog");
+            var btn = document.getElementById("contentDialogHider");
+            dlg.setCloseControl(btn);
+        }
+        dojo.addOnLoad(init);
+    </script>
+</wicket:head>
+
+<body>
+
+<wicket:panel>
+    <div dojoType="dialog" id="contentDialog" bgColor="white" bgOpacity="0.5" toggle="fade"
+         toggleDuration="250" refreshOnShow="true">
+        <form onsubmit="return false;">
+            <div id="content" style="overflow:auto; padding: 12px; margin: 1em 7px 1em 7px;">
+                <div wicket:id="contentText"
+                     style="white-space:pre;font-family:monospace;font-size:medium;">
+                </div>
+            </div>
+            <div align="right" style="padding-top:1em;">
+                <input type="button" id="contentDialogHider" value="OK">
+            </div>
+        </form>
+    </div>
+</wicket:panel>
+</body>
+</html>
