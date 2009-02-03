@@ -16,6 +16,7 @@
  */
 package org.artifactory.maven;
 
+import org.apache.log4j.Logger;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferEventSupport;
 
@@ -28,6 +29,9 @@ import java.io.IOException;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class TransferProgressReportingInputStream extends FileInputStream {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER =
+            Logger.getLogger(TransferProgressReportingInputStream.class);
 
     private TransferEventSupport eventSupport;
     private TransferEvent event;

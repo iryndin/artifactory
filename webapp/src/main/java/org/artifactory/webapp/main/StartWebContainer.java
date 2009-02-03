@@ -18,8 +18,8 @@ package org.artifactory.webapp.main;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
+import org.apache.log4j.Logger;
+import org.artifactory.ArtifactoryHome;
 import org.mortbay.jetty.Server;
 import org.mortbay.xml.XmlConfiguration;
 
@@ -30,16 +30,20 @@ import java.net.URL;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class StartWebContainer {
+    @SuppressWarnings({"UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(StartWebContainer.class);
+
+    private static final Log log = LogFactory.getLog(StartWebContainer.class);
 
     /**
      * Main function, starts the jetty server.
+     *
+     * @param args
      */
     public static void main(String[] args) {
         Server server = null;
-        ArtifactoryHome.setHomeDir(new File("webapp/src"));
-        System.setProperty(ConstantsValue.devDebugMode.getPropertyName(), "true");
-        // create the logger only after artifactory.home is set
-        Log log = LogFactory.getLog(StartWebContainer.class);
+        String artifactotyHome = new File("webapp/src").getAbsolutePath();
+        System.setProperty(ArtifactoryHome.SYS_PROP, artifactotyHome);
         try {
             URL configUrl = new URL("file:webapp/src/etc/jetty.xml");
             XmlConfiguration xmlConfiguration = new XmlConfiguration(configUrl);
@@ -57,4 +61,5 @@ public class StartWebContainer {
             }
         }
     }
+
 }

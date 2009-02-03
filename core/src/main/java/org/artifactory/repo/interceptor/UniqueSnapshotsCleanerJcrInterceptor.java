@@ -1,70 +1,71 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.artifactory.repo.interceptor;
 
 import org.apache.commons.collections15.SortedBag;
 import org.apache.commons.collections15.bag.TreeBag;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.jcr.fs.JcrFile;
-import org.artifactory.jcr.fs.JcrFolder;
-import org.artifactory.jcr.fs.JcrFsItem;
+import org.apache.log4j.Logger;
+import org.artifactory.jcr.JcrCallback;
+import org.artifactory.jcr.JcrFile;
+import org.artifactory.jcr.JcrFolder;
+import org.artifactory.jcr.JcrFsItem;
+import org.artifactory.jcr.JcrHelper;
+import org.artifactory.jcr.JcrSessionWrapper;
 import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.resource.RepoResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.spring.ArtifactoryContext;
+import org.artifactory.spring.ContextHelper;
 
+import javax.jcr.RepositoryException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoInterceptor {
-    private static final Logger log =
-            LoggerFactory.getLogger(UniqueSnapshotsCleanerJcrInterceptor.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER =
+            Logger.getLogger(UniqueSnapshotsCleanerJcrInterceptor.class);
 
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public InputStream beforeResourceSave(RepoResource res, LocalRepo repo, InputStream in)
             throws Exception {
         return in;
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "ConstantConditions"})
     public void afterResourceSave(final RepoResource res, final LocalRepo repo) throws Exception {
-        String path = res.getRepoPath().getPath();
-        JcrFile file = repo.getLockedJcrFile(path, true);
-        if (!NamingUtils.isSnapshotMetadata(path)) {
+        ArtifactoryContext context = ContextHelper.get();
+        JcrHelper jcr = context.getJcr();
+        JcrFile file = jcr.doInSession(new JcrCallback<JcrFile>() {
+            @SuppressWarnings({"UnnecessaryLocalVariable"})
+            public JcrFile doInJcr(JcrSessionWrapper session) throws RepositoryException {
+                String path = res.getPath();
+                JcrFile file = (JcrFile) repo.getFsItem(path, session);
+                return file;
+            }
+        });
+        String path = file.relPath();
+        if (!MavenUtils.isSnapshotMetadata(path)) {
             return;
         }
         int maxUniqueSnapshots = repo.getMaxUniqueSnapshots();
         if (maxUniqueSnapshots > 0) {
             //Read the last updated and delete old unique snapshot artifacts
-            JcrFolder snapshotFolder = file.getParentFolder();
+            JcrFolder snapshotFolder = file.getParent();
             List<JcrFsItem> children = snapshotFolder.getItems();
             List<ItemDesc> itemsByDate = new ArrayList<ItemDesc>();
             for (JcrFsItem child : children) {
                 String name = child.getName();
-                if (MavenNaming.isVersionUniqueSnapshot(name)) {
-                    String childTimeStamp = MavenNaming.getUniqueSnapshotVersionTimestamp(name);
+                Matcher m = MavenUtils.UNIQUE_SNAPSHOT_NAME_PATTERN.matcher(name);
+                if (m.matches()) {
+                    String childTimeStamp = m.group(3);
                     Date childLastUpdated = MavenUtils.timestampToDate(childTimeStamp);
                     //Add it to the sorted set - newer items closer to the head
                     ItemDesc newDesc = new ItemDesc(child, childLastUpdated);
@@ -88,8 +89,8 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             itemsByDate.removeAll(itemsToKeep);
             for (ItemDesc item : itemsByDate) {
                 item.item.delete();
-                if (log.isInfoEnabled()) {
-                    log.info("Removed old unique snapshot '" + item.item.getRelativePath() + "'.");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Removed old unique snapshot '" + item.item.relPath() + "'.");
                 }
             }
         }
@@ -108,7 +109,6 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             return -1 * lastModified.compareTo(o.lastModified);
         }
 
-        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -121,7 +121,6 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
 
         }
 
-        @Override
         public int hashCode() {
             int result;
             result = item.hashCode();
