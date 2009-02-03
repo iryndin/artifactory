@@ -1,0 +1,28 @@
+<wicket:extend>
+    <div wicket:id="feedback"/>
+    <form wicket:id="newTargetForm">
+        <table class="formBody">
+            <tr>
+                <td class="form_label">Repository</td>
+                <td>
+                    <select wicket:id="repoKey"/>
+                </td>
+                <td>
+                    <input wicket:id="anyRepo" type="checkbox"/> Any repository
+                </td>   
+            </tr>
+            <tr>
+                <td class="form_label">Path prefix<span wicket:id="pathPrefixHelp"></span></td>
+                <td>
+                    <input wicket:id="path" type="text" class="medium"/>
+                </td>
+                <td>
+                    <input wicket:id="anyPath" type="checkbox"/> Any path
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="button" wicket:id="submit"/>
+    </form>
+
+</wicket:extend>
