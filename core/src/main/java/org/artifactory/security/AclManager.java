@@ -17,49 +17,40 @@
 package org.artifactory.security;
 
 import org.artifactory.api.security.AclInfo;
-import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.spring.PostInitializingBean;
+import org.springframework.security.acls.AlreadyExistsException;
 import org.springframework.security.acls.NotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public interface AclManager extends ReloadableBean {
+public interface AclManager extends PostInitializingBean {
     List<Acl> getAllAcls();
 
-    @Transactional
     List<Acl> getAllAcls(ArtifactorySid[] sids);
 
-    @Transactional
     List<AclInfo> getAllAclDescriptors();
 
-    @Transactional
     Acl createAcl(Acl acl);
 
     void deleteAcl(PermissionTarget permissionTarget);
 
     void deleteAllAcls();
 
-    @Transactional
     Acl updateAcl(Acl acl) throws NotFoundException;
 
-    @Transactional
     Acl createAcl(PermissionTarget permissionTarget) throws AlreadyExistsException;
 
-    @Transactional
     List<PermissionTarget> getAllPermissionTargets();
 
     /**
      * @param permissionTarget The permission target which is the Acl id.
      * @return An Acl by its id - the permission target. Null if not found
      */
-    @Transactional
     Acl findAclById(PermissionTarget permissionTarget);
 
-    @Transactional
     void createAnythingPermision(SimpleUser anonUser);
 
     void removeAllUserAces(String username);

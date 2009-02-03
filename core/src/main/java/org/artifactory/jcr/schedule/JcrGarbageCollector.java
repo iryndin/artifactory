@@ -16,24 +16,61 @@
  */
 package org.artifactory.jcr.schedule;
 
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.data.GarbageCollector;
+import org.apache.log4j.Logger;
 import org.artifactory.jcr.JcrService;
-import org.artifactory.schedule.quartz.QuartzCommand;
+import org.artifactory.jcr.JcrSession;
+import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
+import org.artifactory.schedule.ArtifactoryTimerTask;
 import org.artifactory.spring.InternalContextHelper;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.jcr.RepositoryException;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class JcrGarbageCollector extends QuartzCommand {
-    @SuppressWarnings({"UnusedDeclaration"})
-    private static final Logger log = LoggerFactory.getLogger(JcrGarbageCollector.class);
+public class JcrGarbageCollector extends ArtifactoryTimerTask {
+    private final static Logger LOGGER = Logger.getLogger(WagonManagerTempArtifactsCleaner.class);
 
     @Override
-    protected void onExecute(JobExecutionContext context) throws JobExecutionException {
+    @Transactional
+    public void onRun() {
         JcrService jcr = InternalContextHelper.get().getJcrService();
-        jcr.garbageCollect();
+        JcrSession session = jcr.getManagedSession();
+        GarbageCollector gc = null;
+        try {
+            SessionImpl internalSession = (SessionImpl) session.getSession();
+            gc = internalSession.createDataStoreGarbageCollector();
+            if (gc.getDataStore() == null) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Datastore not yet initialize. Not running garbage collector...");
+                }
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Runnning Jackrabbit's datastore garbage collector...");
+            }
+            gc.setSleepBetweenNodes(1000);
+            gc.scan();
+            gc.stopScan();
+            int count = gc.deleteUnused();
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Jackrabbit's datastore garbage collector deleted " + count +
+                        " unreferenced item(s).");
+            }
+        } catch (Exception e) {
+            if (gc != null) {
+                try {
+                    gc.stopScan();
+                } catch (RepositoryException re) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("GC scanning could not be stopped.", re);
+                    }
+                }
+            }
+            throw new RuntimeException(
+                    "Jackrabbit's datastore garbage collector execution failed.", e);
+        }
     }
 }

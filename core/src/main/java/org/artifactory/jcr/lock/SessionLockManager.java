@@ -16,41 +16,97 @@
  */
 package org.artifactory.jcr.lock;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.jcr.md.MetadataKey;
+import org.artifactory.jcr.md.MetadataValue;
 
-import org.artifactory.tx.SessionResource;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author freds
  * @date Sep 5, 2008
  */
-public class SessionLockManager implements SessionResource {
+public class SessionLockManager {
+    private static final Logger LOGGER = LogManager.getLogger(SessionLockManager.class);
 
-    /**
-     * Called afterCompletion of the TX manager
-     *
-     * @param commit true if committed
-     */
-    public void afterCompletion(boolean commit) {
-        if (LockingHelper.hasLockManager()) {
-            if (commit) {
-                LockingAdvice.getLockManager().updateCache();
-            } else {
-                // TODO: Release early on rollback
+    private Map<MetadataKey, MetadataValue> lockedMetadata = null;
+
+    public boolean isDebugEnabled() {
+        return LOGGER.isDebugEnabled();
+    }
+
+    public void debug(Object message) {
+        LOGGER.debug(message);
+    }
+
+    public void debug(Object message, Throwable t) {
+        LOGGER.debug(message, t);
+    }
+
+    public void addMetadataObject(MetadataValue value) {
+        if (lockedMetadata == null) {
+            lockedMetadata = new HashMap<MetadataKey, MetadataValue>(5, 0.75f);
+            /*
+            new ReferenceMap<MetadataKey, MetadataValue>(
+                    ReferenceMap.HARD, ReferenceMap.SOFT, 5, 0.75f);
+            */
+        }
+        lockedMetadata.put(value.getKey(), value);
+    }
+
+    public MetadataValue getLockedMetadata(MetadataKey key) {
+        if (lockedMetadata == null) {
+            return null;
+        }
+        return lockedMetadata.get(key);
+    }
+
+    public boolean isLockedByMe(MetadataKey key) {
+        MetadataValue localValue = getLockedMetadata(key);
+        if (localValue == null) {
+            return false;
+        }
+        // This sanity check synchronize on lock so active only in debug
+        if (LOGGER.isDebugEnabled()) {
+            localValue.assertLockOwner();
+        }
+        return true;
+    }
+
+    public void releaseLocks(boolean commit) {
+        if (lockedMetadata == null) {
+            return;
+        }
+        try {
+            Collection<MetadataValue> lockedMds = lockedMetadata.values();
+            MetadataValue[] metadataValues = lockedMds.toArray(new MetadataValue[lockedMds.size()]);
+            // Loop through the array since unlock will remove the element from the Map
+            for (MetadataValue value : metadataValues) {
+                value.unlock(this, commit);
             }
+        } finally {
+            lockedMetadata = null;
         }
     }
 
-    public boolean hasResources() {
-        return LockingHelper.hasLockManager() && LockingAdvice.getLockManager().hasResources();
-    }
-
-    public boolean hasPendingChanges() {
-        return LockingHelper.hasLockManager() && LockingAdvice.getLockManager().hasPendingChanges();
-    }
-
-    public void onSessionSave() {
-        if (LockingHelper.hasLockManager()) {
-            LockingAdvice.getLockManager().save();
+    public boolean removeEntry(MetadataKey key) {
+        if (lockedMetadata == null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn("Unlocking " + key + " but not locked by me!");
+            }
+            return false;
         }
+        MetadataValue localValue = lockedMetadata.remove(key);
+        if (LOGGER.isDebugEnabled() && localValue == null) {
+            LOGGER.warn("Unlocking " + key + " but not locked by me!");
+        }
+        return localValue != null;
+    }
+
+    public boolean hasLocks() {
+        return (lockedMetadata != null && !lockedMetadata.isEmpty());
     }
 }

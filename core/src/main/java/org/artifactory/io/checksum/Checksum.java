@@ -16,7 +16,7 @@
  */
 package org.artifactory.io.checksum;
 
-import org.artifactory.api.mime.ChecksumType;
+import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -28,15 +28,16 @@ import java.security.NoSuchAlgorithmException;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class Checksum {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(Checksum.class);
 
+    private final String name;
     private final ChecksumType type;
     private final MessageDigest digest;
     private String checksum;
 
-    /**
-     * @param type The checksum type
-     */
-    public Checksum(ChecksumType type) {
+    public Checksum(String name, ChecksumType type) {
+        this.name = name;
         this.type = type;
         String algorithm = type.alg();
         try {
@@ -47,12 +48,20 @@ public class Checksum {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ChecksumType getType() {
         return type;
     }
 
     public String getChecksum() {
         return checksum;
+    }
+
+    public String getFileName() {
+        return name + type.ext();
     }
 
     public InputStream asInputStream() throws UnsupportedEncodingException {

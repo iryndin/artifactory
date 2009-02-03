@@ -16,18 +16,16 @@
  */
 package org.artifactory.security;
 
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.PostInitializingBean;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-@Transactional
-public interface UserGroupManager extends UserDetailsService, ReloadableBean {
+public interface UserGroupManager extends UserDetailsService, PostInitializingBean {
 
     Collection<User> getAllUsers(boolean includeAdmins);
 
@@ -40,6 +38,8 @@ public interface UserGroupManager extends UserDetailsService, ReloadableBean {
     void removeUser(String username);
 
     SimpleUser loadUserByUsername(String username) throws UsernameNotFoundException;
+
+    Group findGroup(String groupName);
 
     void removeGroup(String groupname);
 

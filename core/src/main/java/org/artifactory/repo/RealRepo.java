@@ -16,9 +16,8 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
+import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.resource.RepoResource;
@@ -33,8 +32,6 @@ public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
     String getUrl();
 
     RepoResource getInfo(String path) throws FileExpectedException;
-
-    String getChecksum(String path) throws IOException;
 
     boolean isLocal();
 
@@ -51,13 +48,15 @@ public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
     boolean isBlackedOut();
 
     ResourceStreamHandle getResourceStreamHandle(RepoResource res)
-            throws IOException, FileExpectedException;
+            throws IOException, RepoAccessException, FileExpectedException;
 
     boolean accepts(String path);
 
-    StatusHolder allowsDownload(RepoPath repoPath);
+    boolean allowsDownload(String path);
 
     boolean handles(String path);
 
     int getMaxUniqueSnapshots();
+
+    String getProperty(String path) throws IOException;
 }

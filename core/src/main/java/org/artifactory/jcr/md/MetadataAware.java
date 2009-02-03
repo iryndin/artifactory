@@ -16,21 +16,15 @@
  */
 package org.artifactory.jcr.md;
 
-import org.artifactory.api.repo.RepoPath;
-
 import javax.jcr.Node;
-import java.util.List;
 
 /**
  * User: freds Date: Aug 10, 2008 Time: 3:39:02 PM
  */
 public interface MetadataAware {
-    String ARTIFACTORY_PREFIX = "artifactory:";
-    String PROP_ARTIFACTORY_CREATED = ARTIFACTORY_PREFIX + "created";
-    String PROP_ARTIFACTORY_LAST_MODIFIED = ARTIFACTORY_PREFIX + "lastModified";
-    String PROP_ARTIFACTORY_LAST_MODIFIED_BY = ARTIFACTORY_PREFIX + "lastModifiedBy";
-    String NODE_ARTIFACTORY_METADATA = ARTIFACTORY_PREFIX + "metadata";
-    String NODE_ARTIFACTORY_XML = ARTIFACTORY_PREFIX + "xml";
+    String NODE_ARTIFACTORY_METADATA = "artifactory:metadata";
+    String NODE_ARTIFACTORY_XML = "artifactory:xml";
+    String PROP_ARTIFACTORY_LAST_MODIFIED_METADATA = "artifactory:lastModifiedMetadata";
 
     /**
      * @return the JCR node that can have metadata
@@ -41,22 +35,4 @@ public interface MetadataAware {
      * @return Get the absolute path of the this Metadata Aware item
      */
     String getAbsolutePath();
-
-    RepoPath getRepoPath();
-
-    void importInternalMetadata(MetadataDefinition definition, Object md);
-
-    <MD> MD getXmlMetdataObject(Class<MD> clazz);
-
-    <MD> MD getXmlMetdataObject(Class<MD> clazz, boolean createIfMissing);
-
-    String getXmlMetdata(String metadataName);
-
-    void setXmlMetadata(String metadataName, Object xstreamable);
-
-    void setXmlMetadata(String metadataName, String value);
-
-    List<String> getXmlMetadataNames();
-
-    boolean hasXmlMetdata(String metadataName);
 }

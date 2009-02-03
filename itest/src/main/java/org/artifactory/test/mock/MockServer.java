@@ -38,9 +38,9 @@ public class MockServer {
     private static final String CONFIG_PREFIX = "/config/";
     private static final String CONTENT_TYPE = "application/xml";
     private static final String ENCODING = "utf-8";
-    private static final String STATS_PREFIX = "/stats/";
+    private final String serverName;
     private String selectedURL = "";
-    private HttpClient httpClient = new HttpClient();
+    private HttpClient httpClient;
     private XStream xStream;
 
     /**
@@ -49,44 +49,42 @@ public class MockServer {
      * @param serverName
      */
     public MockServer(String serverName) {
-        this.selectedURL = PROTOCOL + serverName + PORT;
+        this.serverName = serverName;
     }
 
     /**
-     * For each server name try to find if a MockServer was started on port 8090 The first one found
-     * create an instance of MockServer with HttpClient initialized correctly If you don't find
-     * anything and the last name is "localhost" Call directly the main method on StartDummyRepo
+     * For each server name try to find if a MockServer was started on port 8090
+     * The first one found create an instance of MockServer with HttpClient initialized correctly
+     * If you don't find anything and the last name is "localhost"
+     * Call directly the main method on StartDummyRepo
      *
      * @param serverNames
      * @return
      * @throws IOException
      */
-    public static MockServer start(String... serverNames) {
+    public static MockServer start(String[] serverNames) throws IOException {
 
-        try {
-            //Search over given server names
-            for (String serverName : serverNames) {
-                MockServer result = new MockServer(serverName);
-                //If the current server is active, return it to the user
-                if (result.isServerActive()) {
-                    return result;
-                }
+        //Search over given server names
+        for (int i = 0; i < serverNames.length; i++) {
+            MockServer result = new MockServer(serverNames[i]);
+            //If the current server is active, return it to the user
+            if (result.isServerActive()) {
+                return result;
             }
-
-            //If no server from the given list is found
-            //Check if the server on the local host is running
-            MockServer result = new MockServer(LOCAL_HOST);
-            if (!result.isServerActive()) {
-                //If the server on the local host is not running, initiate it,
-                // and return it to the user
-                StartDummyRepo.main(null);
-            }
-
-            return result;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+
+        //If no server from the given list is found
+        //Check if the server on the local host is running
+        MockServer result = new MockServer(LOCAL_HOST);
+        if (result.isServerActive()) {
+            return result;
+        }
+        //If the server on the local host is not running, initiate it, and return it to the user
+        else {
+            StartDummyRepo.main(null);
+        }
+
+        return result;
     }
 
     /**
@@ -95,19 +93,20 @@ public class MockServer {
      * @return
      * @throws IOException
      */
-    public boolean isServerActive() throws IOException {
-
-        GetMethod getMethod = new GetMethod(selectedURL + EXISTENCE_PREFIX);
-        int response;
-        try {
-            response = httpClient.executeMethod(getMethod);
-            getMethod.releaseConnection();
-        } catch (IOException e) {
+    private boolean isServerActive() throws IOException {
+        //Check the current server with existence handle
+        httpClient = new HttpClient();
+        String currentURL = PROTOCOL + serverName + PORT;
+        GetMethod getMethod = new GetMethod(currentURL + EXISTENCE_PREFIX);
+        int response = httpClient.executeMethod(getMethod);
+        //If the responce is ok, return true
+        if (response == HttpStatus.SC_OK) {
+            selectedURL = currentURL;
+            httpClient.getHostConfiguration().setHost(selectedURL);
+            return true;
+        } else {
             return false;
         }
-
-        //If the responce is ok, return true
-        return response == HttpStatus.SC_OK;
     }
 
     /**
@@ -116,26 +115,16 @@ public class MockServer {
      * @param test
      * @throws IOException
      */
-    public void addTest(MockTest test) {
+    public void addTest(MockTest test) throws IOException {
         //Get xml stream
         XStream xStream = getXStream();
         xStream.processAnnotations(MockTest.class);
         String xmlConfig = xStream.toXML(test);
 
         //Add test
-        String testName = test.getName();
-        addTest(testName, xmlConfig);
-    }
-
-    public void addTest(String testName, String xmlConfig) {
-        PutMethod putMethod = new PutMethod(getConfigURL(testName));
-        try {
-            putMethod.setRequestEntity(new StringRequestEntity(xmlConfig, CONTENT_TYPE, ENCODING));
-            httpClient.executeMethod(putMethod);
-            putMethod.releaseConnection();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        PutMethod putMethod = new PutMethod(getConfigURL(test.name));
+        putMethod.setRequestEntity(new StringRequestEntity(xmlConfig, CONTENT_TYPE, ENCODING));
+        httpClient.executeMethod(putMethod);
     }
 
     /**
@@ -145,24 +134,19 @@ public class MockServer {
      * @return
      * @throws IOException
      */
-    public MockTest getTest(String testName) {
-        try {
-            //Search for given test name
-            GetMethod getMethod = new GetMethod(getConfigURL(testName));
-            httpClient.executeMethod(getMethod);
+    public MockTest getTest(String testName) throws IOException {
+        //Search for given test name
+        GetMethod getMethod = new GetMethod(getConfigURL(testName));
+        httpClient.executeMethod(getMethod);
 
-            //If the responce is ok
-            if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
-                //Return test object
-                XStream xStream = getXStream();
-                MockTest result = (MockTest) xStream.fromXML(getMethod.getResponseBodyAsStream());
-                getMethod.releaseConnection();
-                return result;
-            }
-            return null;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        //If the responce is ok
+        if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
+            //Return test object
+            XStream xStream = getXStream();
+            MockTest result = (MockTest) xStream.fromXML(getMethod.getResponseBodyAsString());
+            return result;
         }
+        return null;
     }
 
     /**
@@ -173,48 +157,17 @@ public class MockServer {
      * @return
      * @throws IOException
      */
-    public MockPathTest changeTest(String testName, MockPathTest pathTest) {
-        try {
-            //Get xml stream
-            XStream xStream = getXStream();
-            xStream.processAnnotations(MockTest.class);
-            String xmlChange = xStream.toXML(pathTest);
+    public MockPathTest changeTest(String testName, MockPathTest pathTest) throws IOException {
+        //Get xml stream
+        XStream xStream = getXStream();
+        xStream.processAnnotations(MockTest.class);
+        String xmlChange = xStream.toXML(pathTest);
 
-            //Search for test
-            PostMethod postMethod = new PostMethod(getConfigURL(testName));
-            postMethod.setRequestEntity(new StringRequestEntity(xmlChange, CONTENT_TYPE, ENCODING));
-            httpClient.executeMethod(postMethod);
-            postMethod.releaseConnection();
-            return pathTest;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Returns stats for the specified test
-     *
-     * @param testName
-     * @return
-     */
-    public TestStats getTestStats(String testName) {
-        try {
-            //Search for given test name
-            GetMethod getMethod = new GetMethod(getStatsURL(testName));
-            httpClient.executeMethod(getMethod);
-
-            //If the responce is ok
-            if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
-                //Return stats object
-                XStream xStream = getXStream();
-                TestStats result = (TestStats) xStream.fromXML(getMethod.getResponseBodyAsStream());
-                getMethod.releaseConnection();
-                return result;
-            }
-            return null;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        //Search for test
+        PostMethod postMethod = new PostMethod(getConfigURL(testName));
+        postMethod.setRequestEntity(new StringRequestEntity(xmlChange, CONTENT_TYPE, ENCODING));
+        httpClient.executeMethod(postMethod);
+        return pathTest;
     }
 
     private XStream getXStream() {
@@ -226,14 +179,6 @@ public class MockServer {
     }
 
     private String getConfigURL(String url) {
-        return selectedURL + CONFIG_PREFIX + url;
-    }
-
-    private String getStatsURL(String url) {
-        return selectedURL + STATS_PREFIX + url;
-    }
-
-    public String getSelectedURL() {
-        return selectedURL;
+        return CONFIG_PREFIX + url;
     }
 }

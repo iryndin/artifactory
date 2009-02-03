@@ -15,8 +15,32 @@
                 <!--<prop key="org.quartz.jobStore.driverDelegateClass">org.artifactory.scheduling.DerbyDelegate</prop>-->
             </props>
         </property>
-        <property name="taskExecutor" ref="taskExecutor"/>
     </bean>
 
-    <bean id="taskExecutor" class="org.artifactory.schedule.CachedThreadPoolTaskExecutor"/>
+    <bean id="jcrGarbageCollector" class="org.artifactory.jcr.schedule.JcrGarbageCollector"/>
+
+    <bean id="jcrGarbageCollectorScheduledTask"
+          class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <!-- run the datastore gc every 12 hours -->
+        <property name="period" value="43200000"/>
+        <property name="timerTask" ref="jcrGarbageCollector"/>
+    </bean>
+
+    <bean id="wagonManagerTempArtifactsCleanerScheduledTask"
+          class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <!-- run the cleanup every 15 minutes -->
+        <property name="period" value="900000"/>
+        <property name="timerTask">
+            <bean class="org.artifactory.maven.WagonManagerTempArtifactsCleaner"/>
+        </property>
+    </bean>
+
+    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref bean="jcrGarbageCollectorScheduledTask"/>
+                <ref bean="wagonManagerTempArtifactsCleanerScheduledTask"/>
+            </list>
+        </property>
+    </bean>
 </beans>

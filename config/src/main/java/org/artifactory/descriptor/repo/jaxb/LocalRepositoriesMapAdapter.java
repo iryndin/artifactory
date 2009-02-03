@@ -18,6 +18,7 @@ package org.artifactory.descriptor.repo.jaxb;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 
@@ -30,8 +31,11 @@ import java.util.List;
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class LocalRepositoriesMapAdapter extends
+public class LocalRepositoriesMapAdapter
+        extends
         XmlAdapter<LocalRepositoriesMapAdapter.Wrappper, OrderedMap<String, LocalRepoDescriptor>> {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(LocalRepositoriesMapAdapter.class);
 
     public OrderedMap<String, LocalRepoDescriptor> unmarshal(Wrappper wrapper) throws Exception {
         OrderedMap<String, LocalRepoDescriptor> localRepositoriesMap =

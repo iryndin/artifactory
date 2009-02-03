@@ -16,8 +16,8 @@
  */
 package org.artifactory.webapp.servlet;
 
+import org.apache.log4j.Logger;
 import org.artifactory.api.context.ArtifactoryContext;
-import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.request.ArtifactoryRequest;
@@ -25,12 +25,11 @@ import org.artifactory.api.request.ArtifactoryResponse;
 import org.artifactory.api.request.DownloadService;
 import org.artifactory.api.request.UploadService;
 import org.artifactory.api.webdav.WebdavService;
-import org.artifactory.util.PathUtils;
-import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.utils.PathUtils;
+import org.artifactory.webapp.request.HttpArtifactoryRequest;
+import org.artifactory.webapp.request.HttpArtifactoryResponse;
+import org.artifactory.webapp.wicket.browse.SimpleRepoBrowserPage;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
@@ -43,41 +42,67 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public class RepoFilter implements Filter {
+public class RepoFilter extends ArtifactoryFilter {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static final Logger log = LoggerFactory.getLogger(RepoFilter.class);
+    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(RepoFilter.class);
 
     public static final String ATTR_ARTIFACTORY_REPOSITORY_PATH = "artifactory.repository_path";
     public static final String ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH =
             "artifactory.removed_repository_path";
 
+    private WebdavService webdavService;
+
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        super.init(filterConfig);
+        ArtifactoryContext context = getContext();
+        webdavService = context.beanForType(WebdavService.class);
+
         String nonUIPathPrefixes = filterConfig.getInitParameter("nonUIPathPrefixes");
         String uiPathPrefixes = filterConfig.getInitParameter("UIPathPrefixes");
-        List<String> nonUiPrefixes = PathUtils.delimitedListToStringList(nonUIPathPrefixes, ",");
-        RequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
-        List<String> uiPrefixes = PathUtils.delimitedListToStringList(uiPathPrefixes, ",");
-        uiPrefixes.add(RequestUtils.WEBAPP_URL_PATH_PREFIX);
-        RequestUtils.setUiPathPrefixes(uiPrefixes);
+        List<String> nonUiPrefixes =
+                PathUtils.delimitedListToStringList(nonUIPathPrefixes, ",", "\r\n\f\t ");
+        RequestUtils.addNonUiPathPrefixes(nonUiPrefixes);
+        List<String> uiPrefixes =
+                PathUtils.delimitedListToStringList(uiPathPrefixes, ",", "\r\n\f\t ");
+        uiPrefixes.add(ArtifactoryFilter.WEBAPP_URL_PATH_PREFIX);
+        RequestUtils.addUiPathPrefixes(uiPrefixes);
+        List<String> repoKeys = context.getRepositoryService().getAllRepoKeys();
+        RequestUtils.addRepoPathPrefixes(repoKeys);
     }
 
-    public void destroy() {
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse resp,
+            FilterChain chain) throws IOException, ServletException {
+        // The Acessfilter did the context binding.
+        // Doing it twice will remove the context after this filter do internal.
+        doFilterInternal((HttpServletRequest) req, (HttpServletResponse) resp, chain);
     }
 
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+    @Override
+    public void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) resp;
-        final String servletPath = RequestUtils.getServletPathFromRequest(request);
+        final String servletPath = request.getServletPath();
         String method = request.getMethod();
+        if (emptyOrRoot(servletPath) && "get".equalsIgnoreCase(method)) {
+            //We were called with an empty path - redirect to the app main page
+            response.sendRedirect("./" + WEBAPP_URL_PATH_PREFIX);
+            return;
+        }
         execute(chain, request, response, servletPath, method);
     }
 
+    private static boolean emptyOrRoot(String path) {
+        return path == null || "/".equals(path) || path.length() == 0;
+    }
+
     @SuppressWarnings({"OverlyComplexMethod"})
-    private void execute(FilterChain chain, final HttpServletRequest request, HttpServletResponse response,
-            String servletPath, String method) throws IOException, ServletException {
-        if (log.isDebugEnabled()) {
-            log.debug("Entering request " + requestDebugString(request));
+    private void execute(FilterChain chain, final HttpServletRequest request,
+            HttpServletResponse response, String servletPath,
+            String method) throws IOException, ServletException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entering request " + requestDebugString(request));
         }
         if (RequestUtils.isRepoRequest(servletPath)) {
             //Handle upload and download requests
@@ -94,7 +119,7 @@ public class RepoFilter implements Filter {
                 }
                 //Dispatch repository directory browsing request
                 RequestDispatcher dispatcher = request.getRequestDispatcher(
-                        "/" + RequestUtils.WEBAPP_URL_PATH_PREFIX + "/" + SimpleRepoBrowserPage.PATH);
+                        "/" + WEBAPP_URL_PATH_PREFIX + "/" + SimpleRepoBrowserPage.PATH);
                 //Remove the forwarding URL (repo+path) as this is used by wicket to build
                 //a relative path, which does not make sense in this case
                 final boolean wicketRequest = RequestUtils.isWicketRequest(request);
@@ -120,50 +145,33 @@ public class RepoFilter implements Filter {
                 try {
                     getUploadEngine().process(artifactoryRequest, artifactoryResponse);
                 } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Upload request of " + artifactoryRequest.getRepoPath() +
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Upload request of " + artifactoryRequest.getRepoPath() +
                                 " failed due to " + e.getMessage());
                     }
-                    artifactoryResponse.sendInternalError(e, log);
+                    artifactoryResponse.sendInternalError(e, LOGGER);
                 }
             } else if ("propfind".equalsIgnoreCase(method)) {
-                getWebdavService().handlePropfind(artifactoryRequest, artifactoryResponse);
+                webdavService.handlePropfind(artifactoryRequest, artifactoryResponse);
             } else if ("mkcol".equalsIgnoreCase(method)) {
-                getWebdavService().handleMkcol(artifactoryRequest, artifactoryResponse);
+                webdavService.handleMkcol(artifactoryRequest, artifactoryResponse);
             } else if ("delete".equalsIgnoreCase(method)) {
-                getWebdavService().handleDelete(artifactoryRequest, artifactoryResponse);
+                webdavService.handleDelete(artifactoryRequest, artifactoryResponse);
             } else if ("options".equalsIgnoreCase(method)) {
-                getWebdavService().handleOptions(artifactoryResponse);
+                webdavService.handleOptions(artifactoryResponse);
             } else {
                 response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                if (log.isInfoEnabled()) {
-                    log.info("Received unsupported request method: " + method +
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Received unsupported request method: " + method +
                             " from: " + request.getRemoteAddr() + ".");
                 }
             }
         } else if (!response.isCommitted()) {
-            // Webdav request not on repository, return 405
-            if (RequestUtils.isWebdavRequest(request)) {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                if (log.isDebugEnabled()) {
-                    log.debug("Received Webdav Request on " + servletPath + " which is not a repository!\n" +
-                            "Returning " + HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                }
-            } else {
-                chain.doFilter(request, response);
-            }
+            chain.doFilter(request, response);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Exiting request " + requestDebugString(request));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Exiting request " + requestDebugString(request));
         }
-    }
-
-    private ArtifactoryContext getContext() {
-        return ContextHelper.get();
-    }
-
-    private WebdavService getWebdavService() {
-        return getContext().beanForType(WebdavService.class);
     }
 
     private DownloadService getDownloadEngine() {
@@ -176,7 +184,7 @@ public class RepoFilter implements Filter {
 
     private static String requestDebugString(HttpServletRequest request) {
         String queryString = request.getQueryString();
-        String str = request.hashCode() + ": " + RequestUtils.getServletPathFromRequest(request) +
+        String str = request.hashCode() + ": " + request.getServletPath() +
                 (queryString != null ? queryString : "");
         return str;
     }
@@ -205,14 +213,16 @@ public class RepoFilter implements Filter {
 
         @Override
         public String getServletPath() {
-            RepoPath removedRepoPath = (RepoPath) getAttribute(ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH);
+            RepoPath removedRepoPath = (RepoPath) getAttribute(
+                    ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH);
             if (wicketRequest) {
                 //All wicket request that come after direct repository
                 //browsing need to have the repo+path stripped
-                return "/" + RequestUtils.WEBAPP_URL_PATH_PREFIX + "/";
+                return "/" + WEBAPP_URL_PATH_PREFIX + "/";
             } else if (removedRepoPath != null) {
                 //After login redirection
-                return "/" + removedRepoPath.getRepoKey() + "/" + removedRepoPath.getPath();
+                return "/" + removedRepoPath.getRepoKey() + "/" +
+                        removedRepoPath.getPath();
             } else {
                 return super.getServletPath();
             }

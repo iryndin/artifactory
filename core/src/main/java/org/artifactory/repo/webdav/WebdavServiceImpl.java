@@ -17,9 +17,7 @@
 package org.artifactory.repo.webdav;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryResponse;
@@ -31,10 +29,10 @@ import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.security.AccessLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.utils.MimeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,7 +55,8 @@ import java.util.TimeZone;
  */
 @Service
 public class WebdavServiceImpl implements WebdavService {
-    private static final Logger log = LoggerFactory.getLogger(WebdavServiceImpl.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(WebdavServiceImpl.class);
 
     /**
      * Default depth is infite.
@@ -101,6 +100,7 @@ public class WebdavServiceImpl implements WebdavService {
     @Autowired
     private InternalRepositoryService repositoryService;
 
+    @Transactional
     public void handlePropfind(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException {
         // Retrieve the resources
@@ -180,30 +180,28 @@ public class WebdavServiceImpl implements WebdavService {
         response.flush();
     }
 
+    @Transactional
     public void handleMkcol(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException {
         RepoPath repoPath = request.getRepoPath();
-        final LocalRepo repo = getLocalRepo(request, response);
-        //Return 405 if folder exists
-        if (repo.itemExists(repoPath.getPath())) {
-            response.setStatus(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            return;
-        }
         //Check that we are allowed to write
         checkCanDeploy(repoPath, response);
-        JcrFolder targetFolder = repo.getLockedJcrFolder(repoPath, true);
+        final LocalRepo repo = getLocalRepo(request, response);
+        String path = repoPath.getPath();
+        JcrFolder targetFolder = new JcrFolder(repo.getRootFolder().getAbsolutePath() + "/" + path);
         targetFolder.mkdirs();
-        // Return 201 when element created
         response.setStatus(HttpStatus.SC_CREATED);
     }
 
+    @Transactional
     public void handleDelete(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException {
         RepoPath repoPath = request.getRepoPath();
         //Check that we are allowed to write
         checkCanDeploy(repoPath, response);
         final LocalRepo repo = getLocalRepo(request, response);
-        repo.undeploy(repoPath);
+        String path = repoPath.getPath();
+        repo.undeploy(path);
         response.sendOk();
     }
 
@@ -219,7 +217,7 @@ public class WebdavServiceImpl implements WebdavService {
         boolean canDeploy = authService.canDeploy(repoPath);
         if (!canDeploy) {
             String msg = "Deploy to '" + repoPath + "' not allowed.";
-            response.sendError(HttpStatus.SC_FORBIDDEN, msg, log);
+            response.sendError(HttpStatus.SC_FORBIDDEN, msg, LOGGER);
             AccessLogger.deployDenied(repoPath);
             throw new RuntimeException(msg);
         }
@@ -275,8 +273,8 @@ public class WebdavServiceImpl implements WebdavService {
      * @param generatedXml           XML response to the Propfind request
      * @param path                   Path of the current resource
      * @param type                   Propfind type
-     * @param propertiesList<String> If the propfind type is find properties by name, then this List<String> contains
-     *                               those properties
+     * @param propertiesList<String> If the propfind type is find properties by name, then this
+     *                               List<String> contains those properties
      */
     private void parseProperties(ArtifactoryRequest request,
             ArtifactoryResponse response,
@@ -284,7 +282,7 @@ public class WebdavServiceImpl implements WebdavService {
             int type, List<String> propertiesList) throws IOException {
         JcrFsItem item = getJcrFsItem(request, response, path);
         if (item == null) {
-            log.warn("Item '" + path + "' not found.");
+            LOGGER.warn("Item '" + path + "' not found.");
             return;
         }
         String creationDate = getIsoCreationDate(item.getCreated());
@@ -337,9 +335,9 @@ public class WebdavServiceImpl implements WebdavService {
                     generatedXml.writeProperty(null, "getlastmodified", lastModified);
                     generatedXml.writeProperty(null, "getcontentlength", resourceLength);
 
-                    ContentType ct = NamingUtils.getContentType(path);
-                    if (ct != null) {
-                        generatedXml.writeProperty(null, "getcontenttype", ct.getMimeType());
+                    String contentType = MimeTypes.getMimeTypeByPathAsString(path);
+                    if (contentType != null) {
+                        generatedXml.writeProperty(null, "getcontenttype", contentType);
                     }
                     generatedXml.writeProperty(
                             null, "getetag", getEtag(resourceLength, lastModified));
@@ -378,7 +376,6 @@ public class WebdavServiceImpl implements WebdavService {
                 generatedXml.writeElement(null, "propstat", XmlWriter.CLOSING);
                 break;
             case FIND_BY_PROPERTY:
-                //noinspection MismatchedQueryAndUpdateOfCollection
                 List<String> propertiesNotFound = new ArrayList<String>();
                 // Parse the list of properties
                 generatedXml.writeElement(null, "propstat", XmlWriter.OPENING);
@@ -408,7 +405,7 @@ public class WebdavServiceImpl implements WebdavService {
                             propertiesNotFound.add(property);
                         } else {
                             generatedXml.writeProperty(null, "getcontenttype",
-                                    NamingUtils.getMimeTypeByPathAsString(path));
+                                    MimeTypes.getMimeTypeByPathAsString(path));
                         }
                     } else if (property.equals("getetag")) {
                         if (isFolder) {
@@ -479,7 +476,7 @@ public class WebdavServiceImpl implements WebdavService {
                 currentPath, propertyFindType, properties);
         JcrFsItem item = getJcrFsItem(request, response, currentPath);
         if (item == null) {
-            log.warn("Folder '" + currentPath + "' not found.");
+            LOGGER.warn("Folder '" + currentPath + "' not found.");
             return;
         }
         if (depth > 0 && item.isDirectory()) {
@@ -498,15 +495,13 @@ public class WebdavServiceImpl implements WebdavService {
             ArtifactoryResponse response, String path) throws IOException {
         final LocalRepo repo = getLocalRepo(request, response);
         String repoKey = request.getRepoKey();
-        RepoPath repoPath = new RepoPath(repoKey, path);
-        StatusHolder status = repo.allowsDownload(repoPath);
         //Check that we are allowed to read
-        if (status.isError()) {
-            String msg = status.getStatusMsg();
-            response.sendError(status.getStatusCode(), msg, log);
+        if (!repo.allowsDownload(path)) {
+            String msg = "Not allowed to read '" + path + "' in repo '" + repoKey + "'.";
+            response.sendError(HttpStatus.SC_FORBIDDEN, msg, LOGGER);
             throw new RuntimeException(msg);
         }
-        JcrFsItem item = repo.getJcrFsItem(repoPath);
+        JcrFsItem item = repo.getFsItem(path);
         return item;
     }
 
@@ -516,7 +511,7 @@ public class WebdavServiceImpl implements WebdavService {
         final LocalRepo repo = repositoryService.localOrCachedRepositoryByKey(repoKey);
         if (repo == null) {
             String msg = "Could not find repo '" + repoKey + "'.";
-            response.sendError(HttpStatus.SC_NOT_FOUND, msg, log);
+            response.sendError(HttpStatus.SC_NOT_FOUND, msg, LOGGER);
             throw new RuntimeException(msg);
         }
         return repo;

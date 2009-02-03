@@ -16,6 +16,7 @@
  */
 package org.artifactory.descriptor.repo.jaxb;
 
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.RepoBaseDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
@@ -37,6 +38,8 @@ import java.util.List;
  */
 public class RepositoriesListAdapter
         extends XmlAdapter<RepositoriesListAdapter.Wrappper, List<RepoDescriptor>> {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(VirtualRepositoriesMapAdapter.class);
 
     public List<RepoDescriptor> unmarshal(Wrappper wrappper) throws Exception {
         return wrappper.getList();

@@ -1,8 +1,6 @@
 package org.artifactory.api.security;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 /**
@@ -49,7 +47,7 @@ public class PermissionTargetInfoTest {
         assertEquals(pmi.getExcludes().size(), 1);
     }
 
-    public void copyConstructor() {
+    public void copyConstructorTest() {
         PermissionTargetInfo orig = new PermissionTargetInfo(
                 "permissionName", "aRepo", "**/*-sources.*,**/*-SNAPSHOT/**",
                 "**/secretjars/**");
@@ -63,12 +61,4 @@ public class PermissionTargetInfoTest {
         assertEquals(copy.getIncludesPattern(), orig.getIncludesPattern());
     }
 
-    public void copyConstructorReflectionEquality() {
-        PermissionTargetInfo orig = new PermissionTargetInfo(
-                "permissionName", "aRepo", "**/*-sources.*,**/*-SNAPSHOT/**",
-                "**/secretjars/**");
-        PermissionTargetInfo copy = new PermissionTargetInfo(orig);
-
-        assertTrue(EqualsBuilder.reflectionEquals(orig, copy), "Orig and copy differ");
-    }
 }

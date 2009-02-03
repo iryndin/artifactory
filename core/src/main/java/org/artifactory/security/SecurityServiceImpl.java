@@ -18,8 +18,8 @@ package org.artifactory.security;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.config.ExportSettings;
@@ -34,20 +34,14 @@ import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.SecurityInfo;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.api.security.UserInfo;
-import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.descriptor.security.SecurityDescriptor;
-import org.artifactory.descriptor.security.ldap.LdapSetting;
+import org.artifactory.descriptor.security.Security;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.security.ldap.LdapConnectionTester;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
-import org.artifactory.update.utils.BackupUtils;
-import org.artifactory.util.PathMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.spring.PostInitializingBean;
+import org.artifactory.utils.PathMatcher;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -58,17 +52,19 @@ import org.springframework.security.acls.sid.Sid;
 import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -78,7 +74,7 @@ import java.util.Set;
  */
 @Service
 public class SecurityServiceImpl implements SecurityServiceInternal {
-    private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
+    private final static Logger LOGGER = Logger.getLogger(SecurityServiceImpl.class);
 
     @Autowired
     private AclManager aclManager;
@@ -99,7 +95,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
 
     @PostConstruct
     public void register() {
-        context.addReloadableBean(SecurityServiceInternal.class);
+        context.addPostInit(SecurityServiceInternal.class);
     }
 
     @Autowired
@@ -108,21 +104,15 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
     }
 
     @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
+    public Class<? extends PostInitializingBean>[] initAfter() {
         return new Class[]{JcrService.class, UserGroupManager.class, AclManager.class};
     }
 
+    @Transactional
     public void init() {
         checkOcmFolders();
         createAdminUser();
         createAnonymousUser();
-    }
-
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-        // TODO: Change the PermissionTarget repoKey according to new config
-    }
-
-    public void destroy() {
     }
 
     private void checkOcmFolders() {
@@ -140,13 +130,8 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
     }
 
     public boolean isAnonAccessEnabled() {
-        SecurityDescriptor security = centralConfig.getDescriptor().getSecurity();
+        Security security = centralConfig.getDescriptor().getSecurity();
         return security != null && security.isAnonAccessEnabled();
-    }
-
-    public boolean isAuthenticated() {
-        Authentication authentication = getAuthentication();
-        return isAuthenticated(authentication);
     }
 
     public boolean isAdmin() {
@@ -154,26 +139,30 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return isAdmin(authentication);
     }
 
+    @Transactional
     public AclInfo createAcl(PermissionTargetInfo entity) {
-        assertAdmin();
         return aclManager.createAcl(new PermissionTarget(entity)).getDescriptor();
     }
 
+    @Transactional
     public void deleteAcl(PermissionTargetInfo target) {
         aclManager.deleteAcl(new PermissionTarget(target));
     }
 
+    @Transactional
     public AclInfo updateAcl(PermissionTargetInfo target) {
         AclInfo aclInfo = getAcl(target);
         aclInfo.setPermissionTarget(target);
         return aclManager.updateAcl(new Acl(aclInfo)).getDescriptor();
     }
 
+    @Transactional
     public List<PermissionTargetInfo> getAdministrativePermissionTargets() {
         Permission adminPermission = permissionFor(ArtifactoryPermisssion.ADMIN);
         return getPermissionTargetsByPermission(adminPermission);
     }
 
+    @Transactional
     public List<PermissionTargetInfo> getDeployablePermissionTargets() {
         Permission deployPermission = permissionFor(ArtifactoryPermisssion.DEPLOY);
         return getPermissionTargetsByPermission(deployPermission);
@@ -214,6 +203,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return userGroupManager.loadUserByUsername(username).getDescriptor();
     }
 
+    @Transactional
     public AclInfo getAcl(PermissionTargetInfo permissionTarget) {
         Acl acl = aclManager.findAclById(new PermissionTarget(permissionTarget));
         if (acl != null) {
@@ -222,6 +212,8 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return null;
     }
 
+
+    @Transactional
     public void updateAcl(AclInfo acl) {
         // Removing empty Ace
         Iterator<AceInfo> it = acl.getAces().iterator();
@@ -234,6 +226,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         aclManager.updateAcl(new Acl(acl));
     }
 
+    @Transactional
     public List<UserInfo> getAllUsers(boolean includeAdmins) {
         Collection<User> simpleUsers = userGroupManager.getAllUsers(includeAdmins);
         List<UserInfo> usersInfo = new ArrayList<UserInfo>(simpleUsers.size());
@@ -247,27 +240,33 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return usersInfo;
     }
 
+    @Transactional
     public boolean createUser(UserInfo user) {
         return userGroupManager.createUser(new SimpleUser(user));
     }
 
+    @Transactional
     public void updateUser(UserInfo user) {
         userGroupManager.updateUser(new SimpleUser(user));
     }
 
+    @Transactional
     public void deleteUser(String username) {
         aclManager.removeAllUserAces(username);
         userGroupManager.removeUser(username);
     }
 
+    @Transactional
     public void updateGroup(GroupInfo groupInfo) {
         userGroupManager.updateGroup(new Group(groupInfo));
     }
 
+    @Transactional
     public boolean createGroup(GroupInfo groupInfo) {
         return userGroupManager.createGroup(new Group(groupInfo));
     }
 
+    @Transactional
     public void deleteGroup(String groupName) {
         List<UserInfo> userInGroup = findUsersInGroup(groupName);
         for (UserInfo userInfo : userInGroup) {
@@ -276,6 +275,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         userGroupManager.removeGroup(groupName);
     }
 
+    @Transactional(readOnly = true)
     public List<GroupInfo> getAllGroups() {
         Collection<Group> groups = userGroupManager.getAllGroups();
         List<GroupInfo> groupsInfo = new ArrayList<GroupInfo>(groups.size());
@@ -285,26 +285,8 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return groupsInfo;
     }
 
-    public Set<GroupInfo> getNewUserDefaultGroups() {
-        List<GroupInfo> allGroups = getAllGroups();
-        Set<GroupInfo> defaultGroups = new HashSet<GroupInfo>();
-        for (GroupInfo group : allGroups) {
-            if (group.isNewUserDefault()) {
-                defaultGroups.add(group);
-            }
-        }
-        return defaultGroups;
-    }
 
-    public Set<String> getNewUserDefaultGroupsNames() {
-        Set<GroupInfo> defaultGroups = getNewUserDefaultGroups();
-        Set<String> defaultGroupsNames = new HashSet<String>(defaultGroups.size());
-        for (GroupInfo group : defaultGroups) {
-            defaultGroupsNames.add(group.getGroupName());
-        }
-        return defaultGroupsNames;
-    }
-
+    @Transactional
     public void addUsersToGroup(String groupName, List<String> usernames) {
         for (String username : usernames) {
             addUserToGroup(username, groupName);
@@ -321,6 +303,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         }
     }
 
+    @Transactional
     public void removeUsersFromGroup(String groupName, List<String> usernames) {
         for (String username : usernames) {
             removeUserFromGroup(username, groupName);
@@ -337,6 +320,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<UserInfo> findUsersInGroup(String groupName) {
         List<UserInfo> allUsers = getAllUsers(true);
         List<UserInfo> groupUsers = new ArrayList<UserInfo>();
@@ -363,13 +347,14 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         }
     }
 
+    @Transactional
     public boolean canDeploy(RepoPath repoPath) {
         //TODO: [by yl] Change this to real deploy permissions assigned to anon on specific caches
         //Before checking permissions, check if the repository is a cache with anonymous access on
         String repoKey = repoPath.getRepoKey();
         LocalRepo localRepo = repositoryService.localOrCachedRepositoryByKey(repoKey);
         if (localRepo == null) {
-            log.warn("Could not test deployment for non exiting repository '" + repoKey + "'.");
+            LOGGER.warn("Could not test deployment for non exiting repository '" + repoKey + "'.");
             return false;
         }
         if (localRepo.isCache() && localRepo.isAnonAccessEnabled()) {
@@ -380,69 +365,78 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return hasPermission;
     }
 
+    @Transactional
     public boolean canAdmin(RepoPath repoPath) {
         Permission permission = permissionFor(ArtifactoryPermisssion.ADMIN);
         return hasPermission(repoPath, permission);
     }
 
+    @Transactional
     public boolean hasDeployPermissions() {
         return isAdmin() || !getDeployablePermissionTargets().isEmpty();
     }
 
+    @Transactional
     public boolean canRead(RepoPath repoPath) {
         Permission permission = permissionFor(ArtifactoryPermisssion.READ);
         return hasPermission(repoPath, permission);
     }
 
+    @Transactional
     public boolean canDelete(RepoPath repoPath) {
         Permission permission = permissionFor(ArtifactoryPermisssion.DELETE);
         return hasPermission(repoPath, permission);
     }
 
+    @Transactional
     public boolean canAdmin(PermissionTargetInfo target) {
         Permission adminPermission = permissionFor(ArtifactoryPermisssion.ADMIN);
         return hasPermissionOnPermissionTarget(new PermissionTarget(target), adminPermission);
     }
 
-    public boolean canAdminPermissionTarget() {
-        return !getAdministrativePermissionTargets().isEmpty();
-    }
-
+    @Transactional
     public boolean canRead(UserInfo user, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.READ);
         return hasPermission(new SimpleUser(user), path, permission);
     }
 
+    @Transactional
     public boolean canDelete(UserInfo user, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.DELETE);
         return hasPermission(new SimpleUser(user), path, permission);
     }
 
+    @Transactional
     public boolean canDeploy(UserInfo user, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.DEPLOY);
         return hasPermission(new SimpleUser(user), path, permission);
     }
 
+    @Transactional
     public boolean canAdmin(UserInfo user, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.ADMIN);
         return hasPermission(new SimpleUser(user), path, permission);
     }
 
+    @Transactional
     public boolean canRead(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.READ);
         return hasPermission(group, path, permission);
     }
 
+    @Transactional
     public boolean canDelete(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.DELETE);
         return hasPermission(group, path, permission);
     }
 
+    @Transactional
     public boolean canDeploy(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.DEPLOY);
         return hasPermission(group, path, permission);
     }
 
+    @Transactional
     public boolean canAdmin(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermisssion.ADMIN);
         return hasPermission(group, path, permission);
@@ -516,6 +510,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return granted;
     }
 
+    @Transactional
     public void exportTo(ExportSettings settings, StatusHolder status) {
         //Export the security settings as xml using xstream
         SecurityInfo descriptor = getSecurityData();
@@ -532,6 +527,7 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         }
     }
 
+    @Transactional
     public SecurityInfo getSecurityData() {
         List<UserInfo> users = getAllUsers(true);
         List<GroupInfo> groups = getAllGroups();
@@ -541,38 +537,28 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
     }
 
     public void importFrom(ImportSettings settings, StatusHolder status) {
-        status.setStatus("Importing security...", log);
+        status.setStatus("Importing security...");
         //Import the new security definitions
-        File baseDir = settings.getBaseDir();
-        String securityData;
-        // First check for security.xml file
-        File securityXmlFile = new File(baseDir, FILE_NAME);
+        File securityXmlFile = new File(settings.getBaseDir(), FILE_NAME);
         if (!securityXmlFile.exists()) {
-            String msg = "Security file " + securityXmlFile +
-                    " does not exists no import of security will be done.";
-            if (settings.isFailIfEmpty()) {
-                status.setError(msg, log);
-            } else {
-                status.setWarning(msg, log);
-            }
-            return;
-        }
-        try {
-            // Check for version
-            if (settings.getExportVersion() != null) {
-                securityData = BackupUtils.convertSecurityFile(baseDir, settings.getExportVersion());
-            } else {
-                securityData = FileUtils.readFileToString(securityXmlFile);
-            }
-        } catch (IOException e) {
-            status.setWarning("Could not read security file", log);
+            LOGGER.info("Security file " + securityXmlFile +
+                    " does not exists no import of security will be done.");
             return;
         }
         SecurityService me = InternalContextHelper.get().beanForType(SecurityService.class);
         me.removeAllSecurityData();
         XStream xstream = getXstream();
-        SecurityInfo descriptor = (SecurityInfo) xstream.fromXML(securityData);
-        me.importSecurityData(descriptor);
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(securityXmlFile));
+            SecurityInfo descriptor = (SecurityInfo) xstream.fromXML(is);
+            me.importSecurityData(descriptor);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Failed to import security configuration " + securityXmlFile,
+                    e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     static Authentication getAuthentication() {
@@ -593,8 +579,8 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
 
     private void createAnonymousUser() {
         SimpleUser anonUser;
-        anonUser = new SimpleUser(UserInfo.ANONYMOUS, DigestUtils.md5Hex(""), null, false, true, false, true,
-                true, true);
+        anonUser = new SimpleUser(UserInfo.ANONYMOUS, DigestUtils.md5Hex(""), null, true, true,
+                true, true, false, false);
         boolean created = userGroupManager.createUser(anonUser);
         if (created) {
             aclManager.createAnythingPermision(anonUser);
@@ -626,34 +612,37 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return sids;
     }
 
+    static RepoPath toRepoPath(RepoResource res) {
+        String repoKey = res.getRepoKey();
+        String path = res.getPath();
+        RepoPath repoPath = new RepoPath(repoKey, path);
+        return repoPath;
+    }
+
+    @Transactional
     public void importSecurityData(SecurityInfo descriptor) {
         List<GroupInfo> groups = descriptor.getGroups();
-        if (groups != null) {
-            for (GroupInfo group : groups) {
-                userGroupManager.createGroup(new Group(group));
-            }
+        for (GroupInfo group : groups) {
+            userGroupManager.createGroup(new Group(group));
         }
         List<UserInfo> users = descriptor.getUsers();
         boolean hasAnonymous = false;
-        if (users != null) {
-            for (UserInfo user : users) {
-                userGroupManager.createUser(new SimpleUser(user));
-                if (user.isAnonymous()) {
-                    hasAnonymous = true;
-                }
+        for (UserInfo user : users) {
+            userGroupManager.createUser(new SimpleUser(user));
+            if (user.isAnonymous()) {
+                hasAnonymous = true;
             }
         }
         List<AclInfo> acls = descriptor.getAcls();
-        if (acls != null) {
-            for (AclInfo acl : acls) {
-                aclManager.createAcl(new Acl(acl));
-            }
+        for (AclInfo acl : acls) {
+            aclManager.createAcl(new Acl(acl));
         }
         if (!hasAnonymous) {
             createAnonymousUser();
         }
     }
 
+    @Transactional
     public void removeAllSecurityData() {
         //Remove all existing users
         List<UserInfo> oldUsers = getAllUsers(true);
@@ -667,22 +656,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         }
         //Clean up all acls
         aclManager.deleteAllAcls();
-    }
-
-    public StatusHolder testLdapConnection(LdapSetting ldapSetting, String username,
-            String password) {
-        LdapConnectionTester ldapTester = new LdapConnectionTester();
-        return ldapTester.testLdapConnection(ldapSetting, username, password);
-    }
-
-    public boolean isPasswordEncryptionEnabled() {
-        CentralConfigDescriptor cc = centralConfig.getDescriptor();
-        return cc.getSecurity().getPasswordSettings().isEncryptionEnabled();
-    }
-
-    public boolean userPasswordMatches(String passwordToCheck) {
-        Authentication authentication = getAuthentication();
-        return authentication != null && passwordToCheck.equals(authentication.getCredentials());
     }
 
     private static boolean isAdmin(Authentication authentication) {
@@ -708,10 +681,4 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
         return xstream;
     }
 
-    private void assertAdmin() {
-        if (!isAdmin()) {
-            throw new SecurityException(
-                    "The attempted action is permitted to users with administrative privileges only.");
-        }
-    }
 }

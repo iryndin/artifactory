@@ -16,25 +16,30 @@
  */
 package org.artifactory.jcr.schedule;
 
+import org.apache.log4j.Logger;
 import org.artifactory.jcr.JcrService;
-import org.artifactory.schedule.quartz.QuartzCommand;
+import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
+import org.artifactory.schedule.ArtifactoryTimerTask;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class WorkingCopyCommitter extends QuartzCommand {
+public class WorkingCopyCommitter extends ArtifactoryTimerTask {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(WagonManagerTempArtifactsCleaner.class);
 
     public WorkingCopyCommitter() {
     }
 
+    public WorkingCopyCommitter(InternalArtifactoryContext context) {
+        this.context = context;
+    }
+
     @Override
-    protected void onExecute(JobExecutionContext context) throws JobExecutionException {
-        InternalArtifactoryContext artifactoryContext = InternalContextHelper.get();
-        JcrService jcr = artifactoryContext.getJcrService();
+    public void onRun() {
+        JcrService jcr = InternalContextHelper.get().getJcrService();
         jcr.commitWorkingCopy(500, this);
     }
 }

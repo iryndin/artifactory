@@ -17,26 +17,24 @@
 package org.artifactory.config;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.StatusHolder;
+import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.config.VersionInfo;
-import org.artifactory.api.security.AuthorizationException;
-import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.api.repo.BackupService;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
 import org.artifactory.config.jaxb.JaxbHelper;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
-import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
-import org.artifactory.repo.index.IndexerService;
+import org.artifactory.keyval.KeyVals;
+import org.artifactory.repo.index.IndexerManagerImpl;
 import org.artifactory.repo.service.InternalRepositoryService;
+import org.artifactory.security.ldap.LdapAuthenticatorWrapper;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.spring.PostInitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -53,32 +51,43 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class wraps the JAXB config descriptor.
+ * This class wraps the JAXB config descriptor TODO: For some reason the Transactional annotation
+ * does not work?
  */
 @Repository("centralConfig")
-public class CentralConfigServiceImpl implements InternalCentralConfigService {
-    private static final Logger log = LoggerFactory.getLogger(CentralConfigServiceImpl.class);
+public class CentralConfigServiceImpl implements CentralConfigService,
+        PostInitializingBean {
+
+    private final static Logger LOGGER = Logger.getLogger(CentralConfigServiceImpl.class);
 
     private CentralConfigDescriptor descriptor;
-    private MutableCentralConfigDescriptor editedDescriptor;
     private File originalConfigFile;
     private DateFormat dateFormatter;
     private String serverName;
 
     @Autowired
-    private AuthorizationService authService;
-
-    @Autowired
     private InternalRepositoryService repositoryService;
 
     @Autowired
-    private IndexerService indexer;
+    private KeyVals keyVals;
+
+    @Autowired
+    private IndexerManagerImpl indexerManager;
 
     public CentralConfigServiceImpl() {
     }
 
+    /**
+     * For testing only
+     *
+     * @param descriptor
+     */
+    CentralConfigServiceImpl(CentralConfigDescriptor descriptor) {
+        setDescriptor(descriptor);
+    }
+
     @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
+    public Class<? extends PostInitializingBean>[] initAfter() {
         return new Class[0];
     }
 
@@ -90,10 +99,22 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         //If we read the configuration from a local file, store it transiently so that we
         //can overwrite the configuration on system import
         setOriginalConfigFile(configFilePath);
-        InternalContextHelper.get().addReloadableBean(InternalCentralConfigService.class);
+        InternalContextHelper.get().addPostInit(CentralConfigServiceImpl.class);
+        //TODO: [by yl] REMOVE ME
+        /*
+        MavenWrapper wrapper = getMavenWrapper();
+        Artifact artifact = wrapper.createArtifact("groovy", "groovy", "1.0-jsr-06",
+                Artifact.SCOPE_COMPILE, "jar");
+        wrapper.resolve(artifact, getLocalRepoDescriptors().get(0), getRemoteRepositories());
+        */
     }
 
     public void init() {
+        //Check the repositories directories create by ArtifactoryHome
+        checkWritableDirectory(ArtifactoryHome.getDataDir());
+        checkWritableDirectory(ArtifactoryHome.getJcrRootDir());
+        //Create the deployment dir
+        checkWritableDirectory(ArtifactoryHome.getWorkingCopyDir());
     }
 
     public void setDescriptor(CentralConfigDescriptor descriptor) {
@@ -105,7 +126,8 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         //Get the server name
         serverName = descriptor.getServerName();
         if (serverName == null) {
-            log.info("No custom server id in configuration. Using hostname instead.");
+            LOGGER.warn("Could not determine server instance id from configuration." +
+                    " Using hostname instead.");
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
@@ -135,64 +157,11 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     }
 
     public VersionInfo getVersionInfo() {
-        return new VersionInfo(ConstantsValue.artifactoryVersion.getString(),
-                ConstantsValue.artifactoryRevision.getString());
+        return new VersionInfo(keyVals.getVersion(), keyVals.getRevision());
     }
 
-    public MutableCentralConfigDescriptor getDescriptorForEditing() {
-        // TODO: support locking
-        if (editedDescriptor == null) {
-            // create a duplicate descriptor by reading the currrent configuration file
-            editedDescriptor = JaxbHelper.readConfig(originalConfigFile);
-        }
-        return editedDescriptor;
-    }
-
-    private void discardEditedDescriptor() {
-        editedDescriptor = null;
-    }
-
-    public void saveEditedDescriptorAndReload() {
-        if (editedDescriptor == null) {
-            throw new IllegalStateException("Mutable editing descriptor is null");
-        }
-
-        if (!authService.isAdmin()) {
-            throw new AuthorizationException("Only admin user can save the artifactory config file");
-        }
-
-        // before doing anything do a sanity check that the edited descriptor is valid
-        // will fail if not valid without affecting the current configuration
-        File tmpNewConfig = new File(originalConfigFile.getAbsolutePath() + ".tmp");
-        JaxbHelper.writeConfig(editedDescriptor, tmpNewConfig);
-        JaxbHelper.readConfig(tmpNewConfig);// will fail if invalid
-
-        // create a backup first
-        File backupConfigFile = new File(originalConfigFile.getPath() + ".orig");
-        try {
-            FileUtils.copyFile(originalConfigFile, backupConfigFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create backup of the original config file", e);
-        }
-
-        // replace the config file
-        boolean deleted = originalConfigFile.delete();
-        if (!deleted) {
-            throw new RuntimeException("Failed to delete original config file");
-        }
-        try {
-            FileUtils.moveFile(tmpNewConfig, originalConfigFile);
-        } catch (IOException e) {
-            // copy from the backup
-            try {
-                FileUtils.copyFile(backupConfigFile, originalConfigFile);
-            } catch (IOException e1) {
-                throw new RuntimeException("Failed to recover original file from backup", e1);
-            }
-            throw new RuntimeException("Failed to replace current config file", e);
-        }
-
-        reload();
+    public void saveTo(String path) {
+        new JaxbHelper<CentralConfigDescriptor>().write(path, descriptor);
     }
 
     public void reload() {
@@ -200,39 +169,36 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     }
 
     public void importFrom(ImportSettings settings, StatusHolder status) {
-        File dirToImport = settings.getBaseDir();
-        if ((dirToImport != null) && (dirToImport.isDirectory()) && (dirToImport.listFiles().length > 0)) {
-            status.setStatus("Importing config...", log);
-            File newConfigFile = new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
-            if (newConfigFile.exists()) {
-                // copy the newly imported config file to the current artifactory etc directory 
-                File etcDir = ArtifactoryHome.getEtcDir();
-                File tempConfFile = new File(etcDir, "import_" + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
-                try {
-                    FileUtils.copyFile(newConfigFile, tempConfFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to backup " + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE, e);
-                }
-                status.setStatus("Reloading configuration from " + tempConfFile, log);
-                reloadConfiguration(tempConfFile);
-                init();
-                status.setStatus("Configuration reloaded from " + newConfigFile, log);
-
+        status.setStatus("Importing config...");
+        File configFile = new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
+        if (configFile.exists()) {
+            status.setStatus("Reloading configuration from " + configFile);
+            reloadConfiguration(configFile);
+            init();
+            status.setStatus("Configuration reloaded from " + configFile);
+        }
+        status.setStatus("Importing repositories...");
+        repositoryService.importFrom(settings, status);
+        status.setStatus("Backing up config...");
+        if (configFile.exists()) {
+            //Backup the config file and overwrite it
+            try {
+                //TODO: [by fs] Use the switch files method that rename with a number
+                FileUtils.copyFile(originalConfigFile, new File(
+                        originalConfigFile.getPath() + ".orig"));
                 //Check that config files are not the same (e.g. if we reimport from the same place)
-                if (!newConfigFile.equals(originalConfigFile)) {
-                    // Switch the originial config file with the new one
-                    status.setStatus("Switching config files...", log);
-                    org.artifactory.util.FileUtils.switchFiles(originalConfigFile, tempConfFile);
+                if (!configFile.equals(originalConfigFile)) {
+                    FileUtils.copyFile(configFile, originalConfigFile);
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(
+                        "Failed to backup the " + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE, e);
             }
-        } else if (settings.isFailIfEmpty()) {
-            String error = "The given base directory is either empty, or non-existant";
-            throw new IllegalArgumentException(error);
         }
     }
 
     public void exportTo(ExportSettings settings, StatusHolder status) {
-        status.setStatus("Exporting config...", log);
+        status.setStatus("Exporting config...");
         File destFile = new File(settings.getBaseDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
         try {
             FileUtils.copyFile(originalConfigFile, destFile);
@@ -249,43 +215,46 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     }
 
     private void reloadConfiguration(File path) {
-        log.info("Reloading configuration (using '" + path + "')...");
+        LOGGER.info("Re-Loading configuration (using '" + path + "')...");
         try {
-            discardEditedDescriptor();
             CentralConfigDescriptor oldDescriptor = getDescriptor();
             if (oldDescriptor == null) {
-                throw new IllegalStateException("The system was not loaded, and a reload was called");
+                throw new IllegalStateException(
+                        "The system was not loaded, and a reload was called");
             }
             InternalArtifactoryContext ctx = InternalContextHelper.get();
-            CentralConfigDescriptorImpl descriptor = JaxbHelper.readConfig(path);
+            CentralConfigDescriptor descriptor = JaxbHelper.readConfig(path);
             //setDescriptor() will set the new date formatter and server name
             setDescriptor(descriptor);
-            ctx.reload(oldDescriptor);
-            log.info("Reloaded configuration from '" + path + "'.");
+            // TODO: Find a more generic way to do this cleanly (add reload method to PostInitializeBean)
+            repositoryService.init();
+            ctx.beanForType(BackupService.class).reload(oldDescriptor);
+            ctx.beanForType(LdapAuthenticatorWrapper.class).reload(oldDescriptor);
+            LOGGER.info("Re-Loaded configuration from '" + path + "'.");
         } catch (Exception e) {
-            log.error("Failed to reload configuration from '" + path + "'.", e);
+            LOGGER.error("Failed to reload configuration from '" + path + "'.", e);
             throw new RuntimeException(e);
         }
     }
 
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-        // Nothing to do
-    }
-
-    public void destroy() {
-        // Nothing to do
-    }
-
     private void loadConfiguration(File path) {
-        log.info("Loading configuration (using '" + path + "')...");
+        LOGGER.info("Loading configuration (using '" + path + "')...");
         try {
-            CentralConfigDescriptorImpl descriptor = JaxbHelper.readConfig(path);
+            CentralConfigDescriptor descriptor = JaxbHelper.readConfig(path);
             //setDescriptor() will set the new date formatter and server name
             setDescriptor(descriptor);
-            log.info("Loaded configuration from '" + path + "'.");
+            LOGGER.info("Loaded configuration from '" + path + "'.");
         } catch (Exception e) {
-            log.error("Failed to load configuration from '" + path + "'.", e);
+            LOGGER.error("Failed to load configuration from '" + path + "'.", e);
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void checkWritableDirectory(File dir) {
+        if (!dir.exists() || !dir.isDirectory() || !dir.canWrite()) {
+            throw new IllegalArgumentException(
+                    "Failed to create writable directory: " +
+                            dir.getAbsolutePath());
         }
     }
 
@@ -296,7 +265,8 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
             String key = proxy.getKey();
             ProxyDescriptor oldProxy = map.put(key, proxy);
             if (oldProxy != null) {
-                throw new RuntimeException("Duplicate proxy key in configuration: " + key + ".");
+                throw new RuntimeException(
+                        "Duplicate proxy key in configuration: " + key + ".");
             }
         }
     }

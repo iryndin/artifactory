@@ -20,8 +20,8 @@ import com.sun.jersey.impl.provider.entity.AbstractMessageReaderWriterProvider;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
+import javax.ws.rs.ConsumeMime;
+import javax.ws.rs.ProduceMime;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -39,22 +39,20 @@ import java.util.Set;
 /**
  * User: freds Date: Aug 12, 2008 Time: 6:46:36 PM
  */
-@Produces({"application/xml", "text/xml", "*/*"})
-@Consumes({"application/xml", "text/xml", "*/*"})
+@ProduceMime({"application/xml", "text/xml", "*/*"})
+@ConsumeMime({"application/xml", "text/xml", "*/*"})
 @Provider
 public class XStreamAliasProvider extends AbstractMessageReaderWriterProvider<Object> {
     private static final Set<Class> processed = new HashSet<Class>();
     private static final XStream xstream = new XStream();
     private static final String DEFAULT_ENCODING = "utf-8";
 
-    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations,
-            MediaType mediaType) {
+    public boolean isReadable(Class<?> type, Type genericType, Annotation annotations[]) {
         return type.getAnnotation(XStreamAlias.class) != null;
     }
 
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations,
-            MediaType mediaType) {
-        return type.getAnnotation(XStreamAlias.class) != null;        
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation annotations[]) {
+        return type.getAnnotation(XStreamAlias.class) != null;
     }
 
     protected static String getCharsetAsString(MediaType m) {

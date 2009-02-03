@@ -3,36 +3,42 @@ package org.artifactory.webapp.wicket.utils.validation;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.ValidationError;
+import org.apache.wicket.validation.validator.StringValidator;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class JcrNameValidator extends DefautlMessageStringValidator {
+public class JcrNameValidator extends StringValidator {
 
-    public JcrNameValidator() {
-        this(null);
+    /**
+     * singleton instance
+     */
+    private static final JcrNameValidator INSTANCE = new JcrNameValidator();
+
+    /**
+     * Retrieves the singleton instance of <code>JcrNameValidator</code>.
+     *
+     * @return the singleton instance of <code>JcrNameValidator</code>
+     */
+    public static JcrNameValidator getInstance() {
+        return INSTANCE;
     }
 
-    public JcrNameValidator(String errorMessage) {
-        super(errorMessage);
-    }
-
-    @Override
     protected void onValidate(IValidatable validatable) {
         // Check value is a valid jcr name
-        String value = (String) validatable.getValue();
+        String name = (String) validatable.getValue();
         try {
-            NameParser.checkFormat(value);
+            NameParser.checkFormat(name);
         } catch (IllegalNameException e) {
-            if (errorMessage == null) {
-                error(validatable);
-            } else {
-                ValidationError error = new ValidationError();
-                String message = String.format(errorMessage, value);
-                error.setMessage(message);
-                validatable.error(error);
-            }
+            error(validatable);
         }
+    }
+
+    /**
+     * Protected constructor to force use of static singleton accessor. Override this constructor to
+     * implement resourceKey(Component).
+     */
+    protected JcrNameValidator() {
+        super();
     }
 }

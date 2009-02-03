@@ -16,9 +16,8 @@
  */
 package org.artifactory.jcr;
 
-import org.artifactory.util.LoggingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+import org.artifactory.utils.LoggingUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
@@ -33,7 +32,8 @@ import org.springmodules.jcr.jackrabbit.support.UserTxSessionHolder;
 @Component("transactionManager")
 public class JcrTransactionManager extends LocalTransactionManager
         implements TransactionSynchronization {
-    private static final Logger log = LoggerFactory.getLogger(JcrTransactionManager.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrTransactionManager.class);
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -64,7 +64,7 @@ public class JcrTransactionManager extends LocalTransactionManager
                 status.setRollbackOnly();
                 session.refresh(false);
                 LoggingUtils.warnOrDebug(
-                        log, "Discarding changes made by a read-only transaction.");
+                        LOGGER, "Discarding changes made by a read-only transaction.");
             }
         }
     }
@@ -76,13 +76,11 @@ public class JcrTransactionManager extends LocalTransactionManager
                 (UserTxSessionHolder) TransactionSynchronizationManager
                         .getResource(getSessionFactory());
         JcrSession session = (JcrSession) sessionHolder.getSession();
-        if (log.isDebugEnabled()) {
-            log.debug("Saving session: " + session + ".");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Saving session: " + session + ".");
         }
-        if (!status.isRollbackOnly() && !status.isReadOnly() && session.isLive()) {
-            //Flush the changes as early as possible to save on memory resources
-            session.save();
-        }
+        //Flush the changes as early as possible to save on memory resources
+        session.save();
         //Now send the commit
         super.doCommit(status);
     }
@@ -97,10 +95,10 @@ public class JcrTransactionManager extends LocalTransactionManager
                         .getResource(getSessionFactory());
         JcrSession session = (JcrSession) sessionHolder.getSession();
         // Release early
-        session.getSessionResourceManager().afterCompletion(false);
+        session.getLockManager().releaseLocks(false);
         if (session.isLive() && session.hasPendingChanges()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Early changes discrading for a rolled back transaction.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Early changes discrading for a rolled back transaction.");
                 session.refresh(false);
             }
         }
@@ -128,10 +126,10 @@ public class JcrTransactionManager extends LocalTransactionManager
         JcrSession session = (JcrSession) sessionHolder.getSession();
         if (status == TransactionSynchronization.STATUS_COMMITTED) {
             // Commit the locks
-            session.getSessionResourceManager().afterCompletion(true);
+            session.getLockManager().releaseLocks(true);
         } else {
             //Discard changes on rollback
-            session.getSessionResourceManager().afterCompletion(false);
+            session.getLockManager().releaseLocks(false);
             session.refresh(false);
         }
     }

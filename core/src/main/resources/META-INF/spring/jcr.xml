@@ -11,12 +11,18 @@
         <constructor-arg value="/META-INF/jcr/artifactory_nodetypes.xml"/>
     </bean>
 
-    <bean id="repoXmlResource" class="org.artifactory.config.JcrConfResourceLoader">
-        <constructor-arg value="repo.xml"/>
+    <bean id="repoXmlResource" class="org.artifactory.io.ClasspathResourceLoader">
+        <constructor-arg value="/META-INF/jcr/repo_db.xml"/>
     </bean>
 
     <bean id="indexConfigLocation" class="org.artifactory.io.ClasspathResourceLoader">
         <constructor-arg value="/META-INF/jcr/index_config.xml"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          lazy-init="true">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+        <property name="url" value="jdbc:derby:${artifactory.home}/data/db;create=true"/>
     </bean>
 
 </beans>

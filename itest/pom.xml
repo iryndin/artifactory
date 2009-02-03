@@ -10,7 +10,8 @@
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.3.0-beta-4</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <dependencies>
@@ -18,18 +19,6 @@
             <groupId>org.artifactory</groupId>
             <artifactId>artifactory-core</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-cli</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-webapp</artifactId>
-            <version>${parent.version}</version>
-            <type>jar</type>
-            <classifier>classes</classifier>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -40,65 +29,14 @@
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-core</artifactId>
-            <version>1.5.4</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-protocol-ldap</artifactId>
-            <version>1.5.4</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
-        <finalName>artifactory-itest</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assemble/assembly.xml</descriptor>
-                    </descriptors>
-                    <finalName>artifactory-itest-${version}</finalName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.artifactory.test.mock.StartDummyRepo</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -116,24 +54,6 @@
                             <skip>false</skip>
                             <suiteXmlFiles>
                                 <suiteXmlFile>${basedir}/src/test/resources/testng.xml</suiteXmlFile>
-                                <suiteXmlFile>${basedir}/src/test/resources/testng-http.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>mock-server</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skip>false</skip>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${basedir}/src/test/resources/mock-server-testng.xml</suiteXmlFile>
                             </suiteXmlFiles>
                         </configuration>
                     </plugin>

@@ -16,12 +16,9 @@
  */
 package org.artifactory.jcr.md;
 
-import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.fs.MetadataInfo;
-import org.artifactory.api.repo.Lock;
-import org.artifactory.io.checksum.Checksum;
-import org.artifactory.spring.ReloadableBean;
-
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -29,42 +26,35 @@ import java.util.List;
 /**
  * User: freds Date: Aug 10, 2008 Time: 3:48:44 PM
  */
-public interface MetadataService extends ReloadableBean {
-    @Lock(transactional = true, readOnly = true)
+public interface MetadataService {
     List<String> getXmlMetadataNames(MetadataAware obj);
 
-    <MD> MD getXmlMetadataObject(MetadataAware metadataAware, Class<MD> clazz);
+    <MD> MD getXmlMetadataObject(MetadataAware obj, Class<MD> clazz);
 
-    <MD> MD getXmlMetadataObject(MetadataAware metadataAware, Class<MD> clazz, boolean createIfMissing);
+    <MD> MD getXmlMetadataObject(MetadataAware obj, Class<MD> clazz,
+            boolean createIfMissing);
 
-    String getXmlMetadata(MetadataAware metadataAware, String metadataName);
+    String getXmlMetadata(MetadataAware obj, String metadataName);
 
-    @Lock(transactional = true)
-    String setXmlMetadata(MetadataAware metadataAware, Object xstreamable);
+    String setXmlMetadata(MetadataAware obj, Object xstreamable);
 
-    @Lock(transactional = true)
-    void setXmlMetadata(MetadataAware metadataAware, String metadataName, InputStream is, StatusHolder status);
+    void importXmlMetadata(MetadataAware obj, String metadataName, InputStream is);
 
-    @Lock(transactional = true)
-    void removeXmlMetadata(MetadataAware MetadataAware, String metadataName);
+    void removeXmlMetadata(MetadataAware obj, String metadataName);
 
-    @Lock(transactional = true)
-    void writeRawXmlStream(MetadataAware metadataAware, String metadataName, OutputStream out);
+    void writeRawXmlStream(MetadataAware obj, String metadataName, OutputStream out);
 
-    void saveChecksums(MetadataAware metadataAware, String metadataName, Checksum[] checksums);
+    void importXml(Node xmlNode, InputStream in) throws RepositoryException, IOException;
 
-    /**
-     * Gets MetadataInfo for <i>existing</i> metadata
-     *
-     * @param MetadataAware
-     * @param metadataName
-     * @return
-     */
-    @Lock(transactional = true, readOnly = true)
-    MetadataInfo getMetadataInfo(MetadataAware MetadataAware, String metadataName);
+    Node getMetadataNode(MetadataAware obj, String metadataName) throws RepositoryException;
 
-    @Lock(transactional = true, readOnly = true)
-    boolean hasXmlMetdata(MetadataAware metadataAware, String metadataName);
+    MetadataValue lockCreateIfEmpty(Class clazz, String absolutePath);
 
-    void setXmlMetadata(MetadataAware metadataAware, String metadataName, InputStream is);
+    <MD> MD getLockedXmlMetadataObject(MetadataAware obj, Class<MD> clazz);
+
+    void delete(String absolutePath);
+
+    <MD> MD getInfoFromCache(String absolutePath, Class<MD> clazz);
+
+    void unlockNoSave(Class clazz, String absolutePath);
 }

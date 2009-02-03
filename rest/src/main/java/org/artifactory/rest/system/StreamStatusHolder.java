@@ -16,27 +16,24 @@
  */
 package org.artifactory.rest.system;
 
-
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.api.common.StatusHolder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * User: freds Date: Aug 12, 2008 Time: 7:49:54 PM
  */
-public class StreamStatusHolder extends MultiStatusHolder {
-    private static final Logger log = LoggerFactory.getLogger(StreamStatusHolder.class);
+public class StreamStatusHolder extends StatusHolder {
+    private static final Logger LOGGER =
+            LogManager.getLogger(StreamStatusHolder.class);
 
     private HttpServletResponse response;
     private PrintStream out;
     private boolean brokenPipe = false;
-    private AtomicInteger doingDots = new AtomicInteger(0);
 
     public StreamStatusHolder(HttpServletResponse response) {
         this.response = response;
@@ -49,7 +46,7 @@ public class StreamStatusHolder extends MultiStatusHolder {
                 response.setStatus(200);
                 out = new PrintStream(response.getOutputStream());
             } catch (IOException e) {
-                log.error("Cannot create writer stream to client " + e.getMessage(), e);
+                LOGGER.error("Cannot create writer stream to client " + e.getMessage(), e);
                 brokenPipe = true;
             }
         }
@@ -57,58 +54,33 @@ public class StreamStatusHolder extends MultiStatusHolder {
     }
 
     @Override
-    protected StatusEntry addStatus(String statusMsg, int statusCode, Logger logger, boolean debug) {
-        StatusEntry result = super.addStatus(statusMsg, statusCode, logger, debug);
-        if (isVerbose() || !result.isDebug()) {
-            String msg = result.getStatusMessage() + "\n";
-            int dots = doingDots.getAndSet(0);
-            if (dots > 0) {
-                msg = "\n" + msg;
-            }
-            sendToClient(msg);
-        } else {
-            int dots = doingDots.incrementAndGet();
-            if (dots == 80) {
-                doingDots.getAndAdd(-80);
-                sendToClient("\n");
-            } else {
-                sendToClient(".");
-            }
-        }
-        return result;
-    }
-
-    private void sendToClient(String statusMsg) {
+    public void setStatus(String statusMsg, int statusCode) {
+        super.setStatus(statusMsg, statusCode);
         if (!brokenPipe) {
             try {
                 PrintStream os = getResponseStream();
                 os.print(statusMsg);
                 os.flush();
             } catch (Exception e) {
-                log.error("Cannot send status to client. Will stop sending them.", e);
+                LOGGER.error("Cannot send status to client. Will stop sending them.", e);
                 brokenPipe = true;
             }
         }
     }
 
     @Override
-    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable,
-            Logger logger,
-            boolean warn) {
-        StatusEntry result = super.addError(statusMsg, statusCode, throwable, logger, warn);
+    public void setError(String statusMsg, int statusCode, Throwable throwable) {
+        super.setError(statusMsg, statusCode, throwable);
         if (!brokenPipe) {
             try {
                 PrintStream os = getResponseStream();
                 os.println("" + statusCode + " : " + statusMsg);
-                if ((throwable != null) && isVerbose()) {
-                    throwable.printStackTrace(os);
-                }
+                throwable.printStackTrace(os);
                 os.flush();
             } catch (Exception e) {
-                log.error("Cannot send status to client. Will stop sending them.", e);
+                LOGGER.error("Cannot send status to client. Will stop sending them.", e);
                 brokenPipe = true;
             }
         }
-        return result;
     }
 }

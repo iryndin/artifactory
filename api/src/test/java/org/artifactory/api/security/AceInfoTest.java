@@ -1,6 +1,5 @@
 package org.artifactory.api.security;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
@@ -50,7 +49,7 @@ public class AceInfoTest {
         assertTrue(aceInfo.canDeploy(), "Shouldn have all roles");
     }
 
-    public void copyConstructor() {
+    public void testCopyConstructor() {
         AceInfo orig = new AceInfo("koko", true, ArtifactoryPermisssion.ADMIN.getMask());
         AceInfo copy = new AceInfo(orig);
 
@@ -59,10 +58,4 @@ public class AceInfoTest {
         assertEquals(orig.isGroup(), copy.isGroup());
     }
 
-    public void copyConstructorReflectionEquality() {
-        AceInfo orig = new AceInfo("koko", true, ArtifactoryPermisssion.ADMIN.getMask());
-        AceInfo copy = new AceInfo(orig);
-
-        assertTrue(EqualsBuilder.reflectionEquals(orig, copy), "Orig and copy differ");
-    }
 }

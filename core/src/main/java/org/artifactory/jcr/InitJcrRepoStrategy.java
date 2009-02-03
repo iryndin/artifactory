@@ -28,12 +28,13 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.bundle.AbstractBundlePersistenceManager;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.log4j.Logger;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
+import org.artifactory.common.ArtifactoryConstants;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
@@ -46,7 +47,7 @@ import java.util.List;
  * User: freds Date: Jun 3, 2008 Time: 12:14:52 PM
  */
 public class InitJcrRepoStrategy {
-    private static final Logger log = LoggerFactory.getLogger(InitJcrRepoStrategy.class);
+    private final static Logger LOGGER = Logger.getLogger(InitJcrRepoStrategy.class);
 
     private final JcrServiceImpl jcrService;
 
@@ -64,7 +65,7 @@ public class InitJcrRepoStrategy {
         try {
             RepositoryConfig repoConfig = RepositoryConfig.create(
                     repoXml.getInputStream(), ArtifactoryHome.getJcrRootDir().getAbsolutePath());
-            if (ConstantsValue.jcrFixConsistency.getBoolean()) {
+            if (ArtifactoryConstants.fixConsistency) {
                 WorkspaceConfig wsConfig =
                         (WorkspaceConfig) repoConfig.getWorkspaceConfigs().iterator().next();
                 PersistenceManagerConfig pmConfig = wsConfig.getPersistenceManagerConfig();
@@ -74,9 +75,10 @@ public class InitJcrRepoStrategy {
                 if (pm instanceof AbstractBundlePersistenceManager) {
                     pmConfig.getParameters().put("consistencyCheck", "true");
                     pmConfig.getParameters().put("consistencyFix", "true");
-                    log.info("Fix consistency requested on '" + className + "'.");
+                    LOGGER.info("Fix consistency requested on '" + className + "'.");
                 } else {
-                    log.warn("Fix consistency requested on a persistence manager that does not support this feature.");
+                    LOGGER.warn("Fix consistency requested on a persistence manager that " +
+                            "does not support this feature.");
                 }
             }
             repository = RepositoryImpl.create(repoConfig);
@@ -88,6 +90,7 @@ public class InitJcrRepoStrategy {
         return repository;
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void init() {
         try {
             JcrSession session = jcrService.getManagedSession();
@@ -96,9 +99,8 @@ public class InitJcrRepoStrategy {
             registerTypes(workspace, jcrService.getArtifactoryNodeTypes());
             initializeOcm();
             initializeRepoRoot();
-            initializeTrash();
         } catch (Exception e) {
-            log.error("Cannot initialize JCR repository " + e.getMessage(), e);
+            LOGGER.error("Cannot initialize JCR repository " + e.getMessage(), e);
             throw new RuntimeException("Cannot initialize JCR repository " + e.getMessage(), e);
         }
     }
@@ -118,10 +120,6 @@ public class InitJcrRepoStrategy {
             }
             jcrService.setOcmMapper(new AnnotationMapperImpl(ocmClasses));
         }
-    }
-
-    protected void initializeTrash() {
-        jcrService.getOrCreateUnstructuredNode(JcrPath.get().getTrashJcrRootPath());
     }
 
     protected void registerTypes(Workspace workspace, NodeTypeDef[] types)
@@ -155,10 +153,13 @@ public class InitJcrRepoStrategy {
         NamespaceRegistry nsReg = workspace.getNamespaceRegistry();
         List<String> nsPrefixes = Arrays.asList(nsReg.getPrefixes());
         if (!nsPrefixes.contains(ARTIFACTORY_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(ARTIFACTORY_NAMESPACE_PREFIX, ARTIFACTORY_NAMESPACE);
+            nsReg.registerNamespace(
+                    ARTIFACTORY_NAMESPACE_PREFIX,
+                    ARTIFACTORY_NAMESPACE);
         }
         if (!nsPrefixes.contains(OCM_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX, OCM_NAMESPACE);
+            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX,
+                    OCM_NAMESPACE);
         }
     }
 

@@ -16,10 +16,14 @@
  */
 package org.artifactory.api.context;
 
+import org.apache.log4j.Logger;
+
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
 public abstract class ArtifactoryContextThreadBinder {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ArtifactoryContextThreadBinder.class);
 
     private static final InheritableThreadLocal<ArtifactoryContext> current =
             new InheritableThreadLocal<ArtifactoryContext>();

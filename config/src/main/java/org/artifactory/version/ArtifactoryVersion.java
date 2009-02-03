@@ -40,13 +40,7 @@ public enum ArtifactoryVersion {
     v130beta1("1.3.0-beta-1", 1501),
     v130beta2("1.3.0-beta-2", 1509),
     v130beta3("1.3.0-beta-3", 1992),
-    v130beta4("1.3.0-beta-4", 2065),
-    v130beta5("1.3.0-beta-5", 2282),
-    v130beta6("1.3.0-beta-6", 2862),
-    v130beta61("1.3.0-beta-6.1", 2897),
-    v130rc1("1.3.0-rc-1", 3148),
-    v130rc2("1.3.0-rc-2", 3392),
-    v200("2.0.0", Integer.MAX_VALUE);
+    v130beta4("1.3.0-beta-4", Integer.MAX_VALUE);
 
     public static ArtifactoryVersion getCurrent() {
         ArtifactoryVersion[] versions = ArtifactoryVersion.values();
@@ -93,7 +87,7 @@ public enum ArtifactoryVersion {
         return versions[ordinal() - 1].findResource(resourceName);
     }
 
-    public boolean isCurrent() {
+    public boolean isCurrentVersion() {
         return this == getCurrent();
     }
 
@@ -103,13 +97,5 @@ public enum ArtifactoryVersion {
      */
     public boolean before(ArtifactoryVersion otherVersion) {
         return this.compareTo(otherVersion) < 0;
-    }
-
-    /**
-     * @param otherVersion The other ArtifactoryVersion
-     * @return returns true if this version is before or equal to the other version
-     */
-    public boolean beforeOrEqual(ArtifactoryVersion otherVersion) {
-        return this == otherVersion || this.compareTo(otherVersion) < 0;
     }
 }

@@ -19,9 +19,8 @@ package org.artifactory.jcr;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.StackObjectPool;
 import org.apache.jackrabbit.api.XASession;
+import org.apache.log4j.Logger;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -31,7 +30,8 @@ import javax.jcr.Session;
  * Created by IntelliJ IDEA. User: yoav
  */
 public class PoolableSessionFactory extends BasePoolableObjectFactory {
-    private static final Logger log = LoggerFactory.getLogger(PoolableSessionFactory.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(PoolableSessionFactory.class);
 
     private Repository repository;
     private StackObjectPool pool;
@@ -54,7 +54,7 @@ public class PoolableSessionFactory extends BasePoolableObjectFactory {
     @Override
     public void destroyObject(Object obj) throws Exception {
         JcrSession session = (JcrSession) obj;
-        session.getSessionResourceManager().afterCompletion(false);
+        session.getLockManager().releaseLocks(false);
         //Extremely important to call this so that all sesion-scoped node locks are cleaned!
         session.getSession().logout();
     }
@@ -73,14 +73,14 @@ public class PoolableSessionFactory extends BasePoolableObjectFactory {
     @Override
     public void passivateObject(Object obj) throws Exception {
         JcrSession session = (JcrSession) obj;
-        if (session.getSessionResourceManager().hasResources()) {
-            throw new IllegalStateException("Cannnot reuse a session that has pending resources.");
+        if (session.getLockManager().hasLocks()) {
+            throw new IllegalStateException("Cannnot reuse a session that has pending locks.");
         }
         if (session.hasPendingChanges()) {
             throw new IllegalStateException("Cannnot reuse a session that has pending changes.");
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Returning pooled session: " + session + ".");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Returning pooled session: " + session + ".");
         }
     }
 

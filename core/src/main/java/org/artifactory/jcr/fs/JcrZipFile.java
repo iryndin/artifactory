@@ -17,6 +17,7 @@
 package org.artifactory.jcr.fs;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +30,16 @@ import java.util.zip.ZipInputStream;
  * A wrapper on a zip resource under a jcr file. This class is non tread safe.
  */
 public class JcrZipFile {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrZipFile.class);
 
     private JcrFile jcrFile;
     private List<ZipEntry> entries;
     private List<InputStream> streams = new ArrayList<InputStream>();
+
+    public JcrZipFile(String absPath) {
+        this(new JcrFile(absPath));
+    }
 
     public JcrZipFile(JcrFile jcrFile) {
         this.jcrFile = jcrFile;
