@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory.deploy-test</groupId>
+    <artifactId>multi</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.artifactory.it</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>1.0</version>
+        <relativePath>../repo-parent/pom.xml</relativePath>
+    </parent>
+
+    <!-- NOTE: Delete the remote repo before testing this - if folders already exist there it will
+    not demonstrate concurrency issues invovlved with creating the folders accross transactions -->
+    <modules>
+        <module>m1</module>
+        <module>m2</module>
+    </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>snapshots</id>
+            <!-- Lightweight http produces more concurrency issues, which is more interesting -->
+            <url>http://localhost:8080/artifactory/libs-snapshots-local</url>
+            <!--<url>dav:http://localhost:8080/artifactory/libs-snapshots</url>-->
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+            </extension>
+        </extensions>
+    </build>
+</project>

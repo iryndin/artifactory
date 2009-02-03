@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+    </script>
+</wicket:head>
+
+<body>
+<wicket:panel>
+    <div wicket:id="feedback"/>
+
+    <div wicket:id="recipientsContainer">
+        <h3 wicket:id="recipientsHeader">Permissions</h3>
+
+        <table wicket:id="recipients" class="results" cellpadding="0"
+               cellspacing="0"/>
+        <input class="button" type="button" wicket:id="cancel" id="cancel"
+               value="Cancel"/>
+        <input class="button" type="button" wicket:id="submit" value="Submit"/>
+    </div>
+
+    <wicket:fragment wicket:id="checkboxFrag"><input type="checkbox"
+                                                     wicket:id="checkbox"/></wicket:fragment>
+</wicket:panel>
+</body>
+</html>
