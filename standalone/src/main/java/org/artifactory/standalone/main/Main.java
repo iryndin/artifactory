@@ -16,11 +16,9 @@
  */
 package org.artifactory.standalone.main;
 
-import org.artifactory.common.ArtifactoryHome;
 import org.mortbay.jetty.Server;
 import org.mortbay.xml.XmlConfiguration;
 
-import java.io.File;
 import java.net.URL;
 
 /**
@@ -28,51 +26,28 @@ import java.net.URL;
  */
 public class Main {
     /**
-     * Main function, starts the jetty server. The first parameter can be the jetty.xml
-     * configuration file. If not provided ${artifactory.home}/etc/jetty.xml will be used.
+     * Main function, starts the jetty server.
      *
      * @param args
      */
     public static void main(String[] args) {
         Server server = null;
         try {
-            URL configUrl;
-            if (args != null && args.length > 0) {
-                // Jetty configuration file is the only param allowed
-                if (args.length != 1) {
-                    System.err.println("Usage java " + Main.class.getName() +
-                            " [URL path to jetty xml conf]");
-                    System.exit(1);
-                }
-                File jettyConfFile = new File(args[0]);
-                if (jettyConfFile.exists() && jettyConfFile.isFile()) {
-                    System.out.println("Starting jetty from configuration file " + jettyConfFile);
-                    configUrl = jettyConfFile.toURI().toURL();
-                } else {
-                    System.out.println("Starting jetty from URL configuration " + args[0]);
-                    configUrl = new URL(args[0]);
-                }
-                ArtifactoryHome.create();
-            } else {
-                //Trying to find Artifactory home and then /etc/jetty.xml under it
-                ArtifactoryHome.create();
-                File jettyConfFile = new File(ArtifactoryHome.getEtcDir(), "jetty.xml");
-                if (jettyConfFile.exists() && jettyConfFile.isFile()) {
-                    System.out.println("Starting jetty from configuration file " + jettyConfFile);
-                    configUrl = jettyConfFile.toURI().toURL();
-                } else {
-                    System.err.println("No jetty configuration file found at " + jettyConfFile);
-                    System.exit(1);
-                    return;
-                }
+            String artifactoryHome = System.getProperty("artifactory.home");
+            if (artifactoryHome == null) {
+                //For testing only
+                artifactoryHome = System.getenv("ARTIFACTORY_HOME");
             }
+            if (artifactoryHome != null) {
+                artifactoryHome = artifactoryHome.replace('\\', '/');
+            }
+            URL configUrl = new URL("file:" + artifactoryHome + "/etc/jetty.xml");
             XmlConfiguration xmlConfiguration = new XmlConfiguration(configUrl);
             server = new Server();
             xmlConfiguration.configure(server);
             server.start();
         } catch (Exception e) {
             System.err.println("Could not start the Jetty server: " + e);
-            e.printStackTrace();
             if (server != null) {
                 try {
                     server.stop();
