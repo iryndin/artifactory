@@ -29,53 +29,42 @@
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.2.5</version>
+        <relativePath>..</relativePath>
     </parent>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
-        <dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-common</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-update</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-
         <!--<dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-api</artifactId>
-            <version>${parent.version}</version>
-            <scope>test</scope>
-            <classifier>tests</classifier>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-webdav</artifactId>
+            <version>1.0-beta-2</version>
         </dependency>-->
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
         <dependency>
@@ -84,8 +73,18 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
         </dependency>
 
         <dependency>
@@ -96,11 +95,6 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
         </dependency>
 
         <dependency>
@@ -118,6 +112,23 @@
             <artifactId>maven-project</artifactId>
         </dependency>
 
+        <!-- Core jaxb classes -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
+        <!-- Core jaxb classes -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
@@ -129,18 +140,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-ocm</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <artifactId>spring-jdbc</artifactId>
         </dependency>
 
         <dependency>
@@ -150,37 +156,12 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
+            <artifactId>spring-support</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-acl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-tiger</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springmodules</groupId>
-            <artifactId>spring-modules-jcr</artifactId>
+            <groupId>org.acegisecurity</groupId>
+            <artifactId>acegi-security</artifactId>
         </dependency>
 
         <dependency>
@@ -194,44 +175,13 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>de.schlichtherle.io</groupId>
-            <artifactId>truezip</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sonatype.nexus</groupId>
-            <artifactId>nexus-indexer</artifactId>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-digest</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetlang</groupId>
-            <artifactId>jetlang</artifactId>
-        </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
+            <artifactId>plexus-archiver</artifactId>
         </dependency>
 
     </dependencies>

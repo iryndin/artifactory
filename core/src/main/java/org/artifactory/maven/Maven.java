@@ -17,6 +17,7 @@
 package org.artifactory.maven;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
@@ -29,27 +30,24 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
-import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
-import org.apache.maven.embedder.PlexusLoggerAdapter;
+import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
+import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.wagon.Wagon;
-import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
+import org.artifactory.config.CentralConfig;
 import org.artifactory.repo.LocalRepo;
-import org.artifactory.repo.RealRepo;
+import org.artifactory.repo.Repo;
+import org.artifactory.repo.SnapshotVersionBehavior;
+import org.artifactory.resource.ArtifactResource;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.util.FieldUtils;
-import org.springframework.stereotype.Service;
+import org.codehaus.plexus.embed.Embedder;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,22 +56,26 @@ import java.util.List;
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-@Service
-public class Maven {
-    private static final Logger log = LoggerFactory.getLogger(Maven.class);
+public class Maven implements DisposableBean {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(Maven.class);
 
-    public static final File LOCAL_REPO_DIR = new File(System.getProperty("java.io.tmpdir"), "artifactory-local-repo");
+    public static final File LOCAL_REPO_DIR =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-local-repo");
+    public static final File USER_SETTINGS_FILE =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-settings.xml");
 
+    private CentralConfig cc;
     private PlexusContainer container;
     private MavenEmbedder maven;
 
-    public Maven() {
+    public Maven(CentralConfig cc) {
         if (!LOCAL_REPO_DIR.exists() && !LOCAL_REPO_DIR.mkdirs()) {
             throw new RuntimeException("Failed to create dummy local repository dir '" +
                     LOCAL_REPO_DIR.getPath() + "'.");
         }
-        maven = new MavenEmbedder();
-        maven.setLogger(new MavenEmbedderConsoleLogger());
+        this.cc = cc;
+        maven = MavenUtils.createMavenEmbedder();
         /*MavenEmbedderConfiguration req = new DefaultMavenEmbedderConfiguration();
         req.setConfigurationCustomizer(new ContainerCustomizer() {
             public void customize(PlexusContainer container) {
@@ -91,39 +93,45 @@ public class Maven {
             field.setAccessible(true);
             container = (PlexusContainer) field.get(maven);*/
             maven.setClassLoader(Thread.currentThread().getContextClassLoader());
+            //setLocalRepositoryDirectory() will create an offline maven, so we create a dummy user
+            //settings dir. Anyway, setLocalRepositoryDirectory() has no effect if a user m2 exists.
+            System.setProperty(MavenSettingsBuilder.ALT_LOCAL_REPOSITORY_LOCATION,
+                    LOCAL_REPO_DIR.getAbsolutePath());
+            System.setProperty(MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION,
+                    USER_SETTINGS_FILE.getAbsolutePath());
+            maven.setAlignWithUserInstallation(true);
             maven.setLocalRepositoryDirectory(LOCAL_REPO_DIR);
             maven.start();
-            container = maven.getEmbedder().getContainer();
+            Field field = maven.getClass().getDeclaredField("embedder");
+            field.setAccessible(true);
+            Embedder embedder = (Embedder) field.get(maven);
+            container = embedder.getContainer();
             //Touch the deployer
             lookup(ArtifactDeployer.ROLE);
             //Register the jcr wagon
             ComponentDescriptor jcrWagonDesc = new ComponentDescriptor();
             jcrWagonDesc.setRole(Wagon.ROLE);
-            String jcrWagonName = JcrWagon.class.getName();
-            jcrWagonDesc.setImplementation(jcrWagonName);
+            jcrWagonDesc.setImplementation(JcrWagon.class.getName());
             jcrWagonDesc.setRoleHint("jcr");
             jcrWagonDesc.setIsolatedRealm(true);
             container.addComponentDescriptor(jcrWagonDesc);
-            //container.createAndAutowire(jcrWagonName);
             container.createComponentInstance(jcrWagonDesc);
             //Register artifactMetadataSource needed for resolution
             ComponentDescriptor artifactMetadataSourceDesc = new ComponentDescriptor();
             artifactMetadataSourceDesc.setRole(ArtifactMetadataSource.ROLE);
-            String mavenMetadataSourceName = MavenMetadataSource.class.getName();
-            artifactMetadataSourceDesc.setImplementation(mavenMetadataSourceName);
+            artifactMetadataSourceDesc.setImplementation(MavenMetadataSource.class.getName());
             artifactMetadataSourceDesc.setRoleHint(MavenMetadataSource.ROLE_HINT);
             artifactMetadataSourceDesc.setIsolatedRealm(true);
             container.addComponentDescriptor(artifactMetadataSourceDesc);
-            //container.createAndAutowire(mavenMetadataSourceName);
+            /*container.createAndAutowire(name);*/
             container.createComponentInstance(artifactMetadataSourceDesc);
-            manipulateComponentLoggers();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start maven embedder.", e);
         }
     }
 
-    public ArtifactResolutionResult resolve(Artifact artifact, RealRepo artifactRepo,
-            List<? extends RealRepo> otherRepos) {
+    public ArtifactResolutionResult resolve(Artifact artifact, Repo artifactRepo,
+            List<? extends Repo> otherRepos) {
         ArtifactResolutionResult artifactResolutionResult;
         try {
             ArtifactRepository localRepository = createRepository(artifactRepo);
@@ -142,33 +150,39 @@ public class Maven {
         return artifactResolutionResult;
     }
 
-    public void deploy(File file, Artifact artifact, final LocalRepo repo) throws ArtifactDeploymentException {
+    public void deploy(File file, Artifact artifact, final LocalRepo repo)
+            throws ArtifactDeploymentException {
         File repoDir = null;
         try {
             //Deploy to a jcr repo
             ArtifactRepositoryFactory repositoryFactory = getArtifactRepositoryFactory();
-            File dir = org.artifactory.util.FileUtils.createRandomDir(
-                    ArtifactoryHome.getTmpUploadsDir(), repo.getKey() + ".");
+            File dir = cc.createTempDeploymentDir(repo);
             String tempDirUrl = dir.toURI().toURL().toString();
-            boolean uniqueSnapshotVersions = repo.getSnapshotVersionBehavior().equals(SnapshotVersionBehavior.UNIQUE);
-            ArtifactRepository localRepository = repositoryFactory.createDeploymentArtifactRepository(
-                    repo.getKey(), tempDirUrl, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
+            boolean uniqueSnapshotVersions =
+                    repo.getSnapshotVersionBehavior().equals(SnapshotVersionBehavior.unique);
+            ArtifactRepository localRepository =
+                    repositoryFactory.createDeploymentArtifactRepository(
+                            repo.getKey(), tempDirUrl, getArtifactRepositoryLayout(),
+                            uniqueSnapshotVersions);
             repoDir = new File(localRepository.getBasedir());
             String url = "jcr:";
-            ArtifactRepository deploymentRepository = repositoryFactory.createDeploymentArtifactRepository(
-                    repo.getKey(), url, getArtifactRepositoryLayout(), uniqueSnapshotVersions);
+            ArtifactRepository deploymentRepository =
+                    repositoryFactory.createDeploymentArtifactRepository(
+                            repo.getKey(), url, getArtifactRepositoryLayout(),
+                            uniqueSnapshotVersions);
             //Do the actual deployment
             ArtifactDeployer deployer = getDeployer();
             deployer.deploy(file, artifact, deploymentRepository, localRepository);
         } catch (Exception e) {
-            throw new ArtifactDeploymentException(e);
+            throw new ArtifactDeploymentException("Failed to deploy file '" + file + "'.", e);
         } finally {
             //Cleanup local repository
             if (repoDir != null) {
                 try {
                     FileUtils.forceDelete(repoDir);
                 } catch (IOException e) {
-                    log.warn("Failed to delete temp repo directory'{}'.", repoDir.getPath());
+                    LOGGER.warn(
+                            "Failed to delete temp repo directory'" + repoDir.getPath() + "'.", e);
                 }
             }
         }
@@ -178,10 +192,10 @@ public class Maven {
         return container;
     }
 
-    private List<ArtifactRepository> createRepositories(List<? extends RealRepo> repos)
+    private List<ArtifactRepository> createRepositories(List<? extends Repo> repos)
             throws MalformedURLException {
         ArrayList<ArtifactRepository> list = new ArrayList<ArtifactRepository>(repos.size());
-        for (RealRepo repo : repos) {
+        for (Repo repo : repos) {
             ArtifactRepository artifactRepository = createRepository(repo);
             list.add(artifactRepository);
         }
@@ -216,27 +230,28 @@ public class Maven {
         return (ArtifactCollector) lookup(ArtifactCollector.class.getName());
     }
 
-    public Artifact createArtifact(MavenArtifactInfo artifactInfo) {
-        String groupId = artifactInfo.getGroupId();
-        String artifactId = artifactInfo.getArtifactId();
-        String version = artifactInfo.getVersion();
-        String classifier = artifactInfo.getClassifier();
-        String type = artifactInfo.getType();
-        return createArtifact(groupId, artifactId, version, classifier, type);
+    public Artifact createArtifact(ArtifactResource pa) {
+        return createArtifact(pa.getGroupId(),
+                pa.getArtifactId(),
+                pa.getVersion(),
+                pa.getClassifier(),
+                pa.getType());
     }
 
-    public Artifact createArtifact(String groupId, String artifactId, String version, String classifier, String type) {
-        Artifact artifact = maven.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
-        artifact.setRelease(!MavenNaming.isVersionSnapshot(version));
+    public Artifact createArtifact(
+            String groupId, String artifactId, String version, String classifier, String type) {
+        Artifact artifact =
+                maven.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
+        artifact.setRelease(!MavenUtils.isVersionSnapshot(version));
         return artifact;
     }
 
-    @PreDestroy
     public void destroy() throws Exception {
         FileUtils.deleteDirectory(LOCAL_REPO_DIR);
     }
 
-    private ArtifactRepository createRepository(RealRepo repo) {
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    private ArtifactRepository createRepository(Repo repo) {
         ArtifactRepository repos;
         try {
             repos = maven.createRepository(null/*repo.getUrl()*/, repo.getKey());
@@ -254,11 +269,5 @@ public class Maven {
         } catch (ComponentLookupException e) {
             throw new RuntimeException("Failed to find plexus component '" + key + "'.");
         }
-    }
-
-    private void manipulateComponentLoggers() {
-        WagonManager wagonManager = getWagonManager();
-        PlexusLoggerAdapter logger = (PlexusLoggerAdapter) FieldUtils.getProtectedFieldValue("logger", wagonManager);
-        logger.setThreshold(org.codehaus.plexus.logging.Logger.LEVEL_ERROR);
     }
 }
