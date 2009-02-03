@@ -16,26 +16,48 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.descriptor.DescriptorAware;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.repo.service.InternalRepositoryService;
+import org.artifactory.engine.ResourceStreamHandle;
+import org.artifactory.resource.ArtifactResource;
+import org.artifactory.resource.RepoResource;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public interface Repo<T extends RepoDescriptor> extends DescriptorAware<T>, Serializable {
+public interface Repo extends Serializable {
+    String getUrl();
+
     String getKey();
 
     String getDescription();
 
-    /**
-     * @see org.artifactory.descriptor.repo.RepoDescriptor#isReal()
-     */
-    boolean isReal();
+    RepoResource getInfo(String path);
 
-    void init();
+    boolean isLocal();
 
-    InternalRepositoryService getRepositoryService();
+    boolean isCache();
+
+    boolean isHandleReleases();
+
+    boolean isHandleSnapshots();
+
+    String getIncludesPattern();
+
+    String getExcludesPattern();
+
+    void init(CentralConfig cc);
+
+    boolean isBlackedOut();
+
+    ResourceStreamHandle getResourceStreamHandle(RepoResource res) throws IOException;
+
+    boolean accepts(String path);
+
+    boolean allowsDownload(String path);
+
+    boolean handles(String path);
+
+    boolean handles(ArtifactResource res);
 }
