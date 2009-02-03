@@ -1,0 +1,21 @@
+<wicket:extend>
+    <form wicket:id="exportForm">
+        <table class="formBody">
+            <tr>
+                <td class="form_label">Source local repository</td>
+                <td>
+                    <select wicket:id="sourceRepo"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="form_label">Export to path</td>
+                <td>
+                    <input wicket:id="exportToPath" type="text" class="path_field"/>
+                    <span wicket:id="browseButton"></span>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" class="button" wicket:id="export" value="Export"/>
+    </form>
+</wicket:extend>

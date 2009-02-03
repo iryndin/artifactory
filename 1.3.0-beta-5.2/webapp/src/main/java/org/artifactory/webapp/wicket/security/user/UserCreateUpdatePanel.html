@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+<wicket:extend>
+    <form wicket:id="form">
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="form_label">Username</td>
+                <td>
+                    <input autocomplete="off" wicket:id="username" type="text" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Password</td>
+                <td>
+                    <input autocomplete="off" wicket:id="password" type="password " class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Retype password</td>
+                <td>
+                    <input autocomplete="off" wicket:id="retypedPassword" type="password"
+                           class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Email address</td>
+                <td>
+                    <input wicket:id="email" type="text" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Groups</td>
+                <td>
+                    <div wicket:id="groups"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Admin</td>
+                <td>
+                    <input wicket:id="admin" type="checkbox"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Profile updatable by user</td>
+                <td>
+                    <input wicket:id="updatableProfile" type="checkbox"/>
+                </td>
+            </tr>
+        </table>
+
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="submit" wicket:id="submit"/>
+    </form>
+
+</wicket:extend>
+</body>
+</html>

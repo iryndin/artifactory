@@ -1,0 +1,21 @@
+<wicket:extend>
+    <form wicket:id="importForm">
+        <p class="noticeMessage" style="color:red">
+            This will wipe all existing Artifactory content - please make sure to backup first!
+        </p>
+        <table class="formBody">
+            <tr>
+                <td class="form_label">System zip file or directory</td>
+                <td>
+                    <input wicket:id="importFromPath" type="text" class="path_field"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" class="button" wicket:id="import" value="Import"/>
+                </td>
+                <!--<td><b>Status:</b> <span wicket:id="status">status</span></td>-->
+            </tr>
+        </table>
+    </form>
+</wicket:extend>

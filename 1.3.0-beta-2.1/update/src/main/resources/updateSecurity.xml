@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+           http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
+
+    <bean id="security" class="org.artifactory.update.security.ExportSecurityManager">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="aclProvider" ref="aclProvider"/>
+        <property name="userDetailsService" ref="userDetailsService"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          lazy-init="true">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+        <property name="url"
+                  value="jdbc:derby:${artifactory.home}/data/${appdb.dirname};create=false"/>
+    </bean>
+
+    <!-- Authentication -->
+    <bean id="daoAuthenticationProvider"
+          class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <!--<property name="saltSource">
+            <ref bean="saltSource"/>
+        </property>-->
+        <property name="passwordEncoder">
+            <bean class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/>
+        </property>
+    </bean>
+
+    <bean id="userDetailsService" class="org.artifactory.update.security.ExtendedJdbcDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Authorization -->
+    <bean id="aclProvider" class="org.artifactory.update.security.CustomAclProvider">
+        <property name="basicAclDao" ref="aclDao"/>
+    </bean>
+
+    <bean id="aclDao" class="org.artifactory.update.security.ExtendedJdbcAclDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="aclProvider" ref="aclProvider"/>
+    </bean>
+
+</beans>

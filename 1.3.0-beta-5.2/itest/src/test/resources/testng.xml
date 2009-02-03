@@ -1,0 +1,18 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Concurrent Suite" thread-count="5" verbose="1" parallel="false">
+    <test name="simpleJarDownload" parallel="methods">
+        <classes>
+            <class name="org.artifactory.test.SimpleArtifactoryTest"/>
+        </classes>
+    </test>
+    <test name="cacheDownload" parallel="methods">
+        <classes>
+            <class name="org.artifactory.test.LocalHostRemoteRepoTest"/>
+        </classes>
+    </test>
+    <test name="wcCommiter" parallel="methods">
+        <classes>
+            <class name="org.artifactory.test.WcCommiterTest"/>
+        </classes>
+    </test>
+</suite>

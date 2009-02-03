@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+           http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
+
+    <bean id="security" class="org.artifactory.security.ArtifactorySecurityManager">
+        <property name="authenticationProvider" ref="daoAuthenticationProvider"/>
+        <property name="aclProvider" ref="aclProvider"/>
+    </bean>
+
+    <!-- Authentication -->
+    <bean id="daoAuthenticationProvider"
+          class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <!--<property name="saltSource">
+            <ref bean="saltSource"/>
+        </property>-->
+        <property name="passwordEncoder">
+            <bean class="org.acegisecurity.providers.encoding.Md5PasswordEncoder"/>
+        </property>
+    </bean>
+
+    <bean id="userDetailsService" class="org.artifactory.security.ExtendedJdbcDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="processingFilter" class="org.acegisecurity.ui.basicauth.BasicProcessingFilter">
+        <property name="authenticationManager">
+            <ref bean="authenticationManager"/>
+        </property>
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint"
+          class="org.acegisecurity.ui.basicauth.BasicProcessingFilterEntryPoint">
+        <property name="realmName" value="Artifactory Realm"/>
+    </bean>
+
+    <!--<bean id="processingFilter"
+          class="org.acegisecurity.ui.digestauth.DigestProcessingFilter">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+        <property name="passwordAlreadyEncoded" value="false"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint"
+          class="org.acegisecurity.ui.digestauth.DigestProcessingFilterEntryPoint">
+        <property name="realmName" value="Artifactory Realm"/>
+        <property name="key" value="kofifo"/>
+        <property name="nonceValiditySeconds" value="100"/>
+    </bean>-->
+
+    <!-- Authorization -->
+    <bean id="aclProvider" class="org.artifactory.security.CustomAclProvider">
+        <property name="basicAclDao" ref="aclDao"/>
+    </bean>
+
+    <bean id="aclDao" class="org.artifactory.security.ExtendedJdbcAclDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
