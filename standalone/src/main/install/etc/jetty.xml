@@ -39,7 +39,6 @@
     </Call>
 
     <!-- AJP13 Connector configuration -->
-    <!--
     <Call name="addConnector">
         <Arg>
             <New class="org.mortbay.jetty.ajp.Ajp13SocketConnector">
@@ -47,7 +46,6 @@
             </New>
         </Arg>
     </Call>
-    -->
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- To add a HTTPS SSL listener                                     -->
@@ -64,7 +62,7 @@
             <Arg>/artifactory</Arg>
         </Call>
         <Call name="setWar">
-          <Arg><SystemProperty name="artifactory.home" default=".."/>/webapps/artifactory.war</Arg>
+          <Arg><SystemProperty name="artifactory.home" default="."/>/webapps/artifactory.war</Arg>
         </Call>
         <Get name="SessionHandler">
             <Set name="SessionManager">
@@ -106,7 +104,7 @@
     <Ref id="requestLog">
         <Set name="requestLog">
             <New id="requestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
-                <Arg><SystemProperty name="artifactory.home" default=".."/>/logs/yyyy_mm_dd.request.log</Arg>
+                <Arg><SystemProperty name="artifactory.home" default="."/>/logs/yyyy_mm_dd.request.log</Arg>
                 <Set name="retainDays">90</Set>
                 <Set name="append">true</Set>
                 <Set name="extended">false</Set>
