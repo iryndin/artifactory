@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory.maven1-layout-test</groupId>
+    <artifactId>maven1-layout</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Maven 1 Repo SSL Test</name>
+    <description>tests a repository that uses a maven 1 layout</description>
+
+    <parent>
+        <groupId>org.artifactory.it</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>1.0</version>
+        <relativePath>../repo-parent/pom.xml</relativePath>
+    </parent>
+
+    <!-- The followings need to be added to artifactory config:
+    <remoteRepository>
+        <key>mavenrepository.dev.java.net</key>
+        <description>maven-repository.dev.java.net</description>
+        <handleReleases>true</handleReleases>
+        <handleSnapshots>true</handleSnapshots>
+        <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
+        <type>maven1</type>
+        <url>https://maven-repository.dev.java.net/nonav/repository</url>
+    </remoteRepository>
+    -->
+
+    <dependencies>
+        <!-- dependencies from java.net maven 1 repo -->
+        <dependency>
+            <groupId>grizzly</groupId>
+            <artifactId>grizzly</artifactId>
+            <version>1.0.11</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

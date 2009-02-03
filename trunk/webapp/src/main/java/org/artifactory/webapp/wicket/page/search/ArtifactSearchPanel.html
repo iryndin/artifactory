@@ -1,0 +1,24 @@
+<wicket:head>
+    <style type="text/css">
+        .quick-search-box {
+            display: none;
+        }
+    </style>
+</wicket:head>
+<wicket:extend>
+    <form wicket:id="form">
+        <div class="search-form">
+            <span wicket:id="searchHelp"></span>
+            <span class="search-box">
+                <input wicket:id="search" name="search" type="text"/>
+            </span>
+            <button wicket:id="submit" type="submit"/>
+        </div>
+    </form>
+
+    <div>
+        <table wicket:id="results"/>
+    </div>
+
+    <span wicket:id="contentDialog"/>
+</wicket:extend>
