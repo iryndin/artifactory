@@ -1,0 +1,305 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<faqs title="Frequently Asked Questions">
+    <part id="general-questions">
+        <title>General Questions</title>
+        <faq id="what-problems">
+            <question>What problems does Artifactory solve?</question>
+            <answer>
+                <p>
+                    We found out that, when working with Maven artifacts, most organizations need to
+                    have a reliable artifacts proxy service in place, for the following reasons:
+                    <ol>
+                        <li>
+                            The public Maven repositories can become unreliable from time to time
+                            (down, highly busy, slow...). It is also not uncommon for broken or
+                            wrong artifacts to appear on these repositories.
+                            This unexpected behavior can fail the build and/or lead to
+                            non-reproducible build results, which for most enterprises is a must.
+                        </li>
+                        <li>
+                            It is expensive and inefficient for every developer inside the same
+                            organization to go and retrieve remote artifacts that are shared by nature.
+                        </li>
+                        <li>
+                            Without a mesh of proxies, there is no easy way to automatically share
+                            artifacts in multi-site development environments.
+                        </li>
+                        <li>
+                            There is often a need to globaly enforce and control the repositories
+                            and the artifacts included in a build in terms of: security, licensing,
+                            include/exclude patterns (do not look for inhouse artifacts
+                            on repo1), etc. This can only be achieved by a global proxy.
+                        </li>
+                        <li>
+                            As part of a normal build Maven will send update queries to its public
+                            repositories, even for organization internal artifacts. Such query
+                            requests going over the internet may reveal sensitive information about
+                            your ongoing projects, which the organization would like to keep
+                            private. Using Artifactory's include/exclude patterns allows you to
+                            avoid internal artifacts from being queried on the internet.
+                        </li>
+                    </ol>
+                </p>
+            </answer>
+        </faq>
+        <faq id="why-artifactory">
+            <question>Why Artifactory? What's wrong with Maven Proxy or with similar offerings?</question>
+            <answer>
+                <p>
+                    We created Artifactory after using the legacy Codehaus Maven-Proxy project.
+                    We soon found out we needed to have many bug fixed as well as additional
+                    advanced features implemented, such as security, indexing, web-based deployment,
+                    multiple local repositories, etc.
+                </p>
+                <p>
+                    After playing with the existing codebase, we soon realized that we are
+                    refactoring and changing too much than can be submitted as patches, so we
+                    decided to go and create Artifactory.
+                </p>
+                <p>
+                    In fact, Artifactory still carries some excellent concepts and implementations
+                    from the original Maven Proxy.
+                </p>
+            </answer>
+        </faq>
+        <faq id="db">
+            <question>With a database used for artifact storage, won't I be loosing control over my
+                repository?
+            </question>
+            <answer>
+                <p>
+                    On the contrary. Using JCR and a DB for storage not only offers a superior
+                    technical solution, but also allows for greater control over your repository.
+                    Artifactory provides browsing, deploying and undeploying through
+                    an Ajax web UI which allows doing all common administrative operations in a
+                    security-aware fashion.
+                </p>
+                <p>
+                    Additionally, if you wish to import or export your repositories to the file
+                    system or execute scheduled backups of your repositories to regular file system
+                    directories, Artifactory allows you to do that.
+                </p>
+            </answer>
+        </faq>
+        <faq id="db-lock">
+            <question>After using Artifactory with Derby DB for storing my artifacts will I be
+                forced to use Artifactory forever?
+            </question>
+            <answer>
+                <p>
+                    Of course not. This is why we created the Import/Export/Backup features, to
+                    allow Artifactory users to create a standard file-system based Maven2 repository
+                    out of the Artifactory DB repositories.
+                </p>
+            </answer>
+        </faq>
+        <faq id="mirroring">
+            <question>Does Artifactory provide mirroring?
+            </question>
+            <answer>
+                <p>
+                    No. Artifactory uses controlled caches of remote repositories, not mirroring.
+                    Caches are populated lazily upon request, so it is only when Maven starts
+                    hitting it with requests that caches start to fill up with artifacts.
+                    Indexing is done completely by Jackrabbit and, unlike with mirroring, is up to
+                    date immediately.
+                </p>
+            </answer>
+        </faq>
+        <faq id="license">
+            <question>Under what license is Artifactory distributed?</question>
+            <answer>
+                <p>
+                    Artifactory uses the friendly Apache License, Version 2.0.
+                </p>
+            </answer>
+        </faq>
+        <faq id="issues">
+            <question>How can I report a bug or ask for new features?</question>
+            <answer>
+                <p>
+                    By submitting a request to
+                    <a href="/jira/browse/RTFACT">JIRA</a>
+                    .
+                </p>
+            </answer>
+        </faq>
+        <faq id="http">
+            <question>What protocols can be used to proxy remote repositories?</question>
+            <answer>
+                <p>
+                    At the moment, only HTTP(S)-enabled remote repositories are supported (including
+                    other Artifactory repositories). We do not have concrete plans to support other
+                    types of protocols.
+                </p>
+            </answer>
+        </faq>
+        <faq id="maven-formats">
+            <question>What Maven repository formats are supported?</question>
+            <answer>
+                <p>
+                    Artifactory supports only Maven 2 repositories. Maven 1 repositories are
+                    becoming rare and are not supported natively (but are usually proxied as Maven 2
+                    repositories by Apache httpd).
+                </p>
+            </answer>
+        </faq>
+        <faq id="repositories">
+            <question>How does Artifactory resolve artifacts?</question>
+            <answer>
+                <p>
+                    Artifactory always looks up artifatcs in the following order:
+                    <ol>
+                        <li>Local repositories</li>
+                        <li>Remote repository caches</li>
+                        <li>Remote repositories</li>
+                    </ol>
+                    <br/>
+                    The iteration between repositories (of the same type) is by the order they are
+                    decalred in the configuration.
+                </p>
+                <p>
+                    As of version 1.2.1, Artifactory supports only the following built-in
+                    aggregation schemes:
+                    <ol>
+                        <li>
+                            A global virtual repo of all local repositories + all remote
+                            repositories and their caches.
+                            <br/>
+                            Using the URL: <![CDATA[http://<host>:<port>/artifactory/repo]]>
+                        </li>
+                        <li>
+                            Any single local repository + all remote repositories and their caches.
+                            <br/>
+                            Using the URL: <![CDATA[http://<host>:<port>/artifactory/<local-repo-key>]]>
+                        </li>
+                        <li>
+                            Any single cache repository + all remote repositories and their caches.
+                            <br/>
+                            Using the URL: <![CDATA[http://<host>:<port>/artifactory/<remote-repo-key>-cache]]>
+                        </li>
+                    </ol>
+                    <br/>
+                    We are working on adding support for virtual repositories, which will allow you
+                    to for aggregate any set of local and remote repositories under an alias, and to
+                    use that alias as a virtual repository.
+                </p>
+            </answer>
+        </faq>
+    </part>
+    <part id="usage">
+        <title>Usage</title>
+        <faq id="admin-login">
+            <question>How do I login to Artifactory for the first time? What are the default admin
+                username and password?
+            </question>
+            <answer>
+                <p>
+                    Artifactory comes with a preconfigured default admin" account.
+                    Username:
+                    <b>admin,</b>
+                    Password:
+                    <b>password</b>
+                    .
+                </p>
+            </answer>
+        </faq>
+        <faq id="building">
+            <question>How do I build Artifactory from source? Maven tells me there are some missing
+                dependencies.
+            </question>
+            <answer>
+                <p>Simply download the source and run
+                    <code>mvn clean install</code>
+                    from within the module named "parent".
+                </p>
+                <p>To gain access to open source dependencies not currently deployed on Maven's public
+                    repositories, you have to run mvn with the "jfrog" profile:
+                    <code>mvn clean install -Pjfrog</code>
+                    .
+                </p>
+            </answer>
+        </faq>
+        <faq id="debug">
+            <question>How do run Artifactory in debug mode?
+            </question>
+            <answer>
+                <p>Just change the right line in the $ARTIFACTORY_HOME/etc/log4j.properties file to:
+                    <code>log4j.logger.org.artifactory=DEBUG</code>
+                </p>
+            </answer>
+        </faq>
+        <faq id="browsing">
+            <question>I am trying to browse repository directories by manually entering the
+                repository URL in my browser, but I get nothing. What's going on?
+            </question>
+            <answer>
+                <p>
+                    Artifactory does not expose directory browsing through URLs. An explorer-like
+                    feature-reach browsing is enabled through the dedicated "Browse repository"
+                    page.
+                </p>
+            </answer>
+        </faq>
+        <faq id="ie">
+            <question>I am trying to use Artifactory with MS-IE, but some stuff seems not to be
+                working correctly. What's wrong?
+            </question>
+            <answer>
+                <p>
+                    Artifactory is best when viewed in FireFox. Use FireFox ;)
+                </p>
+                <p>
+                    Seriousely, we are doing our best to maintain cross browser behavior, but since
+                    our resources are limited, Firefox always comes first.
+                </p>
+            </answer>
+        </faq>
+    </part>
+    <part id="demo">
+        <title>Live Demo</title>
+        <faq id="guest-login">
+            <question>How do I login to the online demo?</question>
+            <answer>
+                <p>
+                    To login use the read-only "guest" account.
+                    Username:
+                    <b>guest,</b>
+                    Password:
+                    <b>guest</b>
+                    .
+                </p>
+            </answer>
+        </faq>
+        <faq id="guest-limits">
+            <question>I logged in as "guest" and now some of Artifactory's functions are not
+                accessible or contain no data. What's going on?
+            </question>
+            <answer>
+                <p>
+                    Being a public demo, the "guest" account is a limited read-only account.
+                </p>
+                <p>
+                    If you wish to use administrative or more privileged operations please download
+                    and install a local instance of Artifactory.
+                </p>
+            </answer>
+        </faq>
+    </part>
+</faqs>

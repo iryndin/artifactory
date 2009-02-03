@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.FilteringTable");
+        dojo.require("dojo.json");
+    </script>
+</wicket:head>
+
+<body>
+
+<wicket:extend>
+    <div class="formBody">
+        <span wicket:id="searchHelp"></span>
+        <label>Search for:</label>
+        <input wicket:id="search" name="search" type="text"/>
+    </div>
+
+    <div>
+        <table wicket:id="results" class="results" cellpadding="0" cellspacing="0">
+        </table>
+    </div>
+
+    <span wicket:id="pomDialog"/>
+</wicket:extend>
+
+</body>
+</html>

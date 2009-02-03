@@ -1,0 +1,65 @@
+<wicket:extend>
+    <form wicket:id="form">
+        <div wicket:id="border">
+
+            <div class="field float-right">
+                <label>NT Domain</label>
+                <span wicket:id="domain.help"/>
+
+                <div class="value">
+                    <input wicket:id="domain" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field required">
+                <label>Proxy key</label>
+                <span wicket:id="key.help"/>
+
+                <div class="value">
+                    <input wicket:id="key" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field required field-sep float-left">
+                <label>Host</label>
+                <span wicket:id="host.help"/>
+
+                <div class="value">
+                    <input wicket:id="host" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep float-right">
+                <label>Port</label>
+                <span wicket:id="port.help"/>
+
+                <div class="value">
+                    <input wicket:id="port" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep float-left">
+                <label>Username</label>
+                <span wicket:id="username.help"/>
+
+                <div class="value">
+                    <input wicket:id="username" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep float-right">
+                <label>Password</label>
+                <span wicket:id="password.help"/>
+
+                <div class="value">
+                    <input wicket:id="password" type="password" class="text"/>
+                </div>
+            </div>
+
+        </div>
+        <div class="buttons">
+            <button type="submit" wicket:id="submit"/>
+            <button type="button" wicket:id="cancel"/>
+        </div>
+    </form>
+</wicket:extend>

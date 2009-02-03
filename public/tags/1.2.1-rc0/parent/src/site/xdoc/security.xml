@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Setting up security</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, security, maven, proxy, enterprise, repository, corporate, maven 2,
+          maven2, mvn, manager, deployment"/>
+
+    <body>
+        <section name="Groups">
+            <p>
+                You can create groups, each group useing a groupId prefix for its name.
+                <br/>
+                This groupId translates to the path prefix of stored artifacts, and is used to
+                determine the effective permissions when referring to a repository path.
+            </p>
+            <p>
+                For each group you can assign users to 3 types of roles:
+                <ol>
+                    <li>
+                        <b>Deployers</b>
+                        - can deploy/remove (undeploy) artifacts.
+                    </li>
+                    <li>
+                        <b>Viewers</b>
+                        - can download artifacts (simple browsing is still enabled for
+                        anyone), unless a repository has the
+                        <code>&lt;anonDownloadsAllowed&gt;</code>
+                        flag set to true (the default), then anyone can download regardless of
+                        whether or not he is a viewer of a group of an artifact in the repository.
+                    </li>
+                    <li>
+                        <b>Admins</b>
+                        - currently unimplemented (will be used to allow management
+                        of users within a group in the next version).
+                    </li>
+                </ol>
+            </p>
+        </section>
+        <section name="Users">
+            <p>
+                A defined user can either be a simple user or an "admin" user (similar to a root
+                user). When a user is defined as an admin he automatically has all
+                3 roles for any group (including undefined groups).
+            </p>
+        </section>
+        <section name="Sample Use Case">
+            <p>
+                Suppose you need to deploy an artifact with a groupId of "org.apache.maven".
+                You will need to create a group with any of the following names (prefixes):
+                "org", "org.apache" or "org.apache.maven".
+                <br/>
+                Then you assign appropriate users as deployers of this group.
+            </p>
+            <p>
+                For authenticating via Maven, you need to have similar configuration in your
+                settings.xml:
+                <source><![CDATA[
+<servers>
+    <server>
+        <id>repository-name-used-in-the-pom-to-refer-to-artifactory</id>
+        <username>myUsername</username>
+        <password>myPassword</password>
+    </server>
+</servers>]]></source>
+            </p>
+        </section>
+    </body>
+</document>

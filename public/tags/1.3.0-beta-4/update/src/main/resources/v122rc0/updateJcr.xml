@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
+
+    <bean id="nodeTypesResource" class="org.artifactory.update.VersionResourceLoader">
+        <constructor-arg value="artifactory_nodetypes.xml"/>
+    </bean>
+
+    <bean id="repoXmlResource" class="org.artifactory.update.VersionResourceLoader">
+        <constructor-arg value="repo.xml"/>
+    </bean>
+
+    <bean id="jcr" class="org.artifactory.update.jcr.JcrRepositoryForExport">
+        <property name="nodeTypes" ref="nodeTypesResource"/>
+        <property name="repoXml" ref="repoXmlResource"/>
+    </bean>
+
+    <bean id="jcrExporter" class="org.artifactory.update.v122rc0.JcrExporterImpl">
+        <property name="jcr" ref="jcr"/>
+        <property name="centralProvider" ref="configExporter"/>
+    </bean>
+</beans>

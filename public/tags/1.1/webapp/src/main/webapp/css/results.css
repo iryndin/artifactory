@@ -1,0 +1,48 @@
+table {
+    font-family: Verdana, Lucida Grande;
+    font-size: 0.7em;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    cursor: default;
+}
+
+table td,
+    table th {
+    padding: 2px;
+    font-weight: normal;
+}
+
+table thead td, table thead th {
+    background-image: url( ../images/ft-head.gif );
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+table thead td.selectedUp, table thead th.selectedUp {
+    background-image: url( ../images/ft-headup.gif );
+}
+
+table thead td.selectedDown, table thead th.selectedDown {
+    background-image: url( ../images/ft-headdown.gif );
+}
+
+table tbody tr td {
+    border-bottom: 1px solid #ddd;
+}
+
+table tbody tr.alt td {
+    background: #e3edfa;
+}
+
+table tbody tr.selected td {
+    background: yellow;
+}
+
+table tbody tr:hover td {
+    background: #a6c2e7;
+}
+
+table tbody tr.selected:hover td {
+    background: #ff9;
+}

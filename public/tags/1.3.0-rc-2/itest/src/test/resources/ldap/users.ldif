@@ -1,0 +1,31 @@
+version: 1
+
+dn: dc=jfrog,dc=org
+objectclass: dcObject
+objectclass: organization
+dc: jfrog
+o: jFrog.org
+
+dn: ou=People, dc=jfrog,dc=org
+ou: People
+description: All people in organisation
+objectclass:organizationalunit
+
+dn: uid=yossis,ou=People,dc=jfrog,dc=org
+objectclass: inetOrgPerson
+cn: Yossi Shaul
+sn: Shaul
+uid: yossis
+mail: yossis@alphacsp.com
+mail: yossis@jfrog.org
+ou: dev
+userPassword: yossis
+
+dn: uid=ldap1,ou=People,dc=jfrog,dc=org
+objectclass: inetOrgPerson
+cn: Momo De Toto
+sn: De Toto
+uid: ldap1
+mail: momo@alphacsp.com
+ou: test
+userPassword: 1234

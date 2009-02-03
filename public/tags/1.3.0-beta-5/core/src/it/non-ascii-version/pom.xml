@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory.deploy-test</groupId>
+    <artifactId>non-ascii-version</artifactId>
+    <version>xöx-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>libs-snapshots</id>
+            <uniqueVersion>true</uniqueVersion>
+            <url>dav:http://localhost:8080/artifactory/libs-snapshots-local</url>
+        </repository>
+    </distributionManagement>
+
+    <parent>
+        <groupId>org.artifactory.it</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>1.0</version>
+        <relativePath>../repo-parent/pom.xml</relativePath>
+    </parent>
+
+    <build>
+        <extensions>
+            <!--<extension>
+                <groupId>org.artifactory.maven.wagon</groupId>
+                <artifactId>artifactory-wagon</artifactId>
+                <version>1.0</version>
+            </extension>-->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <!--<version>1.0-beta-2</version>-->
+            </extension>
+        </extensions>
+    </build>
+</project>

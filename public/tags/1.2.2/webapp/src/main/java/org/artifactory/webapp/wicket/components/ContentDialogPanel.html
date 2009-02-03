@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <title></title>
+</head>
+
+<wicket:head>
+    <script type="text/javascript" src="js/ContentDialogPanel.js"></script>
+</wicket:head>
+
+<body>
+
+<wicket:panel>
+    <div dojoType="dialog" id="contentDialog" bgColor="#eeeeee" bgOpacity="0.5" toggle="fade"
+         toggleDuration="250" refreshOnShow="true" style="display: none;">
+        <div class="popup" id="contentWin">
+            <div class="popup_top">
+                <div class="popup_topleft"></div>
+                <div class="popup_topright">
+                    <div class="btn_close" title="Close" onclick="ContentDialog.hide();"><img/></div>
+                </div>
+            </div>
+            <div class="popup_left">
+                <div class="popup_right" id="contentBody">
+                    <div class="popup_body">
+                        <textarea wicket:id="contentText" readonly="readonly"></textarea>
+
+                        <a class="button" href="javascript: ContentDialog.hide();">Close</a>
+                    </div>
+                </div>
+            </div>
+            <div class="popup_bottom">
+                <div class="popup_bottomleft"></div>
+                <div id="contentGrabber" class="popup_bottomright"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        ContentDialog.init();
+    </script>
+</wicket:panel>
+</body>
+</html>

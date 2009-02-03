@@ -1,0 +1,8 @@
+#!/bin/sh
+
+#export ARTIFACTORY_HOME=/opt/artifactory/current
+#export JETTY_USER=jetty
+
+#export JAVA_HOME=/opt/java/1.6.0
+#export ARTIFACTORY_CONSOLE=${ARTIFACTORY_HOME}/logs/consoleout.log
+export JAVA_OPTIONS="-server -Xms300m -Xmx1g"

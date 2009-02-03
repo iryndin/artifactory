@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC '-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN'
+        'http://java.sun.com/dtd/web-app_2_3.dtd'>
+
+<web-app>
+    <display-name>artifactory-webapp</display-name>
+
+    <distributable/>
+
+    <context-param>
+        <param-name>artifactory.config.location</param-name>
+        <param-value>/WEB-INF/artifactory.config.xml</param-value>
+        <description>Controls where artifactory loads its configuration from</description>
+    </context-param>
+
+    <context-param>
+        <param-name>configuration</param-name>
+        <!--<param-value>development</param-value>-->
+        <param-value>deployment</param-value>
+        <description>Wicket run mode</description>
+    </context-param>
+
+    <filter>
+        <filter-name>AccessFilter</filter-name>
+        <filter-class>org.artifactory.webapp.servlet.AccessFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>RepoFilter</filter-name>
+        <filter-class>org.artifactory.webapp.servlet.RepoFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>WicketFilter</filter-name>
+        <filter-class>wicket.protocol.http.WicketFilter</filter-class>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.artifactory.webapp.wicket.ArtifactoryApp</param-value>
+        </init-param>
+        <init-param>
+            <param-name>filterPath</param-name>
+            <param-value>webapp</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AccessFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>RepoFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>WicketFilter</filter-name>
+        <url-pattern>/webapp/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.artifactory.webapp.servlet.Lifecycle</listener-class>
+    </listener>
+
+</web-app>

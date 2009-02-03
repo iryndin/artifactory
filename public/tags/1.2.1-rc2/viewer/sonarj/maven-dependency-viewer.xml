@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.5.0_06" class="java.beans.XMLDecoder">
+    <object class="com.hello2morrow.sonar.workspace.java.WorkspaceDescription">
+        <void property="name">
+            <string>Maven Dependency Viewer</string>
+        </void>
+        <void property="pathsCollection">
+            <void method="add">
+                <string>../src/main/java</string>
+            </void>
+            <void method="add">
+                <string>../target/classes</string>
+            </void>
+        </void>
+    </object>
+</java> 

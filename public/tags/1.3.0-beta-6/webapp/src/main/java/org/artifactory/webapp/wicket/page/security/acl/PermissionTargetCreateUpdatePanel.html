@@ -1,0 +1,71 @@
+<wicket:extend>
+    <form wicket:id="form">
+        <div wicket:id="border">
+            <div class="name-repository-fields">
+                <div class="field required">
+                    <label>Name</label>
+
+                    <div class="value">
+                        <input wicket:id="name" type="text" class="text"/>
+                    </div>
+                </div>
+
+                <div class="field field-sep">
+                    <label>Repository</label>
+
+                    <div class="value">
+                        <select wicket:id="repoKey"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="include-pattern-fields">
+                <div class="field">
+                    <label>Include patterns</label>
+                    <span wicket:id="includesHelp"/>
+
+                    <div class="value">
+                        <select wicket:id="includesSuggest" class="small-font"
+                                style="height: 22px;"/>
+                    </div>
+                </div>
+
+                <div class="field field-sep">
+                    <div class="value">
+                        <textarea wicket:id="includesPattern" class="medium"
+                                  rows="4">[input]</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exclude-pattern-fields">
+                <div class="field">
+                    <label>Exclude patterns</label>
+                    <span wicket:id="excludesHelp"/>
+
+                    <div class="value">
+                        <select wicket:id="excludesSuggest" class="small-font"
+                                style="height: 22px;"/>
+                    </div>
+                </div>
+
+                <div class="field field-sep">
+                    <div class="value">
+                        <textarea wicket:id="excludesPattern" class="medium"
+                                  rows="4">[input]</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clear">
+                <div wicket:id="recipients" style="margin: 0px !important;"/>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button wicket:id="submit" type="submit"/>
+            <button wicket:id="cancel" type="button"/>
+        </div>
+    </form>
+
+</wicket:extend>

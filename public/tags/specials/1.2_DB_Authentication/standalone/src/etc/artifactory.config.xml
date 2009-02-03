@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://artifactory.jfrog.org/xsd/1.0.0"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.0.0
+        http://artifactory.jfrog.org/xsd/artifactory-v1_0_0.xsd">
+    <!-- Backup every 2 hours-->
+    <backupCronExp>0 0 /2 * * ?</backupCronExp>
+    <localRepositories>
+        <localRepository>
+            <key>local-repo</key>
+            <description>local repoitory</description>
+        </localRepository>
+    </localRepositories>
+
+    <remoteRepositories>
+        <remoteRepository>
+            <key>repo1</key>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <excludesPattern>org/artifactory/**</excludesPattern>
+            <url>http://repo1.maven.org/maven2</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>codehaus</key>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <url>http://dist.codehaus.org</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>codehaus-snapshots</key>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </remoteRepository>
+        <!--<remoteRepository>
+            <key>ibiblio</key>
+            <excludesPattern>org/artifactory/**</excludesPattern>
+            <url>http://www.ibiblio.org/maven2</url>
+        </remoteRepository>-->
+        <!--<remoteRepository>
+            <key>apache-m2-snapshots</key>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+        </remoteRepository>-->
+
+        <remoteRepository>
+            <key>java.net</key>
+            <description>java.net repo</description>
+            <blackedOut>true</blackedOut>
+            <includesPattern>*/**</includesPattern>
+            <excludesPattern></excludesPattern>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <hardFail>true</hardFail>
+            <storeArtifactsLocally>true</storeArtifactsLocally>
+            <cacheRetrievalFailures>true</cacheRetrievalFailures>
+            <cacheRetrievalMisses>true</cacheRetrievalMisses>
+            <username>un</username>
+            <password>pw</password>
+            <socketTimeoutMillis>2000</socketTimeoutMillis>
+            <proxyRef>proxy1</proxyRef>
+        </remoteRepository>
+    </remoteRepositories>
+
+    <proxies>
+        <proxy>
+            <key>proxy1</key>
+            <host>somehost</host>
+            <port>8080</port>
+            <username>un</username>
+            <password>pw</password>
+            <domain>domain</domain>
+        </proxy>
+    </proxies>
+
+</config>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://artifactory.jfrog.org/xsd/1.3.1"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.1
+        http://www.jfrog.org/xsd/artifactory-v1_3_1.xsd">
+    <localRepositories>
+        <localRepository>
+            <key>libs-releases-local</key>
+            <description>Local repository for in-house libraries</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+        </localRepository>
+        <localRepository>
+            <key>libs-snapshots-local</key>
+            <description>Local repository for in-house snapshots</description>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+        </localRepository>
+        <localRepository>
+            <key>ext-releases-local</key>
+            <description>Local repository for third party libraries</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+        </localRepository>
+        <localRepository>
+            <key>ext-snapshots-local</key>
+            <description>Local repository for third party snapshots</description>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+        </localRepository>
+    </localRepositories>
+
+    <virtualRepositories>
+        <virtualRepository>
+            <key>libs-releases</key>
+            <repositories>
+                <repositoryRef>libs-releases-local</repositoryRef>
+                <repositoryRef>ext-releases-local</repositoryRef>
+            </repositories>
+        </virtualRepository>
+    </virtualRepositories>
+</config>

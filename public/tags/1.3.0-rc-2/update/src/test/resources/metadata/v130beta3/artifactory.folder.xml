@@ -1,0 +1,6 @@
+<artifactory.folder>
+  <repoKey>repo1-cache</repoKey>
+  <relPath>commons-lang/commons-lang</relPath>
+  <created>0</created>
+  <modifiedBy>anonymous</modifiedBy>
+</artifactory.folder>

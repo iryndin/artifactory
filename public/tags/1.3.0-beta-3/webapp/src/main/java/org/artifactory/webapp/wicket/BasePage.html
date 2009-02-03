@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+     Artifactory by jfrog [http://artifactory.jfrog.org]
+     Copyright (C) 2000-2008 jfrog Ltd.
+
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU Affero General Public License as
+     published by the Free Software Foundation, either version 3 of the
+     License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     GNU Affero General Public License for more details.
+
+     You should have received a copy of the GNU Affero General Public License
+     along with this program. If not, see <http://www.gnu.org/licenses/> or write to
+     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+     MA 02110-1301 USA.
+
+     You can also contact jfrog Ltd. at info@jfrog.org.
+
+     The interactive user interfaces in modified source and object code versions
+     of this program must display Appropriate Legal Notices, as required under
+     Section 5 of the GNU Affero General Public License version 3.
+
+     In accordance with Section 7(b) of the GNU Affero General Public License
+     version 3, these Appropriate Legal Notices must retain the display of the
+     "Powered by Artifactory" logo. If the display of the logo is not reasonably
+     feasible for technical reasons, the Appropriate Legal Notices must display
+     the words "Powered by Artifactory".
+
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.sourceforge.net/">
+
+<head>
+    <wicket:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+        <link rel="stylesheet" type="text/css" href="js130beta3/dijit/themes/tundra/tundra.css"/>
+        <link rel="stylesheet" type="text/css" href="js130beta3/dojo/resources/dojo.css"/>
+        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+
+        <!-- override any previous css -->
+        <link rel="stylesheet" type="text/css" href="skins130beta3/blueart/style.css"/>
+
+        <!-- src attribute is computed and added by wicket -->
+        <script wicket:id="djConfig" type="text/javascript" djConfig="parseOnLoad:true"></script>
+
+        <script type="text/javascript" src="js130beta3/AjaxIndicator.js"></script>
+    </wicket:head>
+</head>
+
+<body class="tundra">
+
+<div id="ajaxIndicator" class="ajax_indicator">
+    <div>Loading...</div>
+</div>
+
+<div id="wrapper">
+    <div id="header">
+        <div id="header_right">
+            <a wicket:id="artifactoryLink" id="logo" title="Artifactory">
+                <h1>artifactory</h1>
+            </a>
+        </div>
+    </div>
+
+    <div id="main">
+        <wicket:child/>
+    </div>
+
+    <div id="footer">
+        <p class="copywrites">
+            <img src="http://www.jfrog.org/images/logos/artifactory-jfrog.png" width="10"
+                 height="10" alt="jfrog"/><a href="http://www.jfrog.org/"> www.jfrog.org</a>, © 2008
+        </p>
+
+        <p wicket:id="version" class="version">Artifactory version</p>
+    </div>
+</div>
+
+</body>
+</html>

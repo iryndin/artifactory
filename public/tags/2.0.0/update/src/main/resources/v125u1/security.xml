@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+           http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
+
+    <bean id="security" class="org.artifactory.security.SecurityManager">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="aclProvider" ref="aclProvider"/>
+        <property name="userDetailsService" ref="userDetailsService"/>
+    </bean>
+
+    <!-- Authentication -->
+    <bean id="daoAuthenticationProvider"
+          class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <!--<property name="saltSource">
+            <ref bean="saltSource"/>
+        </property>-->
+        <property name="passwordEncoder">
+            <bean class="org.acegisecurity.providers.encoding.Md5PasswordEncoder"/>
+        </property>
+    </bean>
+
+    <bean id="userDetailsService" class="org.artifactory.security.ExtendedJdbcDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+                <ref local="ldapAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="processingFilter" class="org.acegisecurity.ui.basicauth.BasicProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint"
+          class="org.acegisecurity.ui.basicauth.BasicProcessingFilterEntryPoint">
+        <property name="realmName" value="Artifactory Realm"/>
+    </bean>
+
+    <!--<bean id="processingFilter"
+          class="org.acegisecurity.ui.digestauth.DigestProcessingFilter">
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+        <property name="passwordAlreadyEncoded" value="false"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint"
+          class="org.acegisecurity.ui.digestauth.DigestProcessingFilterEntryPoint">
+        <property name="realmName" value="Artifactory Realm"/>
+        <property name="key" value="kofifo"/>
+        <property name="nonceValiditySeconds" value="100"/>
+    </bean>-->
+
+    <!-- Authorization -->
+    <bean id="aclProvider" class="org.artifactory.security.CustomAclProvider">
+        <property name="basicAclDao" ref="aclDao"/>
+    </bean>
+
+    <bean id="aclDao" class="org.artifactory.security.ExtendedJdbcAclDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="aclProvider" ref="aclProvider"/>
+    </bean>
+
+    <bean id="ldapAuthenticationProvider"
+          class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+        <constructor-arg index="0">
+            <ref local="ldapAuthenticatorSelector"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <bean class="org.artifactory.security.ldap.DaoLdapAuthoritiesPopulator">
+                <property name="userDetailsService">
+                    <ref local="userDetailsService"/>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ldapAuthenticatorSelector" class="org.artifactory.security.LdapAuthenticatorSelector">
+        <property name="centralConfig">
+            <ref bean="centralConfig"/>
+        </property>
+        <property name="authenticators">
+            <map>
+                <entry key="bind-anonymous" value="ldapAnonymousBindAuthenticator"/>
+                <entry key="bind-manager" value="ldapManagerBindAuthenticator"/>
+                <entry key="search-anonymous" value="ldapAnonymousSearchAuthenticator"/>
+                <entry key="search-manager" value="ldapManagerSearchAuthenticator"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="abstractAuthenticatorBean" abstract="true">
+        <property name="userDnPatterns">
+            <list>
+                <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                    <property name="targetBeanName" value="centralConfig"/>
+                    <property name="propertyPath" value="security.ldapSettings.userDnPattern"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ldapAnonymousBindAuthenticator" parent="abstractAuthenticatorBean"
+          class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator" lazy-init="true">
+        <constructor-arg>
+            <ref local="anonymousContextFactory"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ldapManagerBindAuthenticator" parent="abstractAuthenticatorBean"
+          class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator" lazy-init="true">
+        <constructor-arg>
+            <ref local="managerContextFactory"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="abstractSearchAuthenticatorBean" parent="abstractAuthenticatorBean" abstract="true">
+        <property name="passwordAttributeName">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="centralConfig"/>
+                <property name="propertyPath"
+                          value="security.ldapSettings.searchAuthPasswordAttributeName"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="ldapAnonymousSearchAuthenticator" parent="abstractSearchAuthenticatorBean"
+          class="org.acegisecurity.providers.ldap.authenticator.PasswordComparisonAuthenticator"
+          lazy-init="true">
+        <constructor-arg>
+            <ref local="anonymousContextFactory"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ldapManagerSearchAuthenticator" parent="abstractSearchAuthenticatorBean"
+          class="org.acegisecurity.providers.ldap.authenticator.PasswordComparisonAuthenticator"
+          lazy-init="true">
+        <constructor-arg>
+            <ref local="managerContextFactory"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="anonymousContextFactory"
+          class="org.acegisecurity.ldap.DefaultInitialDirContextFactory" lazy-init="true">
+        <constructor-arg>
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="centralConfig"/>
+                <property name="propertyPath" value="security.ldapSettings.ldapUrl"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="managerContextFactory"
+          class="org.acegisecurity.ldap.DefaultInitialDirContextFactory" lazy-init="true">
+        <constructor-arg>
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="centralConfig"/>
+                <property name="propertyPath" value="security.ldapSettings.ldapUrl"/>
+            </bean>
+        </constructor-arg>
+        <property name="managerDn">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="centralConfig"/>
+                <property name="propertyPath" value="security.ldapSettings.managerDn"/>
+            </bean>
+        </property>
+        <property name="managerPassword">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="centralConfig"/>
+                <property name="propertyPath" value="security.ldapSettings.managerPassword"/>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

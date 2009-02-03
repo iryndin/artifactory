@@ -1,0 +1,221 @@
+/*
+body {
+	background-color: white;
+	background-image: url('wicket-logo.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: 96% 96%;
+	color: #6F6F6F;
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans';
+	font-size: 9pt;
+	line-height: 1.8em;
+	padding: 10px 10px 10px 10px;
+	margin: 10px 10px 10px 10px;
+}
+
+h1,h2,h3,h4,h5,h6,h7,h8 {
+	color: #E9601A;
+}
+
+#extitle {
+	font-size: 12pt;
+	font-weight: bold;
+	color: #E9601A;
+	padding: 10px 10px 10px 10px;
+}
+
+.mark {
+	background-color: yellow;
+	margin: 5px;
+}
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: circle;
+	font-weight: bold;
+}
+
+.feedbackPanelINFO {
+	color: green;
+	list-style: circle;
+	font-weight: bold;
+}
+
+.block {
+	padding: 10px;
+}
+
+.blockWithBorder {
+	border-width: thin;
+	border-style: dotted;
+	border-color: #E9601A;
+}
+
+#hellomessage {
+	font-size: 30pt;
+}
+
+#titleblock {
+	background-color: #BBBBBB;
+	color: white;
+	font-weight: bold;
+	border-bottom: solid #E9601A;
+	border-width: thin;
+	padding: 2px 2px 2px 6px;
+}
+
+h2 {
+	font-size: 1.25em;
+}
+
+h3 {
+	font-size: 1em;
+}
+
+a {
+	color: #6F6F6F;
+	text-decoration: underline;
+}
+
+img {
+	border: none;
+}
+
+pre {
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans serif', 'sans';
+}
+
+th {
+	background: #C3C3C3;
+	color: white;
+	font-weight: bold;
+}
+
+tr.b {
+	background: #F5F5F5;
+}
+
+tr.a {
+	background: #E6E6E5;
+}
+
+tr.none {
+	background: transparent;
+}
+
+a.none {
+	background: transparent;
+	padding-right: 0px;
+}
+
+#inputForm {
+	width: 300px;
+}
+
+#inputForm label {
+	display: block;
+	margin-top: 5px;
+}
+
+#numberRadioChoice label { display: inline !important; }
+
+#inputForm label.non {
+	display: inline !important;
+}
+
+#inputFormTable td {
+	vertical-align: top;
+	padding: 10px;
+}
+
+#nestedExampleTree {
+	width: 300px;
+}
+
+#feedbackPanel {
+	width: 600px;
+}
+
+#siteSelection {
+	width: 200px;
+}
+
+div.tabRowContent {
+	border-color: #DDDDDD;
+	border-style: solid;
+	border-width: 1px;
+	margin: 4px;
+	padding: 4px;
+}
+
+
+table.dataview {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #0079d6;
+	font-size: 1em;
+	font-family: arial;
+	}
+
+table.dataview caption { text-align: left; }
+table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview tr.even { background-color: #ffebcd; }
+table.dataview tr.odd { background-color: #fff; }
+table.dataview tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview tr th { color: black; padding-top: 3px; padding-bottom: 3px; padding-left: 8px; padding-right: 24px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+
+table.dataview tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview tr th.wicket_orderDown {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview tr th.wicket_orderUp {
+	background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview tr th.wicket_orderNone {
+	background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview tr th a { font-weight: normal; }
+table.dataview #message { padding-left: 3px; }
+table.dataview caption { padding-bottom: 2px; }
+*/
+
+/* PROGRESS BAR */
+
+div.wupb-uploadStatus {
+    margin: 5px;
+    color: #aaa;
+}
+
+div.wupb-progressBar {
+    margin: 5px;
+}
+
+div.wupb-progressBar .wupb-border {
+    background: url( /images/progress-remainder.gif ) repeat-x;
+    background-color: #eee;
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+    width: 100%;
+}
+
+div.wupb-progressBar .wupb-background {
+    background: url( /images/progress-bar.gif ) repeat-x;
+    background-color: #507090;
+    height: 18px;
+    width: 0%;
+}
+
+.feedbackPanelERROR {
+	color: red;
+	list-style: circle;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.feedbackPanelINFO {
+	color: green;
+	list-style: circle;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+/* END PROGRESS BAR */

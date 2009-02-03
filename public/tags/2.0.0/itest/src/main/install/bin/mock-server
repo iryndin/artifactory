@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ -n "$JAVA_HOME"  ] ; then
+   if [ -x "$JAVA_HOME/bin/java" ] ; then
+       JAVACMD="$JAVA_HOME/bin/java"
+   else
+       echo "** ERROR: java under JAVA_HOME=$JAVA_HOME cannot be executed"
+       exit 1
+   fi
+else
+   JAVACMD=`which java 2> /dev/null `
+   if [ -z "$JAVACMD" ] ; then
+       JAVACMD=java
+   fi
+fi
+
+MOCK_SERVER_DIR=`dirname $0`/..
+MOCK_SERVER_DIR=`cd $MOCK_SERVER_DIR && pwd`
+
+echo Starting Mock Server Test
+exec "$JAVACMD" $JAVA_OPTIONS -jar "$MOCK_SERVER_DIR/artifactory-itest.jar" "$@"

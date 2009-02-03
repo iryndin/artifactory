@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jfrog.maven</groupId>
+    <artifactId>dependency-viewer</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.1-SNAPSHOT</version>
+
+    <name>Artifactory Dependency Viewer</name>
+    <description>Artifactory Maven POM Dependency viewer for Maven2 projects</description>
+
+    <url>http://www.jfrog.org/sites/dependency-viewer/1.0</url>
+
+    <scm>
+        <connection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk/viewer/
+        </connection>
+        <developerConnection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk/viewer/
+        </developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>http://www.jfrog.org/jira/browse/MDV</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Dependency Viewer Users List</name>
+            <subscribe>https://lists.sourceforge.net/lists/listinfo/artifactory-viewer</subscribe>
+            <archive>https://sourceforge.net/mailarchive/forum.php?forum_name=artifactory-viewer</archive>
+        </mailingList>
+        <mailingList>
+            <name>Artifactory Developers List</name>
+            <subscribe>https://lists.sourceforge.net/lists/listinfo/artifactory-developers</subscribe>
+            <archive>http://www.nabble.com/Artifactory-Developers-f19965.html</archive>
+        </mailingList>
+    </mailingLists>
+
+    <developers>
+        <developer>
+            <id>drorb</id>
+            <name>Dror Bereznitsky</name>
+            <email>mailto:drorbr@gmail.com</email>
+            <roles>
+                <role>Lead Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>freddy33</id>
+            <name>Frederic Simon</name>
+            <email>frederic.simon@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <sourceforgeId>175347</sourceforgeId>
+        <sourceforgeName>artifactory</sourceforgeName>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+            <!-- For resolving the SVN revision number -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <id>getting-scm.revision</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- copy all non java resources from inside the java source tree -->
+            <plugin>
+                <groupId>org.jfrog.jade.plugins.build</groupId>
+                <artifactId>jade-multijar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>augmentResources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <finalName>dependency-viewer</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.jfrog.maven.viewer.Main</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <URL>${org.jfrog.maven.viewer.bo.url}</URL>
+                            <Extension-Name>${project.artifactId}</Extension-Name>
+                            <Specification-Vendor>${project.organization.name}</Specification-Vendor>
+                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                            <Implementation-Title>${project.description}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Revision-Number>${scm.revision}</Revision-Number>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                    <finalName>dependency-viewer-${version}</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.9</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jung</groupId>
+            <artifactId>jung</artifactId>
+            <version>1.7.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-jxpath</groupId>
+                    <artifactId>commons-jxpath</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xerces</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Maven Related -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>2.0.4</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>2.0.5</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-reporting-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-plugin-parameter-documenter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Spring Rich Client -->
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-resources</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-core</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-binding</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-form</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-support</artifactId>
+            <version>0.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>concurrent</groupId>
+                    <artifactId>concurrent</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-tiger</artifactId>
+            <version>0.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jnlp</groupId>
+                    <artifactId>jnlp-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.richclient</groupId>
+            <artifactId>spring-richclient-resources</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>forms</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>looks</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>jfrog</id>
+            <distributionManagement>
+                <site>
+                    <id>jfrog-server</id>
+                    <name>jfrog-sites</name>
+                    <url>scp://tadpole.jfrog.org/srv/www/html/sites/dependency-viewer/1.0</url>
+                </site>
+                <repository>
+                    <id>jfrog-libs-releases</id>
+                    <name>jfrog-libs-releases</name>
+                    <url>https://www.jfrog.org/artifactory/libs-releases</url>
+                </repository>
+                <snapshotRepository>
+                    <id>jfrog-libs-snapshots</id>
+                    <name>jfrog-libs-snapshots</name>
+                    <url>https://www.jfrog.org/artifactory/libs-snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <repositories>
+                <repository>
+                    <id>springRichclientRepository</id>
+                    <name>Spring rich client repository</name>
+                    <url>http://spring-rich-c.sourceforge.net/maven2repository</url>
+                </repository>
+                <repository>
+                    <id>jfrog-all</id>
+                    <!-- Needed because maven tries to download the skin from a normal repo,
+                    rather than a plugin repo -->
+                    <name>The jfrog repository global entry point</name>
+                    <url>http://www.jfrog.org/artifactory/repo</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jfrog-plugins-releases</id>
+                    <name>The jfrog repository for plugin releases</name>
+                    <url>http://www.jfrog.org/artifactory/plugins-releases</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+        <profile>
+            <id>ext</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>springRichclientRepository</id>
+                    <name>Spring rich client repository</name>
+                    <url>http://spring-rich-c.sourceforge.net/maven2repository</url>
+                </repository>
+                <repository>
+                    <id>jfrog-global</id>
+                    <!-- Needed because maven tries to download the skin from a normal repo,
+                    rather than a plugin repo -->
+                    <name>The jfrog repository global entry point</name>
+                    <url>http://www.jfrog.org/artifactory/repo</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jfrog-plugins-releases</id>
+                    <name>jfrog plugins releases</name>
+                    <url>http://www.jfrog.org/artifactory/plugins-releases</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+</project>

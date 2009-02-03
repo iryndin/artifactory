@@ -1,0 +1,7 @@
+<folder>
+    <repoKey>libs-snapshots-local</repoKey>
+    <relPath>org/artifactory/it/deploy-war</relPath>
+    <artifactoryName>deploy-war</artifactoryName>
+    <created>1216044553581</created>
+    <modifiedBy>admin</modifiedBy>
+</folder>

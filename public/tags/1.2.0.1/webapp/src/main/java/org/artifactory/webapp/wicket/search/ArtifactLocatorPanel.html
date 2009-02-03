@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.FilteringTable");
+        dojo.require("dojo.json");
+    </script>
+</wicket:head>
+
+<body>
+
+<wicket:extend>
+    <div class="formBody">
+        <span wicket:id="searchHelp"></span>
+        <label>Search for:</label>
+        <input wicket:id="search" name="search" type="text"/>
+    </div>
+
+    <div class="tableContainer">
+        <table wicket:id="results"
+               dojoType="FilteringTable" widgetId="results"
+               multiple="false" alternateRows="true"
+               valueField="id"
+               class="results" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th field="name" dataType="String">Artifact</th>
+                    <th field="relativePath" dataType="String">Relative Path</th>
+                    <th field="lastModified" dataType="String" sort="asc">Date Modified</th>
+                    <th field="repositoryName" dataType="String">Repos</th>
+                </tr>
+            </thead>
+            <tbody/>
+        </table>
+    </div>
+
+    <span wicket:id="pomDialog"/>
+</wicket:extend>
+
+</body>
+</html>

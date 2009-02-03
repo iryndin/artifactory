@@ -1,0 +1,72 @@
+table.results {
+    font-family: Verdana, Lucida Grande, serif;
+    font-size: 0.7em;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    cursor: default;
+}
+
+table.results td,
+    table th {
+    padding: 2px;
+    font-weight: normal;
+}
+
+table.results thead td, table thead th {
+    background-image: url( ../images/ft-head.gif );
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+table.results thead td.selectedUp, table thead th.selectedUp {
+    background-image: url( ../images/ft-headup.gif );
+}
+
+table.results thead td.selectedDown, table thead th.selectedDown {
+    background-image: url( ../images/ft-headdown.gif );
+}
+
+table.results tbody tr td {
+    border-bottom: 1px solid #ddd;
+}
+
+table.results tbody tr.alt td {
+    background: #e3edfa;
+}
+
+table.results tbody tr.selected td {
+    background: yellow;
+}
+
+table.results tbody tr:hover td {
+    background: #a6c2e7;
+}
+
+table.results tbody tr.selected:hover td {
+    background: #ff9;
+}
+
+/* From the dataview style */
+table.results tr th.wicket_orderDown {
+    background-color: #87cbff;
+    background-image: url( ../images/ft-headdown.gif );
+}
+
+table.results tr th.wicket_orderUp {
+    background-color: #87cbff;
+    background-image: url( ../images/ft-headup.gif );
+}
+
+table.results tr th.wicket_orderNone {
+    background-image: url( ../images/ft-head.gif );
+}
+
+table.results tr.even {
+    background-color: #e3edfa;
+}
+
+table.results tr.odd {
+    background-color: #ddd;
+}
+/**/

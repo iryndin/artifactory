@@ -1,0 +1,32 @@
+<wicket:extend>
+    <form wicket:id="importForm">
+        <table class="formBody">
+            <tr>
+                <td class="form_label">Target local repository</td>
+                <td>
+                    <select wicket:id="targetRepo"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="form_label">Import from path</td>
+                <td>
+                    <input wicket:id="importFromPath" type="text" class="path_field"/>
+                </td>
+            </tr>
+
+            <!--
+            <tr>
+                 <td class="form_label">Import from zip file</td>
+                 <td>
+                     <input wicket:id="fileInput" type="file"/>
+                     <input class="button" type="submit" value="Upload!"/>
+                     <span wicket:id="progress">[[ajax upload progressbar]]</span>
+                 </td>
+             </tr>
+            -->
+
+        </table>
+        <input class="button" type="button" wicket:id="import" value="Import"/>
+    </form>
+</wicket:extend>

@@ -1,0 +1,10 @@
+.tt {
+    border-bottom: 1px dotted black;
+    cursor: pointer;
+}
+
+body .dojoTooltip {
+    color: dimgray;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 0.7em;
+}

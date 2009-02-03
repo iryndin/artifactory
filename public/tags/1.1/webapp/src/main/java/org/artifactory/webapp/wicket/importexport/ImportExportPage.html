@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+    </script>
+</wicket:head>
+
+<body>
+<wicket:extend>
+    <h2 class="pageSubContentTitle">Local Import Export</h2>
+
+    <div>
+        <span wicket:id="feedback"/>
+    </div>
+
+    <form wicket:id="importForm" id="importForm">
+        <div class="formQuestion">Local Repository Import</div>
+        <table class="formAnswer" style="width: 100%;">
+            <tr>
+                <td class="emphasise" style="border-right:0px">Target local repository</td>
+                <td width="100%" style="border-right:0px">
+                    <select wicket:id="targetRepo"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="emphasise" style="border-right:0px">Import from path</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="importFromPath" type="text" class="medium"/>
+                </td>
+                <td style="width: 7em;width:50%;border:none" align="left">
+                    <button dojoType="Button" wicket:id="import"
+                            onClick="dojo.byId('importForm').submit();">
+                        Import
+                    </button>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+    <p/>
+    <form wicket:id="exportForm" id="exportForm">
+        <div class="formQuestion">Local Repository Export</div>
+        <table class="formAnswer" style="width: 100%;">
+            <tr>
+                <td class="emphasise" style="border-right:0px">Source local repository</td>
+                <td width="100%" style="border-right:0px">
+                    <select wicket:id="sourceRepo"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="emphasise" style="border-right:0px">Export to path</td>
+                <td width="100%" style="border-right:0px">
+                    <input wicket:id="exportToPath" type="text" class="medium"
+                           dojoType="ValidationTextBox"/>
+                </td>
+                <td style="width: 7em;width:50%;border:none" align="left">
+                    <button dojoType="Button" wicket:id="export"
+                            onClick="dojo.byId('exportForm').submit();">
+                        Export
+                    </button>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+</wicket:extend>
+</body>
+</html>

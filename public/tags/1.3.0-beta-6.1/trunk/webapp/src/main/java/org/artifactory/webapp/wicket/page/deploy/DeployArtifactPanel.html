@@ -1,0 +1,90 @@
+<wicket:panel>
+    <div wicket:id="uploadBorder">
+        <form wicket:id="uploadForm" class="upload-form">
+            <p class="info">
+                Upload a deployable artifact file, edit the artifact details and then deploy it.
+            </p>
+
+            <div class="field required upload-field">
+                <label>Artifact File</label>
+
+                <span class="value">
+                    <input wicket:id="fileInput" type="file" class="text"/>
+                </span>
+
+                <button type="submit" class="button default-button">
+                    <div class="button-center">
+                        <div class="button-left">
+                            <div class="button-right">Upload!</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <span wicket:id="progress"></span>
+        </form>
+    </div>
+
+    <div wicket:id="artifactBorder">
+        <form wicket:id="artifactForm" class="artifact-form">
+            <div class="field">
+                <label>GroupId</label>
+
+                <div class="value">
+                    <input wicket:id="group" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <label>ArtifactId</label>
+
+                <div class="value">
+                    <input wicket:id="artifact" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <label>Version</label>
+
+                <div class="value">
+                    <input wicket:id="version" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <label>Classifier</label>
+
+                <div class="value">
+                    <input wicket:id="classifier" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <label>Packaging</label>
+
+                <div class="value">
+                    <input wicket:id="packaging" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <div class="value">
+                    <input wicket:id="deployPom" type="checkbox" widgetId="deployPom" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <label>Target local repository</label>
+
+                <div class="value">
+                    <select wicket:id="targetRepo" class="medium"/>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" wicket:id="artifactSubmit"/>
+                <button type="button" wicket:id="cancel"/>
+            </div>
+        </form>
+    </div>
+</wicket:panel>

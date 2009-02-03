@@ -1,0 +1,23 @@
+<wicket:head>
+    <script type="text/javascript">
+        var Menu = {
+            init: function(menu, e) {
+                if (e.button > 0) {
+                    dojo.parser.parse(menu);
+                }
+            }
+        }
+    </script>
+</wicket:head>
+
+<wicket:panel>
+    <div class="wicket-tree">
+        <div wicket:id="i" onmousedown="Menu.init(this, event);">
+            <div class="a_">
+                <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
+                <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+            </div>
+            <div wicket:id="actionsMenu"></div>
+        </div>
+    </div>
+</wicket:panel>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<wicket:head>
+    <script type="text/javascript">
+        var ContextMenu = {
+            show: function(nodeId) {
+                var e;
+                var menu = dijit.byId('contextMenu');
+                if (dojo.isIE) {
+                    e = {target: window.lastTarget};
+                } else {
+                    e = window.lastEvent;
+                    menu._contextMenuWithMouse = true;
+                }
+                menu._openMyself(e);
+            },
+
+            init: function() {
+                dijit.Menu.prototype.templateString =
+                '<div class="tree-actions">' +
+                '<div class="links-border">' +
+                '<div class="link-top"></div>' +
+                '<div class="link-bottom"></div>' +
+                '<div class="link-left"></div>' +
+                '<div class="link-right"></div>' +
+                '<div class="link-top-left"></div>' +
+                '<div class="link-top-right"></div>' +
+                '<div class="link-bottom-left"></div>' +
+                '<div class="link-bottom-right"></div>' +
+                '<div class="links-body">' +
+                '<table class="dijit dijitMenu dijitReset dijitMenuTable" waiRole="menu" dojoAttachEvent="onkeypress:_onKeyPress">' +
+                '<tbody class="dijitReset" dojoAttachPoint="containerNode"></tbody>' +
+                '</table>' +
+                '</div></div>' +
+                '<div class="links-pointer"></div>' +
+                '</div>';
+                var prevMenu = dijit.byId('contextMenu');
+                if (prevMenu) {
+                    prevMenu.destroy();
+                }
+                dojo.parser.parse(dojo.byId('contextMenu').parentNode);
+            }
+        };
+
+    </script>
+</wicket:head>
+
+<wicket:panel>
+    <div wicket:id="menu" dojoType="dijit.Menu" targetNodeIds="contextMenu" style="display: none;">
+        <div wicket:id="menuItem" dojoType="dijit.MenuItem">
+            <span wicket:id="label" class="icon-link"/>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        ContextMenu.init();
+    </script>
+</wicket:panel>

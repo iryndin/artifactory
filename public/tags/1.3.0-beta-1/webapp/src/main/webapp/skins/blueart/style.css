@@ -1,0 +1,767 @@
+/*-- general elements styles ------------------------------------*/
+
+html, body {
+    min-height: 100%;
+    _height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0ffff;
+}
+
+body, td, select, input, li {
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+form {
+    margin: 0;
+}
+
+p {
+    margin: 0 0 7px 0;
+}
+
+h2 {
+    font-size: 20px;
+    margin: 5px 0;
+}
+
+h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #000066;
+}
+
+label {
+    color: #666666;
+    font-weight: bold;
+}
+
+hr {
+    margin: 20px 10px;
+}
+
+/*-- common classes ----------------------------------------------*/
+
+.center {
+    text-align: center;
+}
+
+input.textfield, input.dojoValidateValid, input.dojoValidateEmpty {
+    border: solid 1px #666699;
+    padding: 1px 3px;
+}
+
+input.chekbox {
+
+}
+
+input.dojoValidateEmpty {
+    background-color: #ff9999;
+}
+
+input.dojoValidateValid {
+}
+
+a.button {
+    display: block;
+    background: url( "images/button_bg.jpg" ) no-repeat 2px 4px;
+    width: 76px;
+    height: 28px;
+    cursor: pointer;
+    padding-top: 6px;
+
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+}
+
+a.button:hover {
+    background-image: url( "images/button_over.jpg" );
+    color: darkblue;
+}
+
+input.button {
+    background: url( "images/button_bg.jpg" ) no-repeat 2px 4px;
+    border: none;
+    width: 76px;
+    height: 28px;
+    cursor: pointer;
+}
+
+li.feedbackPanelERROR, li.feedbackPanelINFO {
+    padding: 5px 5px 5px 25px;
+    margin-left: -20px;
+    list-style: none;
+}
+
+li.feedbackPanelERROR {
+    background: url( "images/error_icon.png" ) no-repeat left;
+}
+
+span.feedbackPanelERROR {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+li.feedbackPanelINFO {
+    background: url( "images/info_icon.png" ) no-repeat left;
+}
+
+span.feedbackPanelINFO {
+    font-weight: bold;
+    color: #007700;
+}
+
+.form_label {
+    white-space: nowrap;
+    padding: 5px 5px 5px 0;
+    color: #666666;
+    font-weight: bold;
+}
+
+.path_field {
+    width: 40em;
+}
+
+.wicket-aa {
+    border: solid 1px #DADADA;
+    border-bottom: none;
+    background-color: white;
+    font-size: 11px;
+    overflow-x: auto;
+    position: absolute;
+    white-space: nowrap;
+    z-index: 50;
+}
+
+.wicket-aa ul {
+    border-bottom: solid 1px #DADADA;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.wicket-aa li {
+    border-bottom: 1px solid #DADADA;
+    color: #636563;
+    cursor: pointer;
+    height: 18px;
+    list-style: none;
+    margin: 0;
+    padding: 0 3px;
+}
+
+.wicket-aa .selected {
+    background-color: #c4f8ff;
+    color: #000000;
+}
+
+/*-- wicket ajax debug -------------------------------------------*/
+
+#wicketAjaxDebugWindow {
+    background-color: #ffffff;
+}
+
+#wicket-debug-link {
+    background-color: #ffffff;
+    padding: 3px;
+    position: fixed !important;
+    _position: absolute !important;
+}
+
+#wicket-debug-link a {
+    display: block;
+    border: solid 1px #666666;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 10px;
+    padding: 2px 5px;
+    color: darkblue;
+}
+
+#wicket-debug-link a:hover {
+    background-color: lightyellow;
+    color: blue;
+}
+
+/*-- HelpBubble ---------------------------------------------------*/
+
+span.help_bubble {
+    background: url( "images/question.gif" ) no-repeat;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 16px !important;
+    font-family: monospace !important;
+    cursor: help;
+
+}
+
+/*-- results table -----------------------------------------------*/
+
+table.results {
+    font-family: Verdana, Lucida Grande, serif;
+    font-size: 0.7em;
+    width: 100%;
+    border: 1px solid #669;
+    border-collapse: collapse;
+    margin: 10px 0;
+    cursor: default;
+}
+
+table.results td,
+    table th {
+    padding: 2px;
+    font-weight: normal;
+}
+
+table.results thead td, table thead th {
+    background-image: url( "images/ft-head.gif" );
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+table.results thead td.selectedUp, table thead th.selectedUp {
+    background-image: url( "images/ft-headup.gif" );
+}
+
+table.results thead td.selectedDown, table thead th.selectedDown {
+    background-image: url( "images/ft-headdown.gif" );
+}
+
+table.results tbody tr td {
+
+}
+
+table.results tbody tr.alt td {
+    background: #e3edfa;
+}
+
+table.results tbody tr.selected td {
+    background: yellow;
+}
+
+table.results tbody tr:hover td {
+    background: #a6c2e7;
+}
+
+table.results tbody tr.selected:hover td {
+    background: #ff9;
+}
+
+/* From the dataview style */
+table.results tr th.wicket_orderDown {
+    background-color: #87cbff;
+    background-image: url( "images/ft-headdown.gif" );
+}
+
+table.results tr th.wicket_orderUp {
+    background-color: #87cbff;
+    background-image: url( "images/ft-headup.gif" );
+}
+
+table.results tr th.wicket_orderNone {
+    background-image: url( "images/ft-head.gif" );
+}
+
+table.results tr.even {
+    background-color: #e3edfa;
+}
+
+table.results tr.odd {
+    background-color: #ddd;
+}
+
+table.results th {
+    border-bottom: solid 1px #9999ff;
+    color: navy;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+table.results th a {
+    text-decoration: none;
+    color: navy;
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+}
+
+/*-- BasePage classes --------------------------------------------*/
+
+#wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 100%;
+    min-width: 100%;
+    _height: 100%;
+    width: expression( '100%' );
+}
+
+#main {
+    padding-bottom: 20px;
+    min-height: 300px;
+}
+
+#header {
+    margin: 3px;
+
+    background: url( "images/header_bg.gif" );
+    height: 50px;
+}
+
+#header_right {
+    background: url( "images/header_right.gif" ) no-repeat right;
+    height: 50px;
+}
+
+#header #logo {
+    display: block;
+    background: url( "images/header_logo.gif" ) no-repeat left;
+    height: 50px;
+}
+
+#header h1 {
+    display: none;
+}
+
+#footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    background-color: skyblue;
+    border-top: solid 1px #999999;
+    clear: both;
+}
+
+#footer p {
+    margin: 0;
+    padding: 3px 5px 5px 5px;
+    font-size: 10px;
+}
+
+.copywrites {
+    float: left;
+}
+
+.version {
+    float: right;
+}
+
+#footer a {
+    color: black;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+/*-- WindowPanel --------------------------------------------------*/
+
+.win_wrapper {
+    background-color: #ffffff;
+    text-align: left;
+    margin: 10px 10px 20px 10px;
+}
+
+.win_top {
+    background: url( "images/win_top.jpg" ) repeat-x top;
+}
+
+.win_bottom {
+    background: url( "images/win_bottom.jpg" ) repeat-x bottom;
+}
+
+.win_left {
+    background: url( "images/win_left.jpg" ) repeat-y left;
+}
+
+.win_right {
+    background: url( "images/win_right.jpg" ) repeat-y right;
+}
+
+.win_topleft {
+    background: url( "images/win_topleft.jpg" ) no-repeat top left;
+}
+
+.win_topright {
+    background: url( "images/win_topright.jpg" ) no-repeat top right;
+}
+
+.win_bottomleft {
+    background: url( "images/win_bottomleft.jpg" ) no-repeat bottom left;
+}
+
+.win_bottomright {
+    background: url( "images/win_bottomright.jpg" ) no-repeat bottom right;
+
+}
+
+.win_title {
+    margin: 0;
+    padding: 9px 5px 5px 5px;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    position: relative; /* IE BUG */
+    white-space: nowrap;
+}
+
+.win_body {
+    position: relative; /* IE BUG */
+    padding: 10px 15px 0 15px;
+    min-height: 50px;
+}
+
+.win_spacer {
+/* IE BUG */
+    font-size: 10px;
+    height: 10px;
+}
+
+/*-- ContentDialogPanel --------------------------------------------*/
+
+.popup_top {
+    background: url( "images/popup_top.jpg" ) repeat-x top;
+    margin: 0 40px;
+    height: 65px;
+}
+
+.popup_bottom {
+    background: url( "images/popup_bottom.gif" ) repeat-x bottom;
+    margin: 0 40px;
+    height: 40px;
+}
+
+.popup_middle {
+    background-color: #ffffff;
+}
+
+.popup_left {
+    background: #ffffff url( "images/popup_left.gif" ) repeat-y left;
+}
+
+.popup_right {
+    background: url( "images/popup_right.gif" ) repeat-y right;
+}
+
+.popup_topleft {
+    background: url( "images/popup_topleft.gif" ) no-repeat top left;
+    float: left;
+    position: relative;
+    left: -40px;
+    width: 40px;
+    height: 65px;
+}
+
+.popup_topright {
+    background: url( "images/popup_topright.gif" ) no-repeat top right;
+    float: right;
+    position: relative;
+    left: 40px;
+    width: 40px;
+    height: 65px;
+}
+
+.popup_bottomleft {
+    background: url( "images/popup_bottomleft.gif" ) no-repeat top left;
+    float: left;
+    position: relative;
+    left: -40px;
+    width: 40px;
+    height: 40px;
+}
+
+.popup_bottomright {
+    background: url( "images/popup_bottomright.gif" ) no-repeat top right;
+    float: right;
+    position: relative;
+    left: 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.popup .button {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.btn_close {
+    display: block;
+    background: url( "images/btn_close.gif" ) no-repeat;
+    cursor: pointer;
+    margin: 10px 0 0 10px;
+}
+
+/* FF fix */
+html>/**/body .btn_close {
+    width: 16px;
+    height: 17px;
+}
+
+/* IE fix */
+.btn_close img {
+    width: 16px;
+    height: 17px;
+    visibility: hidden;
+}
+
+.popup_body {
+    position: absolute;
+    top: -5px;
+    left: 5px;
+}
+
+.popup textarea {
+    margin-top: 10px;
+    padding: 10px 15px 0 15px;
+    border: none;
+    background: none;
+    overflow: auto;
+}
+
+/*-- LoginPage -----------------------------------------*/
+
+.win_login {
+    width: 400px;
+    margin: 20px auto;
+}
+
+.win_login .checkbox {
+    background: none;
+    height: auto;
+    width: auto;
+    margin: 0;
+}
+
+.win_login .textfield {
+    width: 200px;
+    background: none;
+    height: auto;
+    cursor: text;
+    border: solid 1px #666699;
+    padding: 1px 3px;
+}
+
+.win_login input {
+    background: url( "images/button_bg.jpg" ) no-repeat 2px 4px;
+    border: none;
+    width: 76px;
+    height: 28px;
+    cursor: pointer;
+}
+
+/*-- LogoutPage ----------------------------------*/
+.win_logout {
+    width: 400px;
+    margin: 20px auto;
+}
+
+.win_logout .button {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.win_logout .win_spacer {
+    height: 5px;
+    font-size: 5px;
+    _font-size: 10px;
+}
+
+/*-- ArtifactoryPage --------------------------*/
+
+.user_info {
+    position: absolute;
+    top: 32px;
+    right: 25px;
+    font-size: 12px;
+    color: #A65700;
+}
+
+.username {
+    margin-right: 10px;
+}
+
+a.topBarLink {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+a.topBarLink:hover {
+    text-decoration: underline;
+    color: #ff0000;
+}
+
+span.topBarLink {
+    display: inline;
+    color: #666666;
+}
+
+.topBarLink em {
+    font-style: normal;
+}
+
+.cellItemLink {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+.cellItemLink:hover {
+    text-decoration: underline;
+    color: #ff0000;
+}
+
+.sidemenu {
+    position: absolute;
+    top: 65px;
+    left: 10px;
+    width: 210px;
+    background: url( "images/menu_bg.jpg" ) repeat-y;
+}
+
+.sidemenu_top {
+    background: url( "images/menu_top.jpg" ) no-repeat top;
+}
+
+.sidemenu_bottom {
+    background: url( "images/menu_bottom.jpg" ) no-repeat bottom;
+    padding: 25px 20px 20px 10px;
+}
+
+.sidemenu ul {
+    margin: 0;
+    padding: 0;
+}
+
+.sidemenu li {
+    list-style: none;
+    padding: 3px 0;
+}
+
+.sidemenu a {
+    text-decoration: none;
+    padding-left: 10px;
+    display: block;
+    color: navy;
+}
+
+.sidemenu a:hover {
+    color: #0000ff;
+}
+
+.sidemenu span {
+    padding-left: 10px;
+    display: block;
+    color: #666666;
+    cursor: default;
+}
+
+.sidemenu em {
+    font-style: normal;
+}
+
+.sidemenu a.closed {
+    background: url( "images/menu_expand.gif" ) no-repeat left;
+}
+
+.sidemenu a.opened {
+    background: url( "images/menu_collapse.gif" ) no-repeat left;
+}
+
+.sidemenu ul.closed {
+    display: none;
+}
+
+.sidemenu ul ul {
+    padding-left: 20px;
+}
+
+.content {
+    margin-left: 220px;
+}
+
+/*-- BrowseRepoPage classes -----------------------------*/
+
+.win_browser .win_spacer {
+    font-size: 10px;
+    height: 10px;
+}
+
+/*-- ArtifactLocatorPage classes -----------------------------*/
+
+.win_locator .win_spacer {
+    font-size: 10px;
+    height: 10px;
+}
+
+.win_locator .results td {
+    cursor: pointer;
+}
+
+/*-- DeployArtifactPage --------------------------------------*/
+
+div.wupb-uploadStatus {
+    margin: 5px;
+    color: #aaa;
+}
+
+div.wupb-progressBar {
+    margin: 5px;
+}
+
+div.wupb-progressBar .wupb-border {
+    background: #eee url( "images/progress-remainder.gif" ) repeat-x;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    width: 100%;
+}
+
+div.wupb-progressBar .wupb-background {
+    background: #507090 url( "images/progress-bar.gif" ) repeat-x;
+    height: 18px;
+    width: 0;
+}
+
+/*-- AclsPage -------------------------------------------*/
+
+.win_security h3 {
+    margin: 13px 0 0 0;
+}
+
+.recipients_table .form_label {
+    padding-left: 30px;
+}
+
+.recipients_table {
+    margin-bottom: 10px;
+}
+
+.ajax_indicator {
+    position: fixed;
+    _position: absolute;
+
+    bottom: 5px;
+    right: 0px;
+    z-index: 100;
+
+    width: 160px;
+    height: 70px;
+
+    font-weight: bold;
+    color: darkblue;
+
+    background: url( "images/ajax_indicator_bg.png" ) no-repeat;
+}
+
+.ajax_indicator div {
+    margin: 24px 20px;
+    cursor: wait;
+    padding-left: 27px;
+    background: url( "images/ajax_indicator.gif" ) 5px no-repeat;

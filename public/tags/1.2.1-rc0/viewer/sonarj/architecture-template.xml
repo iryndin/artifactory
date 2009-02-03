@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.5.0_06" class="java.beans.XMLDecoder">
+    <object class="com.hello2morrow.sonar.core.architecturedescription.ArchitectureDescription">
+        <void property="assertionPatternsCollection">
+            <void method="add">
+                <string>assert</string>
+            </void>
+        </void>
+        <void property="excludePackagePatternsCollection">
+            <void method="add">
+                <string>org.jfrog.maven.viewer</string>
+            </void>
+        </void>
+        <void property="ignoreExternalTypePatternsCollection">
+            <void method="add">
+                <string>java.lang.*</string>
+            </void>
+            <void method="add">
+                <string>java.io.**</string>
+            </void>
+            <void method="add">
+                <string>java.net.**</string>
+            </void>
+            <void method="add">
+                <string>java.util**</string>
+            </void>
+            <void method="add">
+                <string>java.text.**</string>
+            </void>
+            <void method="add">
+                <string>java.math.**</string>
+            </void>
+            <void method="add">
+                <string>java.lang.ref.**</string>
+            </void>
+        </void>
+        <void property="layersCollection">
+            <void method="add">
+                <object id="LayerNode0" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                    <void property="allowedAfferentsCollection">
+                        <void method="add">
+                            <object id="LayerNode1"
+                                    class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                                <void property="allowedEfferentsCollection">
+                                    <void method="add">
+                                        <object idref="LayerNode0"/>
+                                    </void>
+                                </void>
+                                <void property="childrenCollection">
+                                    <void method="add">
+                                        <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                            <void property="includePackagePatternsCollection">
+                                                <void method="add">
+                                                    <string>org.jfrog.maven.viewer.common</string>
+                                                </void>
+                                            </void>
+                                            <void property="name">
+                                                <string>common</string>
+                                            </void>
+                                        </object>
+                                    </void>
+                                </void>
+                                <void property="isPublic">
+                                    <boolean>true</boolean>
+                                </void>
+                                <void property="name">
+                                    <string>common</string>
+                                </void>
+                                <void property="x">
+                                    <int>455</int>
+                                </void>
+                                <void property="y">
+                                    <int>159</int>
+                                </void>
+                            </object>
+                        </void>
+                    </void>
+                    <void property="childrenCollection">
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>java.lang.reflect</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>reflection</string>
+                                </void>
+                                <void property="x">
+                                    <int>179</int>
+                                </void>
+                                <void property="y">
+                                    <int>263</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>java.beans</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>bean-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>626</int>
+                                </void>
+                                <void property="y">
+                                    <int>262</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>junit.**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>junit</string>
+                                </void>
+                                <void property="x">
+                                    <int>296</int>
+                                </void>
+                                <void property="y">
+                                    <int>263</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>org.apache.log4j**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>log4j</string>
+                                </void>
+                                <void property="x">
+                                    <int>463</int>
+                                </void>
+                                <void property="y">
+                                    <int>262</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>javax.xml.**</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.xml.**</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.dom4j**</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.w3c.dom**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>xml-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>10</int>
+                                </void>
+                                <void property="y">
+                                    <int>263</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>javax.mail**</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>com.sun.mail**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>mail-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>11</int>
+                                </void>
+                                <void property="y">
+                                    <int>200</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>java.sql</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>javax.sql</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>sql-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>177</int>
+                                </void>
+                                <void property="y">
+                                    <int>200</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>javax.servlet**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>servlet-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>343</int>
+                                </void>
+                                <void property="y">
+                                    <int>200</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>java.awt**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>awt</string>
+                                </void>
+                                <void property="x">
+                                    <int>509</int>
+                                </void>
+                                <void property="y">
+                                    <int>200</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>javax.swing**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>swing</string>
+                                </void>
+                                <void property="x">
+                                    <int>679</int>
+                                </void>
+                                <void property="y">
+                                    <int>200</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>javax.ejb**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>ejb-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>762</int>
+                                </void>
+                                <void property="y">
+                                    <int>260</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>java.applet**</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>applet-support</string>
+                                </void>
+                                <void property="x">
+                                    <int>12</int>
+                                </void>
+                                <void property="y">
+                                    <int>141</int>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.graph</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.graph.decorators</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.graph.impl</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.utils</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.visualization</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.visualization.contrib</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>edu.uci.ics.jung.visualization.control</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>jung</string>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>org.apache.commons.httpclient</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.apache.commons.httpclient.methods</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.apache.commons.httpclient.params</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>apache-commons</string>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>org.apache.maven.model.io.xpp3</string>
+                                    </void>
+                                    <void method="add">
+                                        <string>org.apache.maven.model</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>maven</string>
+                                </void>
+                            </object>
+                        </void>
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>org.codehaus.plexus.util.xml.pull</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>plexus</string>
+                                </void>
+                            </object>
+                        </void>
+                    </void>
+                    <void property="isPublic">
+                        <boolean>true</boolean>
+                    </void>
+                    <void property="name">
+                        <string>external</string>
+                    </void>
+                    <void property="x">
+                        <int>458</int>
+                    </void>
+                    <void property="y">
+                        <int>75</int>
+                    </void>
+                </object>
+            </void>
+            <void method="add">
+                <object idref="LayerNode1"/>
+            </void>
+            <void method="add">
+                <object id="LayerNode2" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                    <void property="allowedAfferentsCollection">
+                        <void method="add">
+                            <object id="LayerNode3"
+                                    class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                                <void property="allowedAfferentsCollection">
+                                    <void method="add">
+                                        <object id="LayerNode4"
+                                                class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                                            <void property="allowedEfferentsCollection">
+                                                <void method="add">
+                                                    <object idref="LayerNode3"/>
+                                                </void>
+                                                <void method="add">
+                                                    <object id="LayerNode5"
+                                                            class="com.hello2morrow.sonar.core.architecturedescription.LayerNode">
+                                                        <void property="allowedAfferentsCollection">
+                                                            <void method="add">
+                                                                <object idref="LayerNode4"/>
+                                                            </void>
+                                                        </void>
+                                                        <void property="childrenCollection">
+                                                            <void method="add">
+                                                                <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                                                    <void property="includePackagePatternsCollection">
+                                                                        <void method="add">
+                                                                            <string>org.jfrog.maven.viewer.ui
+                                                                            </string>
+                                                                        </void>
+                                                                    </void>
+                                                                    <void property="name">
+                                                                        <string>ui</string>
+                                                                    </void>
+                                                                </object>
+                                                            </void>
+                                                            <void method="add">
+                                                                <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                                                    <void property="includePackagePatternsCollection">
+                                                                        <void method="add">
+                                                                            <string>org.jfrog.maven.viewer.ui.model.jung
+                                                                            </string>
+                                                                        </void>
+                                                                    </void>
+                                                                    <void property="name">
+                                                                        <string>graph</string>
+                                                                    </void>
+                                                                </object>
+                                                            </void>
+                                                        </void>
+                                                        <void property="name">
+                                                            <string>View</string>
+                                                        </void>
+                                                        <void property="x">
+                                                            <int>221</int>
+                                                        </void>
+                                                        <void property="y">
+                                                            <int>35</int>
+                                                        </void>
+                                                    </object>
+                                                </void>
+                                            </void>
+                                            <void property="childrenCollection">
+                                                <void method="add">
+                                                    <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                                        <void property="includePackagePatternsCollection">
+                                                            <void method="add">
+                                                                <string>org.jfrog.maven.viewer.ui.controller</string>
+                                                            </void>
+                                                        </void>
+                                                        <void property="name">
+                                                            <string>controller</string>
+                                                        </void>
+                                                    </object>
+                                                </void>
+                                            </void>
+                                            <void property="name">
+                                                <string>Controller</string>
+                                            </void>
+                                            <void property="x">
+                                                <int>216</int>
+                                            </void>
+                                            <void property="y">
+                                                <int>109</int>
+                                            </void>
+                                        </object>
+                                    </void>
+                                </void>
+                                <void property="allowedEfferentsCollection">
+                                    <void method="add">
+                                        <object idref="LayerNode2"/>
+                                    </void>
+                                </void>
+                                <void property="childrenCollection">
+                                    <void method="add">
+                                        <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                            <void property="includePackagePatternsCollection">
+                                                <void method="add">
+                                                    <string>org.jfrog.maven.viewer.bo</string>
+                                                </void>
+                                            </void>
+                                            <void property="name">
+                                                <string>model</string>
+                                            </void>
+                                        </object>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>model</string>
+                                </void>
+                                <void property="x">
+                                    <int>217</int>
+                                </void>
+                                <void property="y">
+                                    <int>187</int>
+                                </void>
+                            </object>
+                        </void>
+                    </void>
+                    <void property="childrenCollection">
+                        <void method="add">
+                            <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode">
+                                <void property="includePackagePatternsCollection">
+                                    <void method="add">
+                                        <string>org.jfrog.maven.viewer.dao</string>
+                                    </void>
+                                </void>
+                                <void property="name">
+                                    <string>dao</string>
+                                </void>
+                            </object>
+                        </void>
+                    </void>
+                    <void property="mayHaveEfferents">
+                        <boolean>false</boolean>
+                    </void>
+                    <void property="name">
+                        <string>Data Access</string>
+                    </void>
+                    <void property="x">
+                        <int>218</int>
+                    </void>
+                    <void property="y">
+                        <int>260</int>
+                    </void>
+                </object>
+            </void>
+            <void method="add">
+                <object idref="LayerNode3"/>
+            </void>
+            <void method="add">
+                <object idref="LayerNode5"/>
+            </void>
+            <void method="add">
+                <object idref="LayerNode4"/>
+            </void>
+        </void>
+        <void property="name">
+            <string>architecture-template</string>
+        </void>
+    </object>
+</java> 

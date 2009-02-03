@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Configuration Help</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, config, configuration, setup, maven, proxy, enterprise, repository, 
+          corporate, maven 2, maven2, mvn, manager, deployment"/>
+
+    <body>
+        <section name="Configuration Files">
+            <p>
+                All artifactory configuration files should be located under etc of the ARTIFACTORY_HOME.
+                On Linux it is usually a soft link to /etc/artifactory.
+                This folder should contain the following files:
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <b>File Name</b>
+                    </td>
+                    <td>
+                        <b>Description</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>jetty.xml</td>
+                    <td>The standard jetty configuration file,
+                        that can be tuned by adding the AJP connector, for example.
+                    </td>
+                </tr>
+                <tr>
+                    <td>log4j.properties</td>
+                    <td>The standard log4j configuration file,
+                        that can (should ;-) be tuned for changing default level from INFO to ERROR.
+                    </td>
+                </tr>
+                <tr>
+                    <td>artifactory.config.xml</td>
+                    <td>The artifactory configuration file, that will be read only when artifactory starts,
+                        and that contains the definitions of all artifactory local and remote repositories.
+                        This XML files is based on well documentated XML Schema availiable
+                        <a href="/xsd/artifactory-v1_0_0.xsd">here</a>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                For the main configuration file "artifactory.config.xml", the provided example in the etc
+                folder is a good start, and reading the xsd helps.
+                <br/>
+                Some important notes about this file:
+                <br/>
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Tag name</b>
+                    </td>
+                    <td>
+                        <b>Information</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>backupCronExp</td>
+                    <td>
+                        If this tag is present the backup will be activated, otherwise no
+                        backup will be done.
+                        <br/>
+                        The backup frequency example is 12 hours, and is deactivated by default.
+                        The format is from quartz cron expression documentated
+                        <a href="http://quartz.sourceforge.net/javadoc/org/quartz/CronTrigger.html">here</a>
+                        .
+                        <br/>
+                        A backup is a full dump under {artifactory.home}/backup/[date folder]
+                        of each repository from Artifactory DB. This dump is like the Export feature and
+                        it has a maven2 repository format. This backup gives you the insurance
+                        that choosing Artifactory is not forcing you to use Derby DB forever.
+                        If you wish to move later to another Maven2 repository Manager/Proxy the backup is
+                        a standard maven2 repository.
+                    </td>
+                </tr>
+                <tr>
+                    <td>serverName</td>
+                    <td>This enables you to identify the artifactory running.</td>
+                </tr>
+                <tr>
+                    <td>anonDownloadsAllowed</td>
+                    <td>By default this field is true which means that maven will be able to download
+                        artifacts without the need for username/password. So when true there are no security
+                        on read access possible. If it is set to false, then every developer running maven
+                        should declare in the settings.xml file the username/password for each repositoryId
+                        that have a URL pointing to artifactory.
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Artifactory Folders">
+            <p>Under the Artifactory home you will find the following subfolders:</p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Folder Name</b>
+                    </td>
+                    <td>
+                        <b>Description</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>bin</td>
+                    <td>All scripts for running and installing artifactory</td>
+                </tr>
+                <tr>
+                    <td>lib</td>
+                    <td>Jetty jars and any other jars you wish to add to jetty classpath</td>
+                </tr>
+                <tr>
+                    <td>webapps</td>
+                    <td>Standard jetty folder for war files that will deployed by jetty.
+                        By default the jetty.xml provided deploys only artifactory.war under this folder.
+                        There is no auto-deploy.
+                    </td>
+                </tr>
+                <tr>
+                    <td>artifactory.jar</td>
+                    <td>A simple java jar containing only the Main startup class.</td>
+                </tr>
+                <tr>
+                    <td>etc</td>
+                    <td>The folder with all artifactory configuration files for jetty,
+                        log4j and of course artifactory itself.
+                        Under Linux it is usually a link to /etc/artifactory and
+                        contains a file "default" for the service variables.
+                    </td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td>The folder where all logs files will go. By default the jetty
+                        console will go to logs/consoleout.log. This folder should exists and be writable
+                        when starting artifactory since log4j cannot create folder dynamically.
+                        Under Linux it is usually a link to /var/log/artifactory.
+                    </td>
+                </tr>
+                <tr>
+                    <td>repos</td>
+                    <td>The folder where artifactory own DB and the repositories databases will be created.
+                        Theses databases are Derby DB files. Artifactory will create these DB files based
+                        on its configuration and so the folder may not exists when artifactory starts.
+                        Under Linux it is usual to link this folder to /var/data/artifactory or /srv/artifactory/repos.
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup</td>
+                    <td>The folder where artifactory scheduled backup will be done.
+                        The backups are flat export of all files in all local repositories.
+                        Under Linux it is usual to link this folder to /var/backup/artifactory.
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Using a NTLM or Simple Proxy">
+            <p>
+                It is possible to configure proxies to be used by Artifactory when it contacts
+                remote repositories.
+                <br/>
+                To do that, you need to specify a &lt;proxy&gt; element inside artifactory.config.xml
+                with all the proxy configuration details, including authentication, then use that
+                proxy's key in a &lt;proxyRef&gt; for a remote repository.
+                <br/>
+                There is an (unused) example in the default artifactory.config.xml
+                (with a key of "unused-proxy").
+            </p>
+        </section>
+    </body>
+</document>

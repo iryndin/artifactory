@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>How to Upgrade Help</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Unzipping a new Version">
+            <p>When a new version of Artifactory is delivered it contains
+                again the whole installation zip/tgz.<br/>
+                So, when unzipping a new verson, you need to keep the important
+                subfolders of your Artifactory home:</p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Folder Name</b>
+                    </td>
+                    <td>
+                        <b>Description</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>etc</td>
+                    <td>You need to keep your configuration files. Artifactory upgrades
+                        that need configuration will be stated.<br/>
+                        The best way on Unix is to have a link instead of this folder.
+                    </td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td>Keep or delete, you choose!
+                    </td>
+                </tr>
+                <tr>
+                    <td>repos</td>
+                    <td>Most upgrades don't change the DB schema, so just keep this folder
+                        on the side during upgrades. The DB files are reused as they are.
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup</td>
+                    <td>Better keep them.
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Changing just the war file">
+            <p>
+                Actually most Artifactory updates can be done by changing the artifactory.war.<br/>
+                <b>ATTENTION:</b> Avoid hot-deploy as much as possible since jackrabbit/lucene and
+                DerbyDB suffers during the process.
+            </p>
+        </section>
+    </body>
+</document>

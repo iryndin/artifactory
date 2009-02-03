@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Introduction</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Introduction">
+            <div>
+                <p>
+                    Artifactory is a Maven2 proxy repository. It offers advanced proxying, caching
+                    and security facilities to answer the enterprise needs of a robust, reproducible and
+                    independent build environment using Maven 2.
+                </p>
+                <p>
+                    Artifactory uses a JSR-170 Java Content Repository (JCR) for storage, which makes
+                    it extremely easy to manage searchable metadata, and provide extended features
+                    such as security, transacted operations, auditing, locking, etc.
+                </p>
+            </div>
+            <p>
+                Below is an incomplete list of the main features of Artifactory:
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Feature</b>
+                    </td>
+                    <td>
+                        <b>Description</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Runs out of the box</td>
+                    <td>
+                        <ol>
+                            <li>Can be run in a matter of minutes out of the box (with default configuration)
+                                by simply unpacking the downloadable archive and running the embedded Jetty container
+                            </li>
+                            <li>Can be deployed as a regular web application to any standard servlet container</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Easy configuration</td>
+                    <td>
+                        <ol>
+                            <li>Configured using a single XML file backed up by a well defined schema</li>
+                            <li>Security related configuration via web UI.</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Multiple local repositories support</td>
+                    <td>
+                        <ol>
+                            <li>Easy separation of 3rd parties/in-house artifacts, or snapshots/releases/plugins
+                                artifacts
+                            </li>
+                            <li>Import/Export for each local repository to the file system (via web UI)</li>
+                            <li>Scheduled backups of local repositories</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Import/Export/Backup to maven2 file repositories</td>
+                    <td>
+                        <ol>
+                            <li>Each repository declared in Artifactory (Local and Cache of remote) can be
+                                "dumped", "loaded" and backup to a standard maven2 repository file
+                                layout.
+                            </li>
+                            <li>This removes your long-term dependency on Artifactory (all your artifacts
+                                inside Artifactory Derby DB only), since you can stop using Artifactory
+                                and use the backup or "dumped" folders as standard maven2 repository.
+                            </li>
+                            <li>The "dump", "restore" enables Artifactory upgrades even when the DB
+                                schema changes.
+                            </li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Security</td>
+                    <td>
+                        <ol>
+                            <li>Fully authenticated access (web based and through Maven)</li>
+                            <li>Allow/disallow anonymous read (artifact download) access</li>
+                            <li>Group-based permissions for admins, deployers and viewers</li>
+                            <li>System-wide admins</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Web UI</td>
+                    <td>
+                        <ol>
+                            <li>Ajax-based web UI using the excellent Wicket and Dojo frameworks</li>
+                            <li>Lazy loading explorer-like navigation for all groups and artifacts
+                                in local, caches and remote repositories
+                            </li>
+                            <li>Search artifacts in all repositories</li>
+                            <li>Display POM with a snippet for inclusion as a POM dependency</li>
+                            <li>Download artifacts directly from the web interface</li>
+                            <li>Contextual menu for viewing POMs, removing artifacts, or zapping the caches</li>
+                            <li>Artifact deployment via a web page, including ability to specify classifier</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fine tuned control for remote and local repositories</td>
+                    <td>
+                        <ol>
+                            <li>Blackout a repository</li>
+                            <li>Include/exclude patterns for allowed artifacts</li>
+                            <li>Network timeouts</li>
+                            <li>Fine grained cache expiry control for missed artifact, communication errors and regular
+                                retrievals
+                            </li>
+                            <li>Go through HTTP proxies (including NTLM-based proxies)</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Artifactory mesh</td>
+                    <td>
+                        <ol>
+                            <li>Setup a group of Artifactory instances treating one another as remote repositories</li>
+                            <li>Support for distributed, multi time zone enterprise development environments</li>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Live Demo">
+            <span>
+                <p>You can watch artifactory in action at:
+                    <br/>
+                    <a href="http://www.jfrog.org/artifactory/">http://www.jfrog.org/artifactory/</a>
+                    <br/>
+                    There is a guest account: guest/guest. This account is of course limited, so to
+                    test drive the full thing just download and run it locally with the default configuration.
+                    It's a matter of unzipping and clicking run.
+                    <br/>
+                </p>
+            </span>
+            <span>
+                <img src="images/browser-small.jpg"/>
+            </span>
+        </section>
+        <section name="Building From Source">
+            <p>Simply download the source and run
+                <code>mvn clean install</code>.
+            </p>
+            <p>To gain access to open source dependencies not currently deployed on Maven's public
+                repositories, run with the jfrog profile:
+                <code>-Pjfrog</code>.
+            </p>
+        </section>
+    </body>
+</document>

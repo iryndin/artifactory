@@ -1,0 +1,9 @@
+artifactory-1.2.0.1 - 8 Mar 2007
+ + Added jetty-ajp-6.1.1.jar to the lib as standard and activated the Ajp13SocketConnector in the jetty.xml
+ + Solved bug RTFACT-48 about 404 on download from UI
+ + Removed the need for specifying @repo in maven repository URLs
+ + Look And Feel of disabled menus rendered correctly
+ + Upgraded to Jackrabbit 1.2.3
+ + Moved verbose INFO messages to DEBUG level
+ + Changed default log4j.properties to WARN level
+ + Handling of authenticated up-to-date (head requests) between Artifactory servers

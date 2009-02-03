@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Introduction</title>
+    </properties>
+
+    <meta name="keyword" content="maven, mvn, proxy, deployment"/>
+
+    <body>
+        <section name="Introduction">
+            <p>
+                This project is a Maven2 proxy repository with advanced features
+            </p>
+            <p>
+                Based on JCR (jackrabbit), with a UI based on Wicket,
+                it contains features like:
+            </p>
+            <table>
+                <tr>
+                    <td>Feature Name</td>
+                    <td>Description</td>
+                </tr>
+                <tr>
+                    <td>Easy configuration</td>
+                    <td>
+                        <ol>
+                            <li>Configuration by XML with well defined XSD</li>
+                            <li>Definition of multiple local and remote repositories</li>
+                            <li>Definition and usage of HTTP proxies (even NTLM based)</li>
+                            <li>Definition of scheduled backup</li>
+                            <li>Allow/Disallow anonymous read access</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Multiple Local repository</td>
+                    <td>
+                        <ol>
+                            <li>Easy separation of Third parties/local, or Snapshots/Releases artifacts</li>
+                            <li>Web UI for Import/Export for each local repository</li>
+                            <li>Deletion/Creation/Blocking of each local repository</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Maven artifacts navigation</td>
+                    <td>
+                        <ol>
+                            <li>Web UI tree with lazy loading to navigate all groups and artifacts
+                                in local and remote repositories</li>
+                            <li>Search ability through all repositories</li>
+                            <li>Dynamic pop-up for displaying the POM with a header
+                                that display a formatted groupId, artifactId, version, that can be included
+                                in your POM dependencies
+                            </li>
+                            <li>Contextual menu for downloading POM, Jar or any other artifact</li>
+                            <li>Contextual menu for viewing POM, removing artifacts, or zapping the cache</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Web based artifact deployment</td>
+                    <td>
+                        <ol>
+                            <li>Web UI for deploying external jar or POM files</li>
+                            <li>Ability to add classifier</li>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Live Demo">
+            <p>You can see for yourself artifactory in action at:<br/>
+                <a href="http://www.jfrog.org/artifactory/">http://www.jfrog.org/artifactory/</a><br/>
+                There is a guest account: guest/guest.
+            </p>
+        </section>
+        <section name="Settings">
+            <p>For setting up maven to use artifactory proxy,
+                just configure a maven repository with the following URL:<br/>
+                <b>http://[your server name]:[port]/artifactory/repo</b><br/>
+                This URL will make artifactory look through all repositories (local and remote),
+                for any artifacts maven is fetching.
+            </p>
+            <p>But, you can also place the name of the local repository to limit artifactory
+                search to this local repository and all remote repositories.<br/>
+                The maven repository URL should look like:<br/>
+                <b>http://[your server name]:[port]/artifactory/[local repo name]@repo</b>
+            </p>
+            <p>If your artifactory is configured correctly, you should override the central
+                repository of maven, so no request to repo1.maven.org will be send directly.
+            </p>
+        </section>
+        <section name="Build">
+            <p>Artifactory uses some non released version or some jar not deployed on ibiblio.<br/>
+                Here are these exotic dependencies:
+                <table>
+                    <tr><td>wicket</td><td>http://svn.apache.org/repos/asf/incubator/wicket/branches/wicket-1.x rev#510929</td></tr>
+                    <tr><td>jackrabbit</td>
+                        <td>repo@http://people.apache.org/repo/m2-ibiblio-rsync-repository, or
+                            http://svn.apache.org/repos/asf/jackrabbit/tags/1.2.2 rev#508509</td></tr>
+                    <tr><td>spring</td><td>repo@http://ndeloof.free.fr/maven2 (for mavenized spring submodules)</td></tr>
+                    <tr><td>collections-generic</td><td>download@http://sourceforge.net/project/showfiles.php?group_id=139125</td></tr>
+                </table>
+            </p>
+        </section>
+    </body>
+</document>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<project name="Core">
+    <skin>
+        <groupId>org.jfrog.maven.skins</groupId>
+        <artifactId>jfrog-sf</artifactId>
+    </skin>
+    <body>
+        <breadcrumbs>
+            <item href="http://www.jfrog.org/sites/artifactory/1.2/artifactory-core" name="Artifactory Core"/>
+        </breadcrumbs>
+
+        <menu name="Overview">
+            <item name="Introduction" href="../introduction.html"/>
+            <item name="Configuration Help" href="../configuration.html"/>
+        </menu>
+        <menu name="Modules">
+            <item name="Artifactory Core" href="../artifactory-core/index.html"/>
+            <item name="Artifactory Webapp" href="../artifactory-webapp/index.html"/>
+            <item name="Artifactory Standalone" href="../artifactory-standalone/index.html"/>
+            <!--<item name="Artifactory Wagon" href="../artifactory-wagon/index.html"/>-->
+        </menu>
+        ${reports}
+    </body>
+</project>

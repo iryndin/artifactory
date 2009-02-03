@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<project name="Artifactory">
+    <skin>
+        <groupId>org.jfrog.maven.skins</groupId>
+        <artifactId>jfrog-sf</artifactId>
+        <version>1.0.11</version>
+    </skin>
+    <bannerLeft>
+        <name>jfrog</name>
+        <src>http://www.jfrog.org/images/logos/jfrog.png</src>
+        <href>http://www.jfrog.org</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>Artifactory</name>
+        <src>http://www.jfrog.org/images/logos/artifactory.png</src>
+        <href>index.html</href>
+    </bannerRight>
+    <poweredBy>
+        <logo name="Jackrabbit" href="http://jackrabbit.apache.org"
+              img="http://www.jfrog.org/images/logos/jackrabbitlogo.gif"/>
+        <logo name="Spring" href="http://www.springframework.org/"
+              img="http://www.jfrog.org/images/logos/spring_white.png"/>
+        <logo name="Wicket" href="http://wicket.sourceforge.net"
+              img="http://www.jfrog.org/images/logos/wicket-logo.png"/>
+        <logo name="Jetty" href="http://www.mortbay.org/"
+              img="http://www.jfrog.org/images/logos/jetty_logo.gif"/>
+        <logo name="Firefox 2" href="http://www.spreadfirefox.com/?q=affiliates&amp;id=0&amp;t=209"
+              img="http://sfx-images.mozilla.org/affiliates/Buttons/firefox2/firefox-spread-btn-1.png"/>
+    </poweredBy>
+    <body>
+        <breadcrumbs>
+            <item href="http://www.jfrog.org" name="jfrog"/>
+            <item href="http://www.jfrog.org/sites/artifactory/1.2" name="Artifactory 1.2"/>
+        </breadcrumbs>
+        <links>
+            <item name="Live Demo" href="http://www.jfrog.org/artifactory/"/>
+            <item name="Wiki" href="http://www.jfrog.org/wiki/"/>
+            <item name="JIRA" href="http://www.jfrog.org/jira/"/>
+        </links>
+
+        <menu name="Overview">
+            <item name="Introduction" href="introduction.html"/>
+            <item name="Maven Setup" href="usage.html"/>
+            <item name="FAQs" href="faqs.html"/>
+        </menu>
+        <menu name="Help">
+            <item name="Installation" href="install.html"/>
+            <item name="Configuration" href="configuration.html"/>
+            <item name="First Import" href="firstImport.html"/>
+            <item name="Security Configuration" href="security.html"/>
+            <item name="Upgrading" collapse="false">
+                <item name="Version 2.0.x" href="upgrade.html"/>
+            </item>
+        </menu>
+        <menu name="Modules">
+            <item name="Artifactory Core" href="artifactory-core/index.html"/>
+            <item name="Artifactory Webapp" href="artifactory-webapp/index.html"/>
+            <item name="Artifactory Standalone" href="artifactory-standalone/index.html"/>
+            <!--<item name="Artifactory Wagon" href="artifactory-wagon/index.html"/>-->
+        </menu>
+
+        ${reports}
+    </body>
+</project>
