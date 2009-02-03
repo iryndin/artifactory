@@ -16,22 +16,24 @@
  */
 package org.artifactory.resource;
 
-import org.artifactory.api.repo.RepoPath;
+import org.artifactory.repo.Repo;
 
-public class UnfoundRepoResource extends FileResource {
-    private final String reason;
+import java.util.Date;
 
-    public UnfoundRepoResource(RepoPath repoPath, String reason) {
-        super(repoPath);
-        this.reason = reason;
+public class UnfoundRepoResource extends SimpleRepoResource {
+
+    /**
+     * Use to store a 'snapshot not found' in the snapshot cache
+     *
+     * @param relPath
+     * @param repo
+     */
+    public UnfoundRepoResource(String relPath, Repo repo) {
+        super(repo, relPath);
+        setLastModifiedTime(new Date().getTime());
     }
 
-    @Override
     public boolean isFound() {
         return false;
-    }
-
-    public String getReason() {
-        return reason;
     }
 }

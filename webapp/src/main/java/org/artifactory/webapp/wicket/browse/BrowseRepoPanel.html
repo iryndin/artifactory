@@ -1,0 +1,236 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+<script type="text/javascript">
+dojo.require("dojo.lang.*");
+dojo.require("dojo.widget.Tree");
+dojo.require("dojo.widget.TreeRPCController");
+dojo.require("dojo.widget.TreeSelector");
+dojo.require("dojo.widget.TreeNode");
+dojo.require("dojo.widget.TreeContextMenu");
+dojo.require("dojo.widget.Tooltip");
+dojo.require("dojo.json");
+
+dojo.addOnLoad(function() {
+    dojo.event.topic.subscribe('treeContextMenuRemove/engage',
+            function (menuItem) {
+                removeClicked(menuItem.getTreeNode(), 'treeController');
+            });
+    dojo.event.topic.subscribe('treeContextMenuViewContent/engage',
+            function (menuItem) {
+                viewClicked(menuItem.getTreeNode());
+            });
+    dojo.event.topic.subscribe('treeContextMenuDownload/engage',
+            function (menuItem) {
+                downloadClicked(menuItem.getTreeNode(), 'treeController');
+            });
+    dojo.event.topic.subscribe('treeContextMenuZap/engage',
+            function (menuItem) {
+                zapClicked(menuItem.getTreeNode(), 'treeController');
+            });
+    dojo.event.topic.subscribe("tree/createDOMNode",
+            function (event) {
+                nodeAdded(event.source);
+            });
+
+    // IE6 bug RTFACT-281 fix (re-render footer)
+    if (!window.XMLHttpRequest) {
+        dojo.event.topic.subscribe("tree/expand", fixIE6Footer);
+        dojo.event.topic.subscribe("tree/collapse", fixIE6Footer);
+        fixIE6Footer()
+    }
+});
+
+function fixIE6Footer() {
+    var footer = document.getElementById('footer');
+    if (footer) {
+        footer.style.display = 'none';
+        footer.style.display = '';
+    }
+}
+
+function nodeAdded(child) {
+    var span = firstChildByName(child.domNode, "SPAN");
+    span.id = child.widgetId;
+    var ttProps = {widgetId: child.widgetId + "_tooltip", connectId: span.id, toggle: "fade",
+        showDelay: "1000"};
+    var tt = dojo.widget.createWidget('Tooltip', ttProps);
+    tt.setContent(child.tooltip);
+    tt.hide();
+    dojo.body().appendChild(tt.domNode);
+    return true;
+}
+
+function viewClicked(selectedNode) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    ajaxIndicator.show();
+    var callbackUrl = dojo.byId("contentViewer27").getAttribute("callbackUrl"); //HACK: id not being generated
+    wicketAjaxPost(callbackUrl + "&nodeId=" + selectedNode.objectId
+            + "&title=" + selectedNode.title);
+    ajaxIndicator.hide();
+    return true;
+}
+
+function removeClicked(selectedNode, controllerId) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    if (selectedNode.actionIsDisabled(selectedNode.actions.REMOVE)) {
+        return false;
+    }
+    this.parentNode = selectedNode.parent;
+    //dojo.debug("parent " + this.parentNode);
+    loadingIconSrc.apply(this, [selectedNode]);
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    var res = false;
+    if (confirm("Are you sure you wish to delete '" + selectedNode.title +
+                (selectedNode.isFolder ?
+                 "' and all its children?" : "'?"))) {
+        ajaxIndicator.show();
+        res = this.controller.removeNode(selectedNode, this, dojo.lang.hitch(this, updateChildren));
+    } else {
+        restoreIconSrc();
+    }
+    return true;
+}
+
+function downloadClicked(selectedNode, controllerId) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    ajaxIndicator.show();
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    //Mimic an rpc request through the controller
+    var res = this.controller.runRPC({
+        url: this.controller.getRPCUrl('download'),
+        sync: true,
+        load: function(response) {
+            if (response.url) {
+                document.location = response.url;
+            }
+        },
+        params: {node: controller.getInfo(selectedNode)},
+        lock: [selectedNode]
+    });
+    ajaxIndicator.hide();
+    return true;
+}
+
+function zapClicked(selectedNode, controllerId) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    ajaxIndicator.show();
+    loadingIconSrc.apply(this, [selectedNode]);
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    //Mimic an rpc request through the controller
+    var res = this.controller.runRPC({
+        url: this.controller.getRPCUrl('zap'),
+        sync: true,
+        load: function(response) {
+            if (response) {
+                //window=this.domNode.ownerDocument.defaultView
+                window.parentNode = selectedNode;
+                window.updateChildren();
+            }
+            restoreIconSrc();
+        },
+        params: {node: controller.getInfo(selectedNode)},
+        lock: [selectedNode]
+    });
+    ajaxIndicator.hide();
+    return true;
+}
+
+function updateChildren() {
+    if (this.parentNode == null || typeof this.parentNode != "undefined") {
+        this.parentNode.state = this.parentNode.loadStates.UNCHECKED;
+        //Do not update the root node (with repositories as children)
+        if (this.parentNode.depth > 0) {
+            this.parentNode.destroyChildren();
+            this.controller.expandToLevel(this.parentNode, 1);
+        }
+    }
+    restoreIconSrc();
+    ajaxIndicator.hide();
+}
+
+function loadingIconSrc(node) {
+    this.icon = node.expandIcon;
+    this.oldIconSrc = icon.src;
+    this.icon.src = '../images/loading.jpg';
+}
+
+function restoreIconSrc() {
+    // icon was changed during the action => no need to move it back
+    this.icon.src = this.oldIconSrc;
+    this.parentNode = null;
+}
+
+function getTreeNodeTitlePath(node) {
+    var res;
+    while (node.parent != null) {
+        res = "/" + parent.title + res;
+        node = node.parent;
+    }
+    return res;
+}
+
+function firstChildByName(domNode, name) {
+    var children = domNode.childNodes;
+    for (var x = 0; x < children.length; x++) {
+        var child = children.item(x);
+        //if (child.nodeName.match("/" + name + "/ig")) {
+        if (child.nodeName == name) {
+            return child;
+        }
+    }
+    return null;
+}
+</script>
+</wicket:head>
+
+<body>
+
+<wicket:extend>
+    <div wicket:id="controller" dojoType="TreeRPCController" RPCUrl="local"
+         widgetId="treeController"></div>
+
+    <div dojoType="TreeSelector" widgetId="treeSelector"></div>
+
+    <div dojoType="TreeContextMenu" toggle="explode" contextMenuForWindow="false"
+         widgetId="treeContextMenu">
+        <div dojoType="TreeMenuItem" treeActions="view" iconSrc="../images/eye.png"
+             caption="View" widgetId="treeContextMenuViewContent"></div>
+        <div dojoType="TreeMenuItem" treeActions="remove" iconSrc="../images/delete.png"
+             caption="Remove" widgetId="treeContextMenuRemove"></div>
+        <div dojoType="TreeMenuItem" treeActions="download" iconSrc="../images/disk.png"
+             caption="Download" widgetId="treeContextMenuDownload"></div>
+        <div dojoType="TreeMenuItem" treeActions="zap" iconSrc="../images/lightning.png"
+             caption="Expire cache" widgetId="treeContextMenuZap"></div>
+    </div>
+
+    <div dojoType="Tree" menu="treeContextMenu" selector="treeSelector" widgetId="tree"
+         toggler="fade" controller="treeController">
+        <div dojoType="TreeNode" objectId="/" title="Repositories"
+             actionsDisabled="view;remove;download;zap" isFolder="true"
+             childIconSrc="../images/root.png" expandLevel="1">
+            <div wicket:id="repositories">
+                <div wicket:id="repository" dojoType="TreeNode" objectId="/" title="Repository"
+                     isFolder="true" childIconSrc="../images/repository.png" expandLevel="1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span wicket:id="contentViewer" id="contentViewer"/>
+</wicket:extend>
+
+</body>
+</html>

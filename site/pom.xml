@@ -23,12 +23,13 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>artifactory-site</artifactId>
     <packaging>jar</packaging>
-    <name>Artifactory Site</name>
+    <name>Artifactory</name>
 
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.2.5u1</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <profiles>
@@ -38,7 +39,7 @@
                 <site>
                     <id>jfrog-server</id>
                     <name>jfrog-sites</name>
-                    <url>scp://www.jfrog.org/srv/www/www.jfrog.org/sites/artifactory/1.3</url>
+                    <url>scp://tadpole.jfrog.org/srv/www/html/sites/artifactory/1.2</url>
                 </site>
             </distributionManagement>
         </profile>
