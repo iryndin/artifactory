@@ -37,6 +37,7 @@
         <property name="ocmClassesList">
             <list>
                 <value>org.artifactory.jcr.ocm.OcmStorable</value>
+                <value>org.artifactory.keyval.KeyVals</value>
                 <value>org.artifactory.security.User</value>
                 <value>org.artifactory.security.RepoPathAcl</value>
                 <value>org.artifactory.security.RepoPathAce</value>
@@ -65,6 +66,11 @@
     </bean>
 
     <bean id="maven" class="org.artifactory.maven.Maven"/>
+
+    <bean id="keyVal" class="org.artifactory.keyval.KeyVals">
+        <property name="version" value="${artifactory.version}"/>
+        <property name="revision" value="${artifactory.revision}"/>
+    </bean>
 
     <import resource="scheduling.xml"/>
     <import resource="security.xml"/>

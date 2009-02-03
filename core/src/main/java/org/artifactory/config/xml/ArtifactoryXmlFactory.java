@@ -1,5 +1,8 @@
 package org.artifactory.config.xml;
 
+import sun.net.www.MimeEntry;
+import sun.net.www.MimeTable;
+
 import javax.xml.parsers.SAXParserFactory;
 
 /**
@@ -7,6 +10,7 @@ import javax.xml.parsers.SAXParserFactory;
  */
 public class ArtifactoryXmlFactory {
     private static boolean xmlInitialized;
+    private static MimeTable mimeTable;
     private static SAXParserFactory factory;
 
     private static synchronized void initXmlConfiguration() {
@@ -29,10 +33,20 @@ public class ArtifactoryXmlFactory {
             factory = null;
             throw new RuntimeException("SAX parser factory initialization error.", e);
         }
+        //Update the system mime table
+        mimeTable = MimeTable.getDefaultTable();
+        MimeEntry mimeEntry = new MimeEntry("application/xml");
+        mimeEntry.setExtensions(".xml,.pom");
+        mimeTable.add(mimeEntry);
     }
 
     public static SAXParserFactory getFactory() {
         initXmlConfiguration();
         return factory;
+    }
+
+    public static MimeTable getMimeTable() {
+        initXmlConfiguration();
+        return mimeTable;
     }
 }

@@ -16,8 +16,6 @@
  */
 package org.artifactory.api.security;
 
-import org.artifactory.api.repo.Lock;
-
 import java.util.List;
 
 /**
@@ -36,10 +34,8 @@ public interface AclService {
 
     boolean canAdmin(PermissionTargetInfo target);
 
-    @Lock(transactional = true)
     AclInfo createAcl(PermissionTargetInfo entity);
 
-    @Lock(transactional = true)
     void deleteAcl(PermissionTargetInfo target);
 
     AclInfo updateAcl(PermissionTargetInfo target);

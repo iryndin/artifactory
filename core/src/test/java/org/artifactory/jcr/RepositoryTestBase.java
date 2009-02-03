@@ -5,8 +5,8 @@ import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.XASessionImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -14,11 +14,11 @@ import javax.transaction.xa.Xid;
 import java.io.File;
 import java.io.InputStream;
 
-public abstract class RepositoryTestBase {
+public class RepositoryTestBase {
 
     private JackrabbitRepository repository;
 
-    @BeforeClass
+    @BeforeMethod
     protected void setUp() throws Exception {
         InputStream is = getClass().getResourceAsStream("test_repo.xml");
         assert is != null;
@@ -33,7 +33,7 @@ public abstract class RepositoryTestBase {
         repository = new TransientRepository(rc);
     }
 
-    @AfterClass
+    @AfterMethod
     protected void tearDown() throws Exception {
         repository.shutdown();
     }

@@ -18,19 +18,14 @@ package org.artifactory.jcr.md;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.collections15.map.FastHashMap;
-import org.artifactory.api.fs.FileAdditionalInfo;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.fs.FolderAdditionaInfo;
 import org.artifactory.api.fs.FolderInfo;
-import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.maven.MavenUnitInfo;
 import org.artifactory.api.stat.StatsInfo;
-import org.artifactory.config.InternalCentralConfigService;
-import org.artifactory.descriptor.config.CentralConfigDescriptor;
+import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.spring.PostInitializingBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -43,10 +38,13 @@ import java.util.Map;
  */
 @Service
 public class MetadataDefinitionServiceImpl implements MetadataDefinitionService {
-    private static final Logger log = LoggerFactory.getLogger(MetadataDefinitionServiceImpl.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(MetadataDefinitionServiceImpl.class);
 
-    private final Map<Class, MetadataDefinition> mdDefsByClass = new FastHashMap<Class, MetadataDefinition>(3);
-    private final Map<String, MetadataDefinition> mdDefsByName = new FastHashMap<String, MetadataDefinition>(3);
+    private final Map<Class, MetadataDefinition> mdDefsByClass =
+            new FastHashMap<Class, MetadataDefinition>(3);
+    private final Map<String, MetadataDefinition> mdDefsByName =
+            new FastHashMap<String, MetadataDefinition>(3);
     private final XStream xstream = new XStream();
 
     public XStream getXstream() {
@@ -55,52 +53,34 @@ public class MetadataDefinitionServiceImpl implements MetadataDefinitionService 
 
     @PostConstruct
     public void register() {
-        InternalContextHelper.get().addReloadableBean(MetadataDefinitionService.class);
+        InternalContextHelper.get().addPostInit(MetadataDefinitionService.class);
     }
 
     @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{InternalCentralConfigService.class};
+    public Class<? extends PostInitializingBean>[] initAfter() {
+        return new Class[]{InternalRepositoryService.class};
     }
 
     public void init() {
-        // Metadata basics
-        createMetadataDefinition(FolderInfo.class, false, true);
-        createMetadataDefinition(FileInfo.class, false, true);
-        createMetadataDefinition(FolderAdditionaInfo.class, true, true);
-        createMetadataDefinition(FileAdditionalInfo.class, true, true);
-
-        // Extra Metadata
-        createMetadataDefinition(StatsInfo.class, true, false);
-        createMetadataDefinition(MavenUnitInfo.class, true, false);
-        createMetadataDefinition(MavenArtifactInfo.class, true, false);
-
-        ((FastHashMap) mdDefsByClass).setFast(true);
-        ((FastHashMap) mdDefsByName).setFast(true);
-    }
-
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-    }
-
-    public void destroy() {
-        mdDefsByClass.clear();
-        mdDefsByName.clear();
+        createMetadataDefinition(FolderInfo.class);
+        createMetadataDefinition(FileInfo.class);
+        createMetadataDefinition(StatsInfo.class);
     }
 
     public MetadataDefinition getMetadataDefinition(Class clazz) {
         MetadataDefinition definition = mdDefsByClass.get(clazz);
         if (definition == null) {
-            throw new IllegalArgumentException("Creating new Metadata on the fly for: '" + clazz +
+            LOGGER.warn("Creating new Metadata on the fly for: '" + clazz +
                     "'. Should have been initialized!");
+            definition = createMetadataDefinition(clazz);
         }
         return definition;
     }
 
-    private MetadataDefinition createMetadataDefinition(Class clazz, boolean useMetadataContainer,
-            boolean internal) {
+    private MetadataDefinition createMetadataDefinition(Class clazz) {
         MetadataDefinition definition;
         String mdName = xmlRootNameForClass(clazz);
-        definition = new MetadataDefinition(mdName, clazz, useMetadataContainer, internal);
+        definition = new MetadataDefinition(mdName, clazz);
         mdDefsByClass.put(clazz, definition);
         mdDefsByName.put(mdName, definition);
         return definition;
@@ -109,7 +89,8 @@ public class MetadataDefinitionServiceImpl implements MetadataDefinitionService 
     public MetadataDefinition getMetadataDefinition(String metadataName) {
         MetadataDefinition definition = mdDefsByName.get(metadataName);
         if (definition == null) {
-            log.debug("Creating new Metadata definition on demand for '{}'.", metadataName);
+            LOGGER.warn("Creating new Metadata on the fly for: '" + metadataName +
+                    "'. Should have been initialized!");
             definition = new MetadataDefinition(metadataName);
             mdDefsByName.put(metadataName, definition);
         }

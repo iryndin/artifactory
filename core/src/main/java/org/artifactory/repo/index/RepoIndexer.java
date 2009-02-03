@@ -17,6 +17,7 @@
 package org.artifactory.repo.index;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
@@ -28,11 +29,9 @@ import org.artifactory.io.TempFileStreamHandle;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.index.creator.JcrMinimalArtifactInfoIndexCreator;
-import org.artifactory.repo.index.locator.ExtensionBasedLocator;
+import org.artifactory.repo.index.locator.ArtifactLocator;
 import org.artifactory.repo.index.locator.MetadataLocator;
 import org.artifactory.repo.index.locator.PomLocator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonatype.nexus.index.ArtifactContext;
 import org.sonatype.nexus.index.ArtifactInfo;
 import org.sonatype.nexus.index.ArtifactScanningListener;
@@ -63,7 +62,8 @@ import java.util.Properties;
  * Created by IntelliJ IDEA. User: yoav
  */
 class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListener {
-    private static final Logger log = LoggerFactory.getLogger(RepoIndexer.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(RepoIndexer.class);
 
     private LocalRepo repo;
     private IndexingContext context;
@@ -73,11 +73,13 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         //Unplexus
         FieldUtils.setProtectedFieldValue("indexer", this, new DefaultIndexerEngine());
         DefaultScanner scanner = new DefaultScanner();
-        DefaultArtifactContextProducer artifactContextProducer = new DefaultArtifactContextProducer();
-        FieldUtils.setProtectedFieldValue("artifactContextProducer", scanner, artifactContextProducer);
-        FieldUtils.setProtectedFieldValue("al", artifactContextProducer, new ExtensionBasedLocator(repo, ".jar"));
-        FieldUtils.setProtectedFieldValue("pl", artifactContextProducer, new PomLocator(repo));
-        FieldUtils.setProtectedFieldValue("ml", artifactContextProducer, new MetadataLocator(repo));
+        DefaultArtifactContextProducer artifactContextProducer =
+                new DefaultArtifactContextProducer();
+        FieldUtils.setProtectedFieldValue(
+                "artifactContextProducer", scanner, artifactContextProducer);
+        FieldUtils.setProtectedFieldValue("al", artifactContextProducer, new ArtifactLocator());
+        FieldUtils.setProtectedFieldValue("pl", artifactContextProducer, new PomLocator());
+        FieldUtils.setProtectedFieldValue("ml", artifactContextProducer, new MetadataLocator());
         FieldUtils.setProtectedFieldValue("scanner", this, scanner);
     }
 
@@ -101,11 +103,11 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         String repoKey = repo.getKey();
         JcrFolder repoDir = repo.getRootFolder();
         //Use a file based dir with a temp file to conserve memory
-        File dir = org.artifactory.util.FileUtils.createRandomDir(
+        File dir = org.artifactory.utils.FileUtils.createRandomDir(
                 ArtifactoryHome.getTmpDir(), "artifactory.index." + repoKey + ".");
         Directory indexDir = FSDirectory.getDirectory(dir);
         List<IndexCreator> indexCreators = new ArrayList<IndexCreator>(1);
-        indexCreators.add(new JcrMinimalArtifactInfoIndexCreator(repo));
+        indexCreators.add(new JcrMinimalArtifactInfoIndexCreator());
         //indexCreators.add(new ;JcrJarFileContentsIndexCreator());
         OutputStream os = null;
         try {
@@ -128,18 +130,10 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
             //Remove the temp index dir
             try {
                 if (dir != null) {
-                    /**
-                     * Remove indexing context and delete the created files in a proper manner
-                     */
-                    removeIndexingContext(context, true);
-                    /**
-                     * We have to delete the index dir ourselves because the nexus removal
-                     *  tool deletes the files, but leaves the dir.
-                     */
                     org.apache.commons.io.FileUtils.deleteDirectory(dir);
                 }
             } catch (IOException e) {
-                log.warn("Failed to delete temporary index dir '" + dir.getPath() + "'.");
+                LOGGER.warn("Failed to delete temporary index dir '" + dir.getPath() + "'.");
             }
         }
     }
@@ -167,7 +161,8 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         int numDocs = reader.numDocs();
         for (int i = 0; i < numDocs; i++) {
             Document doc = reader.document(i);
-            System.err.println(i + " " + doc.get(ArtifactInfo.UINFO) + " : " + doc.get(ArtifactInfo.PACKAGING));
+            System.err.println(i + " " + doc.get(ArtifactInfo.UINFO) + " : " +
+                    doc.get(ArtifactInfo.PACKAGING));
         }
     }
 }

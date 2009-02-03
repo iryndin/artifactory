@@ -20,6 +20,7 @@ import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterI
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.log4j.Logger;
 import org.artifactory.api.security.AceInfo;
 import org.springframework.security.acls.AccessControlEntry;
 import org.springframework.security.acls.Permission;
@@ -35,6 +36,8 @@ import java.io.Serializable;
  */
 @Node
 public class Ace implements AccessControlEntry {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(Ace.class);
 
     static {
         //Force eager loading of this class to initialize default permissions registration.

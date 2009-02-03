@@ -19,8 +19,8 @@ package org.artifactory.descriptor;
 import java.io.Serializable;
 
 /**
- * @author yoavl
+ * Created by IntelliJ IDEA. User: yoavl
  */
 public interface Descriptor extends Serializable {
-    String NS = "http://artifactory.jfrog.org/xsd/1.3.5";
+    String NS = "http://artifactory.jfrog.org/xsd/1.3.1";
 }

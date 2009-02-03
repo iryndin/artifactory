@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://artifactory.jfrog.org/xsd/1.3.2"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.2
-        http://www.jfrog.org/xsd/artifactory-v1_3_2.xsd">
+        xmlns="http://artifactory.jfrog.org/xsd/1.3.1"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.1
+        http://www.jfrog.org/xsd/artifactory-v1_3_1.xsd">
     <security>
         <!--<anonAccessEnabled>false</anonAccessEnabled>-->
         <!--<ldapSettings>
@@ -20,6 +20,12 @@
             Set to 0 in order to always backup to a "current" dir (useful for incremental FS backups).
             -->
             <retentionPeriodHours>168</retentionPeriodHours>
+            <excludedRepositories>
+                <repositoryRef>repo1</repositoryRef>
+                <repositoryRef>codehaus-snapshots</repositoryRef>
+                <repositoryRef>java.net.m2</repositoryRef>
+                <repositoryRef>java.net.m1</repositoryRef>
+            </excludedRepositories>
         </backup>
     </backups>
 
@@ -27,7 +33,7 @@
     <indexer>
         <cronExp>0 0 /1 * * ?</cronExp>
     </indexer>
-
+    
     <localRepositories>
         <localRepository>
             <key>libs-releases-local</key>
@@ -69,15 +75,57 @@
 
     <remoteRepositories>
         <remoteRepository>
-            <key>remote-repo</key>
+            <key>repo1</key>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
-            <!-- NEVER LEAVE THIS ON REPO1 OR INDEXER TESTS WILL TRY TO DOWNLOAD THE FULL R1 INDEX WITH EACH RUN -->
-            <!--<url>http://repo1.maven.org/maven2/</url>-->
-            <url>http://swamp.jfrog.org:8081/artifactory/remote-repos/</url>
-            <!--<offline>true</offline>-->
+            <url>http://repo1.maven.org/maven2</url>
         </remoteRepository>
+        <remoteRepository>
+            <key>codehaus-snapshots</key>
+            <blackedOut>true</blackedOut>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>java.net.m2</key>
+            <description>java.net Maven2 Format</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
+            <url>http://download.java.net/maven/2</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>java.net.m1</key>
+            <description>java.net Maven1 Format</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <type>maven1</type>
+            <url>http://download.java.net/maven/1</url>
+        </remoteRepository>
+        <!--
+        <remoteRepository>
+            <key>codehaus</key>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
+            <url>http://dist.codehaus.org</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>ibiblio</key>
+            <excludesPattern>org/artifactory/**</excludesPattern>
+            <url>http://www.ibiblio.org/maven2</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>apache-m2-snapshots</key>
+            <handleReleases>false</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+            <proxyRef>unused-proxy</proxyRef>
+        </remoteRepository>
+        -->
     </remoteRepositories>
 
     <virtualRepositories>
@@ -85,7 +133,9 @@
             <key>remote-repos</key>
             <artifactoryRequestsCanRetrieveRemoteArtifacts>true</artifactoryRequestsCanRetrieveRemoteArtifacts>
             <repositories>
-                <repositoryRef>remote-repo</repositoryRef>
+                <repositoryRef>java.net.m2</repositoryRef>
+                <repositoryRef>java.net.m1</repositoryRef>
+                <repositoryRef>repo1</repositoryRef>
             </repositories>
         </virtualRepository>
         <virtualRepository>
@@ -110,6 +160,7 @@
                 <repositoryRef>libs-snapshots-local</repositoryRef>
                 <repositoryRef>ext-snapshots-local</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
+                <repositoryRef>codehaus-snapshots</repositoryRef>
             </repositories>
         </virtualRepository>
         <virtualRepository>
@@ -118,6 +169,7 @@
                 <repositoryRef>plugins-snapshots-local</repositoryRef>
                 <repositoryRef>ext-snapshots-local</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
+                <repositoryRef>codehaus-snapshots</repositoryRef>
             </repositories>
         </virtualRepository>
     </virtualRepositories>

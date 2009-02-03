@@ -13,9 +13,6 @@ public class GroupInfo implements Info {
     private String groupName;
     private String description;
 
-    /** indicates if this group should automatically be added to newly created users */
-    private boolean newUserDefault;
-
     public GroupInfo() {
     }
 
@@ -23,10 +20,9 @@ public class GroupInfo implements Info {
         this.groupName = groupName;
     }
 
-    public GroupInfo(String groupName, String description, boolean newUserDefault) {
+    public GroupInfo(String groupName, String description) {
         this.groupName = groupName;
         this.description = description;
-        this.newUserDefault = newUserDefault;
     }
 
     /**
@@ -35,7 +31,7 @@ public class GroupInfo implements Info {
      * @param groupInfo Original group info.
      */
     public GroupInfo(GroupInfo groupInfo) {
-        this(groupInfo.getGroupName(), groupInfo.getDescription(), groupInfo.isNewUserDefault());
+        this(groupInfo.getGroupName(), groupInfo.getDescription());
     }
 
     public String getGroupName() {
@@ -54,18 +50,6 @@ public class GroupInfo implements Info {
         this.description = description;
     }
 
-    /**
-     * @return True if this group should automatically be added to newly created users.
-     */
-    public boolean isNewUserDefault() {
-        return newUserDefault;
-    }
-
-    public void setNewUserDefault(boolean newUserDefault) {
-        this.newUserDefault = newUserDefault;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -76,18 +60,18 @@ public class GroupInfo implements Info {
 
         GroupInfo info = (GroupInfo) o;
 
-        return !(groupName != null ? !groupName.equals(info.groupName) : info.groupName != null);
+        if (groupName != null ? !groupName.equals(info.groupName) : info.groupName != null) {
+            return false;
+        }
 
+        return true;
     }
 
-    @Override
     public int hashCode() {
         return (groupName != null ? groupName.hashCode() : 0);
     }
 
-    @Override
     public String toString() {
         return (groupName != null ? groupName : "Group name not set");
     }
-
 }

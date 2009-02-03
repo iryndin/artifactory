@@ -30,6 +30,10 @@ import java.util.TreeSet;
  * instances when getters are called.
  */
 public class SimpleUser implements UserDetails, Comparable {
+    /**
+     * Used this empty non-hashed string as an invalid password.
+     */
+    private static String INVALID_PASSWORD = "";
 
     public final static GrantedAuthority[] USER_GAS =
             new GrantedAuthority[]{new GrantedAuthorityImpl(SecurityServiceImpl.ROLE_USER)};
@@ -41,11 +45,23 @@ public class SimpleUser implements UserDetails, Comparable {
 
     private GrantedAuthority[] authorities;
 
-    public SimpleUser(String username, String password, String email, boolean admin, boolean enabled,
-            boolean updatableProfile, boolean accountNonExpired, boolean credentialsNonExpired,
-            boolean accountNonLocked) {
-        this(new UserInfo(username, password, email, admin, enabled,
-                updatableProfile, accountNonExpired, credentialsNonExpired, accountNonLocked));
+    public SimpleUser(String username, String password, String email, boolean enabled,
+            boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+            boolean updatableProfile, boolean admin) {
+
+        this(new UserInfo(username, password, email, admin,
+                enabled, updatableProfile, accountNonExpired, credentialsNonExpired,
+                accountNonLocked));
+    }
+
+    /**
+     * Creates a new user with invalid password, and user permissions. The created user cannot
+     * update its profile.
+     *
+     * @param username The unique user name for the new user
+     */
+    public SimpleUser(String username) {
+        this(username, INVALID_PASSWORD, "", true, true, true, true, false, false);
     }
 
     public SimpleUser(UserInfo userInfo) {
@@ -66,7 +82,8 @@ public class SimpleUser implements UserDetails, Comparable {
         // contract and SEC-xxx)
         SortedSet<GrantedAuthority> sorter = new TreeSet<GrantedAuthority>();
         for (int i = 0; i < authorities.length; i++) {
-            Assert.notNull(authorities[i], "Granted authority element " + i +
+            Assert.notNull(authorities[i],
+                    "Granted authority element " + i +
                             " is null - GrantedAuthority[] cannot contain any null elements");
             sorter.add(authorities[i]);
         }

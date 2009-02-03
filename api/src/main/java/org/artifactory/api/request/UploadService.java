@@ -23,7 +23,6 @@ import java.io.IOException;
  */
 public interface UploadService {
 
-    //@Lock(transactional = false)
     void process(ArtifactoryRequest request, ArtifactoryResponse response)
             throws IOException;
 }

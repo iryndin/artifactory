@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "RemoteRepoBaseType", propOrder = {"type", "url", "offline", "hardFail",
         "storeArtifactsLocally", "retrievalCachePeriodSecs", "failedRetrievalCachePeriodSecs",
-        "missedRetrievalCachePeriodSecs", "checksumPolicyType"})
+        "missedRetrievalCachePeriodSecs"})
 public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
 
     @XmlElement(required = true)
@@ -50,9 +50,6 @@ public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
 
     @XmlElement(defaultValue = "maven2", required = false)
     private RemoteRepoType type = RemoteRepoType.maven2;
-
-    @XmlElement(defaultValue = "generate-if-absent", required = false)
-    private ChecksumPolicyType checksumPolicyType = ChecksumPolicyType.GEN_IF_ABSENT;
 
     public String getUrl() {
         return url;
@@ -116,14 +113,6 @@ public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
 
     public void setType(RemoteRepoType type) {
         this.type = type;
-    }
-
-    public ChecksumPolicyType getChecksumPolicyType() {
-        return checksumPolicyType;
-    }
-
-    public void setChecksumPolicyType(ChecksumPolicyType checksumPolicyType) {
-        this.checksumPolicyType = checksumPolicyType;
     }
 
     @Override

@@ -16,18 +16,19 @@
  */
 package org.artifactory.rest.system;
 
-
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepositoryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.rest.common.AuthorizationContainerRequestFilter;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
+import javax.ws.rs.ConsumeMime;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
+import javax.ws.rs.ProduceMime;
 import java.io.File;
 
 /**
@@ -35,33 +36,37 @@ import java.io.File;
  * @date Sep 4, 2008
  */
 public class ImportResource {
-    private static final Logger log = LoggerFactory.getLogger(ImportResource.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(ImportResource.class);
 
     HttpServletResponse httpResponse;
+    AuthorizationService authorizationService;
     RepositoryService repoService;
 
-    public ImportResource(HttpServletResponse httpResponse, RepositoryService repoService) {
+    public ImportResource(HttpServletResponse httpResponse,
+            AuthorizationService authorizationService,
+            RepositoryService repoService) {
         this.httpResponse = httpResponse;
+        this.authorizationService = authorizationService;
         this.repoService = repoService;
     }
 
     @GET
-    @Produces("application/xml")
+    @ProduceMime("application/xml")
     public ImportSettings settingsExample() {
         ImportSettings settings = new ImportSettings(new File("/import/path"));
-        settings.setRepositories(repoService.getLocalAndCachedRepoDescriptors());
+        settings.setReposToImport(repoService.getLocalAndCachedRepoDescriptors());
         return settings;
     }
 
     @POST
-    @Consumes("application/xml")
+    @ConsumeMime("application/xml")
     public void activateImport(ImportSettings settings) {
-        log.debug("Activating import {}", settings);
-        StreamStatusHolder holder = new StreamStatusHolder(httpResponse);
-        try {
-            ContextHelper.get().importFrom(settings, holder);
-        } catch (Exception e) {
-            holder.setError("Received uncaugth exception", e, log);
+        AuthorizationContainerRequestFilter.checkAuthorization(authorizationService, httpResponse);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Activating import " + settings);
         }
+        StreamStatusHolder holder = new StreamStatusHolder(httpResponse);
+        ContextHelper.get().importFrom(settings, holder);
     }
 }

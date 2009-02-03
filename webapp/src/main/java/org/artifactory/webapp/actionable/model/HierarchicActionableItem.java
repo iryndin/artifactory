@@ -33,8 +33,6 @@
 package org.artifactory.webapp.actionable.model;
 
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.webapp.actionable.ActionableItem;
-import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 
 import java.util.List;
 
@@ -42,7 +40,6 @@ import java.util.List;
  * Created by IntelliJ IDEA. User: yoav
  */
 public interface HierarchicActionableItem extends ActionableItem {
-    
     List<RepoAwareActionableItem> getChildren(AuthorizationService authService);
 
     boolean hasChildren(AuthorizationService authService);

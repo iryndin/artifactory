@@ -16,7 +16,6 @@
  */
 package org.artifactory.api.webdav;
 
-import org.artifactory.api.repo.Lock;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryResponse;
 
@@ -31,15 +30,12 @@ public interface WebdavService {
      *
      * @throws java.io.IOException
      */
-    @Lock(transactional = true)
     void handlePropfind(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException;
 
-    @Lock(transactional = true)
     void handleMkcol(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException;
 
-    @Lock(transactional = true)
     void handleDelete(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException;
 

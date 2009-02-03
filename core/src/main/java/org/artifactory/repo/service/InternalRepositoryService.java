@@ -17,11 +17,13 @@
 package org.artifactory.repo.service;
 
 import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.config.ExportSettings;
-import org.artifactory.api.repo.Lock;
+import org.artifactory.api.config.ImportableExportable;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
+import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
@@ -30,9 +32,8 @@ import org.artifactory.repo.Repo;
 import org.artifactory.repo.interceptor.LocalRepoInterceptor;
 import org.artifactory.repo.virtual.VirtualRepo;
 import org.artifactory.resource.RepoResource;
-import org.artifactory.spring.ReloadableBean;
-import org.artifactory.worker.WorkMessage;
-import org.jetlang.channels.Publisher;
+import org.artifactory.spring.PostInitializingBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -42,7 +43,7 @@ import java.util.List;
  * User: freds Date: Jul 31, 2008 Time: 5:50:18 PM
  */
 public interface InternalRepositoryService
-        extends Publisher<WorkMessage>, RepositoryService, ReloadableBean {
+        extends RepositoryService, ImportableExportable, PostInitializingBean {
     boolean isAnonAccessEnabled();
 
     LocalRepoInterceptor getLocalRepoInterceptor();
@@ -63,34 +64,31 @@ public interface InternalRepositoryService
 
     Repo nonCacheRepositoryByKey(String key);
 
-    StatusHolder assertValidPath(RealRepo repo, String path);
+    void deleteFullRepo(LocalRepoDescriptor repo, StatusHolder status);
 
-    @Lock(transactional = true)
+    public StatusHolder assertValidPath(RealRepo repo, String path);
+
     StatusHolder assertValidDeployPath(LocalRepo repo, String path);
 
-    @Lock(transactional = true)
+    void restartWorkingCopyCommitter();
+
     void rebuildRepositories();
 
-    @Lock(transactional = true)
-    <T extends RemoteRepoDescriptor> ResourceStreamHandle downloadAndSave(
-            RemoteRepo<T> remoteRepo, RepoResource res) throws IOException;
+    void stopWorkingCopyCommitter();
 
-    @Lock(transactional = true)
-    RepoResource unexpireIfExists(LocalRepo localCacheRepo, String path);
+    <T extends RemoteRepoDescriptor> ResourceStreamHandle downloadAndSave(RemoteRepo<T> remoteRepo,
+            RepoResource res) throws IOException;
 
-    @Lock(transactional = true)
-    ResourceStreamHandle unexpireAndRetrieveIfExists(LocalRepo localCacheRepo, String path) throws IOException;
+    RepoResource unexpireIfExists(LocalRepo<LocalCacheRepoDescriptor> localCacheRepo, String path
+    );
 
-    @Lock(transactional = true)
+    ResourceStreamHandle unexpireAndRetrieveIfExists(
+            LocalRepo<LocalCacheRepoDescriptor> localCacheRepo, String path)
+            throws RepoAccessException, IOException;
+
     ResourceStreamHandle getResourceStreamHandle(RealRepo repo, RepoResource res)
-            throws IOException, RepoAccessException;
+            throws RepoAccessException, IOException;
 
-    @Lock(transactional = true)
-    String getChecksum(RealRepo repo, String path) throws IOException;
-
-    @Lock(transactional = true, readOnly = true)
-    void exportTo(ExportSettings settings, StatusHolder status);
-
-    @Lock(transactional = true)
-    void executeMessage(WorkMessage message);
+    @Transactional
+    RepoResource retrieveInfo(LocalRepo repo, String path) throws FileExpectedException;
 }

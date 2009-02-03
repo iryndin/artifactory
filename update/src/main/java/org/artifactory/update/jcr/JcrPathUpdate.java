@@ -16,11 +16,11 @@
  */
 package org.artifactory.update.jcr;
 
-import org.artifactory.common.ArtifactoryProperties;
+import org.artifactory.common.ArtifactoryConstants;
+import org.artifactory.update.ArtifactoryVersion;
 import org.artifactory.update.VersionsHolder;
+import org.artifactory.update.config.ArtifactoryConfigVersion;
 import org.artifactory.update.utils.UpdateUtils;
-import org.artifactory.version.ArtifactoryConfigVersion;
-import org.artifactory.version.ArtifactoryVersion;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -96,7 +96,7 @@ public abstract class JcrPathUpdate {
         if (repoKeyMightSubstituted()) {
             if (reverseSubstituteRepoKeys.isEmpty()) {
                 Set<Map.Entry<String, String>> entries =
-                        ArtifactoryProperties.get().getSubstituteRepoKeys().entrySet();
+                        ArtifactoryConstants.substituteRepoKeys.entrySet();
                 for (Map.Entry<String, String> entry : entries) {
                     reverseSubstituteRepoKeys.put(entry.getValue(), entry.getKey());
                 }
@@ -116,6 +116,6 @@ public abstract class JcrPathUpdate {
     private static boolean repoKeyMightSubstituted() {
         return (ArtifactoryConfigVersion.OneOne.getUntilArtifactoryVersion().getRevision() >=
                 getVersion().getRevision())
-                && !ArtifactoryProperties.get().getSubstituteRepoKeys().isEmpty();
+                && !ArtifactoryConstants.substituteRepoKeys.isEmpty();
     }
 }

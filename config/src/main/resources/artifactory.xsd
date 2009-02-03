@@ -18,8 +18,8 @@
  */
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
-           targetNamespace="http://artifactory.jfrog.org/xsd/1.3.5"
-           xmlns="http://artifactory.jfrog.org/xsd/1.3.5"
+           targetNamespace="http://artifactory.jfrog.org/xsd/1.3.1"
+           xmlns="http://artifactory.jfrog.org/xsd/1.3.1"
            elementFormDefault="qualified">
 
     <xs:element name="config" type="CentralConfigType"/>
@@ -30,27 +30,20 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        A name uniquely identifying this artifactory server instance accross the network.
+                        A name uniquely identifying this artifactory server instance accross the
+                        network.
                         ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="offlineMode" type="xs:boolean" default="false" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        If set to true, Artifactory will never try to fetch artifacts remotely.
-                        Only cached and local artifacts will be served.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="fileUploadMaxSizeMb" type="xs:int" default="100" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        The maximun size in megabytes for uploaded artifact files. Set to '0' for unlimited size.
+                        The maximun size in megabytes for uploaded artifact files.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="dateFormat" type="xs:string" default="dd-MM-yy HH:mm:ss z"
+            <xs:element name="dateFormat" type="xs:string" default="dd-MM-yy HH:mm:ssZ"
                         minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -151,7 +144,7 @@
                         <xs:annotation>
                             <xs:documentation source="description">
                                 Whether the repository is blacked-out. A blacked-out repository does not
-                                participate in artifact resolution, nor does its local cache.
+                                participate in artifact resolution, nor dies its local cache.
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -365,35 +358,6 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="checksumPolicyType" default="generate-if-absent" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="description">
-                                Checksum policy determines how Artifactory behaves when a cheksum for a remote resource
-                                is missing or conflicts with the locally calculated checksum (bad checksum).
-                                Checksum checking effectively verifies the integrity of the remote resource.
-                                The options are:
-                                (1) Generate if absent (the default) - A bad remote checksum will fail the resource
-                                request. If, however, a remote checksum could not be found Artifatory will
-                                automcatically genrate one.
-                                (2) Fail: A bad or missing remote checksum will fail the resource request.
-                                (3) Ignore and generate: Artifactory will locally generate a checksum for both bad or
-                                missing remote checksum. Remote resource retrival will never fail, but integrity might
-                                be compromised.
-                                (4) Pass-thru: Artifactory will store and pass-thorugh all remote checksums including
-                                bad ones and will locally generate a checksum for a missing remote checksum cannot be
-                                found. Remote esource retrival will never fail, but integrity might be compromised and
-                                client-side checksum validation (such as the one done by Maven) will fail.
-                            </xs:documentation>
-                        </xs:annotation>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="generate-if-absent"/>
-                                <xs:enumeration value="fail"/>
-                                <xs:enumeration value="ignore-and-generate"/>
-                                <xs:enumeration value="pass-thru"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -495,41 +459,26 @@
 
     <xs:complexType name="BackupsType">
         <xs:sequence>
-            <xs:element name="backup" type="BackupType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="backup" type="BackupType" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="BackupType">
         <xs:sequence>
-            <xs:element name="key" type="xs:ID">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Backup unique id.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="enabled" type="xs:boolean" minOccurs="0" default="true">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether this backup is enabled or disabled.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="dir" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
                         The directory to which backup local repository data as files.
-                        The default is $ARTIFACTORY_HOME/backup/[backup_key]
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="cronExp" type="xs:string">
+            <xs:element name="cronExp" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        The cron expression by which backup frequency is determined.  <a href="http://www.opensymphony.com/quartz/wikidocs/TutorialLesson6.html" target="_blank">More Info...</a>
+                        The cron expression by which backup frequency is determined.
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -538,9 +487,10 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         The maximun number of hours to keep old backups in the destination dir.
-                        Checking the "Incremental" checkbox, means that backups will be incrementally (delta only)
-                        written to the same directory: ${backupDir}/current. This "in place" backup type is suitbale
-                        for file-system based backup support, and cleanup of old backups is inactive in this mode.
+                        A value of 0 means backups will be incrementally (only modification)
+                        written to the same directory: backupDir/current.
+                        A value of zero is an "in place" backup for file-system based backup support,
+                        thus cleanup of old backups is inactive.
                         The default is 168 hours = 7 days.
                     </xs:documentation>
                 </xs:annotation>
@@ -586,7 +536,7 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        The cron expression by which indexing frequency is determined. <a href="http://www.opensymphony.com/quartz/wikidocs/TutorialLesson6.html" target="_blank">More Info...</a>
+                        The cron expression by which indexing frequency is determined.
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -619,16 +569,8 @@
             <xs:element name="anonAccessEnabled" type="xs:boolean" minOccurs="0" default="true">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        Determines whether anonymous access to the repository and the UI is permitted.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="passwordSettings" type="PasswordSettingsType" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                        Password policy settings (credentials encryption etc.).
-                        ]]>
+                        Determines whether anonymous access to the repository and the UI is
+                        permitted.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -636,7 +578,7 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        Security settings specific to LDAP.
+                        Security settings specific to ldap.
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -644,54 +586,8 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="PasswordSettingsType">
-        <xs:sequence>
-            <xs:element name="encryptionPolicy" default="supported" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines the password requirements from users indetified to Artifactory from a remote
-                        client, such as Maven.
-                        The options are:
-                        (1) Supported (the default) - Users can authenticate using both secure encrypted
-                        passwords or clear-text passwords.
-                        (2) Required: Users need to authenticate using secure encrypted passwords. Clear-text
-                        authentication will fail.
-                        (3) Unsupported: Only clear-text passwords can be used for authentication.
-                    </xs:documentation>
-                </xs:annotation>
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="supported"/>
-                        <xs:enumeration value="required"/>
-                        <xs:enumeration value="unsupported"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="LdapSettingsType">
         <xs:sequence>
-            <xs:element name="ldapSetting" type="LdapSettingType" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="LdapSettingType">
-        <xs:sequence>
-            <xs:element name="key" type="xs:ID">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Ldap setting unique id.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="enabled" type="xs:boolean" minOccurs="0" default="true">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether this ldap is enabled or disabled.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="ldapUrl" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -702,69 +598,12 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="userDnPattern" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:element name="userDnPattern" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        A DN pattern that can used to directly login users to the LDAP database.
-                        This pattern is used for creating a DN string for "direct" user
-                        authentication, where the pattern is relative to the base DN in the ldapUrl.
-                        The pattern argument {0} will be replace with the username in runtime.
-                        This will work only if anonymous binding is allowed and a direct user DN can
-                        be used (which is not the default case for Active Directory).
-                        Example: uid={0},ou=People
-                        ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="search" type="SearchType" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="SearchType">
-        <xs:annotation>
-            <xs:documentation source="description">
-                <![CDATA[
-                An authentication pattern can include either a userDnPattern for "direct"
-                authentication or searchFilter for user "search" (after binding with a manager DN)
-                and then authentication of the found user.
-                The managerDn and managerPassword are not used for "direct" DN authentication.
-                ]]>
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="searchFilter" type="xs:string" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                        The filter expression used for searching a user.
-                        This is an LDAP search filter (as defined in 'RFC 2254') with optional
-                        arguments.
-                        See the documentation for the <tt>search</tt> methods in {@link
-                        javax.naming.directory.DirContext DirContext} for more information.
-                        In this case, the username is the only parameter.
-                        Possible examples are:
-                        (uid={0}) - this would search for a username match on the uid attribute.
-                        Authentication to LDAP will be done from the DN found if successful.
-                        ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="searchBase" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                        Context name to search in, relative to the base DN in the ldapUrl.
-                        This is parameter is optional.
-                        ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="searchSubTree" type="xs:boolean" minOccurs="0" maxOccurs="1" default="true">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                        Enables deep search through the sub tree of the ldapUrl + searchBase. True by default.
+                        Search criteria used to locate users in the ldap database.
+                        For example: uid={0},ou=People
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -773,9 +612,8 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        Used only with "search" authentication method.
-                        It is the DN of the user who will bind to the LDAP server to perform the
-                        search.
+                        Used only if the authenticationMethod "search" is used.
+                        It is the name of the user who binds to the ldap server to perform the search
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -784,14 +622,12 @@
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                        Used only with "search" authentication method.
-                        It is the password of the user who will bind to the LDAP server to perform
-                        the search.
+                        Used only if the authenticationMethod "search" is used.
+                        It is the password of the user who binds to the ldap server to perform the search
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
 </xs:schema>

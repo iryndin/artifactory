@@ -16,10 +16,10 @@
  */
 package org.artifactory.update;
 
-import org.artifactory.version.ArtifactoryVersion;
-
 /**
- * User: freds Date: Jun 6, 2008 Time: 10:12:08 AM
+ * User: freds
+ * Date: Jun 6, 2008
+ * Time: 10:12:08 AM
  */
 public class VersionsHolder {
     private static ArtifactoryVersion originalVersion;

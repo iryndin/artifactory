@@ -20,15 +20,17 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
-import org.artifactory.descriptor.config.CentralConfigDescriptor;
+import org.apache.log4j.Logger;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.PostInitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.jcr.Node;
@@ -39,6 +41,8 @@ import java.util.Collection;
  */
 @Repository("userDetailsService")
 public class JcrUserGroupManager implements UserGroupManager {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrUserGroupManager.class);
 
     private static final String USERS_KEY = "users";
     private static final String GROUPS_KEY = "groups";
@@ -56,9 +60,10 @@ public class JcrUserGroupManager implements UserGroupManager {
 
     @PostConstruct
     public void register() {
-        InternalContextHelper.get().addReloadableBean(UserGroupManager.class);
+        InternalContextHelper.get().addPostInit(UserGroupManager.class);
     }
 
+    @Transactional
     public void init() {
         //Create the storage folders if they do not already exist
         Node confNode = jcr.getOrCreateUnstructuredNode(JcrPath.get().getOcmJcrRootPath());
@@ -66,15 +71,8 @@ public class JcrUserGroupManager implements UserGroupManager {
         jcr.getOrCreateUnstructuredNode(confNode, GROUPS_KEY);
     }
 
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-        // Any relation to LDAP should be done here
-    }
-
-    public void destroy() {
-    }
-
     @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
+    public Class<? extends PostInitializingBean>[] initAfter() {
         return new Class[]{JcrService.class};
     }
 
@@ -89,6 +87,7 @@ public class JcrUserGroupManager implements UserGroupManager {
         return users;
     }
 
+    @Transactional
     public SimpleUser loadUserByUsername(String username)
             throws UsernameNotFoundException, DataAccessException {
         ObjectContentManager ocm = getOcm();
@@ -121,11 +120,13 @@ public class JcrUserGroupManager implements UserGroupManager {
         return findGroup(groupName) != null;
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void updateGroup(Group group) {
         ObjectContentManager ocm = getOcm();
         ocm.update(group);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public boolean createGroup(Group group) {
         if (findGroup(group.getGroupName()) != null) {
             //Return false if the group already exists
@@ -138,6 +139,7 @@ public class JcrUserGroupManager implements UserGroupManager {
         }
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void removeGroup(String groupName) {
         ObjectContentManager ocm = getOcm();
         Group group = new Group(groupName);
@@ -145,6 +147,7 @@ public class JcrUserGroupManager implements UserGroupManager {
         ocm.save();
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public boolean createUser(SimpleUser user) {
         String username = user.getUsername();
         try {
@@ -159,15 +162,18 @@ public class JcrUserGroupManager implements UserGroupManager {
         }
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void updateUser(SimpleUser user) {
         removeUser(user);
         createUser(user);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void removeUser(SimpleUser user) {
         removeUser(user.getUsername());
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public void removeUser(String username) {
         ObjectContentManager ocm = getOcm();
         User user = new User(username);

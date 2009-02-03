@@ -25,14 +25,10 @@ import java.util.Set;
 @XStreamAlias("user")
 public class UserInfo implements Info {
     public static final String ANONYMOUS = "anonymous";
-    /** Users with invalid password can only authenticate externally */
-    public static String INVALID_PASSWORD = "";
 
     private String username;
     private String password;
     private String email;
-    private String privateKey;
-    private String publicKey;
     private boolean admin;
     private boolean enabled;
     private boolean updatableProfile;
@@ -81,15 +77,7 @@ public class UserInfo implements Info {
                 user.isCredentialsNonExpired(),
                 user.isAccountNonLocked()
         );
-        Set<String> groups = user.getGroups();
-        if (groups != null) {
-            setGroups(new HashSet<String>(groups));
-        } else {
-            setGroups(new HashSet<String>(1));
-        }
-
-        setPrivateKey(user.getPrivateKey());
-        setPublicKey(user.getPublicKey());
+        setGroups(new HashSet<String>(user.getGroups()));
     }
 
     public String getUsername() {
@@ -114,22 +102,6 @@ public class UserInfo implements Info {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
     }
 
     public boolean isAdmin() {

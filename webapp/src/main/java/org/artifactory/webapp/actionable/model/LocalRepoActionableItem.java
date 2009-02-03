@@ -32,53 +32,55 @@
 
 package org.artifactory.webapp.actionable.model;
 
+import org.apache.commons.collections15.OrderedMap;
+import org.apache.log4j.Logger;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.repo.DirectoryItem;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.webapp.actionable.RepoAwareActionableItem;
-import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
-import org.artifactory.webapp.actionable.action.DeleteVersionsAction;
-import org.artifactory.webapp.actionable.action.ItemAction;
-import org.artifactory.webapp.actionable.action.RemoveAction;
-import org.artifactory.webapp.actionable.action.ZapAction;
-import org.artifactory.webapp.wicket.utils.CssClass;
+import org.artifactory.webapp.actionable.ItemAction;
+import org.artifactory.webapp.actionable.ItemActionEvent;
+import static org.artifactory.webapp.actionable.model.ActionDescriptor.REMOVE;
+import static org.artifactory.webapp.actionable.model.ActionDescriptor.ZAP;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public class LocalRepoActionableItem extends RepoAwareActionableItemBase
         implements HierarchicActionableItem {
-    private ItemAction removeAction;
-    private ItemAction zapAction;
-    private DeleteVersionsAction delVersions;
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ActionableItemBase.class);
 
     public LocalRepoActionableItem(LocalRepoDescriptor repo) {
         super(new RepoPath(repo.getKey(), ""));
-        Set<ItemAction> actions = getActions();
-        removeAction = new RemoveAction();
-        actions.add(removeAction);
-        zapAction = new ZapAction();
-        actions.add(zapAction);
-        delVersions = new DeleteVersionsAction();
-        actions.add(delVersions);
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
+        actions.put(REMOVE, new ItemAction(REMOVE.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+                getRepoService().undeploy(getRepoPath());
+            }
+        });
+        actions.put(ZAP, new ItemAction(ZAP.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+            }
+        });
     }
 
     public String getDisplayName() {
         return getRepoPath().getRepoKey();
     }
 
-    public String getCssClass() {
+    public String getIconRes() {
         if (getRepo().isCache()) {
-            return CssClass.repositoryCache.cssClass();
+            return "/images/repository-cache.png";
         } else {
-            return CssClass.repository.cssClass();
+            return "/images/repository.png";
         }
     }
 
@@ -104,24 +106,13 @@ public class LocalRepoActionableItem extends RepoAwareActionableItemBase
 
     public void filterActions(AuthorizationService authService) {
         String key = getRepoPath().getRepoKey();
-        boolean isAnonymous = authService.isAnonymous();
         boolean deployer = authService.canDeploy(RepoPath.repoPathForRepo(key));
-        boolean canDelete = authService.canDelete(RepoPath.repoPathForRepo(key));
-        if (!canDelete) {
-            removeAction.setEnabled(false);
-        }
-
-        if (isAnonymous) {
-            zapAction.setEnabled(false);
-        } else if (!deployer) {
-            zapAction.setEnabled(false);
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
+        if (!deployer) {
+            actions.get(REMOVE).setEnabled(false);
+            actions.get(ZAP).setEnabled(false);
         } else if (!getRepo().isCache()) {
-            zapAction.setEnabled(false);
-        }
-
-        // only admin can cleanup by version
-        if (!authService.isAdmin()) {
-            delVersions.setEnabled(false);
+            actions.get(ZAP).setEnabled(false);
         }
     }
 

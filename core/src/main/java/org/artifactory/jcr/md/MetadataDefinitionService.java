@@ -17,7 +17,7 @@
 package org.artifactory.jcr.md;
 
 import com.thoughtworks.xstream.XStream;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.PostInitializingBean;
 
 import java.util.Collection;
 
@@ -25,7 +25,7 @@ import java.util.Collection;
  * @author freds
  * @date Sep 3, 2008
  */
-public interface MetadataDefinitionService extends ReloadableBean {
+public interface MetadataDefinitionService extends PostInitializingBean {
     XStream getXstream();
 
     MetadataDefinition getMetadataDefinition(Class clazz);

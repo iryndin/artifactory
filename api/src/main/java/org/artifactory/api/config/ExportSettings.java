@@ -1,38 +1,53 @@
 package org.artifactory.api.config;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.apache.log4j.Logger;
+import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
 @XStreamAlias("export-settings")
-public class ExportSettings extends BaseSettings {
+public class ExportSettings implements Serializable {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ExportSettings.class);
 
+    private final File baseDir;
+    private boolean includeMetadata = true;
     private boolean ignoreRepositoryFilteringRulesOn = false;
     private boolean createArchive = false;
     private Date time;
-    /**
-     * Flag that indicates if to export m2 compatible meta data
-     */
-    private boolean m2Compatible = false;
-
-    private boolean incremental;
+    List<LocalRepoDescriptor> reposToExport = Collections.emptyList();//When empty - export all
 
     public ExportSettings(File baseDir) {
-        super(baseDir);
-        time = new Date();
+        this.baseDir = baseDir;
     }
 
     public ExportSettings(File baseDir, ExportSettings settings) {
-        super(baseDir, settings);
+        this(baseDir);
+        this.includeMetadata = settings.includeMetadata;
         this.ignoreRepositoryFilteringRulesOn = settings.ignoreRepositoryFilteringRulesOn;
         this.createArchive = settings.createArchive;
         this.time = settings.time;
-        this.m2Compatible = settings.m2Compatible;
-        this.incremental = settings.incremental;
+        this.reposToExport = settings.reposToExport;
+    }
+
+    public File getBaseDir() {
+        return baseDir;
+    }
+
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
+    }
+
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
     }
 
     public boolean isIgnoreRepositoryFilteringRulesOn() {
@@ -59,27 +74,11 @@ public class ExportSettings extends BaseSettings {
         this.time = time;
     }
 
-    /**
-     * @return True is the export is incremental. Meaning override target only if exported file or folder is newer.
-     */
-    public boolean isIncremental() {
-        return incremental;
+    public List<LocalRepoDescriptor> getReposToExport() {
+        return reposToExport;
     }
 
-    /**
-     * Incremental export only writes files and folder that are newer than what's in the target.
-     *
-     * @param incremental   True to use incremental export.
-     */
-    public void setIncremental(boolean incremental) {
-        this.incremental = incremental;
-    }
-
-    public boolean isM2Compatible() {
-        return m2Compatible;
-    }
-
-    public void setM2Compatible(boolean m2Compatible) {
-        this.m2Compatible = m2Compatible;
+    public void setReposToExport(List<LocalRepoDescriptor> reposToExport) {
+        this.reposToExport = reposToExport;
     }
 }

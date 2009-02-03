@@ -18,6 +18,7 @@ package org.artifactory.descriptor.repo.jaxb;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
@@ -33,6 +34,9 @@ import java.util.List;
 public class VirtualRepositoriesMapAdapter
         extends
         XmlAdapter<VirtualRepositoriesMapAdapter.Wrappper, OrderedMap<String, VirtualRepoDescriptor>> {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(VirtualRepositoriesMapAdapter.class);
+
 
     public OrderedMap<String, VirtualRepoDescriptor> unmarshal(Wrappper wrapper)
             throws Exception {

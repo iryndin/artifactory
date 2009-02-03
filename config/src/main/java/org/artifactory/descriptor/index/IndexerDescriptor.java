@@ -16,7 +16,9 @@
  */
 package org.artifactory.descriptor.index;
 
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
+import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,6 +30,8 @@ import java.util.List;
 
 @XmlType(name = "IndexerType", propOrder = {"cronExp", "excludedRepositories"})
 public class IndexerDescriptor implements Descriptor {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(BackupDescriptor.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -58,10 +62,6 @@ public class IndexerDescriptor implements Descriptor {
 
     public void setExcludedRepositories(List<RealRepoDescriptor> excludedRepositories) {
         this.excludedRepositories = excludedRepositories;
-    }
-
-    public boolean removeExcludedRepository(RealRepoDescriptor realRepo) {
-        return excludedRepositories.remove(realRepo);
     }
 
 }

@@ -7,13 +7,11 @@ import org.artifactory.api.security.ArtifactoryPermisssion;
 import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.UserInfo;
-import org.artifactory.repo.LocalRepo;
-import org.artifactory.repo.service.InternalRepositoryService;
 import static org.easymock.EasyMock.*;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.context.SecurityContextImpl;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.TestingAuthenticationToken;
 import org.springframework.test.util.ReflectionTestUtils;
 import static org.testng.Assert.*;
 import org.testng.annotations.BeforeClass;
@@ -26,7 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * SecurityServiceImpl unit tests. TODO: simplify the tests
+ * SecurityServiceImpl unit tests.
+ * TODO: simplify the tests
  *
  * @author Yossi Shaul
  */
@@ -38,15 +37,11 @@ public class SecurityServiceImplTest {
     private AclManager aclManagerMock;
     private String userAndGroupSharedName;
     private List<PermissionTarget> permissionTargets;
-    private InternalRepositoryService repositoryServiceMock;
-    private LocalRepo localRepoMock;
 
     @BeforeClass
     public void initArtifactoryRoles() {
         testAcls = createTestAcls();
         aclManagerMock = createMock(AclManager.class);
-        repositoryServiceMock = createMock(InternalRepositoryService.class);
-        localRepoMock = createLocalRepoMock();
     }
 
     @BeforeMethod
@@ -59,7 +54,6 @@ public class SecurityServiceImplTest {
         service = new SecurityServiceImpl();
         // set the aclManager mock on the security service
         ReflectionTestUtils.setField(service, "aclManager", aclManagerMock);
-        ReflectionTestUtils.setField(service, "repositoryService", repositoryServiceMock);
 
         // reset mock
         reset(aclManagerMock);
@@ -89,16 +83,11 @@ public class SecurityServiceImplTest {
         assertFalse(service.isAnonymous());// sanity
         assertTrue(service.isAdmin());// sanity
 
-        RepoPath path = new RepoPath("someRepo", "blabla");
-        expect(repositoryServiceMock.localOrCachedRepositoryByKey(path.getRepoKey()))
-                .andReturn(localRepoMock);
-        replay(repositoryServiceMock);
+        RepoPath path = new RepoPath("smoeRepo", "blabla");
 
         boolean canRead = service.canRead(path);
         assertTrue(canRead);
         boolean canDeploy = service.canDeploy(path);
-        verify(repositoryServiceMock);
-        reset(repositoryServiceMock);
         assertTrue(canDeploy);
     }
 
@@ -107,9 +96,6 @@ public class SecurityServiceImplTest {
         Authentication authentication = setSimpleUserAuthentication();
 
         RepoPath securedPath = new RepoPath("securedRepo", "blabla");
-        expect(repositoryServiceMock.localOrCachedRepositoryByKey(securedPath.getRepoKey()))
-                .andReturn(localRepoMock);
-        replay(repositoryServiceMock);
 
         // cannot read the specified path
         expectGetAllAclsCall(authentication);
@@ -122,18 +108,12 @@ public class SecurityServiceImplTest {
         // cannot deploy to the specified path
         expectGetAllAclsCall(authentication);
         replay(aclManagerMock);
-
         boolean canDeploy = service.canDeploy(securedPath);
         assertFalse(canDeploy, "User should not have permissions for this path");
         verify(aclManagerMock);
         reset(aclManagerMock);
-        verify(repositoryServiceMock);
-        reset(repositoryServiceMock);
 
         RepoPath allowedReadPath = new RepoPath("testRepo1", "blabla");
-        expect(repositoryServiceMock.localOrCachedRepositoryByKey(allowedReadPath.getRepoKey()))
-                .andReturn(localRepoMock);
-        replay(repositoryServiceMock);
 
         // can read the specified path
         expectGetAllAclsCall(authentication);
@@ -150,8 +130,6 @@ public class SecurityServiceImplTest {
         assertFalse(canDeploy, "User should not have permissions for this path");
         verify(aclManagerMock);
         reset(aclManagerMock);
-        verify(repositoryServiceMock);
-        reset(repositoryServiceMock);
 
         // cannot admin the specified path
         expectGetAllAclsCall(authentication);
@@ -168,9 +146,6 @@ public class SecurityServiceImplTest {
         Authentication authentication = setSimpleUserAuthentication("yossis");
 
         RepoPath allowedReadPath = new RepoPath("testRepo1", "blabla");
-        expect(repositoryServiceMock.localOrCachedRepositoryByKey(allowedReadPath.getRepoKey()))
-                .andReturn(localRepoMock);
-        replay(repositoryServiceMock);
 
         // can read the specified path
         expectGetAllAclsCall(authentication);
@@ -187,8 +162,6 @@ public class SecurityServiceImplTest {
         assertTrue(canDeploy, "User should have permissions for this path");
         verify(aclManagerMock);
         reset(aclManagerMock);
-        verify(repositoryServiceMock);
-        reset(repositoryServiceMock);
 
         // can admin the specified path
         expectGetAllAclsCall(authentication);
@@ -213,9 +186,6 @@ public class SecurityServiceImplTest {
         Authentication authentication = setSimpleUserAuthentication("userwithnopermissions");
 
         RepoPath allowedReadPath = new RepoPath("testRepo1", "**");
-        expect(repositoryServiceMock.localOrCachedRepositoryByKey(allowedReadPath.getRepoKey()))
-                .andReturn(localRepoMock).times(2);
-        replay(repositoryServiceMock);
 
         // cannot deploy to the specified path
         expectGetAllAclsCall(authentication);
@@ -233,8 +203,6 @@ public class SecurityServiceImplTest {
         assertTrue(canDeploy, "User in a group with permissions for this path");
         verify(aclManagerMock);
         reset(aclManagerMock);
-        verify(repositoryServiceMock);
-        reset(repositoryServiceMock);
     }
 
     @Test
@@ -436,16 +404,6 @@ public class SecurityServiceImplTest {
         verify(aclManagerMock);
     }
 
-    @Test
-    public void userPasswordMatches() {
-        setSimpleUserAuthentication("user");
-
-        assertTrue(service.userPasswordMatches("password"));
-        assertFalse(service.userPasswordMatches(""));
-        assertFalse(service.userPasswordMatches("Password"));
-        assertFalse(service.userPasswordMatches("blabla"));
-    }
-
     private void expectAclScan() {
         expect(aclManagerMock.getAllPermissionTargets()).andReturn(permissionTargets);
         expect(aclManagerMock.findAclById(permissionTargets.get(0))).andReturn(testAcls.get(0));
@@ -503,8 +461,9 @@ public class SecurityServiceImplTest {
 
     private Authentication setAdminAuthentication() {
         SimpleUser adminUser = createAdminUser();
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(
                 adminUser, null, SimpleUser.ADMIN_GAS);
+        authenticationToken.setAuthenticated(true);
         securityContext.setAuthentication(authenticationToken);
         return authenticationToken;
     }
@@ -515,28 +474,21 @@ public class SecurityServiceImplTest {
 
     private Authentication setSimpleUserAuthentication(String username, String... groups) {
         SimpleUser simpleUser = createNonAdminUser(username, groups);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                simpleUser, "password", SimpleUser.USER_GAS);
+        TestingAuthenticationToken authenticationToken = new TestingAuthenticationToken(
+                simpleUser, null, SimpleUser.USER_GAS);
+        authenticationToken.setAuthenticated(true);
         securityContext.setAuthentication(authenticationToken);
         return authenticationToken;
     }
 
-    private static SimpleUser createNonAdminUser(String username, String... groups) {
+    private SimpleUser createNonAdminUser(String username, String... groups) {
         UserInfo userInfo = new UserInfo(username, "", "", false, true, true, true, true, true);
         userInfo.setGroups(new HashSet<String>(Arrays.asList(groups)));
         return new SimpleUser(userInfo);
     }
 
-    private static SimpleUser createAdminUser() {
+    private SimpleUser createAdminUser() {
         return new SimpleUser("spiderman", "", "", true, true, true, true, true, true);
-    }
-
-    private static LocalRepo createLocalRepoMock() {
-        LocalRepo localRepo = createMock(LocalRepo.class);
-        expect(localRepo.isCache()).andReturn(false).anyTimes();
-        expect(localRepo.isAnonAccessEnabled()).andReturn(true).anyTimes();
-        replay(localRepo);
-        return localRepo;
     }
 
 }

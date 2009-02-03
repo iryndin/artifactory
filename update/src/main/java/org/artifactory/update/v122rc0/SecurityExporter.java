@@ -17,19 +17,18 @@
 package org.artifactory.update.v122rc0;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.config.ImportableExportable;
 import org.artifactory.api.security.AceInfo;
 import org.artifactory.api.security.AclInfo;
-import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.update.VersionsHolder;
 import org.artifactory.update.utils.UpdateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.object.MappingSqlQuery;
 
 import javax.annotation.PostConstruct;
@@ -51,7 +50,8 @@ import java.util.Set;
  * @date Aug 14, 2008
  */
 public class SecurityExporter implements ImportableExportable {
-    private static final Logger log = LoggerFactory.getLogger(SecurityExporter.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SecurityExporter.class);
 
     public static final String ALL_USERS_QUERY = "SELECT * FROM users";
     public static final String ALL_ADMIN_QUERY =
@@ -103,31 +103,30 @@ public class SecurityExporter implements ImportableExportable {
      * @param status
      */
     public void exportTo(ExportSettings settings, StatusHolder status) {
-        status.setStatus("Extracting all users", log);
+        status.setStatus("Extracting all users");
         List<UserInfo> users = getAllUsers();
         // Test if hash password conversion needed
         if (VersionsHolder.getOriginalVersion().getRevision() < 913) {
-            log.info("User passwords need hash conversion.");
+            LOGGER.info("User passwords need hash conversion.");
             for (UserInfo user : users) {
                 String oldPassword = user.getPassword();
                 String newPassword = DigestUtils.md5Hex(oldPassword);
                 user.setPassword(newPassword);
-                log.info(
+                LOGGER.info(
                         "Password successfully updated for user '" + user.getUsername() + "'.");
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("User passwords do not need hash conversion.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("User passwords do not need hash conversion.");
             }
         }
-        status.setStatus("Extracting all ACLs", log);
+        status.setStatus("Extracting all ACLs");
         allAcls = new HashMap<Long, AclInfo>();
         allPermissionTargets.execute();
         allAces.execute();
         ArrayList<AclInfo> acls = new ArrayList<AclInfo>(allAcls.values());
-        status.setCallback(
-                UpdateUtils.exportSecurityData(settings.getBaseDir(), users, acls, new ArrayList<GroupInfo>()));
-        status.setStatus("Security settings successfully exported", log);
+        status.setCallback(UpdateUtils.exportSecurityData(settings.getBaseDir(), users, acls));
+        status.setStatus("Security settings successfully exported");
     }
 
     /**

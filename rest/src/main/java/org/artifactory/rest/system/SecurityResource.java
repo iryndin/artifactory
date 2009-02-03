@@ -16,47 +16,55 @@
  */
 package org.artifactory.rest.system;
 
-
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.SecurityInfo;
 import org.artifactory.api.security.SecurityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.rest.common.AuthorizationContainerRequestFilter;
 
-import javax.ws.rs.Consumes;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ConsumeMime;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
+import javax.ws.rs.ProduceMime;
 
 /**
  * @author freds
  * @date Sep 4, 2008
  */
 public class SecurityResource {
-    private static final Logger log = LoggerFactory.getLogger(SecurityResource.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SecurityResource.class);
 
+    private HttpServletResponse httpResponse;
+    private AuthorizationService authService;
     private SecurityService securityService;
 
-    public SecurityResource(SecurityService securityService) {
+    public SecurityResource(HttpServletResponse httpResponse, AuthorizationService authService,
+            SecurityService securityService) {
+        this.httpResponse = httpResponse;
+        this.authService = authService;
         this.securityService = securityService;
     }
 
     @GET
-    @Produces("application/xml")
+    @ProduceMime("application/xml")
     public SecurityInfo getSecurityData() {
+        AuthorizationContainerRequestFilter.checkAuthorization(authService, httpResponse);
         return securityService.getSecurityData();
     }
 
     @POST
-    @Consumes("application/xml")
-    @Produces("text/plain")
+    @ConsumeMime("application/xml")
+    @ProduceMime("text/plain")
     public String importSecurityData(SecurityInfo descriptor) {
-        log.debug("Activating import of new security data " + descriptor);
+        AuthorizationContainerRequestFilter.checkAuthorization(authService, httpResponse);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Activating import of new security data " + descriptor);
+        }
         securityService.removeAllSecurityData();
         securityService.importSecurityData(descriptor);
-        SecurityInfo securityData = securityService.getSecurityData();
-        int x = securityData.getUsers().size();
-        int y = securityData.getGroups().size();
-        int z = securityData.getAcls().size();
-        return "Import of new Security data (" + x + " users, " + y + " groups, " + z + " acls) succeeded";
+        return "Import of new Security data succeeded";
     }
 }

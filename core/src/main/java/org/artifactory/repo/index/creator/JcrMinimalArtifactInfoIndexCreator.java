@@ -1,20 +1,18 @@
 package org.artifactory.repo.index.creator;
 
+import org.apache.log4j.Logger;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptorBuilder;
-import org.artifactory.api.mime.ChecksumType;
+import org.artifactory.io.checksum.ChecksumType;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrZipFile;
-import org.artifactory.repo.LocalRepo;
-import org.artifactory.repo.index.locator.ExtensionBasedLocator;
-import org.artifactory.schedule.TaskService;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.repo.index.locator.JcrJavadocLocator;
+import org.artifactory.repo.index.locator.JcrSignatureLocator;
+import org.artifactory.repo.index.locator.JcrSourcesLocator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonatype.nexus.artifact.Gav;
 import org.sonatype.nexus.artifact.M2GavCalculator;
 import org.sonatype.nexus.index.ArtifactAvailablility;
@@ -35,40 +33,18 @@ import java.util.zip.ZipEntry;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class JcrMinimalArtifactInfoIndexCreator extends MinimalArtifactInfoIndexCreator {
-    private static final Logger log =
-            LoggerFactory.getLogger(JcrMinimalArtifactInfoIndexCreator.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrMinimalArtifactInfoIndexCreator.class);
 
-    private final LocalRepo repo;
-
-    private final ModelReader modelReader;
-    private final Locator jl;
-    private final Locator sl;
-    private final Locator sigl;
+    private ModelReader modelReader = new JcrModelReader();
+    private Locator jl = new JcrJavadocLocator();
+    private Locator sl = new JcrSourcesLocator();
+    private Locator sigl = new JcrSignatureLocator();
     //private Locator sha1l = new JcrSha1Locator();
-
-    public JcrMinimalArtifactInfoIndexCreator(LocalRepo repo) {
-        this.repo = repo;
-        this.modelReader = new JcrModelReader();
-        this.jl = new ExtensionBasedLocator(repo, "-javadoc.jar");
-        this.sl = new ExtensionBasedLocator(repo, "-sources.jar");
-        this.sigl = new ExtensionBasedLocator(repo, ".jar.asc");
-    }
-
-    public LocalRepo getRepo() {
-        return repo;
-    }
 
     @SuppressWarnings({"OverlyComplexMethod", "EmptyCatchBlock"})
     @Override
     public void populateArtifactInfo(ArtifactIndexingContext context) {
-        //Test whether the indexer needs to be stopped or paused
-        //Check if we need to stop/suspend
-        TaskService taskService = InternalContextHelper.get().getTaskService();
-        boolean stop = taskService.blockIfPausedAndShouldBreak();
-        if (stop) {
-            return;
-        }
-        //Nexus shit for populating the artifact info
         ArtifactContext artifactContext = context.getArtifactContext();
         JcrFile artifact = (JcrFile) artifactContext.getArtifact();
         JcrFile pom = (JcrFile) artifactContext.getPom();
@@ -144,51 +120,50 @@ public class JcrMinimalArtifactInfoIndexCreator extends MinimalArtifactInfoIndex
                             + (artifact == null ? ai.artifactId + '-' + ai.version + ".jar" :
                             artifact.getName()));
 
-            if (artifact != null) {
-                try {
-                    String sha1 = artifact.getChecksum(ChecksumType.sha1);
-                    ai.sha1 = StringUtils.chomp(sha1).trim().split(" ")[0];
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Could not retrieve artifact checksum.", e);
-                    } else {
-                        String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
-                        log.warn("Could not retrieve artifact checksum" + (msg != null ? ": " + msg : "") + ".");
-                    }
+
+            try {
+                String sha1 = artifact.getChecksum(ChecksumType.sha1);
+                ai.sha1 = StringUtils.chomp(sha1).trim().split(" ")[0];
+            } catch (Exception e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not retrieve artifact checksum.", e);
+                } else {
+                    String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+                    LOGGER.warn("Could not retrieve artifact checksum"
+                            + (msg != null ? ": " + msg : "") + ".");
                 }
             }
 
             File sources = sl.locate(pom, gav);
-            ai.sourcesExists = getAvailabillity(sources);
+
+            ai.sourcesExists = sources.exists() ? ArtifactAvailablility.PRESENT
+                    : ArtifactAvailablility.NOT_PRESENT;
 
             File javadoc = jl.locate(pom, gav);
-            ai.javadocExists = getAvailabillity(javadoc);
+
+            ai.javadocExists = javadoc.exists() ? ArtifactAvailablility.PRESENT
+                    : ArtifactAvailablility.NOT_PRESENT;
 
             File signature = sigl.locate(pom, gav);
-            ai.signatureExists = getAvailabillity(signature);
+
+            ai.signatureExists = signature.exists() ? ArtifactAvailablility.PRESENT
+                    : ArtifactAvailablility.NOT_PRESENT;
         }
 
         if (artifact != null) {
             ai.lastModified = artifact.lastModified();
+
             ai.size = artifact.length();
         }
     }
 
-    private ArtifactAvailablility getAvailabillity(File file) {
-        if (file == null || !file.exists()) {
-            return ArtifactAvailablility.NOT_PRESENT;
-        } else {
-            return ArtifactAvailablility.NOT_PRESENT;
-        }
-    }
-
+    @SuppressWarnings({"EmptyCatchBlock"})
     private static void close(JcrZipFile zf) {
         if (zf != null) {
             try {
                 zf.close();
             }
             catch (IOException ex) {
-                // nothing to do
             }
         }
     }

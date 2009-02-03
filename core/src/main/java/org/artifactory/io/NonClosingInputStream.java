@@ -17,6 +17,7 @@
 package org.artifactory.io;
 
 import org.apache.commons.io.input.ProxyInputStream;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,9 @@ import java.io.InputStream;
  * Created by IntelliJ IDEA. User: yoav
  */
 public class NonClosingInputStream extends ProxyInputStream {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(NonClosingInputStream.class);
+
 
     public NonClosingInputStream(InputStream proxy) {
         super(proxy);

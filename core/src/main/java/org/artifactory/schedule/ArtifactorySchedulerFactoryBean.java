@@ -16,9 +16,11 @@
  */
 package org.artifactory.schedule;
 
+import org.apache.log4j.Logger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import javax.annotation.PreDestroy;
@@ -27,6 +29,9 @@ import javax.annotation.PreDestroy;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class ArtifactorySchedulerFactoryBean extends SchedulerFactoryBean {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER =
+            Logger.getLogger(ArtifactorySchedulerFactoryBean.class);
 
     /**
      * Ugly signleton for use by quartz only
@@ -34,10 +39,11 @@ public class ArtifactorySchedulerFactoryBean extends SchedulerFactoryBean {
     private static InternalArtifactoryContext singleton;
 
     @Autowired
-    public void setApplicationContext(InternalArtifactoryContext applicationContext) {
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
         //Init the static singleton
-        ArtifactorySchedulerFactoryBean.singleton = applicationContext;
+        ArtifactorySchedulerFactoryBean.singleton = (InternalArtifactoryContext) applicationContext;
     }
 
     @PreDestroy
@@ -49,12 +55,12 @@ public class ArtifactorySchedulerFactoryBean extends SchedulerFactoryBean {
     }
 
     /**
-     * TODO: Ugly singleton because need to get the context in the quartz thread
+     * TODO: Ugly singleton because need to add the context in the quartz thread
      *
      * @return
      */
     @Deprecated
-    public static InternalArtifactoryContext getContext() {
+    static InternalArtifactoryContext getContext() {
         return singleton;
     }
 }

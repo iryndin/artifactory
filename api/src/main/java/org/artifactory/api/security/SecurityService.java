@@ -16,48 +16,16 @@
  */
 package org.artifactory.api.security;
 
-import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportableExportable;
-import org.artifactory.api.repo.Lock;
-import org.artifactory.descriptor.security.ldap.LdapSetting;
-
-import java.util.List;
 
 /**
  * User: freds Date: Aug 13, 2008 Time: 5:17:47 PM
  */
 public interface SecurityService extends ImportableExportable {
-    String FILE_NAME = "security.xml";
 
     SecurityInfo getSecurityData();
 
-    @Lock(transactional = true)
     void importSecurityData(SecurityInfo descriptor);
 
-    @Lock(transactional = true)
     void removeAllSecurityData();
-
-    /**
-     * @see org.artifactory.security.ldap.LdapConnectionTester#testLdapConnection
-     */
-    StatusHolder testLdapConnection(LdapSetting ldapSetting, String username, String password);
-
-    /**
-     * Returns a list of PermissionTargetInfo objects that represent the local repos that the user is permitted to
-     * deploy on
-     *
-     * @return List<PermissionTargetInfo> - List of deploy-permitted local repos
-     */
-    public List<PermissionTargetInfo> getDeployablePermissionTargets();
-
-    /**
-     * @return True if password encryption is enabled (supported or required).
-     */
-    public boolean isPasswordEncryptionEnabled();
-
-    /**
-     * @return True if the password matches to the password of the currently logged-in user.
-     */
-    public boolean userPasswordMatches(String passwordToCheck);
-
 }

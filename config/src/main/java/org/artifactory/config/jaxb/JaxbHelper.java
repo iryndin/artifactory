@@ -17,14 +17,9 @@
 package org.artifactory.config.jaxb;
 
 import org.apache.commons.io.IOUtils;
-import org.artifactory.common.ArtifactoryHome;
+import org.apache.log4j.Logger;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
-import org.artifactory.util.FileUtils;
-import org.artifactory.version.ArtifactoryConfigVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -43,24 +38,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class JaxbHelper<T> {
-    private static final Logger log = LoggerFactory.getLogger(JaxbHelper.class);
-    private static final String UTF_8 = "utf-8";
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JaxbHelper.class);
 
-    public static CentralConfigDescriptorImpl readConfig(File configFile) {
+    public static CentralConfigDescriptor readConfig(File configFile) {
         FileInputStream fis;
         try {
             fis = new FileInputStream(configFile);
         } catch (FileNotFoundException e) {
             String msg = "Configuration file path location '"
                     + configFile + "' does not exists.";
-            log.error(msg);
+            LOGGER.error(msg);
             throw new RuntimeException(msg, e);
         }
         //Check that the namespace is the current valid one
@@ -68,96 +62,34 @@ public class JaxbHelper<T> {
         String configXmlString;
         try {
             bytes = IOUtils.toByteArray(fis);
-            configXmlString = new String(bytes, UTF_8);
+            configXmlString = new String(bytes, "utf-8");
         } catch (IOException e) {
+            e.printStackTrace();
             String msg = "Could not read data from configuration file path location '"
                     + configFile + "'.";
-            log.error(msg, e);
+            LOGGER.error(msg);
             throw new RuntimeException(msg, e);
-        } finally {
-            IOUtils.closeQuietly(fis);
         }
         if (!configXmlString.contains(Descriptor.NS)) {
-            String configFileAbsPath = configFile.getAbsolutePath();
-            String msg = "The current Artifactory config schema namespace is '" + Descriptor.NS +
-                    "' \nThe provided config file '" + configFileAbsPath +
-                    "' does not seem to be compliant with it.\n";
-            if (log.isDebugEnabled()) {
-                log.debug(msg + "\n" + configXmlString);
-            }
-
-            ArtifactoryConfigVersion configVersion =
-                    ArtifactoryConfigVersion.getConfigVersion(configXmlString);
-            if (configVersion == null) {
-                throw new RuntimeException(msg +
-                        "The Auto discovery of Artifactory configuration version " +
-                        "did not find any valid version for this config file and so cannot " +
-                        "convert it automaticaly.\n" +
-                        "Please fix this file manually!");
-            } else if (configVersion == ArtifactoryConfigVersion.getCurrent()) {
-                throw new RuntimeException(msg +
-                        "The Auto discovery of Artifactory configuration version " +
-                        "found that this config file is up to date but does point to the rigth schema.\n" +
-                        "Please fix this file manually!");
-            } else {
-                String newConfigXml = configVersion.convert(configXmlString);
-                // Auto convert and save if write permission to the etc folder
-                File parentFile = configFile.getParentFile();
-                if (parentFile.canWrite()) {
-                    try {
-                        log.info(msg +
-                                "Automatically converting the config file, original will be saved in " +
-                                parentFile.getAbsolutePath());
-                        File newConfigFile =
-                                new File(parentFile,
-                                        "new_" + ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
-                        FileOutputStream fos = new FileOutputStream(newConfigFile);
-                        IOUtils.write(newConfigXml, fos);
-                        fos.close();
-                        FileUtils.switchFiles(configFile, newConfigFile);
-                    } catch (Exception e) {
-                        log.error(msg +
-                                "The converted config file for '" + configFileAbsPath + "' is:\n" +
-                                newConfigXml + "\nBut it failed to be saved automatically to '" +
-                                parentFile.getAbsolutePath() +
-                                "' due to :" + e.getMessage() + ".\n" +
-                                getPleaseCopyMessage(configFileAbsPath), e);
-                    }
-                } else {
-                    log.error(msg +
-                            "The converted config file for '" + configFileAbsPath + "' is:\n" +
-                            newConfigXml + "\nBut it cannot be saved automatically to '" +
-                            parentFile.getAbsolutePath() +
-                            "' since the folder is not writable.\n" +
-                            getPleaseCopyMessage(configFileAbsPath));
-                }
-                try {
-                    bytes = newConfigXml.getBytes(UTF_8);
-                } catch (UnsupportedEncodingException e) {
-                    log.error(msg, e);
-                    throw new RuntimeException(msg, e);
-                }
-            }
+            throw new RuntimeException(
+                    "The current Artifactory config schema namespace is '" + Descriptor.NS +
+                            "' \n" +
+                            "The provided config file does not seem to be compliant with it.\n" +
+                            "Please run artifactoryExport.sh from the artifactory-upgrade package" +
+                            " if you are using an old version of Artifactory home.");
         }
-        URL schemaUrl = CentralConfigDescriptorImpl.class
+        URL schemaUrl = CentralConfigDescriptor.class
                 .getClassLoader().getResource("artifactory.xsd");
         if (schemaUrl == null) {
             throw new RuntimeException("Cannot load artifactory.xsd schema file from classpath.\n" +
                     "Please make sure the artifactory.war is full.");
         }
-        CentralConfigDescriptorImpl descriptor =
-                new JaxbHelper<CentralConfigDescriptorImpl>()
+        CentralConfigDescriptor descriptor =
+                new JaxbHelper<CentralConfigDescriptor>()
                         .read(new ByteArrayInputStream(bytes),
-                                CentralConfigDescriptorImpl.class,
+                                CentralConfigDescriptor.class,
                                 schemaUrl);
         return descriptor;
-    }
-
-    private static String getPleaseCopyMessage(String configFileAbsPath) {
-        String pleaseCopyMsg = "Please copy the new config xml definition above to '" +
-                configFileAbsPath + "'!\n" +
-                "An in memory version of this configuration will be used!";
-        return pleaseCopyMsg;
     }
 
     public static void writeConfig(CentralConfigDescriptor config, File newConfFile) {
@@ -193,7 +125,7 @@ public class JaxbHelper<T> {
             fis = new FileInputStream(path);
             return read(fis, clazz, schemaUrl);
         } catch (FileNotFoundException e) {
-            log.error("Could not load configuration from path location '"
+            LOGGER.error("Could not load configuration from path location '"
                     + path + "'.");
             throw new RuntimeException("Failed to read object from file '" + path + "'.", e);
         }
@@ -201,16 +133,24 @@ public class JaxbHelper<T> {
 
     @SuppressWarnings({"unchecked"})
     public T read(InputStream stream, Class clazz, URL schemaUrl) {
-        T o = null;
+        T o;
         try {
             JAXBContext context = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            if (schemaUrl != null) {
-                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Schema schema = sf.newSchema(schemaUrl);
-                unmarshaller.setSchema(schema);
-            }
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(schemaUrl);
+            unmarshaller.setSchema(schema);
             o = (T) unmarshaller.unmarshal(stream);
+            /*
+            //Should clean whitespaces automatically, but doesn't work:
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setIgnoringElementContentWhitespace(true);
+            dbf.setSchema(schema);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(stream);
+            db.setErrorHandler(new XMLErrorHandler());
+            o = (T) unmarshaller.unmarshal(doc);
+            */
         } catch (Throwable t) {
             throw new RuntimeException("Failed to read object from stream.", t);
         } finally {
@@ -229,6 +169,13 @@ public class JaxbHelper<T> {
                         throws IOException {
                     StreamResult result = new StreamResult(stream);
                     result.setSystemId(namespace);
+                    //result.setSystemId("http://artifactory.org/" + object.getClass().getName());
+                    /*OutputFormat format = new OutputFormat();
+                    XMLResult result = new XMLResult(stream, format);
+                    format.setIndentSize(2);
+                    format.setEncoding("utf-8");
+                    format.setTrimText(false);
+                    format.setNewlines(true);*/
                     return result;
                 }
             });

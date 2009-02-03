@@ -32,43 +32,35 @@
 
 package org.artifactory.webapp.actionable.model;
 
-import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
-import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
+import org.apache.commons.collections15.OrderedMap;
+import org.apache.log4j.Logger;
+import org.artifactory.api.common.PackagingType;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.DirectoryItem;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.webapp.actionable.RepoAwareActionableItem;
-import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
-import org.artifactory.webapp.actionable.action.DeleteVersionsAction;
-import org.artifactory.webapp.actionable.action.ItemAction;
-import org.artifactory.webapp.actionable.action.RemoveAction;
-import org.artifactory.webapp.actionable.action.ZapAction;
-import org.artifactory.webapp.wicket.common.component.panel.actionable.maven.MavenMetadataTabPanel;
-import org.artifactory.webapp.wicket.utils.CssClass;
+import org.artifactory.webapp.actionable.ItemAction;
+import org.artifactory.webapp.actionable.ItemActionEvent;
+import static org.artifactory.webapp.actionable.model.ActionDescriptor.REMOVE;
+import static org.artifactory.webapp.actionable.model.ActionDescriptor.ZAP;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
- * @author yoavl
+ * Created by IntelliJ IDEA. User: yoav
  */
-public class FolderActionableItem extends RepoAwareActionableItemBase implements HierarchicActionableItem {
+public class FolderActionableItem extends RepoAwareActionableItemBase
+        implements HierarchicActionableItem {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ActionableItemBase.class);
 
     private FolderInfo folder;
     private String displayName;
     private RepoPath compactedFolderRepoPath;
-    private ItemAction removeAction;
-    private ItemAction zapAction;
-    private DeleteVersionsAction delVersions;
 
     private List<RepoAwareActionableItem> children;
 
@@ -76,7 +68,7 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
         super(folder.getRepoPath());
         this.folder = folder;
         displayName = folder.getName();
-
+        //Check whether the folder can be compacted for empty middle folders
         List<FolderInfo> folderList = getRepoService().getWithEmptyChildren(folder);
         for (int i = 1; i < folderList.size(); i++) {
             FolderInfo jcrFolder = folderList.get(i);
@@ -88,45 +80,18 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
             this.folder = folderList.get(size - 1);
             compactedFolderRepoPath = this.folder.getRepoPath();
         }
-
-        addActions();
-    }
-
-    private boolean hasViewableMetadata() {
-        return getRepoService().hasXmlMetdata(getCanonicalPath(), MavenNaming.MAVEN_METADATA_NAME);
-    }
-
-    @Override
-    public void addTabs(List<ITab> tabs) {
-        super.addTabs(tabs);
-        if (hasViewableMetadata()) {
-            // add pom view panel
-            tabs.add(new AbstractTab(new Model("Maven Metadata")) {
-                @Override
-                public Panel getPanel(String panelId) {
-                    return new MavenMetadataTabPanel(panelId, FolderActionableItem.this);
-                }
-            });
-        }
-    }
-
-    /**
-     * The repo path of the last element of the compacted folder or the current folder.
-     *
-     * @return the actual canonical repo path of this folder
-     */
-    public RepoPath getCanonicalPath() {
-        return getFolder().getRepoPath();
-    }
-
-    private void addActions() {
-        Set<ItemAction> actions = getActions();
-        removeAction = new RemoveAction();
-        actions.add(removeAction);
-        zapAction = new ZapAction();
-        actions.add(zapAction);
-        delVersions = new DeleteVersionsAction();
-        actions.add(delVersions);
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
+        actions.put(REMOVE, new ItemAction(REMOVE.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+                getRepoService().undeploy(getRepoPath());
+            }
+        });
+        actions.put(ZAP, new ItemAction(ZAP.getName()) {
+            @Override
+            public void actionPerformed(ItemActionEvent e) {
+            }
+        });
     }
 
     public FolderInfo getFolder() {
@@ -144,15 +109,15 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
         return displayName;
     }
 
-    public String getCssClass() {
+    public String getIconRes() {
         return compactedFolderRepoPath != null ?
-                CssClass.folderCompact.cssClass() : CssClass.folder.cssClass();
+                "/images/folder-compact.png" : "/images/folder.png";
     }
 
     public List<RepoAwareActionableItem> getChildren(AuthorizationService authService) {
         if (children == null) {
             List<DirectoryItem> items =
-                    getRepoService().getDirectoryItems(getCanonicalPath(), false);
+                    getRepoService().getDirectoryItems(getFolder().getRepoPath(), false);
             children = new ArrayList<RepoAwareActionableItem>(items.size());
             for (DirectoryItem dirItem : items) {
                 ItemInfo item = dirItem.getItemInfo();
@@ -165,7 +130,7 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
                 }
                 String name = item.getName();
                 //Skip checksum files
-                if (NamingUtils.isChecksum(name)) {
+                if (PackagingType.isChecksum(name)) {
                     continue;
                 }
                 RepoAwareActionableItem child;
@@ -190,7 +155,7 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
                     childrenToRemove.add(item);
                 }
             }
-            //Now remove what's needed
+            //Now remove waht's needed
             for (RepoAwareActionableItem item : childrenToRemove) {
                 children.remove(item);
             }
@@ -199,26 +164,22 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
     }
 
     public boolean hasChildren(AuthorizationService authService) {
-        RepoPath repoPath = getCanonicalPath();
+        RepoPath repoPath = getFolder().getRepoPath();
         return getRepoService().hasChildren(repoPath);
     }
 
     public void filterActions(AuthorizationService authService) {
-        RepoPath repoPath = getCanonicalPath();
+        RepoPath repoPath = getFolder().getRepoPath();
+        OrderedMap<ActionDescriptor, ItemAction> actions = getActions();
         boolean canDelete = authService.canDelete(repoPath);
         if (!canDelete) {
-            removeAction.setEnabled(false);
+            actions.get(REMOVE).setEnabled(false);
         }
-        boolean canAdmin = authService.canAdmin(repoPath);
-        if (!canAdmin) {
-            zapAction.setEnabled(false);
+        boolean canDeploy = authService.canDeploy(repoPath);
+        if (!canDeploy) {
+            actions.get(ZAP).setEnabled(false);
         } else if (!getRepo().isCache()) {
-            zapAction.setEnabled(false);
-        }
-
-        // only admin can cleanup by version
-        if (!authService.isAdmin()) {
-            delVersions.setEnabled(false);
+            actions.get(ZAP).setEnabled(false);
         }
     }
 

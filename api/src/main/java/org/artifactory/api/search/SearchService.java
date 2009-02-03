@@ -16,14 +16,11 @@
  */
 package org.artifactory.api.search;
 
-import org.artifactory.api.repo.Lock;
-
 import java.util.List;
 
 /**
  * User: freds Date: Jul 27, 2008 Time: 6:03:17 PM
  */
 public interface SearchService {
-    @Lock(transactional = true)
     public List<SearchResult> searchArtifacts(SearchControls controls);
 }

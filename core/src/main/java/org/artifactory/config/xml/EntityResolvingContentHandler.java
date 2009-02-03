@@ -16,14 +16,8 @@
  */
 package org.artifactory.config.xml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.apache.log4j.Logger;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
@@ -33,7 +27,8 @@ import java.io.InputStream;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class EntityResolvingContentHandler extends DefaultHandler {
-    private static final Logger log = LoggerFactory.getLogger(EntityResolvingContentHandler.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(EntityResolvingContentHandler.class);
     private ContentHandler handler;
 
 
@@ -100,7 +95,7 @@ public class EntityResolvingContentHandler extends DefaultHandler {
 
     public void fatalError(SAXParseException e) throws SAXException {
         //Temp hack to avoid broken plexus poms (ver 1.0.4 & 1.0.5)
-        log.warn("Received the following error during xml parsing: '" + e.getMessage() + "'.");
+        LOGGER.warn("Received the following error during xml parsing: '" + e.getMessage() + "'.");
         //No 'super.fatalError(e)'!;
     }
 }

@@ -17,16 +17,13 @@
 package org.artifactory.update.config;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.artifactory.common.ArtifactoryConstants;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ArtifactoryProperties;
-import org.artifactory.common.ConstantsValue;
+import org.artifactory.update.ArtifactoryVersion;
 import org.artifactory.update.jcr.JcrPathUpdate;
 import org.artifactory.update.utils.UpdateUtils;
-import org.artifactory.util.FileUtils;
-import org.artifactory.version.ArtifactoryConfigVersion;
-import org.artifactory.version.ArtifactoryVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,7 +50,7 @@ import java.util.Set;
  * User: freds Date: Jul 1, 2008 Time: 10:34:47 PM
  */
 public class ArtifactoryConfigUpdate {
-    private final static Logger log = LoggerFactory.getLogger(ArtifactoryConfigUpdate.class);
+    private final static Logger log = Logger.getLogger(ArtifactoryConfigUpdate.class);
 
     private static final String ENCODING = "utf-8";
     private static final String VIRTUAL_REPOSITORIES = "virtualRepositories";
@@ -79,10 +76,9 @@ public class ArtifactoryConfigUpdate {
         factory.setNamespaceAware(true);
         Document document = factory.newDocumentBuilder().parse(currentConfigFile);
 
-        Map<String, Element> localRepoKeys = getRepoKeys(document, "localRepositories", true);
-        Map<String, Element> remoteRepoKeys = getRepoKeys(document, REMOTE_REPOSITORIES, true);
-        Map<String, Element> virtualRepoKeys = getRepoKeys(document, VIRTUAL_REPOSITORIES, true);
-        Map<String, Element> excludedRepoKeys = getRepoKeys(document, "excludedRepositories", false);
+        Map<String, Element> localRepoKeys = getRepoKeys(document, "localRepositories");
+        Map<String, Element> remoteRepoKeys = getRepoKeys(document, REMOTE_REPOSITORIES);
+        Map<String, Element> virtualRepoKeys = getRepoKeys(document, VIRTUAL_REPOSITORIES);
 
         // Check if we already did the work of repo reorg
         boolean alreadyDone = true;
@@ -124,23 +120,15 @@ public class ArtifactoryConfigUpdate {
 
         // First rename all local repo to localKey-local
         Set<String> keys = localRepoKeys.keySet();
-        Set<String> excludedKeys = excludedRepoKeys.keySet();
         boolean localRepositoryNameChanged = false;
         for (String localRepoKey : keys) {
             if (!localRepoKey.endsWith(UpdateUtils.LOCAL_SUFFIX)) {
                 // First rename the xml key element
                 Element localRepoEl = localRepoKeys.get(localRepoKey);
                 String newLocalRepoKey = localRepoKey + UpdateUtils.LOCAL_SUFFIX;
-                getKeyTag(localRepoEl, KEY_TAG).setTextContent(newLocalRepoKey);
+                getKeyTag(localRepoEl).setTextContent(newLocalRepoKey);
                 log.info(String.format("Renaming local repo %s to %s",
                         localRepoKey, newLocalRepoKey));
-                //If the changed local key exists in the backup excludes list, rename it too
-                if (excludedKeys.contains(localRepoKey)) {
-                    Element excludedElement = excludedRepoKeys.get(localRepoKey);
-                    Node firstChild = excludedElement.getFirstChild();
-                    firstChild.setTextContent(newLocalRepoKey);
-                }
-
                 localRepositoryNameChanged = true;
                 // local repositories already named with the -local prefix
                 // it is done there because we also need the new name as the value
@@ -159,7 +147,6 @@ public class ArtifactoryConfigUpdate {
                 }*/
             }
         }
-
         if (localRepositoryNameChanged) {
             displayMessageOnLocalRepositoryRename();
         }
@@ -242,7 +229,7 @@ public class ArtifactoryConfigUpdate {
         }
     }
 
-    private static Map<String, Element> getRepoKeys(Document document, String tagname, boolean getByKeyTag) {
+    private static Map<String, Element> getRepoKeys(Document document, String tagname) {
         Map<String, Element> repoKeys = new HashMap<String, Element>();
         NodeList repositoriesTag = document.getElementsByTagName(tagname);
         if (repositoriesTag.getLength() == 0) {
@@ -255,26 +242,13 @@ public class ArtifactoryConfigUpdate {
                 Node node = repos.item(i);
                 if (node instanceof Element) {
                     Element element = (Element) node;
-                    //If the repo key should be under the <key> tag
-                    if (getByKeyTag) {
-                        Element keyTag = getKeyTag(element, KEY_TAG);
-                        if (keyTag == null) {
-                            log.warn("No key found for " + tagname + " repository " + element);
-                        } else {
-                            String key = keyTag.getTextContent();
-                            repoKeys.put(key, element);
-                            builder.append(" ").append(key);
-                        }
-                    } else { //If the repo key is in a different location (excludes for example)
-                        Node firstChild = element.getFirstChild();
-                        if ((firstChild == null) || (firstChild.getTextContent() == null) ||
-                                ("".equals(firstChild.getTextContent()))) {
-                            log.warn("No key found for " + tagname + " repository " + element);
-                        } else {
-                            String key = firstChild.getTextContent();
-                            repoKeys.put(key, element);
-                            builder.append(" ").append(key);
-                        }
+                    Element keyTag = getKeyTag(element);
+                    if (keyTag == null) {
+                        log.warn("No key found for " + tagname + " repository " + element);
+                    } else {
+                        String key = keyTag.getTextContent();
+                        repoKeys.put(key, element);
+                        builder.append(" ").append(key);
                     }
                 }
             }
@@ -285,8 +259,8 @@ public class ArtifactoryConfigUpdate {
         return repoKeys;
     }
 
-    private static Element getKeyTag(Element element, String keyTagName) {
-        NodeList list = element.getElementsByTagName(keyTagName);
+    private static Element getKeyTag(Element element) {
+        NodeList list = element.getElementsByTagName(KEY_TAG);
         if (list.getLength() == 0) {
             return null;
         }
@@ -305,21 +279,27 @@ public class ArtifactoryConfigUpdate {
                 is.close();
             }
         }
-        String newConfigXml;
-        ArtifactoryConfigVersion configVersion =
-                ArtifactoryConfigVersion.getConfigVersion(configXml);
-        if (configVersion == null) {
+        String newConfigXml = null;
+        ArtifactoryConfigVersion[] versions = ArtifactoryConfigVersion.values();
+        for (ArtifactoryConfigVersion configVersion : versions) {
+            if (configXml.contains(configVersion.getXsdUri())) {
+                // If last version nothing to do, So why do you run me?
+                if (configVersion == ArtifactoryConfigVersion.getCurrent()) {
+                    log.warn("Version detected in config file " + oldConfigFile +
+                            " is the latest one!");
+                    log.warn("Config file will not be converted! Already did it?");
+                    newConfigXml = configXml;
+                } else {
+                    addDefaultRepoKeySubstitute(configVersion);
+                    displayMessageOnSubstitute();
+                    newConfigXml = configVersion.convert(configXml);
+                }
+                break;
+            }
+        }
+        if (newConfigXml == null) {
             throw new RuntimeException(
                     "No valid Artifactory XSD version found in config file " + oldConfigFile);
-        } else if (configVersion == ArtifactoryConfigVersion.getCurrent()) {
-            log.warn("Version detected in config file " + oldConfigFile +
-                    " is the latest one!");
-            log.warn("Config file will not be converted! Already did it?");
-            newConfigXml = configXml;
-        } else {
-            addDefaultRepoKeySubstitute(configVersion);
-            displayMessageOnSubstitute();
-            newConfigXml = configVersion.convert(configXml);
         }
 
         // Create the new artifactory.config.xml file
@@ -335,15 +315,15 @@ public class ArtifactoryConfigUpdate {
     }
 
     private static void displayMessageOnSubstitute() {
-        Map<String, String> keys = ArtifactoryProperties.get().getSubstituteRepoKeys();
-        if (!keys.isEmpty()) {
+        if (!ArtifactoryConstants.substituteRepoKeys.isEmpty()) {
             log.warn("****************** ATTENTION ******************");
             log.warn("Some substitution keys will be used.");
             log.warn("Please make sure you add the following JVM params " +
                     "to your Artifactory if needed:");
-            Set<Map.Entry<String, String>> entries = keys.entrySet();
+            Set<Map.Entry<String, String>> entries =
+                    ArtifactoryConstants.substituteRepoKeys.entrySet();
             for (Map.Entry<String, String> entry : entries) {
-                log.warn("-D" + ConstantsValue.substituteRepoKeys.getPropertyName() +
+                log.warn("-D" + ArtifactoryConstants.SYS_PROP_PREFIX_REPO_KEY_SUBST +
                         entry.getKey() + "=" + entry.getValue() + " \\");
             }
             log.warn("***********************************************");
@@ -351,7 +331,7 @@ public class ArtifactoryConfigUpdate {
     }
 
     private static void displayMessageOnLocalRepositoryRename() {
-        if (!ArtifactoryProperties.get().getSubstituteRepoKeys().isEmpty()) {
+        if (!ArtifactoryConstants.substituteRepoKeys.isEmpty()) {
             log.warn("****************** ATTENTION ******************");
             log.warn("Some local repository names were changed.");
             log.warn("Please make sure to update your repository url in the distribution " +
@@ -361,17 +341,17 @@ public class ArtifactoryConfigUpdate {
     }
 
     private static void addDefaultRepoKeySubstitute(ArtifactoryConfigVersion configVersion) {
-        ArtifactoryProperties properties = ArtifactoryProperties.get();
-        Map<String, String> keys = properties.getSubstituteRepoKeys();
         if (configVersion == ArtifactoryConfigVersion.OneZero &&
-                keys.isEmpty()) {
+                ArtifactoryConstants.substituteRepoKeys.isEmpty()) {
             log.warn(
                     "The config file is version 1.0.0 which may have broken repo key, and the substitute key map is empty");
             log.warn(
                     "The default substitute keys will be added. Don't forget to add them to the JAVA_OPTIONS of Artifactory start script");
-            properties.addSubstitute("3rd-party", "third-party");
-            properties.addSubstitute("3rdp-releases", "third-party-releases");
-            properties.addSubstitute("3rdp-snapshots", "third-party-snapshots");
+            ArtifactoryConstants.substituteRepoKeys.put("3rd-party", "third-party");
+            ArtifactoryConstants.substituteRepoKeys
+                    .put("3rdp-releases", "third-party-releases");
+            ArtifactoryConstants.substituteRepoKeys
+                    .put("3rdp-snapshots", "third-party-snapshots");
         }
     }
 

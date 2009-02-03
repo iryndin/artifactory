@@ -16,22 +16,23 @@
  */
 package org.artifactory.api.repo;
 
+import org.apache.log4j.Logger;
 import org.artifactory.api.common.Info;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.security.PermissionTargetInfo;
-import org.artifactory.util.PathUtils;
 
 /**
  * An object identity that represents a repository and a groupId
  * <p/>
  * Created by IntelliJ IDEA. User: yoavl
  */
-public final class RepoPath implements Info {
+public class RepoPath implements Info {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(RepoPath.class);
 
     public static final char REPO_PATH_SEP = ':';
 
-    private final String repoKey;
-    private final String path;
+    private String repoKey;
+    private String path;
 
     /**
      * @param repoKey The key of any repo
@@ -39,18 +40,7 @@ public final class RepoPath implements Info {
      */
     public RepoPath(String repoKey, String path) {
         this.repoKey = repoKey;
-        this.path = PathUtils.formatRelativePath(path);
-    }
-
-    /**
-     * Create a repo path representing the child of parent
-     *
-     * @param parent the repo path of the parent folder
-     * @param child  the child name
-     */
-    public RepoPath(RepoPath parent, String child) {
-        this.repoKey = parent.repoKey;
-        this.path = PathUtils.formatRelativePath(parent.path + "/" + child);
+        setPath(path);
     }
 
     public RepoPath(String id) {
@@ -64,24 +54,33 @@ public final class RepoPath implements Info {
                     "Could not determine both repository key and groupId from '" +
                             id + "'.");
         }
-        this.repoKey = id.substring(0, idx);
-        this.path = PathUtils.formatRelativePath(id.substring(idx + 1));
+        repoKey = id.substring(0, idx);
+        setPath(id.substring(idx + 1));
     }
 
     public String getRepoKey() {
         return repoKey;
     }
 
+    public void setRepoKey(String repoKey) {
+        this.repoKey = repoKey;
+    }
+
     public String getPath() {
         return path;
     }
 
-    public String getId() {
-        return repoKey + REPO_PATH_SEP + path;
+    public void setPath(String path) {
+        //Trim leading '/' (caused by webdav requests)
+        if (path.startsWith("/")) {
+            this.path = path.substring(1);
+        } else {
+            this.path = path;
+        }
     }
 
-    public String getName() {
-        return PathUtils.getName(getPath());
+    public String getId() {
+        return repoKey + REPO_PATH_SEP + path;
     }
 
     @Override
@@ -119,15 +118,5 @@ public final class RepoPath implements Info {
 
     public static RepoPath repoPathForAny() {
         return new RepoPath(PermissionTargetInfo.ANY_REPO, PermissionTargetInfo.ANY_PATH);
-    }
-
-    public static RepoPath getMetadataContainerRepoPath(RepoPath metdadataRepoPath) {
-        String path = metdadataRepoPath.getPath();
-        if (NamingUtils.isMetadata(path)) {
-            String fsItemPath = NamingUtils.getMetadataParentPath(path);
-            return new RepoPath(metdadataRepoPath.getRepoKey(), fsItemPath);
-        } else {
-            return metdadataRepoPath;
-        }
     }
 }

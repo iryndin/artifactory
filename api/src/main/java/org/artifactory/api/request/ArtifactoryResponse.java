@@ -16,8 +16,6 @@
  */
 package org.artifactory.api.request;
 
-import org.slf4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +25,8 @@ import java.io.PrintWriter;
 public interface ArtifactoryResponse {
     void setException(Exception exception);
 
-    enum Status {
-        UNSET, SUCCESS, FAILURE
+    public static enum Success {
+        unset, success, failure
     }
 
     void setLastModified(long lastModified);
@@ -37,13 +35,11 @@ public interface ArtifactoryResponse {
 
     void setContentType(String contentType);
 
-    OutputStream getOutputStream() throws IOException;
+    public OutputStream getOutputStream() throws IOException;
 
     PrintWriter getWriter() throws IOException;
 
-    void sendInternalError(Exception exception, Logger logger) throws IOException;
-
-    void sendError(int statusCode, String reason, Logger logger) throws IOException;
+    void sendError(int statusCode) throws IOException;
 
     void sendStream(InputStream is) throws IOException;
 
@@ -62,7 +58,5 @@ public interface ArtifactoryResponse {
     void flush();
 
     Exception getException();
-
-    void sendAuthorizationRequired(String message, String realm) throws IOException;
 
 }

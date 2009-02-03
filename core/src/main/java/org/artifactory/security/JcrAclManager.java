@@ -23,21 +23,21 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
+import org.apache.log4j.Logger;
 import org.artifactory.api.security.AclInfo;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.AlreadyExistsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.spring.PostInitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.acls.AlreadyExistsException;
 import org.springframework.security.acls.NotFoundException;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.sid.PrincipalSid;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -52,7 +52,7 @@ import java.util.List;
  */
 @Repository
 public class JcrAclManager implements AclManager {
-    private final static Logger log = LoggerFactory.getLogger(JcrAclManager.class);
+    private final static Logger log = Logger.getLogger(JcrAclManager.class);
 
     static final String ACLS_KEY = "acls";
     private static final String ARTIFACTORY_CACHE_NAME = "artifactory-cache";
@@ -61,7 +61,8 @@ public class JcrAclManager implements AclManager {
     private JcrService jcr;
 
     /**
-     * Cache holding one entry (key is ACLS_KEY) with all the ACLs. Access to this cache should be synchronized.
+     * Cache holding one entry (key is ACLS_KEY) with all the ACLs. Access to this cache should be
+     * synchronized.
      */
     private Ehcache aclsCache;
 
@@ -87,26 +88,19 @@ public class JcrAclManager implements AclManager {
                 System.setProperty("java.io.tmpdir", origTmpDir);
             }
         }
-        InternalContextHelper.get().addReloadableBean(AclManager.class);
+        InternalContextHelper.get().addPostInit(AclManager.class);
     }
 
     @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
+    public Class<? extends PostInitializingBean>[] initAfter() {
         return new Class[]{JcrService.class};
     }
 
+    @Transactional
     public void init() {
         //Create the storage folders
         Node confNode = jcr.getOrCreateUnstructuredNode(JcrPath.get().getOcmJcrRootPath());
         jcr.getOrCreateUnstructuredNode(confNode, ACLS_KEY);
-    }
-
-    public void reload(CentralConfigDescriptor oldDescriptor) {
-        // Nothing for the moment
-    }
-
-    public void destroy() {
-        CacheManager.getInstance().removalAll();
     }
 
     /**
@@ -114,9 +108,9 @@ public class JcrAclManager implements AclManager {
      *
      * @param objectIdentity the user or group this ACL apply to
      * @return the new ACL created
-     * @throws org.artifactory.util.AlreadyExistsException
-     *
+     * @throws AlreadyExistsException
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Acl createAcl(PermissionTarget objectIdentity) throws AlreadyExistsException {
         Acl acl = toAcl(objectIdentity);
         return createAcl(acl);
@@ -160,6 +154,7 @@ public class JcrAclManager implements AclManager {
         return null;
     }
 
+    @Transactional
     public void createAnythingPermision(SimpleUser anonUser) {
         //Create the anon acl if the anonymous user was created
         PermissionTarget anyAnyTarget = PermissionTarget.ANY_PERMISSION_TARGET;

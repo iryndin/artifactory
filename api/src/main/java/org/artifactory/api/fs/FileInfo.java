@@ -1,59 +1,71 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.artifactory.api.fs;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
-
-import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
- * Basic information about the file. Internally not stored as XML but as node properties
- *
- * @author yoavl
+ * Created by IntelliJ IDEA. User: yoav
  */
 @XStreamAlias(FileInfo.ROOT)
-public class FileInfo extends ItemInfo implements RepoResourceInfo {
-    public static final String ROOT = "artifactory-file";
+public class FileInfo extends ItemInfo {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(FileInfo.class);
 
+    public static final String ROOT = "artifactory.file";
+
+    /**
+     * The last time the (cached) resource has been updated from it's remote location.
+     */
+    private long lastUpdated;
+    private long lastModified;
     private long size;
     private String mimeType;
-    private FileAdditionalInfo additionalInfo;
+    private String sha1;
+    private String md5;
 
-    public FileInfo(RepoPath repoPath) {
-        super(repoPath);
-        this.size = 0;
-        //Force a mime type
-        setMimeType(null);
-        this.additionalInfo = new FileAdditionalInfo();
+    public FileInfo() {
     }
 
     public FileInfo(FileInfo info) {
-        super(info);
-        this.size = info.getSize();
-        setMimeType(info.getMimeType());
-        this.additionalInfo = new FileAdditionalInfo(info.additionalInfo);
+        update(info);
+    }
+
+    @Override
+    public void update(ItemInfo info) {
+        super.update(info);
+        FileInfo fileInfo = (FileInfo) info;
+        this.lastUpdated = fileInfo.getLastUpdated();
+        this.lastModified = fileInfo.getLastModified();
+        this.size = fileInfo.getSize();
+        this.mimeType = fileInfo.getMimeType();
+        this.sha1 = fileInfo.getSha1();
+        this.md5 = fileInfo.getMd5();
     }
 
     @Override
     public boolean isFolder() {
         return false;
+    }
+
+    @Override
+    public String getRootName() {
+        return ROOT;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public long getSize() {
@@ -65,7 +77,7 @@ public class FileInfo extends ItemInfo implements RepoResourceInfo {
     }
 
     public long getAge() {
-        return getLastModified() != 0 ? System.currentTimeMillis() - getLastModified() : -1;
+        return lastUpdated != 0 ? System.currentTimeMillis() - lastUpdated : -1;
     }
 
     public String getMimeType() {
@@ -74,94 +86,33 @@ public class FileInfo extends ItemInfo implements RepoResourceInfo {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-        if (this.mimeType == null) {
-            this.mimeType = NamingUtils.getMimeTypeByPathAsString(getRelPath());
-        }
-    }
-
-    public long getLastUpdated() {
-        return additionalInfo.getLastUpdated();
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        additionalInfo.setLastUpdated(lastUpdated);
-    }
-
-    public String getModifiedBy() {
-        return additionalInfo.getModifiedBy();
-    }
-
-    public String getCreatedBy() {
-        return additionalInfo.getCreatedBy();
     }
 
     public String getSha1() {
-        return additionalInfo.getSha1();
+        return sha1;
+    }
+
+    public void setSha1(String sha1) {
+        this.sha1 = sha1;
     }
 
     public String getMd5() {
-        return additionalInfo.getMd5();
+        return md5;
     }
 
-    public ChecksumsInfo getChecksumsInfo() {
-        return additionalInfo.getChecksumsInfo();
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 
-    @Override
     public String toString() {
         return "FileInfo{" +
-                super.toString() +
+                "super=" + super.toString() +
+                ", lastUpdated=" + lastUpdated +
+                ", lastModified=" + lastModified +
                 ", size=" + size +
                 ", mimeType='" + mimeType + '\'' +
-                ", extension=" + additionalInfo +
+                ", sha1='" + sha1 + '\'' +
+                ", md5='" + md5 + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean isIdentical(ItemInfo info) {
-        if (!(info instanceof FileInfo)) {
-            return false;
-        }
-        FileInfo fileInfo = (FileInfo) info;
-        return this.size == fileInfo.size &&
-                PathUtils.safeStringEquals(this.mimeType, fileInfo.mimeType) &&
-                this.additionalInfo.isIdentical(fileInfo.additionalInfo) &&
-                super.isIdentical(info);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
-    @Override
-    @Deprecated
-    public FileAdditionalInfo getInernalXmlInfo() {
-        return additionalInfo;
-    }
-
-    /**
-     * Should not be called by clients - for internal use
-     *
-     * @return
-     */
-    public void setAdditionalInfo(FileAdditionalInfo additionalInfo) {
-        this.additionalInfo = additionalInfo;
-    }
-
-    public Set<ChecksumInfo> getChecksums() {
-        return additionalInfo.getChecksums();
-    }
-
-    public void setChecksums(Set<ChecksumInfo> checksums) {
-        additionalInfo.setChecksums(checksums);
-    }
-
-    public void createTrustedChecksums() {
-        this.additionalInfo.createTrustedChecksums();
-    }
-
-    public void addChecksumInfo(ChecksumInfo info) {
-        additionalInfo.addChecksumInfo(info);
     }
 }

@@ -13,16 +13,10 @@
 
     <security:authentication-manager alias="authenticationManager"/>
 
-    <bean id="passwordDecryptingManager" class="org.artifactory.security.PasswordDecryptingManager">
-        <property name="delegate" ref="authenticationManager"/>
-    </bean>
-
-    <bean id="processingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
-        <property name="authenticationManager" ref="passwordDecryptingManager"/>
+    <bean id="processingFilter"
+          class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
-        <property name="authenticationDetailsSource">
-            <bean class="org.artifactory.security.HttpAuthenticationDetailsSource"/>
-        </property>
     </bean>
 
     <bean id="authenticationEntryPoint"
@@ -33,7 +27,8 @@
     <!-- Authentication providers -->
 
     <!-- LDAP provider first -->
-    <bean id="ldapAuthenticationProvider" class="org.artifactory.security.ldap.ArtifactoryLdapAuthenticationProvider">
+    <bean id="ldapAuthenticationProvider"
+          class="org.artifactory.security.ldap.ArtifactoryLdapAuthenticationProvider">
         <constructor-arg index="0">
             <ref local="ldapAuthenticatorWrapper"/>
         </constructor-arg>
@@ -47,5 +42,13 @@
 
 
     <bean id="ldapAuthenticatorWrapper" class="org.artifactory.security.ldap.LdapAuthenticatorWrapper"/>
+
+    <bean id="ldapSecurityContext"
+          factory-bean="ldapAuthenticatorWrapper"
+          factory-method="createSecurityContext" lazy-init="true"/>
+
+    <bean id="ldapAuthenticator"
+          factory-bean="ldapAuthenticatorWrapper"
+          factory-method="createBindAuthenticator" lazy-init="true"/>
 
 </beans>

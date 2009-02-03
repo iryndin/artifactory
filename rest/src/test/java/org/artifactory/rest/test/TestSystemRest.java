@@ -21,7 +21,6 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -30,9 +29,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.api.rest.SystemActionInfo;
 import org.artifactory.api.rest.SystemInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -47,12 +47,14 @@ import java.net.URL;
  * User: freds Date: Aug 12, 2008 Time: 5:36:40 PM
  */
 public class TestSystemRest {
-    private static final Logger log = LoggerFactory.getLogger(TestSystemRest.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(TestSystemRest.class);
 
     /**
-     * /api /system (GET, POST - import/export) /config (GET, PUT, POST, DELETE) /security (GET, PUT, POST, DELETE)
-     * /security /users /[username] /groups /[groupname] /acls /[aclname] /repo /[repoName] (GET, POST - import/export)
-     * /allpaths /config /backup /jobs /repo /local /remote /virtual /proxy
+     * /api /system (GET, POST - import/export) /config (GET, PUT, POST, DELETE) /security (GET,
+     * PUT, POST, DELETE) /security /users /[username] /groups /[groupname] /acls /[aclname] /repo
+     * /[repoName] (GET, POST - import/export) /allpaths /config /backup /jobs /repo /local /remote
+     * /virtual /proxy
      */
 
     private static final String API_ROOT =
@@ -64,15 +66,15 @@ public class TestSystemRest {
         String systemUri = API_ROOT + "system";
         SystemInfo systemInfo = get(systemUri, SystemInfo.class);
         Assert.assertNotNull(systemInfo);
-        //SystemActionInfo action = systemInfo.actionExample;
-        //Assert.assertNotNull(action);
-        //log.debug("Received SystemInfo " + systemInfo);
-        //action.importFrom = "";
-        //action.exportTo = "/tmp/testRestExport";
-        //action.repositories = "";// All repos if empty
-        //action.security = true;
-        //action.config = true;
-        //post(systemUri, action, null);
+        SystemActionInfo action = systemInfo.actionExample;
+        Assert.assertNotNull(action);
+        LOGGER.debug("Received SystemInfo " + systemInfo);
+        action.importFrom = "";
+        action.exportTo = "/tmp/testRestExport";
+        action.repositories = "";// All repos if empty
+        action.security = true;
+        action.config = true;
+        post(systemUri, action, null);
     }
 
     @Test
@@ -80,22 +82,15 @@ public class TestSystemRest {
         String systemUri = API_ROOT + "system";
         SystemInfo systemInfo = get(systemUri, SystemInfo.class);
         Assert.assertNotNull(systemInfo);
-        //SystemActionInfo action = systemInfo.actionExample;
-        //Assert.assertNotNull(action);
-        //log.debug("Received SystemInfo " + systemInfo);
-        //action.importFrom = "/tmp/testRestExport/20080901.121146";
-        //action.exportTo = "";
-        //action.repositories = "";// All repos if empty
-        //action.security = true;
-        //action.config = true;
-        //post(systemUri, action, null);
-    }
-
-    @Test
-    public void unauthorizedAccess() throws Exception {
-        GetMethod method = new GetMethod(API_ROOT + "system");
-        int status = getHttpClient(false).executeMethod(method);
-        Assert.assertEquals(status, HttpStatus.SC_UNAUTHORIZED);
+        SystemActionInfo action = systemInfo.actionExample;
+        Assert.assertNotNull(action);
+        LOGGER.debug("Received SystemInfo " + systemInfo);
+        action.importFrom = "/tmp/testRestExport/20080901.121146";
+        action.exportTo = "";
+        action.repositories = "";// All repos if empty
+        action.security = true;
+        action.config = true;
+        post(systemUri, action, null);
     }
 
     @SuppressWarnings({"unchecked"})

@@ -17,14 +17,13 @@
 package org.artifactory.common;
 
 import org.apache.commons.io.FileUtils;
-import org.artifactory.version.ArtifactoryDbVersion;
-import org.artifactory.version.ArtifactoryVersionReader;
-import org.artifactory.version.CompoundVersionDetails;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -33,22 +32,24 @@ public abstract class ArtifactoryHome {
     public static String SYS_PROP = "artifactory.home";
     public static String ENV_VAR = "ARTIFACTORY_HOME";
 
-    public static final String ARTIFACTORY_CONFIG_FILE = "artifactory.config.xml";
-    public static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE = "artifactory.system.properties";
-    public static final String ARTIFACTORY_PROPERTIES_FILE = "artifactory.properties";
-    private static final String LOGBACK_CONFIG_FILE_NAME = "logback.xml";
+    public static final String SYS_PROP_ARTIFACTORY_CONFIG = "artifactory.config.file";
 
-    public static final File TEMP_FOLDER = new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
+    public static final String ARTIFACTORY_CONFIG_FILE = "artifactory.config.xml";
+    private static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE =
+            "artifactory.system.properties";
+    private static final String ARTIFACTORY_PROPERTIES_FILE = "artifactory.properties";
+    private static final String LOG4J_PROPERTIES_FILE = "log4j.properties";
+
+    public static final File TEMP_FOLDER =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
 
     private static boolean readOnly = false;
-    private static IllegalArgumentException initFailCause = null;
     private static File homeDir;
     private static File etcDir;
     private static File dataDir;
     private static File jcrRootDir;
     private static File workingCopyDir;
     private static File logDir;
-    private static File backupDir;
     private static File configFile;
     private static File tmpDir;
     private static File tmpUploadsDir;
@@ -98,10 +99,6 @@ public abstract class ArtifactoryHome {
         return logDir;
     }
 
-    public static File getBackupDir() {
-        return backupDir;
-    }
-
     public static File getWorkingCopyDir() {
         return workingCopyDir;
     }
@@ -144,44 +141,28 @@ public abstract class ArtifactoryHome {
         try {
             // Create or find all the needed subfolders
             etcDir = getOrCreateSubDir("etc");
-            setDataAndJcrDir();
-            File jettyWorkDir = null;
+            dataDir = getOrCreateSubDir("data");
+            jcrRootDir = dataDir;
             if (!readOnly) {
                 logDir = getOrCreateSubDir("logs");
-                backupDir = getOrCreateSubDir("backup");
-                jettyWorkDir = getOrCreateSubDir("work");
+                getOrCreateSubDir("work");
                 workingCopyDir = getOrCreateSubDir(dataDir, "wc");
-                tmpDir = getOrCreateSubDir(dataDir, "tmp");
+                tmpDir = new File(System.getProperty("java.io.tmpdir"));
                 tmpUploadsDir = getOrCreateSubDir(tmpDir, "artifactory-uploads");
             }
-
+        } catch (IOException e) {
+            throw new IllegalArgumentException(
+                    "Could not create or access artifactory main directory " + e.getMessage(), e);
+        }
+        // Manage config file
+        File localConfigFile = findLocalConfigFile();
+        setConfigFile(localConfigFile);
+        if (!readOnly) {
             //Manage the artifactory.system.properties file under etc dir
             initAndLoadSystemPropertyFile();
-            // Manage config file
-            File localConfigFile = findLocalConfigFile();
-            setConfigFile(localConfigFile);
-
-            //Check the write access to all directories that need it
-            checkWritableDirectory(dataDir);
-            checkWritableDirectory(jcrRootDir);
-            if (!readOnly) {
-                checkWritableDirectory(logDir);
-                checkWritableDirectory(backupDir);
-                checkWritableDirectory(jettyWorkDir);
-                checkWritableDirectory(workingCopyDir);
-                checkWritableDirectory(tmpDir);
-                checkWritableDirectory(tmpUploadsDir);
-            }
-        } catch (Exception e) {
-            initFailCause = new IllegalArgumentException(
-                    "Could not initialize artifactory main directory due to " + e.getMessage(), e);
-            throw initFailCause;
+            //Copy the artifactory.properties file into the data folder
+            copyPropertyFile();
         }
-    }
-
-    public static void setDataAndJcrDir() throws IOException {
-        dataDir = getOrCreateSubDir("data");
-        jcrRootDir = dataDir;
     }
 
     public static void setConfigFile(File newConfigFile) {
@@ -220,38 +201,24 @@ public abstract class ArtifactoryHome {
         return home;
     }
 
-    /**
-     * Chacks the existence of the logback configuration file under the etc directory. If the file doesn't exist this
-     * method will extract a default one from the war.
-     *
-     * @param logbackConfigLocation The location to check
-     */
-    public static void ensureLogbackConfig(String logbackConfigLocation) {
-        if ("file:${artifactory.home}/etc/logback.xml".equals(logbackConfigLocation)) {
+    public static void checkLog4j(String log4jConfigLocation) {
+        if ("file:${artifactory.home}/etc/log4j.properties".equals(log4jConfigLocation)) {
             File etcDir = new File(getHomeDir(), "etc");
-            File logbackFile = new File(etcDir, LOGBACK_CONFIG_FILE_NAME);
-            if (!logbackFile.exists()) {
+            File log4jfile = new File(etcDir, LOG4J_PROPERTIES_FILE);
+            if (!log4jfile.exists()) {
                 try {
                     //Copy from default
-                    URL configUrl = ArtifactoryHome.class.getResource(
-                            "/META-INF/default/" + LOGBACK_CONFIG_FILE_NAME);
-                    FileUtils.copyURLToFile(configUrl, logbackFile);
+                    URL configUrl =
+                            ArtifactoryHome.class.getResource(
+                                    "/META-INF/default/" + LOG4J_PROPERTIES_FILE);
+                    FileUtils.copyURLToFile(configUrl, log4jfile);
                 } catch (IOException e) {
-                    // we don't have the logger configuration - use System.err
-                    System.err.printf("Could not create default %s into %s",
-                            LOGBACK_CONFIG_FILE_NAME, logbackFile);
+                    System.err.println(
+                            "Could not create default " + LOG4J_PROPERTIES_FILE + " into " +
+                                    log4jfile);
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    /**
-     * Assert to stop init process if home dir is in invalid state
-     */
-    public static void assertInitialized() {
-        if (initFailCause != null) {
-            throw initFailCause;
         }
     }
 
@@ -262,28 +229,31 @@ public abstract class ArtifactoryHome {
         public void log(String message);
     }
 
-    public static File getArtifactoryPropertiesFile() {
-        return new File(dataDir, ARTIFACTORY_PROPERTIES_FILE);
-    }
-
-    public static URL getDefaultArtifactoryPropertiesUrl() {
-        return ArtifactoryHome.class.getResource("/META-INF/" + ARTIFACTORY_PROPERTIES_FILE);
-    }
-
-    public static CompoundVersionDetails readRunningArtifactoryVersion() {
-        InputStream inputStream = ArtifactoryHome.class.getResourceAsStream("/META-INF/" + ARTIFACTORY_PROPERTIES_FILE);
-        CompoundVersionDetails details = ArtifactoryVersionReader.read(inputStream);
-        return details;
+    /**
+     * Copy the artifactory.properties file containing internal use information into the data
+     * folder
+     */
+    private static void copyPropertyFile() {
+        File artifactoryPropertiesFile = new File(dataDir, ARTIFACTORY_PROPERTIES_FILE);
+        try {
+            //Copy from default
+            URL url = ArtifactoryHome.class.getResource("/META-INF/" + ARTIFACTORY_PROPERTIES_FILE);
+            FileUtils.copyURLToFile(url, artifactoryPropertiesFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not copy " +
+                    ARTIFACTORY_PROPERTIES_FILE + " to " +
+                    artifactoryPropertiesFile.getAbsolutePath(), e);
+        }
     }
 
     /**
      * Copy the system properties file and set its data as system properties
      */
     private static void initAndLoadSystemPropertyFile() {
-        // Expose the properties inside artfactory.properties and artfactory.system.properties
-        // as system properties, availale to ArtifactoryConstants
+        //Expose the properties inside artfactory.properties as system properties, availale to
+        //ArtifactoryConstants
         File systemPropertiesFile = new File(etcDir, ARTIFACTORY_SYSTEM_PROPERTIES_FILE);
-        if (!readOnly && !systemPropertiesFile.exists()) {
+        if (!systemPropertiesFile.exists()) {
             try {
                 //Copy from default
                 URL url = ArtifactoryHome.class
@@ -295,61 +265,38 @@ public abstract class ArtifactoryHome {
                         systemPropertiesFile.getAbsolutePath(), e);
             }
         }
-
-        CompoundVersionDetails runningVersion = readRunningArtifactoryVersion();
-        if (!runningVersion.isCurrent()) {
-            throw new IllegalStateException("Running version is not the current version.");
-        }
-        File artifactoryPropertiesFile = getArtifactoryPropertiesFile();
-        if (!readOnly) {
-            boolean writeArtifactoryProperties;
-            if (artifactoryPropertiesFile.exists()) {
-                CompoundVersionDetails versionFromFile = ArtifactoryVersionReader.read(artifactoryPropertiesFile);
-                if (!runningVersion.equals(versionFromFile)) {
-                    // the version written in the jar and the version read from the data directory are different
-                    // make sure the version from the data directory is supported by the current deployed artifactory
-                    ArtifactoryDbVersion actualDbVersion =
-                            ArtifactoryDbVersion.findVersion(versionFromFile.getVersion());
-                    if (!actualDbVersion.isCurrent()) {
-                        throw new IllegalStateException("The database version for (" + versionFromFile + ") " +
-                                "is not supported by the current deployed Artifactory (" + runningVersion + ")");
-                    }
-                    writeArtifactoryProperties = true;
-                } else {
-                    writeArtifactoryProperties = false;
-                }
-            } else {
-                writeArtifactoryProperties = true;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(systemPropertiesFile);
+            Properties props = new Properties();
+            props.load(fis);
+            for (Object key : props.keySet()) {
+                String value = (String) props.get(key);
+                System.setProperty((String) key, value);
             }
-            if (writeArtifactoryProperties) {
-                //Copy the artifactory.properties file into the data folder
-                try {
-                    //Copy from default
-                    FileUtils.copyURLToFile(getDefaultArtifactoryPropertiesUrl(), artifactoryPropertiesFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not copy " + ARTIFACTORY_PROPERTIES_FILE + " to " +
-                            artifactoryPropertiesFile.getAbsolutePath(), e);
-                }
-            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not read default system properties from '" +
+                    systemPropertiesFile.getAbsolutePath() + "'.", e);
+        } finally {
+            IOUtils.closeQuietly(fis);
         }
-
-        ArtifactoryProperties.get().loadArtifactorySystemProperties(systemPropertiesFile, artifactoryPropertiesFile);
     }
 
     private static File findLocalConfigFile() {
-        String configFilePath = ConstantsValue.config.getString();
+        String configFilePath = System.getProperty(SYS_PROP_ARTIFACTORY_CONFIG);
         File localConfigFile;
         if (configFilePath == null) {
             localConfigFile = new File(etcDir, ARTIFACTORY_CONFIG_FILE);
             if (!localConfigFile.exists()) {
                 if (readOnly) {
-                    throw new RuntimeException("Could not read the default " + ARTIFACTORY_CONFIG_FILE + " at " +
+                    throw new RuntimeException("Could not read the default " +
+                            ARTIFACTORY_CONFIG_FILE + " at " +
                             localConfigFile.getAbsolutePath());
                 } else {
                     try {
                         //Copy from default
-                        URL configUrl =
-                                ArtifactoryHome.class.getResource("/META-INF/default/" + ARTIFACTORY_CONFIG_FILE);
+                        URL configUrl = ArtifactoryHome.class
+                                .getResource("/META-INF/default/" + ARTIFACTORY_CONFIG_FILE);
                         FileUtils.copyURLToFile(configUrl, localConfigFile);
                     } catch (IOException e) {
                         throw new RuntimeException("Could not create a default " +
@@ -358,16 +305,9 @@ public abstract class ArtifactoryHome {
                     }
                 }
             }
-            ArtifactoryProperties.get().setProperty(ConstantsValue.config.getPropertyName(), localConfigFile.getPath());
         } else {
             localConfigFile = new File(configFilePath);
         }
         return localConfigFile;
-    }
-
-    private static void checkWritableDirectory(File dir) {
-        if (!dir.exists() || !dir.isDirectory() || !dir.canWrite()) {
-            throw new IllegalArgumentException("Directory '" + dir.getAbsolutePath() + "' is not writable!");
-        }
     }
 }

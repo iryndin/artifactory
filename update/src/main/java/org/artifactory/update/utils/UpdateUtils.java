@@ -26,12 +26,12 @@ import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.PermissionTargetInfo;
 import org.artifactory.api.security.SecurityInfo;
 import org.artifactory.api.security.UserInfo;
+import org.artifactory.common.ArtifactoryConstants;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ArtifactoryProperties;
+import org.artifactory.update.ArtifactoryVersion;
 import org.artifactory.update.VersionsHolder;
 import org.artifactory.update.config.ConfigExporter;
-import org.artifactory.update.jcr.JcrExporter;
-import org.artifactory.version.ArtifactoryVersion;
+import org.artifactory.update.v122rc0.JcrExporter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +55,8 @@ public class UpdateUtils {
     public static final String ANY = "ANY";
     public static final String SECURITY_FILE_NAME = "security.xml";
 
-    public static void initArtifactoryHome() {
+    public static void initArtifactoryHome(File artifactoryHome) {
+        ArtifactoryHome.setHomeDir(artifactoryHome);
         ArtifactoryHome.setReadOnly(true);
         ArtifactoryHome.create();
         ArtifactoryVersion version = VersionsHolder.getOriginalVersion();
@@ -86,10 +88,10 @@ public class UpdateUtils {
         }
         //Replace permissions: repo:ANY -> repo:**, repo:x/y->repo/x/y/**
         PermissionTargetInfo permissionTarget = null;
-        if (ANY.equals(path) || PermissionTargetInfo.ANY_PATH.equals(path)) {
+        if ("ANY".equals(path)) {
             path = PermissionTargetInfo.ANY_PATH;
             // If repoKey is ANY the name is now Anything
-            if (ANY.equals(repoKey)) {
+            if (repoKey.equals("ANY")) {
                 permissionTarget = new PermissionTargetInfo(
                         PermissionTargetInfo.ANY_PERMISSION_TARGET_NAME,
                         PermissionTargetInfo.ANY_REPO, PermissionTargetInfo.ANY_PATH, null
@@ -105,14 +107,15 @@ public class UpdateUtils {
     }
 
     public static File exportSecurityData(File exportDir, List<UserInfo> users,
-            List<AclInfo> acls, List<GroupInfo> groups) {
+            List<AclInfo> acls) {
         OutputStream os = null;
         File path = null;
         try {
             path = new File(exportDir, SECURITY_FILE_NAME);
             File parentFile = path.getParentFile();
             FileUtils.forceMkdir(parentFile);
-            SecurityInfo descriptor = new SecurityInfo(users, groups, acls);
+            SecurityInfo descriptor = new SecurityInfo(users,
+                    new ArrayList<GroupInfo>(), acls);
             XStream xstream = getXstream(SecurityInfo.class);
             os = new BufferedOutputStream(new FileOutputStream(path));
             xstream.toXML(descriptor, os);
@@ -155,18 +158,18 @@ public class UpdateUtils {
 
     /**
      * @param repoKey The repo key from the jcr database.
-     * @return The new repo key after the keys substitution. Might be the same if no substitution occurred. Example of
-     *         keys substitutions is from 3rd-party-lib to third-party-lib
+     * @return The new repo key after the keys substitution. Might be the same if no substitution
+     *         occurred. Example of keys substitutions is from 3rd-party-lib to third-party-lib
      */
     public static String getNewRepoKey(String repoKey) {
         // If in substitute repo get new substituted name
-        String newRepoKey = ArtifactoryProperties.get().getSubstituteRepoKeys().get(repoKey);
+        String newRepoKey = ArtifactoryConstants.substituteRepoKeys.get(repoKey);
         if (newRepoKey == null) {
             newRepoKey = repoKey;
         }
 
         // If it is local repository add the -local
-        if (!ANY.equals(newRepoKey) && !newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
+        if (!newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
             newRepoKey = newRepoKey + LOCAL_SUFFIX;
         }
 
@@ -174,8 +177,8 @@ public class UpdateUtils {
     }
 
     /**
-     * The delete permission was added in version 1.3.0-beta3. Grand the delete permission to deployers and admins if
-     * importing from a version up to 1.3.0-beta2.
+     * The delete permission was added in version 1.3.0-beta3. Grand the delete permission to
+     * deployers and admins if importing from a version up to 1.3.0-beta2.
      */
     public static void updateAceMask(AceInfo aceInfo) {
         ArtifactoryVersion version = VersionsHolder.getOriginalVersion();

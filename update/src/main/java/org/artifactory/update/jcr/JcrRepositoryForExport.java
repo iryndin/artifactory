@@ -28,11 +28,11 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.xml.NodeTypeReader;
 import org.apache.jackrabbit.core.persistence.bundle.AbstractBundlePersistenceManager;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.artifactory.common.ArtifactoryConstants;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.jcr.NamespaceRegistry;
@@ -40,7 +40,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,7 +47,8 @@ import java.util.List;
  * User: freds Date: Jun 3, 2008 Time: 1:31:07 PM
  */
 public class JcrRepositoryForExport implements JcrSessionProvider {
-    private static final Logger log = LoggerFactory.getLogger(JcrRepositoryForExport.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(JcrRepositoryForExport.class);
 
     protected static final String ARTIFACTORY_NAMESPACE_PREFIX = "artifactory";
     protected static final String ARTIFACTORY_NAMESPACE = "http://artifactory.jfrog.org/1.0";
@@ -91,7 +91,7 @@ public class JcrRepositoryForExport implements JcrSessionProvider {
             registerNamespaces(workspace);
             registerTypes(workspace, getArtifactoryNodeTypes());
         } catch (Exception e) {
-            log.error("Cannot initialize JCR repository " + e.getMessage(), e);
+            LOGGER.error("Cannot initialize JCR repository " + e.getMessage(), e);
             throw new RuntimeException("Cannot initialize JCR repository " + e.getMessage(), e);
         }
     }
@@ -126,10 +126,7 @@ public class JcrRepositoryForExport implements JcrSessionProvider {
         try {
             RepositoryConfig repoConfig = RepositoryConfig.create(
                     repoXml.getInputStream(), ArtifactoryHome.getJcrRootDir().getAbsolutePath());
-            Field searchConfigField = repoConfig.getClass().getDeclaredField("sc");
-            searchConfigField.setAccessible(true);
-            searchConfigField.set(repoConfig, null);
-            if (ConstantsValue.jcrFixConsistency.getBoolean()) {
+            if (ArtifactoryConstants.fixConsistency) {
                 WorkspaceConfig wsConfig =
                         (WorkspaceConfig) repoConfig.getWorkspaceConfigs().iterator().next();
                 PersistenceManagerConfig pmConfig = wsConfig.getPersistenceManagerConfig();
@@ -139,9 +136,9 @@ public class JcrRepositoryForExport implements JcrSessionProvider {
                 if (pm instanceof AbstractBundlePersistenceManager) {
                     pmConfig.getParameters().put("consistencyCheck", "true");
                     pmConfig.getParameters().put("consistencyFix", "true");
-                    log.info("Fix consistency requested on '" + className + "'.");
+                    LOGGER.info("Fix consistency requested on '" + className + "'.");
                 } else {
-                    log.warn("Fix consistency requested on a persistence manager that " +
+                    LOGGER.warn("Fix consistency requested on a persistence manager that " +
                             "does not support this feature.");
                 }
             }

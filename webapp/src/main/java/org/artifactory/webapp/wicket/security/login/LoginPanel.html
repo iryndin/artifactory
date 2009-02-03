@@ -1,0 +1,35 @@
+<wicket:extend>
+    <p>Please sign in to Artifactory:</p>
+
+    <form wicket:id="loginForm" class="win_login">
+        <table>
+            <tr>
+                <td align="right">Username:</td>
+                <td>
+                    <input wicket:id="username" type="text" value="foo@goo.moo" size="30"
+                           class="textfield"/>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Password:</td>
+                <td>
+                    <input wicket:id="password" type="password" value="password" size="30"
+                           class="textfield"/>
+                </td>
+            </tr>
+            <tr wicket:id="rememberMeRow">
+                <td></td>
+                <td><input wicket:id="rememberMe" type="checkbox" class="checkbox"/> Remember Me
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="button" wicket:id="cancel"/>
+                    <button type="submit" wicket:id="submit"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+</wicket:extend>

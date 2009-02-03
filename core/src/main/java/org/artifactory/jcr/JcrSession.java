@@ -18,13 +18,9 @@ package org.artifactory.jcr;
 
 import org.apache.commons.pool.impl.StackObjectPool;
 import org.apache.jackrabbit.api.XASession;
+import org.apache.log4j.Logger;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.jcr.lock.SessionLockManager;
-import org.artifactory.tx.SessionResource;
-import org.artifactory.tx.SessionResourceManager;
-import org.artifactory.tx.SessionResourceManagerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -46,10 +42,11 @@ import java.security.AccessControlException;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class JcrSession implements XASession {
-    private static final Logger log = LoggerFactory.getLogger(JcrSession.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrSession.class);
 
     private final XASession session;
-    private SessionResourceManager sessionResourceManager = null;
+    private final SessionLockManager lockManager = new SessionLockManager();
     private StackObjectPool pool;
 
     public JcrSession(XASession session, StackObjectPool pool) {
@@ -131,7 +128,6 @@ public class JcrSession implements XASession {
 
     public void save() {
         try {
-            getSessionResourceManager().onSessionSave();
             session.save();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
@@ -148,7 +144,7 @@ public class JcrSession implements XASession {
 
     public boolean hasPendingChanges() {
         try {
-            return getSessionResourceManager().hasPendingChanges() || session.hasPendingChanges();
+            return session.hasPendingChanges();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
         }
@@ -241,7 +237,7 @@ public class JcrSession implements XASession {
         try {
             pool.returnObject(this);
         } catch (Exception e) {
-            log.warn("Failed to return jcr session to pool.", e);
+            LOGGER.warn("Failed to return jcr session to pool.", e);
         }
     }
 
@@ -267,23 +263,12 @@ public class JcrSession implements XASession {
 
     @Override
     protected void finalize() throws Throwable {
-        if (sessionResourceManager != null) {
-            sessionResourceManager.afterCompletion(false);
-        }
+        lockManager.releaseLocks(false);
         session.logout();
         super.finalize();
     }
 
-    public SessionResourceManager getSessionResourceManager() {
-        if (sessionResourceManager == null) {
-            sessionResourceManager = new SessionResourceManagerImpl();
-            sessionResourceManager.getOrCreateResource(SessionLockManager.class);
-        }
-        return sessionResourceManager;
+    public SessionLockManager getLockManager() {
+        return lockManager;
     }
-
-    public <T extends SessionResource> T getOrCreateResource(Class<T> resourceClass) {
-        return getSessionResourceManager().getOrCreateResource(resourceClass);
-    }
-
 }

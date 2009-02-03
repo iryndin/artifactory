@@ -24,28 +24,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
  */
 @XmlEnum(String.class)
 public enum SnapshotVersionBehavior {
-    @XmlEnumValue("unique")UNIQUE("Unique"),
-    @XmlEnumValue("non-unique")NONUNIQUE("Non-unique"),
-    @XmlEnumValue("deployer")DEPLOYER("Deployer");
-
-    //The name to display when used in different components
-    private String displayName;
-
-    /**
-     * Sets the display name of the element
-     *
-     * @param displayName The display name
-     */
-    SnapshotVersionBehavior(String displayName) {
-        this.displayName = displayName;
-    }
-
-    /**
-     * Returns the display name of the element
-     *
-     * @return String - Element display name
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
+    @XmlEnumValue("unique")UNIQUE,
+    @XmlEnumValue("non-unique")NONUNIQUE,
+    @XmlEnumValue("deployer")DEPLOYER
 }

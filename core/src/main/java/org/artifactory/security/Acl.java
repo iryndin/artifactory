@@ -22,11 +22,10 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.log4j.Logger;
 import org.artifactory.api.security.AceInfo;
 import org.artifactory.api.security.AclInfo;
 import org.artifactory.jcr.ocm.OcmStorable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.acls.MutableAcl;
 import org.springframework.security.acls.NotFoundException;
@@ -46,7 +45,9 @@ import java.util.Set;
  */
 @Node(extend = OcmStorable.class)
 public class Acl implements MutableAcl, OcmStorable {
-    private static final Logger log = LoggerFactory.getLogger(Acl.class);
+
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(Acl.class);
 
     @Collection(elementClassName = Ace.class,
             collectionConverter = NTCollectionConverterImpl.class)
@@ -130,8 +131,8 @@ public class Acl implements MutableAcl, OcmStorable {
                     aces.set(i, ace);
                 }
             }
-            if (log.isDebugEnabled()) {
-                log.debug(
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(
                         "No existing ace for principal '" + ace.getPrincipal() +
                                 "'. Creating one.");
             }
