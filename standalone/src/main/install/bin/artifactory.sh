@@ -14,11 +14,11 @@ else
    fi
 fi
 
-# Verify that it is java 5+
-javaVersion=`$JAVACMD -version 2>&1 | grep "java version" | egrep -e "1\.[56]"`
+# Verify that it is java 6
+javaVersion=`$JAVACMD -version 2>&1 | grep "java version" | grep "1.6"`
 if [ -z "$javaVersion" ]; then
     $JAVACMD -version
-    echo "** ERROR: The Java of $JAVACMD version is not 1.5 or 1.6"
+    echo "** ERROR: The Java of $JAVACMD version is not 1.6"
     exit 1
 fi
 
@@ -27,14 +27,6 @@ if [ -z "$ARTIFACTORY_HOME" ]; then
 fi
 
 JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.home=$ARTIFACTORY_HOME -Dartifactory.home=$ARTIFACTORY_HOME"
+JAVA_OPTIONS="$JAVA_OPTIONS -Dlog4j.configuration=file:$ARTIFACTORY_HOME/etc/log4j.properties"
 
-LIB_DIR=$ARTIFACTORY_HOME/lib
-CLASSPATH=$ARTIFACTORY_HOME/artifactory.jar
-# Add all jars under the lib dir to the classpath
-for i in `ls $LIB_DIR/*.jar`
-do
-  CLASSPATH="$CLASSPATH:$i"
-done
-
-echo "Runing: exec $JAVACMD $JAVA_OPTIONS -cp \"$CLASSPATH\" org.artifactory.standalone.main.Main $@"
-exec "$JAVACMD" $JAVA_OPTIONS -cp "$CLASSPATH" org.artifactory.standalone.main.Main "$@"
+exec "$JAVACMD" $JAVA_OPTIONS -cp "$ARTIFACTORY_HOME/artifactory.jar:$ARTIFACTORY_HOME/lib/*" org.artifactory.webapp.main.Main "$@"

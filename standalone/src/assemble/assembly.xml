@@ -1,11 +1,12 @@
 <assembly>
     <formats>
         <format>zip</format>
+        <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/bin</directory>
+            <directory>src/main/install/bin</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>**/*.bat</include>
@@ -13,11 +14,10 @@
             <lineEnding>dos</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/bin</directory>
+            <directory>src/main/install/bin</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
-                <include>artadmin</include>
                 <include>artifactoryctl</include>
                 <include>artifactory.default</include>
             </includes>
@@ -25,48 +25,23 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/bin</directory>
-            <outputDirectory>bin</outputDirectory>
-            <includes>
-                <include>**/*.conf</include>
-                <include>**/*.exe</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/install/etc</directory>
+            <directory>src/main/install/etc</directory>
             <outputDirectory>etc</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/misc</directory>
-            <outputDirectory>misc</outputDirectory>
-            <filtered>true</filtered>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../core/src/main/resources/META-INF/default</directory>
-            <outputDirectory>etc</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/install/lib</directory>
-            <outputDirectory>lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/install</directory>
-            <outputDirectory/>
+            <directory>src/main/install</directory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>*.txt</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/logs</directory>
+            <directory>src/main/install/logs</directory>
             <outputDirectory>logs</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/src/main/install/work</directory>
-            <outputDirectory>work</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/target</directory>
-            <outputDirectory/>
+            <directory>target</directory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -74,47 +49,21 @@
                 <exclude>*-sources.jar</exclude>
             </excludes>
         </fileSet>
-
-        <!-- add the cli dependencies to clilib. the cli already prepared the files -->
-        <fileSet>
-            <directory>${project.basedir}/../cli/target/clilib</directory>
-            <outputDirectory>clilib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../cli/target</directory>
-            <outputDirectory>clilib</outputDirectory>
-            <includes>
-                <include>artifactory-cli-${project.version}.jar</include>
-            </includes>
-        </fileSet>
-
     </fileSets>
     <dependencySets>
-        <!-- add the artifactory war file to the webapp dir -->
         <dependencySet>
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>artifactory.war</outputFileNameMapping>
-            <useStrictFiltering>true</useStrictFiltering>
             <includes>
                 <include>org.artifactory:artifactory-webapp</include>
             </includes>
         </dependencySet>
-        <!-- add some mandatory dependencies to jetty lib directory -->
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
-            <useStrictFiltering>true</useStrictFiltering>
-            <scope>compile</scope>
-            <includes>
-                <include>org.artifactory:artifactory-config</include>
-                <include>org.mortbay.jetty:jetty</include>
-                <include>org.mortbay.jetty:jetty-ajp</include>
-                <include>org.mortbay.jetty:jetty-util</include>
-                <include>org.mortbay.jetty:servlet-api-2.5</include>
-                <include>org.slf4j:slf4j-api</include>
-                <include>ch.qos.logback:logback-core</include>
-                <include>ch.qos.logback:logback-classic</include>
-                <include>commons-io:commons-io</include>
-            </includes>
+            <excludes>
+                <exclude>org.artifactory:artifactory-standalone</exclude>
+                <exclude>org.artifactory:artifactory-webapp</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
 </assembly>

@@ -1,28 +1,44 @@
 package org.artifactory.backup;
 
-import org.artifactory.schedule.quartz.QuartzCommand;
-import org.artifactory.spring.InternalArtifactoryContext;
-import org.artifactory.spring.InternalContextHelper;
+import org.apache.log4j.Logger;
+import org.apache.maven.artifact.transform.SnapshotTransformation;
+import org.artifactory.repo.CentralConfig;
+import org.artifactory.repo.LocalRepo;
+import org.artifactory.scheduling.ArtifactoryJob;
+import org.artifactory.spring.ArtifactoryContext;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class BackupJob extends QuartzCommand {
+public class BackupJob extends ArtifactoryJob {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(BackupJob.class);
 
-    @Override
-    protected void onExecute(JobExecutionContext jobContext) throws JobExecutionException {
-        final int backupIndex = jobContext.getJobDetail().getJobDataMap().getInt("index");
-        InternalArtifactoryContext context = InternalContextHelper.get();
-        InternalBackupService backup = context.beanForType(InternalBackupService.class);
-        Date fireTime = jobContext.getFireTime();
-        boolean success = backup.backupSystem(context, backupIndex);
-        if (success) {
-            //If backup was successful continue with old backups cleanup
-            backup.cleanupOldBackups(fireTime, backupIndex);
+    @SuppressWarnings({"unchecked"})
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        ArtifactoryContext artifactoryContext = getArtifactoryContext();
+        CentralConfig cc = artifactoryContext.getCentralConfig();
+        List<LocalRepo> localRepos = cc.getLocalRepositories();
+        String backupDir = cc.getBackupDir();
+        Date fireTime = context.getFireTime();
+        String timestamp = SnapshotTransformation.getUtcDateFormatter().format(fireTime);
+        for (LocalRepo repo : localRepos) {
+            String key = repo.getKey();
+            File targetDir = new File(backupDir + "/" + timestamp + "/" + key);
+            if (!targetDir.mkdirs()) {
+                throw new RuntimeException(
+                        "Failed to create backup directory '" + targetDir + "'.");
+            }
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Exporting repository '" + key + "' to '" + targetDir + "'.");
+            }
+            repo.export(targetDir);
         }
     }
 }

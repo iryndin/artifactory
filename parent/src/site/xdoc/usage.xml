@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Artifactory Usage</title>
+    </properties>
+
+    <meta name="keyword" content="maven, maven2, mvn, proxy, deployment"/>
+
+    <body>
+        <section name="Setting Up Maven">
+            <p>For setting up maven to use artifactory proxy,
+                just configure a maven repository with the following URL:
+                <br/>
+                <b>http://[your server name]:[port]/artifactory/repo</b>
+                <br/>
+                This URL will make artifactory look through all repositories (local and remote),
+                for any artifacts maven is fetching.
+                <br/>
+                <br/>
+            </p>
+            <p>But, you can also place the name of the local repository to limit artifactory
+                search to this local repository and all remote repositories.
+                <br/>
+                The maven repository URL should look like:
+                <br/>
+                <b>http://[your server name]:[port]/artifactory/[local repo name]</b>
+                <br/>
+                or the deprecated format
+                <b>http://[your server name]:[port]/artifactory/[local repo name]@repo</b>
+                <br/>
+            </p>
+            <p>If your artifactory is configured correctly, you should override the built-in central
+                and snapshots repositories of Maven, so no request to them will be sent directly.
+                <br/>
+                Insert the following to your parent POM or settings.xml (more recommended):
+                <source><![CDATA[
+<repositories>
+    <repository>
+        <id>central</id>
+        <url>http://[your server name]:[port]/artifactory/repo</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>snapshots</id>
+        <url>http://[your server name]:[port]/artifactory/repo</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>central</id>
+        <url>http://[your server name]:[port]/artifactory/plugins-releases</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+        <id>snapshots</id>
+        <url>http://[your server name]:[port]/artifactory/plugins-snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+    </pluginRepository>
+</pluginRepositories>]]></source>
+            </p>
+        </section>
+    </body>
+</document>
