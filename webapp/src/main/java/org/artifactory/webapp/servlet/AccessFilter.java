@@ -22,7 +22,6 @@ import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ArtifactoryContextThreadBinder;
 import org.artifactory.api.security.UserInfo;
-import org.artifactory.security.HttpAuthenticationDetailsSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -32,6 +31,7 @@ import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.ui.AuthenticationDetailsSource;
+import org.springframework.security.ui.WebAuthenticationDetailsSource;
 import org.springframework.security.ui.basicauth.BasicProcessingFilter;
 import org.springframework.security.ui.basicauth.BasicProcessingFilterEntryPoint;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,8 +56,9 @@ public class AccessFilter implements Filter {
     private BasicProcessingFilterEntryPoint authenticationEntryPoint;
 
     /**
-     * holds cached Authentication instances for the non ui requests based on the Authorization header and client ip
-     */
+     *  holds cached Authentication instances for the non ui requests 
+     *  based on the Authorization header and client ip
+     * */
     private Map<AuthCacheKey, Authentication> nonUiAuthCache;
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -93,7 +94,8 @@ public class AccessFilter implements Filter {
         }
     }
 
-    private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    private void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         final String servletPath = RequestUtils.getServletPathFromRequest(request);
         String method = request.getMethod();
@@ -131,7 +133,7 @@ public class AccessFilter implements Filter {
         AuthCacheKey authCacheKey = new AuthCacheKey(request);
         Authentication authentication = nonUiAuthCache.get(authCacheKey);
         if (authentication != null) {
-            log.debug("Header authentication {} found in cache.", authentication);
+            log.debug("Header authentication {} in cache.", authentication);
             useAuthentication(request, response, chain, authentication, securityContext);
             return;
         }
@@ -165,7 +167,7 @@ public class AccessFilter implements Filter {
                 log.debug("Creating the Anonymous token");
                 final UsernamePasswordAuthenticationToken authRequest =
                         new UsernamePasswordAuthenticationToken(UserInfo.ANONYMOUS, "");
-                AuthenticationDetailsSource ads = new HttpAuthenticationDetailsSource();
+                AuthenticationDetailsSource ads = new WebAuthenticationDetailsSource();
                 authRequest.setDetails(ads.buildDetails(request));
                 authentication = context.beanForType(AuthenticationManager.class).authenticate(authRequest);
                 if (authentication != null && authentication.isAuthenticated()) {
@@ -173,7 +175,7 @@ public class AccessFilter implements Filter {
                     log.debug("Added anonymous authentication {} to cache", authentication);
                 }
             } else {
-                log.debug("Using cached anonymous authentication");
+                log.debug("Using caches authentication");
             }
             useAuthentication(request, response, chain, authentication, securityContext);
         } else {

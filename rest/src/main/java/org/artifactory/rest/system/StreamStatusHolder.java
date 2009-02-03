@@ -100,7 +100,7 @@ public class StreamStatusHolder extends MultiStatusHolder {
             try {
                 PrintStream os = getResponseStream();
                 os.println("" + statusCode + " : " + statusMsg);
-                if ((throwable != null) && isVerbose()) {
+                if (throwable != null) {
                     throwable.printStackTrace(os);
                 }
                 os.flush();

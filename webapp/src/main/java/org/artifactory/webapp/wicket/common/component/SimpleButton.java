@@ -16,8 +16,6 @@
  */
 package org.artifactory.webapp.wicket.common.component;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxFallbackButton;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupException;
@@ -25,7 +23,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.parser.XmlTag;
 import org.apache.wicket.model.Model;
-import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
+import org.artifactory.webapp.wicket.common.behavior.CssClass;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -42,6 +40,7 @@ public abstract class SimpleButton extends AjaxFallbackButton {
     protected SimpleButton(String id, Form form, String caption) {
         super(id, caption == null ? null : new Model(caption), form);
         setOutputMarkupId(true);
+        add(new CssClass("button"));
     }
 
     @Override
@@ -53,16 +52,7 @@ public abstract class SimpleButton extends AjaxFallbackButton {
         if ("a".equals(tag.getName())) {
             tag.put("href", "#");
         }
-        tag.put("class", getCssClass(tag));
         super.onComponentTag(tag);
-    }
-
-    protected String getCssClass(ComponentTag tag) {
-        String oldCssClass = StringUtils.defaultString(tag.getAttributes().getString("class"));
-        if (!isEnabled()) {
-            return oldCssClass + " button " + oldCssClass + "-disabled button-disabled";
-        }
-        return oldCssClass + " button";
     }
 
     @Override
@@ -80,12 +70,6 @@ public abstract class SimpleButton extends AjaxFallbackButton {
                         ". Component: " + toString());
             }
         }
-    }
-
-    @Override
-    protected void onError(AjaxRequestTarget target, Form form) {
-        super.onError(target, form);
-        FeedbackUtils.refreshFeedback(target);
     }
 
     private String getHtml() {

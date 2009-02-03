@@ -192,7 +192,7 @@ public abstract class BaseCommand implements Command {
         if (param.isNeedExtraParam()) {
             i++;
             if (i >= args.length) {
-                System.out.println("The " + paramType + " " + param + " needs a parameter: " +
+                System.out.println("The " + paramType + " " + param + " needs a parameter - " +
                         param.getParamDescription());
                 usage();
                 return -1;
@@ -202,7 +202,7 @@ public abstract class BaseCommand implements Command {
             if (param.getValue().startsWith(OptionInfo.OPTION_PREFIX)) {
                 // Unset on error
                 param.setValue(null);
-                System.out.println("The " + paramType + " " + param + " needs a parameter: " +
+                System.out.println("The " + paramType + " " + param.getName() + " needs a parameter - " +
                         param.getParamDescription());
                 usage();
                 return -1;
@@ -227,6 +227,7 @@ public abstract class BaseCommand implements Command {
         String versionName = null;
         if (CliOption.version.isSet()) {
             versionName = CliOption.version.getValue();
+        } else if (CliOption.basedir.isSet()) {
         } else {
             log.info("Finding version...");
             // First look for artifactory.properties in the data folder (works since 1.3.0-rc1)

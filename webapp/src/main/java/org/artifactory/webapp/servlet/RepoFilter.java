@@ -25,7 +25,7 @@ import org.artifactory.api.request.ArtifactoryResponse;
 import org.artifactory.api.request.DownloadService;
 import org.artifactory.api.request.UploadService;
 import org.artifactory.api.webdav.WebdavService;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +54,9 @@ public class RepoFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String nonUIPathPrefixes = filterConfig.getInitParameter("nonUIPathPrefixes");
         String uiPathPrefixes = filterConfig.getInitParameter("UIPathPrefixes");
-        List<String> nonUiPrefixes = PathUtils.delimitedListToStringList(nonUIPathPrefixes, ",");
+        List<String> nonUiPrefixes = PathUtils.delimitedListToStringList(nonUIPathPrefixes, ",", "\r\n\f\t ");
         RequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
-        List<String> uiPrefixes = PathUtils.delimitedListToStringList(uiPathPrefixes, ",");
+        List<String> uiPrefixes = PathUtils.delimitedListToStringList(uiPathPrefixes, ",", "\r\n\f\t ");
         uiPrefixes.add(RequestUtils.WEBAPP_URL_PATH_PREFIX);
         RequestUtils.setUiPathPrefixes(uiPrefixes);
     }
@@ -142,16 +142,7 @@ public class RepoFilter implements Filter {
                 }
             }
         } else if (!response.isCommitted()) {
-            // Webdav request not on repository, return 405
-            if (RequestUtils.isWebdavRequest(request)) {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                if (log.isDebugEnabled()) {
-                    log.debug("Received Webdav Request on " + servletPath + " which is not a repository!\n" +
-                            "Returning " + HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                }
-            } else {
-                chain.doFilter(request, response);
-            }
+            chain.doFilter(request, response);
         }
         if (log.isDebugEnabled()) {
             log.debug("Exiting request " + requestDebugString(request));

@@ -33,7 +33,6 @@ import org.artifactory.webapp.wicket.application.sitemap.ArtifactorySiteMapBuild
 import org.artifactory.webapp.wicket.application.sitemap.MenuNode;
 import org.artifactory.webapp.wicket.application.sitemap.SiteMap;
 import org.artifactory.webapp.wicket.application.sitemap.SiteMapBuilder;
-import org.artifactory.webapp.wicket.page.base.BasePage;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.artifactory.webapp.wicket.page.error.AccessDeniedPage;
 import org.artifactory.webapp.wicket.page.error.InternalErrorPage;
@@ -69,6 +68,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
     @Override
     protected void init() {
         super.init();
+
         setup();
         buildSiteMap();
         mountPages();
@@ -89,11 +89,9 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
         getApplicationSettings().setAccessDeniedPage(AccessDeniedPage.class);
         getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 
-        getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
         getMarkupSettings().setCompressWhitespace(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setStripWicketTags(true);
-        getMarkupSettings().setStripXmlDeclarationFromOutput(false);
     }
 
     private void setupListeners() {
@@ -175,7 +173,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication {
     }
 
     @Override
-    public Class<? extends BasePage> getHomePage() {
+    public Class getHomePage() {
         return HomePage.class;
     }
 

@@ -30,7 +30,7 @@ import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.utils.AlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,8 @@ public class JcrAclManager implements AclManager {
     private JcrService jcr;
 
     /**
-     * Cache holding one entry (key is ACLS_KEY) with all the ACLs. Access to this cache should be synchronized.
+     * Cache holding one entry (key is ACLS_KEY) with all the ACLs. Access to this cache should be
+     * synchronized.
      */
     private Ehcache aclsCache;
 
@@ -114,7 +115,7 @@ public class JcrAclManager implements AclManager {
      *
      * @param objectIdentity the user or group this ACL apply to
      * @return the new ACL created
-     * @throws org.artifactory.util.AlreadyExistsException
+     * @throws org.artifactory.utils.AlreadyExistsException
      *
      */
     public Acl createAcl(PermissionTarget objectIdentity) throws AlreadyExistsException {

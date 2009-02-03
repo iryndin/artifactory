@@ -16,13 +16,14 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.version.VersionInfoService;
 import static org.artifactory.common.ConstantsValue.artifactoryVersion;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
+import org.artifactory.webapp.wicket.application.ArtifactoryWebSession;
 import org.artifactory.webapp.wicket.common.ajax.NoAjaxIndicatorDecorator;
 import org.artifactory.webapp.wicket.common.component.SimplePageLink;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
-import org.artifactory.webapp.wicket.page.base.EditProfileLink;
-import org.artifactory.webapp.wicket.page.base.LoginLink;
-import org.artifactory.webapp.wicket.page.base.LogoutLink;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.BrowseRepoPage;
+import org.artifactory.webapp.wicket.page.security.login.LoginPage;
+import org.artifactory.webapp.wicket.page.security.login.LogoutPage;
+import org.artifactory.webapp.wicket.page.security.profile.ProfilePage;
 import org.artifactory.webapp.wicket.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,9 +82,27 @@ public class WelcomeBorder extends TitledBorder {
     private void addCurrentUserInfo() {
         add(new SimplePageLink("browseLink", "browse", BrowseRepoPage.class));
 
-        add(new LoginLink("loginLink", "log in"));
-        add(new LogoutLink("logoutLink", "log out"));
-        add(new EditProfileLink("profileLink"));
+        SimplePageLink loginLink = new SimplePageLink("loginLink", "log in", LoginPage.class);
+        add(loginLink);
+
+        SimplePageLink logoutLink = new SimplePageLink("logoutLink", "log out", LogoutPage.class);
+        add(logoutLink);
+
+        // update profile link
+        SimplePageLink profileLink = new SimplePageLink(
+                "profileLink", authorizationService.currentUsername(), ProfilePage.class) {
+            @Override
+            public boolean isEnabled() {
+                return authorizationService.isUpdatableProfile();
+            }
+        };
+        add(profileLink);
+
+        if (ArtifactoryWebSession.get().isSignedIn() && !authorizationService.isAnonymous()) {
+            loginLink.setVisible(false);
+        } else {
+            logoutLink.setVisible(false);
+        }
     }
 
     private void addVersionInfo() {
@@ -94,12 +113,11 @@ public class WelcomeBorder extends TitledBorder {
         latestLabel.setOutputMarkupId(true);
         CentralConfigDescriptor configDescriptor = centralConfigService.getDescriptor();
         if (!configDescriptor.isOfflineMode()) {
-            // try to get the latest version from the cache with a non-blocking call
-            final Map<String, String> headersMap = WebUtils.getHeadersMap();
-            String latestVersion = versionInfoService.getLatestVersion(headersMap, true);
+            // first try to get the latest version from the cache (we don't want to block)
+            String latestVersion = versionInfoService.getLatestVersionFromCache(true);
             if (VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
-                // send ajax refresh in 5 second and update the latest version with the result
-                latestLabel.add(new AbstractAjaxTimerBehavior(Duration.seconds(5)) {
+                // send ajax refresh in 1 second and update the latest version with the result
+                latestLabel.add(new AbstractAjaxTimerBehavior(Duration.seconds(1)) {
                     @Override
                     protected IAjaxCallDecorator getAjaxCallDecorator() {
                         return new NoAjaxIndicatorDecorator();
@@ -108,7 +126,8 @@ public class WelcomeBorder extends TitledBorder {
                     @Override
                     protected void onTimer(AjaxRequestTarget target) {
                         stop(); // try only once
-                        String latestVersion = versionInfoService.getLatestVersionFromCache(true);
+                        Map<String, String> headersMap = WebUtils.getHeadersMap();
+                        String latestVersion = versionInfoService.getLatestVersion(headersMap, true);
                         if (!VersionInfoService.SERVICE_UNAVAILABLE.equals(latestVersion)) {
                             latestLabel.setModelObject(buildLatestversionString(latestVersion));
                             target.addComponent(latestLabel);

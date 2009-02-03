@@ -75,10 +75,6 @@ public class FolderInfo extends ItemInfo {
         return additionalInfo.getLastUpdated();
     }
 
-    public void setLastUpdated(long lastUpdated) {
-        additionalInfo.setLastUpdated(lastUpdated);
-    }
-
     FolderAdditionaInfo getAdditionalInfo() {
         return additionalInfo;
     }

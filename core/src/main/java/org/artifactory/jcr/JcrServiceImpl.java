@@ -50,7 +50,6 @@ import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.md.MetadataAware;
 import org.artifactory.jcr.md.MetadataService;
-import org.artifactory.jcr.trash.Trashman;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.index.IndexerJob;
 import org.artifactory.repo.service.InternalRepositoryService;
@@ -61,8 +60,8 @@ import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.tx.SessionResource;
-import org.artifactory.util.ExceptionUtils;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.ExceptionUtils;
+import org.artifactory.utils.PathUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +95,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Spring based session factory for tx jcr sessions
@@ -158,16 +156,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         JcrSession session;
         try {
             session = (JcrSession) SessionFactoryUtils.doGetSession(sessionFactory, true);
-        } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException(e);
-        }
-        return session;
-    }
-
-    public JcrSession getUnmanagedSession() {
-        JcrSession session;
-        try {
-            session = (JcrSession) sessionFactory.getSession();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
         }
@@ -240,7 +228,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
      * @param settings
      * @param status
      */
-    public RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings, StatusHolder status) {
+    public RepoPath importFolder(LocalRepo repo, RepoPath jcrFolder, ImportSettings settings,
+            StatusHolder status) {
         JcrFolder folder = repo.getLockedJcrFolder(jcrFolder, true);
         folder.importFrom(settings, status);
         return folder.getRepoPath();
@@ -275,7 +264,12 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         if (!session.itemExists(absPath)) {
             return false;
         }
-
+        Node node = (Node) session.getItem(absPath);
+        try {
+            node.remove();
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException("Failed to remove node.", e);
+        }
         //TODO: [by yl] This event should really be emmitted from the fsitem itself, but is done here for tx propagation
         fsItem.getLocalRepo().onDelete(fsItem);
         return true;
@@ -301,24 +295,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             throw new RepositoryRuntimeException("Failed to get node's children names.", e);
         }
         return names;
-    }
-
-    public void trash(List<JcrFsItem> items) {
-        try {
-            String tempFolderName = UUID.randomUUID().toString();
-            String trashFolderPath = JcrPath.get().getTrashJcrRootPath() + "/" + tempFolderName;
-            getOrCreateUnstructuredNode(trashFolderPath);
-            JcrSession session = getManagedSession();
-            //Move items to the trash folder
-            for (JcrFsItem item : items) {
-                String path = item.getPath();
-                session.move(path, trashFolderPath + "/" + item.getName());
-            }
-            Trashman trashman = session.getOrCreateResource(Trashman.class);
-            trashman.addTrashedFolder(tempFolderName);
-        } catch (Exception e) {
-            log.error("Could not move items to trash.", e);
-        }
     }
 
     /**
@@ -388,10 +364,10 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         return file;
     }
 
-    public Node getOrCreateUnstructuredNode(String absPath) {
+    public Node getOrCreateUnstructuredNode(String name) {
         JcrSession session = getManagedSession();
         Node root = session.getRootNode();
-        return getOrCreateUnstructuredNode(root, absPath);
+        return getOrCreateUnstructuredNode(root, name);
     }
 
     public Node getOrCreateUnstructuredNode(Node parent, String name) {
@@ -424,6 +400,11 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     /**
      * Import xml with characters entity resolving
+     *
+     * @param xmlNode
+     * @param in
+     * @throws javax.jcr.RepositoryException
+     * @throws java.io.IOException
      */
     public void importXml(Node xmlNode, InputStream in) throws RepositoryException, IOException {
         if (!xmlNode.isNew()) {
@@ -464,16 +445,23 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     @SuppressWarnings({"unchecked"})
     public void commitWorkingCopy(long sleepBetweenFiles, TaskCallback callback) {
-        File workingCopyDir = ArtifactoryHome.getWorkingCopyDir();
         try {
             taskService.pauseTasks(IndexerJob.class, false);
+            File workingCopyDir = ArtifactoryHome.getWorkingCopyDir();
             Collection<File> files = FileUtils.listFiles(workingCopyDir,
                     FileFilterUtils.trueFileFilter(),
                     FileFilterUtils.trueFileFilter());
             if (files.size() == 0) {
+                //Remove any left over folders and return
+                try {
+                    FileUtils.cleanDirectory(workingCopyDir);
+                } catch (IOException e) {
+                    log.warn("Could not clean up the working copy directory: " + e.getMessage());
+                }
                 return;
+            } else {
+                log.info("Committing working copy ({} files)...", files.size());
             }
-            log.info("Committing working copy ({} files)...", files.size());
             int count = 0;
             for (File file : files) {
                 boolean stopped = taskService.blockIfPausedAndShouldBreak();
@@ -504,7 +492,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             }
             log.info("Working copy commit done (" + count + " files).");
         } finally {
-            org.artifactory.util.FileUtils.cleanupEmptyDirectories(workingCopyDir);
             //Resume
             taskService.resumeTasks(IndexerJob.class);
         }

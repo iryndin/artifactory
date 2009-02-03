@@ -19,8 +19,6 @@ package org.artifactory.cli.main;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.artifactory.cli.command.HelpCommand;
 import org.artifactory.cli.common.Command;
-import org.artifactory.cli.common.RemoteCommandException;
-import org.artifactory.cli.common.SecurePrompt;
 import org.artifactory.cli.common.UrlBasedCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,7 @@ public class ArtifactoryCli {
             try {
                 commandDefinition = CommandDefinition.get(commandName);
             } catch (Exception e) {
-                System.err.println("Command " + commandName + " is unknown.");
+                System.err.println("Command " + commandName + " does not exists!");
                 (new HelpCommand()).usage();
                 if (DO_SYSTEM_EXIT) {
                     System.exit(ERROR_STATUS);
@@ -63,22 +61,12 @@ public class ArtifactoryCli {
                     return;
                 }
                 if (command instanceof UrlBasedCommand) {
-                    if (!CliOption.username.isSet()) {
+                    if (!CliOption.username.isSet() || !CliOption.password.isSet()) {
                         System.err.println("The command you have executed makes use of Artfiactory's REST API.\n" +
-                                "Please specify a username.");
+                                "You -MUST- specifiy a username and password.");
                         if (DO_SYSTEM_EXIT) {
                             System.exit(ERROR_STATUS);
                         }
-                    }
-                    if (!CliOption.password.isSet()) {
-                        char[] passwordChars;
-                        try {
-                            passwordChars = SecurePrompt.readConsoleSecure("Please enter you password: ");
-                        } catch (Exception e) {
-                            throw new RemoteCommandException(e.getMessage());
-                        }
-                        String password = String.valueOf(passwordChars);
-                        CliOption.password.setValue(password);
                     }
                 }
                 long start = System.currentTimeMillis();
@@ -89,8 +77,6 @@ public class ArtifactoryCli {
                 if (DO_SYSTEM_EXIT) {
                     System.exit(returnCode);
                 }
-            } catch (RemoteCommandException rme) {
-                log.error(rme.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
                 if (DO_SYSTEM_EXIT) {
@@ -98,7 +84,7 @@ public class ArtifactoryCli {
                 }
             }
         } else {
-            System.err.println("No command has been specified. Please specify a command.");
+            System.err.println("No command was specified. Please specify a command");
             (new HelpCommand()).usage();
             if (DO_SYSTEM_EXIT) {
                 System.exit(ERROR_STATUS);

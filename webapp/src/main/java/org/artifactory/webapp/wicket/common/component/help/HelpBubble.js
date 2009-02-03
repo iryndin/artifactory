@@ -1,9 +1,8 @@
-dojo.provide('artifactory.HelpBubble');
+dojo.require("dijit.Tooltip");
+dojo.provide("artifactory.HelpBubble");
+dojo.require("dojo.parser");
+dojo.declare("artifactory.HelpBubble", [dijit.Tooltip], {
 
-dojo.require('dijit.Tooltip');
-dojo.require('dojo.parser');
-
-dojo.declare('artifactory.HelpBubble', dijit.Tooltip, {
     postCreate: function() {
         //alert(dijit._masterTT)
         if (!dijit._masterTT) {
@@ -11,8 +10,7 @@ dojo.declare('artifactory.HelpBubble', dijit.Tooltip, {
         }
         dijit._masterTT.connect(dijit._masterTT.domNode, 'onmouseover', this.ttPersist);
         dijit._masterTT.connect(dijit._masterTT.domNode, 'onmouseout', this.ttFade);
-
-        this.inherited('postCreate', arguments);
+        this.inherited("postCreate", arguments);
     },
 
     ttPersist: function (e) {
@@ -23,4 +21,9 @@ dojo.declare('artifactory.HelpBubble', dijit.Tooltip, {
     ttFade: function (e) {
         this.fadeOut.play();
     }
-});
+
+}
+        );
+
+dojo.require("artifactory.HelpBubble");
+

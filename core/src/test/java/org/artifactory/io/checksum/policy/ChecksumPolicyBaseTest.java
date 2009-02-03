@@ -2,7 +2,6 @@ package org.artifactory.io.checksum.policy;
 
 import org.artifactory.api.fs.ChecksumInfo;
 import org.artifactory.api.mime.ChecksumType;
-import org.artifactory.descriptor.repo.ChecksumPolicyType;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -12,7 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 /**
- * Base class for the checksum policies tests. Mainly to enforce certain tests for all the policies.
+ * Base class for the checksum policies tests.
+ * Mainly to enforce certain tests for all the policies.
  *
  * @author Yossi Shaul
  */
@@ -26,7 +26,7 @@ public abstract class ChecksumPolicyBaseTest {
 
     abstract ChecksumPolicy getPolicy();
 
-    abstract void checksumsMatch();
+    abstract void checksumsMatches();
 
     abstract void noOriginalChecksum();
 
@@ -64,11 +64,6 @@ public abstract class ChecksumPolicyBaseTest {
             @Override
             String getChecksum(ChecksumInfo checksumInfo) {
                 return ((ChecksumPolicyBase) getPolicy()).getChecksum(checksumInfo);
-            }
-
-            @Override
-            ChecksumPolicyType getChecksumPolicyType() {
-                return null;
             }
         };
         Assert.assertTrue(delegatingBasePolicy.verify(new HashSet<ChecksumInfo>(

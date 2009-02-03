@@ -18,13 +18,18 @@ package org.artifactory.resource;
 
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.nexus.index.context.IndexingContext;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class ArtifactResource extends FileResource {
-    public static final String NEXUS_MAVEN_REPOSITORY_INDEX_ZIP = IndexingContext.INDEX_FILE + ".zip";
+    private static final Logger log = LoggerFactory.getLogger(ArtifactResource.class);
+
+    public static final String NEXUS_MAVEN_REPOSITORY_INDEX_ZIP =
+            IndexingContext.INDEX_FILE + ".zip";
     public static final String NEXUS_MAVEN_REPOSITORY_INDEX_PROPERTIES =
             IndexingContext.INDEX_FILE + ".properties";
 
@@ -35,7 +40,7 @@ public class ArtifactResource extends FileResource {
         String name = getInfo().getName();
         if (!NEXUS_MAVEN_REPOSITORY_INDEX_ZIP.equals(name) &&
                 !NEXUS_MAVEN_REPOSITORY_INDEX_PROPERTIES.equals(name)) {
-            mavenInfo = MavenArtifactInfo.fromRepoPath(getRepoPath());
+            mavenInfo = MavenArtifactInfo.buildFromPath(getRepoPath());
         } else {
             mavenInfo = new MavenArtifactInfo();
         }

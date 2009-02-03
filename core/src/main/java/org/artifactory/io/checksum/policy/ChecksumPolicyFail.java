@@ -1,7 +1,6 @@
 package org.artifactory.io.checksum.policy;
 
 import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.descriptor.repo.ChecksumPolicyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ public class ChecksumPolicyFail extends ChecksumPolicyBase {
             log.warn("Rejecting original {} null checksum", checksumInfo.getType());
             return false;
         }
-        if (!checksumInfo.checksumsMatch()) {
+        if (!checksumInfo.checksumsMatches()) {
             log.warn("Checksum mismatch: {}", checksumInfo);
             return false;
         }
@@ -30,10 +29,5 @@ public class ChecksumPolicyFail extends ChecksumPolicyBase {
     @Override
     String getChecksum(ChecksumInfo checksumInfo) {
         return checksumInfo.getActual();
-    }
-
-    @Override
-    ChecksumPolicyType getChecksumPolicyType() {
-        return ChecksumPolicyType.FAIL;
     }
 }

@@ -17,7 +17,7 @@
 package org.artifactory.api.fs;
 
 import org.artifactory.api.common.Info;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * @author freds

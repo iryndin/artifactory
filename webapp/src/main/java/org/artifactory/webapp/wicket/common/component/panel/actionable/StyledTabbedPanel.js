@@ -23,17 +23,8 @@ var StyledTabbedPanel = {
             moveLeft.style.visibility = (tabsContainer.scrollTop - height >= 0) ? 'visible' : 'hidden';
             moveRight.style.visibility = (tabsContainer.scrollTop + height <= tabsContainer.scrollHeight - height) ? 'visible' : 'hidden';
 
-            fixScrollAlignment();
-        }
-
-        function fixScrollAlignment() {
             if (tabsContainer.scrollTop > tabsContainer.scrollHeight - height) {
                 tabsContainer.scrollTop -= height;
-            }
-
-            var mod = tabsContainer.scrollTop % height;
-            if (mod != 0) {
-                tabsContainer.scrollTop -= mod;
             }
         }
 
@@ -54,30 +45,29 @@ var StyledTabbedPanel = {
             DomUtils.addStyle(tabs[tabs.length - 1], 'last-tab');
         }
 
-        function onResize() {
-            initLinks();
-            initTabs();
-        }
-
         moveLeft.onclick = function() {
             return move(-1);
-        };
-
+        }
         moveRight.onclick = function() {
             return move(1);
-        };
+        }
 
-        tabsContainer.resizeTabs = onResize;
 
-        // connect to events
         dojo.disconnect(StyledTabbedPanel.onresize);
-        StyledTabbedPanel.onresize = dojo.connect(window, 'onresize', onResize);
-
-        dojo.addOnLoad(function() {
-            setTimeout(onResize, 100);
+        StyledTabbedPanel.onresize = dojo.connect(window, 'onresize', function() {
+            initLinks();
+            initTabs();
         });
 
         // init
-        onResize();
+        initLinks();
+        initTabs();
+
+        dojo.addOnLoad(function() {
+            setTimeout(function() {
+                initLinks();
+                initTabs();
+            }, 100);
+        });
     }
 };

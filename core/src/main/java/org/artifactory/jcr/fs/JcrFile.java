@@ -33,7 +33,6 @@ import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.stat.StatsInfo;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.io.checksum.Checksum;
@@ -50,7 +49,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -214,7 +213,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 FileUtils.forceMkdir(targetWcFile.getParentFile());
                 if (settings.isUseSymLinks()) {
                     //Create a symlink in the wokring copy
-                    org.artifactory.util.FileUtils.createSymLink(file, targetWcFile);
+                    org.artifactory.utils.FileUtils.createSymLink(file, targetWcFile);
                 } else {
                     //Copy the file to the working copy, overriding any previously existing file
                     FileUtils.copyFile(file, targetWcFile);
@@ -295,7 +294,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         }
     }
 
-    @Override
     public void setLastUpdated(long lastUpdated) {
         if (!isMutable()) {
             throw new LockingException("Cannot modified immutable " + this);
@@ -345,7 +343,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                         return null;
                     }
                 } else {
-                    QuartzTask task = new QuartzTask(ExtractWorkingCopyFileJob.class, "ExtractWorkingCopyFile");
+                    QuartzTask task = new QuartzTask(ExtractWorkingCopyFileJob.class,
+                            "ExtractWorkingCopyFile");
                     StatusHolder status = new StatusHolder();
                     task.addAttribute(StatusHolder.class.getName(), status);
                     task.addAttribute(WORKING_COPY_ABS_PATH, getAbsolutePath());
@@ -452,7 +451,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
     private void deleteWcFile(File workingCopyFile) {
         boolean deleted = workingCopyFile.delete();
         if (!deleted) {
-            log.warn("Failed to delete imported file: " + workingCopyFile.getAbsolutePath() +
+            log.warn("Failed to delete imported file: " +
+                    workingCopyFile.getAbsolutePath() +
                     ". File might have been removed externally.");
         }
     }
@@ -482,51 +482,22 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             return false;
         }
         JcrFile jcrFile = (JcrFile) item;
-        return this.uncommitted == jcrFile.uncommitted && super.isIdentical(item);
+        return this.uncommitted == jcrFile.uncommitted &&
+                super.isIdentical(item);
     }
 
     @Override
     public int zap(long expiredLastUpdated) {
-        if (MavenNaming.isNonUniqueSnapshot(getPath())) {
-            // zap has a meaning only on non unique snapshot files
-            setLastUpdated(expiredLastUpdated);
-            return 1;
-        } else {
-            return 0;
-        }
+        setLastUpdated(expiredLastUpdated);
+        return 1;
     }
 
-    public void exportTo(ExportSettings settings, StatusHolder status) {
+    public void exportNoMetadata(File targetFile) {
+        export(targetFile, null, false, false);
+    }
+
+    void export(File targetFile, StatusHolder status, boolean includeMetadata, boolean m2Compatible) {
         status.setDebug("Exporting file '" + getRelativePath() + "'...", log);
-        File targetFile = new File(settings.getBaseDir(), getRelativePath());
-        try {
-            exportFileContent(targetFile, status, settings);
-
-            if (settings.isIncludeMetadata()) {
-                exportMetadata(targetFile, status, settings.isIncremental());
-            }
-            if (settings.isM2Compatible()) {
-                writeChecksums(targetFile.getParentFile(), getInfo().getChecksumsInfo(), targetFile.getName(),
-                        getLastModified());
-            }
-        } catch (FileNotFoundException e) {
-            status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
-        } catch (Exception e) {
-            status.setError("Failed to export " + getAbsolutePath() + " to file '" +
-                    targetFile.getPath() + "'.", e, log);
-        }
-    }
-
-    private void exportFileContent(File targetFile, StatusHolder status, ExportSettings settings)
-            throws IOException {
-        if (settings.isIncremental() && targetFile.exists()) {
-            // incremental export - only export the file if it is newer
-            if (getInfo().getLastModified() <= targetFile.lastModified()) {
-                log.debug("Skipping not modified file {}", getPath());
-                return;
-            }
-        }
-        log.debug("Exporting file content to {}", targetFile.getAbsolutePath());
         OutputStream os = null;
         InputStream is = null;
         try {
@@ -534,17 +505,33 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             is = getStream();
             if (is == null) {
                 // File was deleted
-                throw new FileNotFoundException();
+                status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
+                return;
             }
-
             IOUtils.copy(is, os);
-            if (getLastModified() >= 0) {
-                targetFile.setLastModified(getLastModified());
-            }
-        } finally {
             IOUtils.closeQuietly(os);
+            long modified = getLastModified();
+            if (modified >= 0) {
+                targetFile.setLastModified(modified);
+            }
+            if (includeMetadata) {
+                exportMetadata(targetFile, modified, status);
+            }
+            if (m2Compatible) {
+                writeChecksums(targetFile.getParentFile(), getInfo().getChecksumsInfo(), targetFile.getName());
+            }
+        } catch (Exception e) {
+            status.setError("Failed to export " + getAbsolutePath() + " to file '" +
+                    targetFile.getPath() + "'.", e, log);
+        } finally {
             IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
         }
+    }
+
+    public void exportTo(ExportSettings settings, StatusHolder status) {
+        File targetFile = new File(settings.getBaseDir(), getRelativePath());
+        export(targetFile, status, settings.isIncludeMetadata(), settings.isM2Compatible());
     }
 
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
@@ -646,6 +633,9 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     /**
      * Do not import metadata,index folders and checksums
+     *
+     * @param name
+     * @return
      */
     public static boolean isStorable(String name) {
         return !name.endsWith(ItemInfo.METADATA_FOLDER) && !NamingUtils.isChecksum(name);
@@ -677,16 +667,12 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             in.mark(Integer.MAX_VALUE);
             //If it is a pom, verify that its groupId/artifactId/version match the dest path
             if (MavenNaming.isPom(name)) {
-                try {
-                    MavenUtils.validatePomTargetPath(in, getRelativePath());
-                } catch (BadPomException e) {
-                    throw new RepositoryException("Could not store POM file.", e);
-                }
+                MavenUtils.validatePomTargetPath(in, getRelativePath());
                 in.reset();
             }
+            //Reset the stream
             Node xmlNode = getJcrService().getOrCreateUnstructuredNode(node, NODE_ARTIFACTORY_XML);
             getJcrService().importXml(xmlNode, in);
-            //Reset the stream
             in.reset();
         }
         try {
@@ -729,7 +715,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         // apply the checksum policy
         LocalRepo repository = getLocalRepo();
         ChecksumPolicy policy = repository.getChecksumPolicy();
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
+        Set<ChecksumInfo> checksumInfos = info.getInernalXmlInfo().getChecksums();
         boolean passes = policy.verify(checksumInfos);
         if (!passes) {
             throw new ChecksumPolicyException(policy, checksumInfos, name);
@@ -765,7 +751,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 checksumInfo.setActual(calculatedChecksum);
                 // original checksum migh be null
                 String originalChecksum = checksumInfo.getOriginal();
-                if (!checksumInfo.checksumsMatch()) {
+                if (!checksumInfo.checksumsMatches()) {
                     log.debug("Checksum mismatch {}. original: {} calculated: {}",
                             new String[]{checksumType.toString(), originalChecksum, calculatedChecksum});
                 }

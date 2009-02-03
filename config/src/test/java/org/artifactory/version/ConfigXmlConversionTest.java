@@ -10,8 +10,6 @@ import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.descriptor.security.EncryptionPolicy;
-import org.artifactory.descriptor.security.PasswordSettings;
 import org.artifactory.descriptor.security.ldap.LdapSetting;
 import org.artifactory.descriptor.security.ldap.SearchPattern;
 import org.slf4j.Logger;
@@ -169,19 +167,6 @@ public class ConfigXmlConversionTest {
         assertFalse(search.isSearchSubTree());
         assertEquals(search.getManagerDn(), "koko");
         assertEquals(search.getManagerPassword(), "loko");
-    }
-
-    @Test
-    public void convert134Install() throws Exception {
-        CentralConfigDescriptor cc =
-                transform("/config/install/config.1.3.4.xml", ArtifactoryConfigVersion.OneThreeFour);
-
-        // PasswordSettings were added in 1.3.5 - no converter was needed as this is not
-        // a required tag and we can use the default
-        PasswordSettings passwordSettings = cc.getSecurity().getPasswordSettings();
-        assertNotNull(passwordSettings, "Passwords settings should not be null");
-        assertEquals(passwordSettings.getEncryptionPolicy(), EncryptionPolicy.SUPPORTED,
-                "If the default was changed, a converter needs to do it!");
     }
 
     @Test

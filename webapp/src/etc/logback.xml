@@ -55,9 +55,6 @@
     <logger name="org.apache.wicket">
         <level value="WARN"/>
     </logger>
-    <logger name="org.apache.wicket.markup.repeater.AbstractRepeater">
-        <level value="ERROR"/>
-    </logger>
     <logger name="org.springframework">
         <level value="WARN"/>
     </logger>

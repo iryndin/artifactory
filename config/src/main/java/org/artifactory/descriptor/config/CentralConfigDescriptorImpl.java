@@ -31,14 +31,13 @@ import org.artifactory.descriptor.repo.jaxb.LocalRepositoriesMapAdapter;
 import org.artifactory.descriptor.repo.jaxb.RemoteRepositoriesMapAdapter;
 import org.artifactory.descriptor.repo.jaxb.VirtualRepositoriesMapAdapter;
 import org.artifactory.descriptor.security.SecurityDescriptor;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.utils.AlreadyExistsException;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -72,6 +71,7 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     @XmlElementWrapper(name = "proxies")
     @XmlElement(name = "proxy", required = false)
     private List<ProxyDescriptor> proxies = new ArrayList<ProxyDescriptor>();
+
     @XmlElement(defaultValue = DEFAULT_DATE_FORMAT)
     private String dateFormat = DEFAULT_DATE_FORMAT;
 
@@ -84,24 +84,15 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     private IndexerDescriptor indexer;
 
-    @XmlTransient
-    private ProxyDescriptor defaultProxy;
-
-    /**
-     * A name uniquely identifying this artifactory server instance
-     */
+    /** A name uniquely identifying this artifactory server instance  */
     @XmlElement
     private String serverName;
 
-    /**
-     * if this flag is set all the remote repos will work in offline mode
-     */
+    /** if this flag is set all the remote repos will work in offline mode */
     @XmlElement(defaultValue = "false", required = false)
     private boolean offlineMode;
 
-    /**
-     * security might not be present in the xml but we always want to create it
-     */
+    /** security might not be present in the xml but we always want to create it */
     @XmlElement
     private SecurityDescriptor security = new SecurityDescriptor();
 
@@ -109,7 +100,8 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return localRepositoriesMap;
     }
 
-    public void setLocalRepositoriesMap(OrderedMap<String, LocalRepoDescriptor> localRepositoriesMap) {
+    public void setLocalRepositoriesMap(
+            OrderedMap<String, LocalRepoDescriptor> localRepositoriesMap) {
         this.localRepositoriesMap = localRepositoriesMap;
     }
 
@@ -117,16 +109,17 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return remoteRepositoriesMap;
     }
 
-    public void setRemoteRepositoriesMap(OrderedMap<String, RemoteRepoDescriptor> remoteRepositoriesMap) {
+    public void setRemoteRepositoriesMap(
+            OrderedMap<String, RemoteRepoDescriptor> remoteRepositoriesMap) {
         this.remoteRepositoriesMap = remoteRepositoriesMap;
-        updateDefaultProxy();
     }
 
     public OrderedMap<String, VirtualRepoDescriptor> getVirtualRepositoriesMap() {
         return virtualRepositoriesMap;
     }
 
-    public void setVirtualRepositoriesMap(OrderedMap<String, VirtualRepoDescriptor> virtualRepositoriesMap) {
+    public void setVirtualRepositoriesMap(
+            OrderedMap<String, VirtualRepoDescriptor> virtualRepositoriesMap) {
         this.virtualRepositoriesMap = virtualRepositoriesMap;
     }
 
@@ -136,10 +129,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     public void setProxies(List<ProxyDescriptor> proxies) {
         this.proxies = proxies;
-    }
-
-    public ProxyDescriptor getDefaultProxy() {
-        return defaultProxy;
     }
 
     public String getDateFormat() {
@@ -195,7 +184,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         RepoDescriptor removedRepo = localRepositoriesMap.remove(repoKey);
         if (removedRepo == null) {
             removedRepo = remoteRepositoriesMap.remove(repoKey);
-            updateDefaultProxy();
         }
         if (removedRepo == null) {
             removedRepo = virtualRepositoriesMap.remove(repoKey);
@@ -227,11 +215,15 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     }
 
     public boolean isKeyAvailable(String key) {
-        return !(VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY.equals(key) ||
+        return !(
                 isRepositoryExists(key) ||
-                isProxyExists(key) ||
-                isBackupExists(key) ||
-                isLdapExists(key));
+                        isProxyExists(key) ||
+                        isBackupExists(key) ||
+                        isLdapExists(key));
+    }
+
+    private boolean isLdapExists(String key) {
+        return security != null && security.isLdapExists(key);
     }
 
     public boolean isRepositoryExists(String repoKey) {
@@ -251,13 +243,18 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         String repoKey = remoteRepoDescriptor.getKey();
         failIfRepoKeyAlreadyExists(repoKey);
         remoteRepositoriesMap.put(repoKey, remoteRepoDescriptor);
-        updateDefaultProxy();
     }
 
     public void addVirtualRepository(VirtualRepoDescriptor virtualRepoDescriptor) {
         String repoKey = virtualRepoDescriptor.getKey();
         failIfRepoKeyAlreadyExists(repoKey);
         virtualRepositoriesMap.put(repoKey, virtualRepoDescriptor);
+    }
+
+    private void failIfRepoKeyAlreadyExists(String repoKey) {
+        if (isRepositoryExists(repoKey)) {
+            throw new AlreadyExistsException("Repository " + repoKey + " already exists");
+        }
     }
 
     public boolean isProxyExists(String proxyKey) {
@@ -287,9 +284,17 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
                 ((HttpRepoDescriptor) remoteRepo).setProxy(null);
             }
         }
-        updateDefaultProxy();
 
         return proxyDescriptor;
+    }
+
+    private ProxyDescriptor getProxy(String proxyKey) {
+        for (ProxyDescriptor proxy : proxies) {
+            if (proxy.getKey().equals(proxyKey)) {
+                return proxy;
+            }
+        }
+        return null;
     }
 
     public boolean isBackupExists(String backupKey) {
@@ -316,23 +321,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return backupDescriptor;
     }
 
-    public void setOfflineMode(boolean offlineMode) {
-        this.offlineMode = offlineMode;
-    }
-
-    public boolean isOfflineMode() {
-        return offlineMode;
-    }
-
-    private ProxyDescriptor getProxy(String proxyKey) {
-        for (ProxyDescriptor proxy : proxies) {
-            if (proxy.getKey().equals(proxyKey)) {
-                return proxy;
-            }
-        }
-        return null;
-    }
-
     private BackupDescriptor getBackup(String backupKey) {
         for (BackupDescriptor backup : backups) {
             if (backup.getKey().equals(backupKey)) {
@@ -342,29 +330,11 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return null;
     }
 
-    private boolean isLdapExists(String key) {
-        return security != null && security.isLdapExists(key);
+    public void setOfflineMode(boolean offlineMode) {
+        this.offlineMode = offlineMode;
     }
 
-    private void failIfRepoKeyAlreadyExists(String repoKey) {
-        if (isRepositoryExists(repoKey)) {
-            throw new AlreadyExistsException("Repository " + repoKey + " already exists");
-        }
-    }
-
-    /**
-     * Sets the default proxy to be the first proxy used by a remote repo
-     */
-    private void updateDefaultProxy() {
-        for (RemoteRepoDescriptor remoteRepoDescriptor : remoteRepositoriesMap.values()) {
-            if (remoteRepoDescriptor instanceof HttpRepoDescriptor) {
-                ProxyDescriptor proxyDescriptor = ((HttpRepoDescriptor) remoteRepoDescriptor).getProxy();
-                if (proxyDescriptor != null) {
-                    defaultProxy = proxyDescriptor;
-                    return;
-                }
-            }
-        }
-        defaultProxy = null;
+    public boolean isOfflineMode() {
+        return offlineMode;
     }
 }

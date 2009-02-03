@@ -47,15 +47,16 @@ public class ModalHandler extends ModalWindow implements TitleModel {
 
     @Override
     public void setContent(Component component) {
+        String cookieName = getId() + "-" + component.getClass().getSimpleName();
+        setCookieName(cookieName);
+
         // set content first
         super.setContent(component);
 
-        // get BaseModalPanel settings
         if (component instanceof BaseModalPanel) {
             BaseModalPanel modalPanel = (BaseModalPanel) component;
 
             setTitle(modalPanel.getTitle());
-            setCookieName(modalPanel.getCookieName());
 
             setMinimalWidth(modalPanel.getMinimalWidth());
             setMinimalHeight(modalPanel.getMinimalHeight());

@@ -36,8 +36,8 @@ import org.artifactory.repo.LocalRepo;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.PathMatcher;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathMatcher;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,13 +220,6 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     @Override
     public int zap(long expiredLastUpdated) {
         int result = 0;
-        if (MavenNaming.isSnapshot(getPath())) {
-            // zap has a meaning only on snapshots
-            setLastUpdated(expiredLastUpdated);
-            result = 1;
-        }
-
-        // zap children
         List<JcrFsItem> children = getJcrService().getChildren(this, true);
         for (JcrFsItem child : children) {
             result += child.zap(expiredLastUpdated);
@@ -235,35 +228,18 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     }
 
     @Override
-    public void setLastUpdated(long lastUpdated) {
-        if (!isMutable()) {
-            throw new LockingException("Cannot modified immutable " + this);
-        }
-        getInfo().setLastUpdated(lastUpdated);
-        saveModifiedInfo();
-    }
-
-    @Override
     public boolean mkdirs() {
         //Split the path and create each subdir in turn
         String path = getRelativePath();
         int from = 1;
-        boolean result = false;
+        boolean result;
         int to;
         do {
             to = path.indexOf("/", from);
             String subPath = to > 0 ? path.substring(0, to) : path;
-            if (result || !getLocalRepo().itemExists(subPath)) {
-                RepoPath subRepoPath = new RepoPath(getRepoKey(), subPath);
-                JcrFolder subFolder = getLocalRepo().getLockedJcrFolder(subRepoPath, true);
-                result = subFolder.mkdir();
-                if (!result) {
-                    // Not created release write lock early
-                    LockingHelper.removeLockEntry(subFolder.getRepoPath());
-                }
-            } else {
-                result = false;
-            }
+            RepoPath subRepoPath = new RepoPath(getRepoKey(), subPath);
+            JcrFolder subFolder = getLocalRepo().getLockedJcrFolder(subRepoPath, true);
+            result = subFolder.mkdir();
             from = to + 1;
         } while (to > 0);
         return result;
@@ -288,117 +264,60 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                 status.setError("Export was stopped on " + this, log);
                 return;
             }
-            File targetDir = new File(settings.getBaseDir(), getRelativePath());
+            String relPath = getRelativePath();
+            File targetDir = new File(settings.getBaseDir(), relPath);
             status.setDebug("Exporting directory '" + getAbsolutePath() + "'...", log);
             FileUtils.forceMkdir(targetDir);
-
             FolderInfo folderInfo = getInfo();
-            long modified = folderInfo.getLastModified();
-            if (modified <= 0) {
-                modified = folderInfo.getCreated();
+            long lm = folderInfo.getLastModified();
+            if (lm <= 0) {
+                lm = folderInfo.getCreated();
             }
-            targetDir.setLastModified(modified);
-
+            targetDir.setLastModified(lm);
             if (settings.isIncludeMetadata()) {
-                exportMetadata(targetDir, status, settings.isIncremental());
+                exportMetadata(targetDir, lm, status);
             }
-
             if (settings.isM2Compatible()) {
-                exportMavenFiles(status, targetDir);
+                String metadataName = MavenNaming.MAVEN_METADATA_NAME;
+                if (hasXmlMetdata(metadataName)) {
+                    File metadataFile = new File(targetDir, metadataName);
+                    writeFile(lm, status, metadataFile, metadataName);
+                    MetadataInfo metadataInfo = getMdService().getMetadataInfo(this, metadataName);
+                    writeChecksums(targetDir, metadataInfo.getChecksumsInfo(), metadataName);
+                }
             }
-
             List<JcrFsItem> list = getItems();
-            if (exportChildren(settings, status, taskService, list)) {
-                // task should stop
-                return;
+            for (JcrFsItem item : list) {
+                //Check if we need to break/pause
+                stop = taskService.blockIfPausedAndShouldBreak();
+                if (stop) {
+                    status.setError("Export was stopped on " + this, log);
+                    return;
+                }
+                String itemName = item.getName();
+                if (item.isDirectory()) {
+                    if (isStorable(itemName)) {
+                        JcrFolder jcrFolder = ((JcrFolder) item);
+                        jcrFolder.exportTo(settings, status);
+                    }
+                } else {
+                    //Do not export checksums
+                    if (JcrFile.isStorable(itemName)) {
+                        JcrFile jcrFile = ((JcrFile) item);
+                        getJcrService().exportFile(jcrFile, settings, status);
+                    }
+                }
             }
-
-            if (settings.isIncremental()) {
-                cleanupIncrementalBackupDirectory(targetDir, list);
-            }
-
         } catch (Exception e) {
             File exportDir = settings.getBaseDir();
             String msg;
             if (exportDir != null) {
-                msg = "Failed to export '" + getAbsolutePath() + "' to dir '" + exportDir.getPath() + "'.";
+                msg = "Failed to export '" + getAbsolutePath() + "' to dir '" +
+                        exportDir.getPath() + "'.";
             } else {
                 msg = "Failed to export '" + getAbsolutePath() + "' to a null dir";
             }
             status.setError(msg, e, log);
-        }
-    }
-
-    private boolean exportChildren(ExportSettings settings, StatusHolder status, TaskService taskService,
-            List<JcrFsItem> list) {
-        boolean shouldStop = false;
-        for (JcrFsItem item : list) {
-            //Check if we need to break/pause
-            shouldStop = taskService.blockIfPausedAndShouldBreak();
-            if (shouldStop) {
-                status.setError("Export was stopped on " + this, log);
-                return true;
-            }
-            String itemName = item.getName();
-            if (item.isDirectory()) {
-                if (isStorable(itemName)) {
-                    JcrFolder jcrFolder = ((JcrFolder) item);
-                    jcrFolder.exportTo(settings, status);
-                }
-            } else {
-                //Do not export checksums
-                if (JcrFile.isStorable(itemName)) {
-                    JcrFile jcrFile = ((JcrFile) item);
-                    getJcrService().exportFile(jcrFile, settings, status);
-                }
-            }
-        }
-        return shouldStop;  // will be false here
-    }
-
-    private void exportMavenFiles(StatusHolder status, File targetDir) {
-        String metadataName = MavenNaming.MAVEN_METADATA_NAME;
-        if (hasXmlMetdata(metadataName)) {
-            MetadataInfo metadataInfo = getMdService().getMetadataInfo(this, metadataName);
-            long lastModified = metadataInfo.getLastModified();
-            File metadataFile = new File(targetDir, metadataName);
-            writeFile(status, metadataFile, metadataName, lastModified);
-            // create checksum files for the maven-metadata.xml
-            writeChecksums(targetDir, metadataInfo.getChecksumsInfo(), metadataName, lastModified);
-        }
-    }
-
-    // remove files and folders from the incremental backup dir if they were deleted from the repository
-    private void cleanupIncrementalBackupDirectory(File targetDir, List<JcrFsItem> currentJcrFolderItems) {
-        File[] childFiles = targetDir.listFiles();
-        for (File childFile : childFiles) {
-            String jcrFileName = childFile.getName();
-            if (jcrFileName.endsWith(ItemInfo.METADATA_FOLDER)) {
-                continue;  // skip metadata folders, will delete them with the actual file/folder if needed
-            }
-            boolean stillExists = false;
-            for (JcrFsItem jcrFsItem : currentJcrFolderItems) {
-                if (jcrFileName.equals(jcrFsItem.getName())) {
-                    stillExists = true;
-                    break;
-                }
-            }
-            if (!stillExists) {
-                log.debug("Deleting {} from the incremental backup dir since it was " +
-                        "deleted from the repository", childFile.getAbsolutePath());
-                boolean deleted = FileUtils.deleteQuietly(childFile);
-                if (!deleted) {
-                    log.warn("Failed to delete {}", childFile.getAbsolutePath());
-                }
-                // now delete the metadata folder of the file/folder is it exists
-                File metadataFolder = getMetadataContainerFolder(childFile);
-                if (metadataFolder.exists()) {
-                    deleted = FileUtils.deleteQuietly(metadataFolder);
-                    if (!deleted) {
-                        log.warn("Failed to delete metadata folder {}", metadataFolder.getAbsolutePath());
-                    }
-                }
-            }
         }
     }
 
@@ -451,12 +370,10 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                 }
                 String fileName = dirEntry.getName();
                 String repoKey = getRepoKey();
-                if (dirEntry.isDirectory()) {
-                    if (isStorable(fileName)) {
-                        status.setDebug(
-                                "Importing folder '" + dirEntry.getAbsolutePath() + "' into '" + repoKey + "'...", log);
-                        foldersToScan.add(new RepoPath(getRepoPath(), fileName));
-                    }
+                if (dirEntry.isDirectory() && isStorable(fileName)) {
+                    status.setDebug(
+                            "Importing folder '" + dirEntry.getAbsolutePath() + "' into '" + repoKey + "'...", log);
+                    foldersToScan.add(new RepoPath(getRepoPath(), fileName));
                 } else if (JcrFile.isStorable(fileName)) {
                     final String msg = "Importing file '" + dirEntry.getAbsolutePath() + "' into '" + repoKey + "'";
                     status.setDebug(msg + "...", log);
@@ -479,7 +396,8 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                 }
             }
         } catch (Exception e) {
-            String msg = "Failed to import folder children from '" + folder.getAbsolutePath() + "'.";
+            String msg =
+                    "Failed to import folder children from '" + folder.getAbsolutePath() + "'.";
             status.setError(msg, e, log);
         }
     }

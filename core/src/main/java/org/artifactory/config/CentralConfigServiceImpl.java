@@ -21,8 +21,6 @@ import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.config.VersionInfo;
-import org.artifactory.api.security.AuthorizationException;
-import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.config.jaxb.JaxbHelper;
@@ -66,9 +64,6 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     private String serverName;
 
     @Autowired
-    private AuthorizationService authService;
-
-    @Autowired
     private InternalRepositoryService repositoryService;
 
     @Autowired
@@ -105,7 +100,8 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         //Get the server name
         serverName = descriptor.getServerName();
         if (serverName == null) {
-            log.info("No custom server id in configuration. Using hostname instead.");
+            log.warn("Could not determine server instance id from configuration." +
+                    " Using hostname instead.");
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
@@ -155,10 +151,6 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     public void saveEditedDescriptorAndReload() {
         if (editedDescriptor == null) {
             throw new IllegalStateException("Mutable editing descriptor is null");
-        }
-
-        if (!authService.isAdmin()) {
-            throw new AuthorizationException("Only admin user can save the artifactory config file");
         }
 
         // before doing anything do a sanity check that the edited descriptor is valid
@@ -222,7 +214,7 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
                 if (!newConfigFile.equals(originalConfigFile)) {
                     // Switch the originial config file with the new one
                     status.setStatus("Switching config files...", log);
-                    org.artifactory.util.FileUtils.switchFiles(originalConfigFile, tempConfFile);
+                    org.artifactory.utils.FileUtils.switchFiles(originalConfigFile, tempConfFile);
                 }
             }
         } else if (settings.isFailIfEmpty()) {

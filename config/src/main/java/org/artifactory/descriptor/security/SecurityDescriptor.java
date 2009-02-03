@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author Yossi Shaul
  */
-@XmlType(name = "SecurityType", propOrder = {"anonAccessEnabled", "passwordSettings", "ldapSettings"})
+@XmlType(name = "SecurityType", propOrder = {"anonAccessEnabled", "ldapSettings"})
 public class SecurityDescriptor implements Descriptor {
 
     @XmlElement(defaultValue = "true")
@@ -37,9 +37,6 @@ public class SecurityDescriptor implements Descriptor {
     @XmlElementWrapper(name = "ldapSettings")
     @XmlElement(name = "ldapSetting", required = false)
     private List<LdapSetting> ldapSettings;
-
-    @XmlElement(name = "passwordSettings", required = false)
-    private PasswordSettings passwordSettings = new PasswordSettings();
 
 
     public boolean isAnonAccessEnabled() {
@@ -94,9 +91,5 @@ public class SecurityDescriptor implements Descriptor {
 
     public boolean isLdapExists(String key) {
         return getLdap(key) != null;
-    }
-
-    public PasswordSettings getPasswordSettings() {
-        return passwordSettings;
     }
 }

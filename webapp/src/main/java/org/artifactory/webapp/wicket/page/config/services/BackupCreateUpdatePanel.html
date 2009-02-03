@@ -1,7 +1,7 @@
 <wicket:extend>
     <form wicket:id="form" class="backup-form">
 
-        <div wicket:id="simple" class="cron-fields">
+        <div wicket:id="simple">
             <div class="field float-right">
                 <div class="value">
                     <input wicket:id="enabled" type="checkbox"/>
@@ -34,7 +34,8 @@
                 <label>Next Backup Time</label>
 
                 <div class="value">
-                    <span wicket:id="cronNextDatePanel"/>
+                    <span wicket:id="cronExpNextRun"/>
+                    <a wicket:id="calculate"></a>
                 </div>
             </div>
 
@@ -46,7 +47,6 @@
 
                 <div class="value">
                     <input wicket:id="dir" type="text" class="text"/>
-                    <span wicket:id="browseButton"></span>
                 </div>
             </div>
         </div>
@@ -60,20 +60,14 @@
                 </div>
             </div>
 
-            <div class="field">
-                <div class="value">
-
-                </div>
-            </div>
-
             <div class="field field-sep">
-                <div class="value">
-
+                <label>
                     <wicket:message key="retentionPeriodHours"/>
-
-                    <input wicket:id="retentionPeriodHours" type="text" class="text"/>
-                    <input wicket:id="createIncrementalBackup" type="checkbox"/>
                     <span wicket:id="retentionPeriodHours.help"/>
+                </label>
+
+                <div class="value">
+                    <input wicket:id="retentionPeriodHours" type="text" class="text"/>
                 </div>
             </div>
 

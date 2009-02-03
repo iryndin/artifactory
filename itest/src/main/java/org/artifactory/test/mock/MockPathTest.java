@@ -22,7 +22,8 @@ public class MockPathTest {
      */
     public int contentLength;
     /**
-     * Can be a remote HTTP content need to be copied in local /tmp folder and save the FIle obj in a local Map
+     * Can be a remote HTTP content need to be copied in local /tmp folder and save the FIle obj in
+     * a local Map
      */
     public String urlContent;
     /**
@@ -41,10 +42,6 @@ public class MockPathTest {
      * A milli-second representation of the last-modified date
      */
     public long lastModified;
-    /**
-     * The amount of seconds to wait between each piece of the data that is sent
-     */
-    public int timePerDataPiece = 3;
 
     /**
      * Simple constructor for path
@@ -53,20 +50,6 @@ public class MockPathTest {
      */
     public MockPathTest(String path) {
         this.path = path;
-    }
-
-    /**
-     * Constructor for simulating a pipe break
-     */
-    public MockPathTest(String path, String contentType, String urlContent, int timeToTakeForHeader,
-            int timeToTakeForData, int breakPipeAfter, int timePerDataPiece) {
-        this.path = path;
-        this.contentType = contentType;
-        this.urlContent = urlContent;
-        this.timeToTakeForHeader = timeToTakeForHeader;
-        this.timeToTakeForData = timeToTakeForData;
-        this.breakPipeAfter = breakPipeAfter;
-        this.timePerDataPiece = timePerDataPiece;
     }
 
     /**

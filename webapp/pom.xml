@@ -29,7 +29,7 @@
     <parent>
         <artifactId>artifactory-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>2.0.0</version>
+        <version>1.3.0-rc-1</version>
     </parent>
 
     <build>
@@ -79,7 +79,7 @@
     <dependencies>
         <dependency>
             <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-common</artifactId>
+            <artifactId>artifactory-api</artifactId>
             <version>${parent.version}</version>
         </dependency>
 
@@ -123,6 +123,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
         </dependency>
@@ -154,19 +159,24 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
         </dependency>
 
+        <!-- compile scope to allow programmatic configuration -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <!-- (overriden) compile scope to allow programmatic configuration -->
             <scope>compile</scope>
         </dependency>
 

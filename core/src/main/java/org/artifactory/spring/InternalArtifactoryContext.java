@@ -18,7 +18,6 @@ package org.artifactory.spring;
 
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.security.SecurityService;
-import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.schedule.TaskService;
 import org.springframework.context.ApplicationContext;
@@ -28,8 +27,6 @@ import org.springframework.context.ApplicationContext;
  */
 public interface InternalArtifactoryContext extends ArtifactoryContext, ReloadableBean, ApplicationContext {
     JcrService getJcrService();
-
-    JcrRepoService getJcrRepoService();
 
     SecurityService getSecurityService();
 

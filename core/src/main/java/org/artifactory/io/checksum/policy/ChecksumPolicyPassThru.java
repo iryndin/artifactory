@@ -1,7 +1,6 @@
 package org.artifactory.io.checksum.policy;
 
 import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.descriptor.repo.ChecksumPolicyType;
 
 /**
  * This checksum policy always passes verification and return the original value when asked.
@@ -18,10 +17,5 @@ public class ChecksumPolicyPassThru extends ChecksumPolicyBase {
     @Override
     String getChecksum(ChecksumInfo checksumInfo) {
         return checksumInfo.getOriginal();
-    }
-
-    @Override
-    ChecksumPolicyType getChecksumPolicyType() {
-        return ChecksumPolicyType.PASS_THRU;
     }
 }

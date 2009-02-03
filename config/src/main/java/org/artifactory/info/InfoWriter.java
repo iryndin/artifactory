@@ -49,7 +49,7 @@ public enum InfoWriter {
      * @throws InstantiationException
      */
     public static void writeInfo() throws IllegalAccessException, InstantiationException {
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder();
             //Create main title
             sb.append(String.format("%n%n SYSTEM INFORMATION DUMP%n"));
@@ -71,7 +71,7 @@ public enum InfoWriter {
 
             //Dump the info to the log
             String wholeDump = sb.toString();
-            log.info(wholeDump);
+            log.debug(wholeDump);
         }
     }
 }

@@ -53,7 +53,6 @@ public abstract class BasicExportJcrFile extends ExportJcrFsItem {
                 //Don't bother exporting checksum files - will be recalculated during import
                 return;
             }
-            status.setDebug("Exporting JCR File " + getNode().getPath(), log);
             File targetFile = new File(exportDir, getRelativePath());
             /*
             //No need for special export - will be taken care of by the import process

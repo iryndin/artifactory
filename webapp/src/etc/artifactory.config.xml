@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<config xmlns="http://artifactory.jfrog.org/xsd/1.3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.5 http://www.jfrog.org/xsd/artifactory-v1_3_5.xsd">
+<config xmlns="http://artifactory.jfrog.org/xsd/1.3.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.4 http://www.jfrog.org/xsd/artifactory-v1_3_4.xsd">
 
     <security>
         <anonAccessEnabled>true</anonAccessEnabled>

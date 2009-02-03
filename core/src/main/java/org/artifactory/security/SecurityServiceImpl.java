@@ -45,7 +45,7 @@ import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.update.utils.BackupUtils;
-import org.artifactory.util.PathMatcher;
+import org.artifactory.utils.PathMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -142,11 +142,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
     public boolean isAnonAccessEnabled() {
         SecurityDescriptor security = centralConfig.getDescriptor().getSecurity();
         return security != null && security.isAnonAccessEnabled();
-    }
-
-    public boolean isAuthenticated() {
-        Authentication authentication = getAuthentication();
-        return isAuthenticated(authentication);
     }
 
     public boolean isAdmin() {
@@ -673,16 +668,6 @@ public class SecurityServiceImpl implements SecurityServiceInternal {
             String password) {
         LdapConnectionTester ldapTester = new LdapConnectionTester();
         return ldapTester.testLdapConnection(ldapSetting, username, password);
-    }
-
-    public boolean isPasswordEncryptionEnabled() {
-        CentralConfigDescriptor cc = centralConfig.getDescriptor();
-        return cc.getSecurity().getPasswordSettings().isEncryptionEnabled();
-    }
-
-    public boolean userPasswordMatches(String passwordToCheck) {
-        Authentication authentication = getAuthentication();
-        return authentication != null && passwordToCheck.equals(authentication.getCredentials());
     }
 
     private static boolean isAdmin(Authentication authentication) {

@@ -9,9 +9,8 @@ ModalHandler.onPopup = function() {
         var event = e ? e : window.event;
 
         var EscKey = 27;
-        var modal = Wicket.Window.current;
-        if (event.keyCode == EscKey && modal && !modal.closing) {
-            modal.close();
+        if (event.keyCode == EscKey) {
+            Wicket.Window.close();
         }
     };
 };
@@ -127,26 +126,4 @@ function(idWindow, idClassElement, idCaption, idContent, idTop, idTopLeft, idTop
     "</div>";
 
     return s;
-};
-
-Wicket.Window.prototype.superClose = Wicket.Window.prototype.close;
-Wicket.Window.prototype.checkedClose = function() {
-    if (this.closing) {
-        this.closing = false;
-        this.superClose(true);
-    }
-};
-
-Wicket.Window.prototype.close = function() {
-    var me = this;
-    me.checkedClose();
-    me.closing = true;
-
-    dojo.fadeOut({
-        node: me.window,
-        duration: 220,
-        onEnd: function() {
-            me.checkedClose();
-        }
-    }).play();
 };

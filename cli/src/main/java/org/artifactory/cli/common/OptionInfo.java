@@ -26,7 +26,8 @@ public class OptionInfo extends BaseParam implements Option {
         this(name, description, false, null);
     }
 
-    public OptionInfo(String name, String description, boolean needExtraParam, String paramDescription) {
+    public OptionInfo(String name, String description, boolean needExtraParam,
+            String paramDescription) {
         super(name, description, needExtraParam, paramDescription);
     }
 

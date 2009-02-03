@@ -34,17 +34,16 @@ public class HelpCommand extends BaseCommand {
      */
     public void usage() {
         if (CommandDefinition.help.getCommandParam().isSet()) {
-            CommandDefinition commandDefinition;
-            String param = CommandDefinition.help.getCommandParam().getValue();
+            CommandDefinition commandDefinition = null;
             try {
-                commandDefinition = CommandDefinition.get(param);
-            } catch (IllegalArgumentException iae) {
-                System.out.println("Error: could not find command parameter: " + param);
-                printGeneralUsage();
-                return;
+                commandDefinition =
+                        CommandDefinition.get(CommandDefinition.help.getCommandParam().getValue());
             }
-            //Avoid getting help on help
-            if (CommandDefinition.help.equals(commandDefinition)) {
+            catch (IllegalArgumentException iae) {
+                System.out.println("Error: could not find command parameter");
+                printGeneralUsage();
+            }
+            if (commandDefinition.equals(CommandDefinition.help)) {
                 CommandDefinition.help.getCommandParam().setValue(null);
             }
             commandDefinition.getCommand().usage();

@@ -1,37 +1,37 @@
 package org.artifactory.webapp.wicket.page.config.services;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.webapp.wicket.WicketProperty;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.CreateUpdatePanel;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
-import org.artifactory.webapp.wicket.common.component.dnd.select.sorted.SortedDragDropSelection;
-import org.artifactory.webapp.wicket.common.component.file.browser.button.FileBrowserButton;
+import org.artifactory.webapp.wicket.common.component.dnd.select.DragDropSelection;
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
 import org.artifactory.webapp.wicket.common.component.file.path.PathMask;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalCloseLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
-import org.artifactory.webapp.wicket.page.config.services.cron.CronNextDatePanel;
+import org.artifactory.webapp.wicket.utils.CronUtils;
 import org.artifactory.webapp.wicket.utils.validation.CronExpValidator;
 import org.artifactory.webapp.wicket.utils.validation.JcrNameValidator;
 import org.artifactory.webapp.wicket.utils.validation.UniqueXmlIdValidator;
 import org.artifactory.webapp.wicket.utils.validation.XsdNCNameValidator;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,16 +47,9 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
     @SpringBean
     private RepositoryService repositoryService;
 
-    @WicketProperty
-    private boolean createIncrementalBackup;
-
-    final TextField retentionHoursField;
-
-    final StyledCheckbox createIncremental;
-
     public BackupCreateUpdatePanel(CreateUpdateAction action, BackupDescriptor backupDescriptor) {
+
         super(action, backupDescriptor);
-        createIncrementalBackup = backupDescriptor.isIncremental();
         setWidth(550);
 
         add(form);
@@ -82,56 +75,40 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
         simpleFields.add(cronExpField);
         simpleFields.add(new SchemaHelpBubble("cronExp.help"));
 
-        simpleFields.add(new CronNextDatePanel("cronNextDatePanel", cronExpField));
-
-        PropertyModel pathModel = new PropertyModel(backupDescriptor, "dir");
-
-        final PathAutoCompleteTextField backupDir = new PathAutoCompleteTextField("dir", pathModel);
+        PathAutoCompleteTextField backupDir = new PathAutoCompleteTextField("dir");
         backupDir.setMask(PathMask.FOLDERS);
         simpleFields.add(backupDir);
         simpleFields.add(new SchemaHelpBubble("dir.help"));
 
-
-        FileBrowserButton browserButton = new FileBrowserButton("browseButton", pathModel) {
-            @Override
-            protected void onOkClicked(AjaxRequestTarget target) {
-                super.onOkClicked(target);
-                target.addComponent(backupDir);
-            }
-        };
-        simpleFields.add(browserButton);
-
         TitledBorder advancedFields = new TitledBorder("advanced");
         form.add(advancedFields);
 
-        retentionHoursField = new TextField("retentionPeriodHours", Integer.class);
-        retentionHoursField.setOutputMarkupId(true);
-        advancedFields.add(retentionHoursField);
+        advancedFields.add(new TextField("retentionPeriodHours", Integer.class));
         advancedFields.add(new SchemaHelpBubble("retentionPeriodHours.help"));
 
         advancedFields.add(new StyledCheckbox("createArchive"));
         advancedFields.add(new SchemaHelpBubble("createArchive.help"));
 
-        createIncremental = new StyledCheckbox("createIncrementalBackup",
-                new PropertyModel(this, "createIncrementalBackup"));
-        createIncremental.setOutputMarkupId(true);
-        createIncremental.setRequired(false);
-        createIncremental.add(new AjaxFormComponentUpdatingBehavior("onclick") {
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                retentionHoursField.setEnabled(!createIncremental.isChecked());
-                if (createIncremental.isChecked()) {
-                    retentionHoursField.setModelObject("0");
-                }
-                target.addComponent(retentionHoursField);
-            }
-        });
-        advancedFields.add(createIncremental);
-
         List<RepoDescriptor> repos = repositoryService.getLocalAndRemoteRepoDescriptors();
-        advancedFields.add(new SortedDragDropSelection<RepoDescriptor>("excludedRepositories", repos));
+        advancedFields.add(new DragDropSelection<RepoDescriptor>("excludedRepositories", repos));
         advancedFields.add(new SchemaHelpBubble("excludedRepositories.help"));
 
+        String nextRun = getNextRunTime(cronExpField.getValue());
+        final Label nextRunLabel = new Label("cronExpNextRun", nextRun);
+        nextRunLabel.setOutputMarkupId(true);
+        simpleFields.add(nextRunLabel);
+
+        //TODO: [by yl] Scheduled run calculation button can easily be made a component
+        SimpleButton calculateButton = new SimpleButton("calculate", form, "Refresh") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                nextRunLabel.setModel(new Model(getNextRunTime(cronExpField.getValue())));
+                target.addComponent(nextRunLabel);
+            }
+        };
+        calculateButton.setDefaultFormProcessing(false);
+
+        simpleFields.add(calculateButton);
         // Cancel button
         form.add(new ModalCloseLink("cancel"));
 
@@ -158,11 +135,30 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
                 ((BackupsListPage) getPage()).refresh(target);
                 close(target);
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
+    }
+
+    private String getNextRunTime(String cronExpression) {
+        if (StringUtils.isEmpty(cronExpression)) {
+            return "The cron expression is blank.";
+        }
+        if (CronUtils.isValid(cronExpression)) {
+            Date nextExecution = CronUtils.getNextExecution(cronExpression);
+            return formatDate(nextExecution);
+        }
+        return "The cron expression is invalid.";
+    }
+
+    private String formatDate(Date nextRunDate) {
+        return nextRunDate.toString();
     }
 
     protected MutableCentralConfigDescriptor getEditingDescriptor() {
         return centralConfigService.getDescriptorForEditing();
     }
-
 }

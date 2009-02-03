@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 public class ImportJob extends QuartzCommand {
     private static final Logger log = LoggerFactory.getLogger(ImportJob.class);
 
-    public static final String REPO_KEY = "repoKey";
-    public static final String DELETE_REPO = "deleteRepo";
+    public static final String REPO_KEY = "RepoKey";
+    public static final String DELETE_REPO = "DeleteRepo";
 
     @Override
     protected void onExecute(JobExecutionContext callbackContext) {
@@ -72,9 +72,9 @@ public class ImportJob extends QuartzCommand {
             }
         } catch (RuntimeException e) {
             if (status != null) {
-                status.setError("Error occured during import: " + e.getMessage(), e, log);
+                status.setError("Received Unhandled Exception", e, log);
             } else {
-                log.error("Error occured during import", e);
+                log.error("Received Unhandled Exception", e);
             }
         }
     }

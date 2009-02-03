@@ -22,7 +22,6 @@ import org.artifactory.webapp.wicket.common.behavior.DelegateEventBehavior;
 public class StyledCheckbox extends FormComponentPanel implements Titled {
     private CheckBox checkbox;
     private Component button;
-    private String title = null;
 
     public StyledCheckbox(String id) {
         super(id);
@@ -42,14 +41,6 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
             @Override
             public boolean isEnabled() {
                 return super.isEnabled() && StyledCheckbox.this.isEnabled();
-            }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                if (isEnabled()) {
-                    tag.put("onclick", "StyledCheckbox.update(this);");
-                }
             }
         };
         checkbox.setOutputMarkupId(true);
@@ -98,23 +89,17 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
     }
 
     public String getTitle() {
-        if (title == null) {
-            Object label = null;
-            if (getLabel() != null) {
-                label = getLabel().getObject();
-            }
+        Object label = null;
 
-            if (label == null) {
-                label = getLocalizer().getString(getId(), getParent(), getId());
-            }
-            title = label.toString();
+        if (getLabel() != null) {
+            label = getLabel().getObject();
         }
-        return title;
-    }
 
-    public StyledCheckbox setTitle(String title) {
-        this.title = title;
-        return this;
+        if (label == null) {
+            label = getLocalizer().getString(getId(), getParent(), getId());
+        }
+
+        return label.toString();
     }
 
     @Override
@@ -133,17 +118,11 @@ public class StyledCheckbox extends FormComponentPanel implements Titled {
             tag.put("for", checkbox.getMarkupId());
 
             if (!isEnabled()) {
-                if (isChecked()) {
-                    tag.put("class", "styled-checkbox styled-checkbox-disabled-checked");
-                } else {
-                    tag.put("class", "styled-checkbox styled-checkbox-disabled-unchecked");
-                }
+                tag.put("class", "styled-checkbox styled-checkbox-disabled");
+            } else if (isChecked()) {
+                tag.put("class", "styled-checkbox styled-checkbox-checked");
             } else {
-                if (isChecked()) {
-                    tag.put("class", "styled-checkbox styled-checkbox-checked");
-                } else {
-                    tag.put("class", "styled-checkbox styled-checkbox-unchecked");
-                }
+                tag.put("class", "styled-checkbox styled-checkbox-unchecked");
             }
 
             if (StyledCheckbox.this.isEnabled()) {

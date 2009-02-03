@@ -42,7 +42,7 @@ public interface RepoResource {
 
     long getSize();
 
-    long getCacheAge();
+    long getAge();
 
     long getLastModified();
 

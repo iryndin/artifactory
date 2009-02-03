@@ -45,7 +45,7 @@ public class SystemLogsViewPanel extends Panel {
      * Link object for downloading the system log file
      */
     private DownloadLink downloadLink =
-            new DownloadLink("systemLogsLink", systemLogFile);
+            new DownloadLink("systemLogsLink", systemLogFile, "artifactory.log");
 
     /**
      * Label to display the dash between the download path and link
@@ -288,7 +288,6 @@ public class SystemLogsViewPanel extends Panel {
             sb.append("File last modified: ").append(logLastModified).append(". ");
             sb.append("View last updated: ").append(viewLastUpdate).append(".");
             lastUpdateLabel.setModelObject(sb.toString());
-            downloadLink.setModel(new Model(systemLogFile));
         }
     }
 }

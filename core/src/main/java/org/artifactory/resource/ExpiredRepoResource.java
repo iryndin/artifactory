@@ -47,8 +47,8 @@ public class ExpiredRepoResource implements RepoResource {
         return wrappedResource.getSize();
     }
 
-    public long getCacheAge() {
-        return wrappedResource.getCacheAge();
+    public long getAge() {
+        return wrappedResource.getAge();
     }
 
     public long getLastModified() {

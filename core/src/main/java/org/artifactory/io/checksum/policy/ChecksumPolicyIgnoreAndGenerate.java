@@ -1,7 +1,6 @@
 package org.artifactory.io.checksum.policy;
 
 import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.descriptor.repo.ChecksumPolicyType;
 
 /**
  * This checksum policy ignores checksums errors.
@@ -20,10 +19,4 @@ public class ChecksumPolicyIgnoreAndGenerate extends ChecksumPolicyBase {
     String getChecksum(ChecksumInfo checksumInfo) {
         return checksumInfo.getActual();
     }
-
-    @Override
-    ChecksumPolicyType getChecksumPolicyType() {
-        return ChecksumPolicyType.IGNORE_AND_GEN;
-    }
-
 }

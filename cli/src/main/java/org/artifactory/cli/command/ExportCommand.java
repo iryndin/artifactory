@@ -5,10 +5,10 @@ import org.artifactory.cli.common.Command;
 import org.artifactory.cli.common.UrlBasedCommand;
 import org.artifactory.cli.main.CliOption;
 import org.artifactory.cli.main.CommandDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * The "Export" command class
@@ -16,22 +16,14 @@ import java.io.File;
  * @author Noam Tenne
  */
 public class ExportCommand extends UrlBasedCommand implements Command {
-    private final static Logger log = LoggerFactory.getLogger(ExportCommand.class);
 
     /**
      * Default constructor
      */
     public ExportCommand() {
-        super(
-                CommandDefinition.export,
-                CliOption.m2,
-                CliOption.noMetadata,
-                CliOption.verbose,
-                CliOption.failOnError,
-                CliOption.failIfEmpty,
-                CliOption.bypassFiltering,
-                CliOption.createArchive
-        );
+        super(CommandDefinition.export, CliOption.noMetadata, CliOption.createArchive,
+                CliOption.bypassFiltering, CliOption.time, CliOption.verbose, CliOption.failFast,
+                CliOption.failIfEmpty, CliOption.m2);
     }
 
     /**
@@ -55,10 +47,17 @@ public class ExportCommand extends UrlBasedCommand implements Command {
         if (CliOption.bypassFiltering.isSet()) {
             settings.setIgnoreRepositoryFilteringRulesOn(true);
         }
+        if (CliOption.time.isSet()) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+            Date time = new Date(simpleDateFormat.parse(CliOption.time.getValue()).getTime());
+            if (time != null) {
+                settings.setTime(time);
+            }
+        }
         if (CliOption.verbose.isSet()) {
             settings.setVerbose(true);
         }
-        if (CliOption.failOnError.isSet()) {
+        if (CliOption.failFast.isSet()) {
             settings.setFailFast(true);
         }
         if (CliOption.failIfEmpty.isSet()) {
@@ -67,8 +66,6 @@ public class ExportCommand extends UrlBasedCommand implements Command {
         if (CliOption.m2.isSet()) {
             settings.setM2Compatible(true);
         }
-
-        log.info("Sending export request to server path: {}", exportTo.getPath());
 
         // TODO: The repo list
         //settings.setReposToExport();

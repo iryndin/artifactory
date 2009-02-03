@@ -52,16 +52,14 @@ public interface RepositoryService extends ImportableExportable {
     List<LocalRepoDescriptor> getLocalRepoDescriptors();
 
     @Lock(transactional = true)
-    MavenArtifactInfo getArtifactInfo(File uploadedFile);
+    DeployableArtifact getDeployableArtifact(File uploadedFile);
 
     @Lock(transactional = true)
-    void deploy(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo, boolean forceDeployPom,
-                File uploadedFile) throws RepoAccessException;
-
-    void deployBundle(File bundle, RepoDescriptor targetRepo, StatusHolder status);
+    void deploy(RepoDescriptor targetRepo, DeployableArtifact deployableArtifact, boolean forceDeployPom,
+            File uploadedFile) throws RepoAccessException;
 
     @Lock(transactional = true)
-    boolean pomExists(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo);
+    boolean pomExists(RepoDescriptor targetRepo, DeployableArtifact deployableArtifact);
 
     List<VirtualRepoDescriptor> getVirtualRepoDescriptors();
 
@@ -103,36 +101,21 @@ public interface RepositoryService extends ImportableExportable {
     @Lock(transactional = true)
     <MD> MD getXmlMetdataObject(RepoPath repoPath, Class<MD> metadataClass);
 
-
-    /**
-     * Gets the metadata content.
-     *
-     * @param repoPath     A repo path (usually pointing to an JcrFsItem)
-     * @param metadataName The metadata name to look for
-     * @return String with the metadata content. Null if path not found or metadata name doesn't exist for this path.
-     */
     @Lock(transactional = true)
     String getXmlMetadata(RepoPath repoPath, String metadataName);
 
-    /**
-     * Checks if the repo path has the specified metadata node under it.
-     *
-     * @param repoPath     A repo path (usually pointing to an JcrFsItem)
-     * @param metadataName The metadata name to look for
-     * @return True if the fsitem for this repo path has the specified metadata. False if item not found of metadata
-     *         doesn't exist for this item.
-     */
     @Lock(transactional = true)
     boolean hasXmlMetdata(RepoPath repoPath, String metadataName);
 
-    @Lock(transactional = true)
+
+    @Lock(transactional = false)
     void undeploy(RepoPath repoPath);
 
     @Lock(transactional = true)
     void zap(RepoPath repoPath);
 
     @Lock(transactional = true)
-    org.artifactory.api.maven.MavenArtifactInfo getMavenArtifactInfo(ItemInfo itemInfo);
+    MavenArtifactInfo getMavenArtifactInfo(ItemInfo itemInfo);
 
     @Lock(transactional = true)
     List<FolderInfo> getWithEmptyChildren(FolderInfo folderInfo);
@@ -147,9 +130,9 @@ public interface RepositoryService extends ImportableExportable {
     @Lock(transactional = true)
     boolean hasChildren(RepoPath repoPath);
 
-
     @Lock(transactional = false)
     void exportRepo(String repoKey, ExportSettings settings, StatusHolder status);
+
 
     /**
      * Returns all the deployable units under a certain path.
@@ -166,14 +149,4 @@ public interface RepositoryService extends ImportableExportable {
      */
     ArtifactCount getArtifactCount();
 
-    /**
-     * Returns a list of local repo descriptors that the user is permitted to deploy on
-     *
-     * @return List<LocalRepoDescriptor> - List of deploy-permitted local repos
-     */
-    List<LocalRepoDescriptor> getDeployableRepoDescriptors();
-
-    boolean isRepoPathHandled(RepoPath repoPath);
-
-    boolean isRepoPathAccepted(RepoPath repoPath);
 }

@@ -17,12 +17,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.fs.DeployableUnit;
 import org.artifactory.api.maven.MavenUnitInfo;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.webapp.wicket.common.component.CheckboxColumn;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.modal.ModalHandler;
 import org.artifactory.webapp.wicket.common.component.modal.links.ModalCloseLink;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.table.SortableTable;
-import org.artifactory.webapp.wicket.common.component.table.columns.checkbox.SelectAllCheckboxColumn;
 import org.artifactory.webapp.wicket.utils.ListPropertySorter;
 
 import javax.swing.tree.DefaultTreeModel;
@@ -46,7 +46,7 @@ public class DeleteVersionsPanel extends Panel {
 
 
     public DeleteVersionsPanel(String id, List<DeployableUnit> deployableUnits,
-                               Component componentToRefresh) {
+            Component componentToRefresh) {
         super(id);
 
         Form form = new Form("form");
@@ -57,7 +57,13 @@ public class DeleteVersionsPanel extends Panel {
         dataProvider = new DeployableUnitsDataProvider(duGroupAndVersion);
 
         List<IColumn> columns = new ArrayList<IColumn>();
-        columns.add(new SelectAllCheckboxColumn<DeployableUnitModel>("", "selected", null));
+        columns.add(new CheckboxColumn<DeployableUnitModel>("", "selected", this) {
+            @Override
+            protected void doUpdate(DeployableUnitModel duModel, boolean checked, AjaxRequestTarget target) {
+                // nothing special
+            }
+        });
+
         columns.add(new PropertyColumn(new Model("Group Id"), "groupId", "groupId"));
         columns.add(new PropertyColumn(new Model("Version"), "version", "version"));
         columns.add(new PropertyColumn(new Model("Directories Count"), "count"));
@@ -107,7 +113,7 @@ public class DeleteVersionsPanel extends Panel {
                 for (DeployableUnit unit : selectedDeployableUnits) {
                     repoService.undeploy(unit.getRepoPath());
                 }
-                getPage().info("Selected versions deleted successfully");
+                getPage().info("Selected versions successfully deleted");
 
                 // colapse all tree nodes
                 if (componentToRefresh instanceof Tree) {
@@ -126,6 +132,11 @@ public class DeleteVersionsPanel extends Panel {
                 target.addComponent(componentToRefresh);
                 FeedbackUtils.refreshFeedback(target);
                 ModalHandler.closeCurrent(target);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
             }
         };
         return submit;

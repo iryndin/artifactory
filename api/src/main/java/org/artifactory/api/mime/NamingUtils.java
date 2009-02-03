@@ -17,7 +17,7 @@
 package org.artifactory.api.mime;
 
 import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.io.File;
 import java.util.Collection;
@@ -95,14 +95,9 @@ public class NamingUtils {
     /**
      * Return the name of the requested metadata. Should be called on a path after determining that it is indeed a
      * metadata path.
-     * <pre>
-     * getMetadataName("x/y/z/resourceName#file-info") = "file-info"
-     * getMetadataName("x/y/z/resourceName/maven-metadata.xml") = "maven-metadata.xmlo"
-     * </pre>
      *
-     * @param path A metadata path in the pattern of x/y/z/resourceName#metadataName or a path that ends with
-     *             maven-metadata.xml.
-     * @return The metadata name from the path. Null if not valid.
+     * @param path
+     * @return
      */
     public static String getMetadataName(String path) {
         //First check for the metadata pattern of x/y/z/resourceName#metadataName
@@ -129,6 +124,20 @@ public class NamingUtils {
     public static String getMetadataParentPath(String path) {
         String metadataName = getMetadataName(path);
         return path.substring(0, path.lastIndexOf(metadataName) - 1);
+    }
+
+    public static boolean isNonUniqueSnapshot(String path) {
+        int idx = path.indexOf("-SNAPSHOT.");
+        return idx > 0 && idx > path.lastIndexOf('/');
+    }
+
+    public static boolean isSnapshot(String path) {
+        boolean result = isNonUniqueSnapshot(path);
+        if (!result) {
+            int versionIdx = path.indexOf("SNAPSHOT/");
+            result = versionIdx > 0 && path.lastIndexOf('/') == versionIdx + 8;
+        }
+        return result;
     }
 
     public static boolean isSnapshotMetadata(String path) {

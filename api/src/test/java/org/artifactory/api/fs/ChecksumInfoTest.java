@@ -14,27 +14,27 @@ public class ChecksumInfoTest {
 
     public void matchSameOriginalAndActual() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, "123", "123");
-        Assert.assertTrue(info.checksumsMatch(), "Checksums should match");
+        Assert.assertTrue(info.checksumsMatches(), "Checksums should match");
     }
 
     public void matchDifferentOriginalAndActual() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, "123", "321");
-        Assert.assertFalse(info.checksumsMatch(), "Checksums shouldn't match");
+        Assert.assertFalse(info.checksumsMatches(), "Checksums shouldn't match");
     }
 
     public void matchNullOriginal() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, null, "321");
-        Assert.assertFalse(info.checksumsMatch(), "Checksums shouldn't if one is null");
+        Assert.assertFalse(info.checksumsMatches(), "Checksums shouldn't if one is null");
     }
 
     public void matchNullActual() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, "123", null);
-        Assert.assertFalse(info.checksumsMatch(), "Checksums shouldn't if one is null");
+        Assert.assertFalse(info.checksumsMatches(), "Checksums shouldn't if one is null");
     }
 
     public void matchNullOriginalAndActual() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, null, null);
-        Assert.assertFalse(info.checksumsMatch(), "Checksums shouldn't if one is null");
+        Assert.assertFalse(info.checksumsMatches(), "Checksums shouldn't if one is null");
     }
 
     public void trustedOriginalShouldReturnActual() {
@@ -46,7 +46,7 @@ public class ChecksumInfoTest {
 
     public void matchIfOriginalIsTruetedAndActualIsSet() {
         ChecksumInfo info = new ChecksumInfo(ChecksumType.sha1, ChecksumInfo.TRUSTED_FILE_MARKER, "123");
-        Assert.assertTrue(info.checksumsMatch(), "Checksums should match if " +
+        Assert.assertTrue(info.checksumsMatches(), "Checksums should match if " +
                 "marked as trusted and actual not null");
     }
 

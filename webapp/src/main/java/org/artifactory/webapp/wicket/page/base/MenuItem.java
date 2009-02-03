@@ -58,13 +58,9 @@ public class MenuItem extends Panel {
             return SELECTED;
         }
 
-        Boolean opened = node.isOpened();
-        if (Boolean.TRUE.equals(opened)) {
+        if (node.isOpened()) {
             return OPENED;
-        } else if (Boolean.FALSE.equals(opened)) {
-            return ENABLED;
         }
-
         SiteMap siteMap = ArtifactoryApplication.get().getSiteMap();
         MenuNode current = siteMap.getPageNode(currentPage);
         while (current != null) {

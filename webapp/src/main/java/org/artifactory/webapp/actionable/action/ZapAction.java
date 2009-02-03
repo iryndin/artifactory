@@ -41,7 +41,7 @@ import org.artifactory.webapp.actionable.event.RepoAwareItemEvent;
  * @author yoavl
  */
 public class ZapAction extends RepoAwareItemAction {
-    public static final String ACTION_NAME = "Zap Caches";
+    public static final String ACTION_NAME = "Zap";
 
     public ZapAction() {
         super(ACTION_NAME, null);

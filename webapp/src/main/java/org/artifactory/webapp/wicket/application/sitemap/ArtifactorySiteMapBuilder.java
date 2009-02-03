@@ -2,7 +2,6 @@ package org.artifactory.webapp.wicket.application.sitemap;
 
 import org.apache.wicket.Page;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.webapp.wicket.page.admin.AdminPage;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.root.SimpleBrowserRootPage;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.BrowseRepoPage;
@@ -10,11 +9,9 @@ import org.artifactory.webapp.wicket.page.config.general.GeneralConfigPage;
 import org.artifactory.webapp.wicket.page.config.proxy.ProxyConfigPage;
 import org.artifactory.webapp.wicket.page.config.repos.RepositoryConfigPage;
 import org.artifactory.webapp.wicket.page.config.security.LdapKeyListPage;
-import org.artifactory.webapp.wicket.page.config.security.general.SecurityGeneralConfigPage;
 import org.artifactory.webapp.wicket.page.config.services.BackupsListPage;
 import org.artifactory.webapp.wicket.page.config.services.IndexerConfigPage;
 import org.artifactory.webapp.wicket.page.deploy.DeployArtifactPage;
-import org.artifactory.webapp.wicket.page.deploy.DeployFromZipPage;
 import org.artifactory.webapp.wicket.page.home.HomePage;
 import org.artifactory.webapp.wicket.page.importexport.repos.ImportExportReposPage;
 import org.artifactory.webapp.wicket.page.importexport.system.ImportExportSystemPage;
@@ -23,8 +20,6 @@ import org.artifactory.webapp.wicket.page.search.ArtifactSearchPage;
 import org.artifactory.webapp.wicket.page.security.acl.AclsPage;
 import org.artifactory.webapp.wicket.page.security.group.GroupsPage;
 import org.artifactory.webapp.wicket.page.security.user.UsersPage;
-
-import java.util.List;
 
 /**
  * @author Yoav Aharoni
@@ -48,10 +43,9 @@ public class ArtifactorySiteMapBuilder extends SiteMapBuilder {
         browseRepoPage.addChild(new MenuNode("Simple Browser", SimpleBrowserRootPage.class));
         browseRepoPage.addChild(new MenuNode("Search Artifactory", ArtifactSearchPage.class));
 
-        DeployArtifactPageNode deployPage = new DeployArtifactPageNode(DeployArtifactPage.class, "Deploy");
+        DeployArtifactPageNode deployPage = new DeployArtifactPageNode("Deploy");
         root.addChild(deployPage);
-        deployPage.addChild(new DeployArtifactPageNode(DeployArtifactPage.class, "Single Artifact"));
-        deployPage.addChild(new DeployArtifactPageNode(DeployFromZipPage.class, "Artifacts Bundle"));
+        deployPage.addChild(new DeployArtifactPageNode("Deploy Artifacts"));
 
         MenuNode adminPage = new AdminPageNode("Admin");
         root.addChild(adminPage);
@@ -62,18 +56,17 @@ public class ArtifactorySiteMapBuilder extends SiteMapBuilder {
         adminConfiguration.addChild(new MenuNode("Repositories", RepositoryConfigPage.class));
         adminConfiguration.addChild(new MenuNode("Proxy", ProxyConfigPage.class));
 
-        MenuNode security = new MenuNode("Security");
-        adminPage.addChild(security);
-        security.addChild(new MenuNode("General", SecurityGeneralConfigPage.class));
-        security.addChild(new MenuNode("Users", UsersPage.class));
-        security.addChild(new MenuNode("Groups", GroupsPage.class));
-        security.addChild(new MenuNode("Permissions", AclsPage.class));
-        security.addChild(new MenuNode("LDAP Settings", LdapKeyListPage.class));
-
         MenuNode services = new MenuNode("Services");
         adminPage.addChild(services);
         services.addChild(new MenuNode("Backups", BackupsListPage.class));
         services.addChild(new MenuNode("Indexer", IndexerConfigPage.class));
+
+        MenuNode security = new MenuNode("Security");
+        adminPage.addChild(security);
+        security.addChild(new MenuNode("Users", UsersPage.class));
+        security.addChild(new MenuNode("Groups", GroupsPage.class));
+        security.addChild(new MenuNode("Permissions", AclsPage.class));
+        security.addChild(new MenuNode("LDAP Settings", LdapKeyListPage.class));
 
         MenuNode adminImportExport = new MenuNode("Import & Export");
         adminPage.addChild(adminImportExport);
@@ -86,19 +79,13 @@ public class ArtifactorySiteMapBuilder extends SiteMapBuilder {
     }
 
     private static class DeployArtifactPageNode extends SecuredPageNode {
-        private DeployArtifactPageNode(Class<? extends Page> pageClass, String name) {
-            super(pageClass, name);
+        private DeployArtifactPageNode(String name) {
+            super(DeployArtifactPage.class, name);
         }
 
         @Override
         public boolean isEnabled() {
-            boolean deployPermitted = getAuthorizationService().hasDeployPermissions();
-            boolean hasTargets = false;
-            List<LocalRepoDescriptor> repoDescriptorList = getRepositoryService().getDeployableRepoDescriptors();
-            if (repoDescriptorList != null) {
-                hasTargets = (repoDescriptorList.size() > 0);
-            }
-            return (deployPermitted && hasTargets);
+            return getAuthorizationService().hasDeployPermissions();
         }
     }
 

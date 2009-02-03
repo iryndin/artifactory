@@ -205,7 +205,7 @@ public class MetadataServiceImpl implements MetadataService {
             while (children.hasNext()) {
                 Node child = (Node) children.next();
                 String name = child.getName();
-                MetadataDefinition definition = definitionService.getMetadataDefinition(name);
+                MetadataDefinition definition = this.definitionService.getMetadataDefinition(name);
                 if (!definition.isInternal() && definition.isPersistent()) {
                     names.add(name);
                 }
@@ -273,8 +273,7 @@ public class MetadataServiceImpl implements MetadataService {
             Calendar created = metadataNode.getProperty(MetadataAware.PROP_ARTIFACTORY_CREATED).getDate();
             Node resourceNode = getResourceNode(metadataAware, metadataName);
             mdi.setCreated(created.getTimeInMillis());
-            Calendar lastModified =
-                    metadataNode.getProperty(MetadataAware.PROP_ARTIFACTORY_LAST_MODIFIED).getDate();
+            Calendar lastModified = metadataNode.getProperty(MetadataAware.PROP_ARTIFACTORY_LAST_MODIFIED).getDate();
             mdi.setLastModified(lastModified.getTimeInMillis());
             String lastModifiedBy =
                     metadataNode.getProperty(MetadataAware.PROP_ARTIFACTORY_LAST_MODIFIED_BY).getString();

@@ -16,10 +16,9 @@
  */
 package org.artifactory.api.request;
 
-import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +43,12 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
     }
 
     public boolean isSnapshot() {
-        return MavenNaming.isSnapshot(getPath());
+        return NamingUtils.isSnapshot(getPath());
     }
 
     public boolean isMetadata() {
-        return NamingUtils.isMetadata(getPath());
+        boolean metadata = NamingUtils.isMetadata(getPath());
+        return metadata;
     }
 
     public boolean isChecksum() {

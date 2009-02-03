@@ -15,8 +15,7 @@ else
 fi
 
 CLI_DIR=`dirname $0`
-LIB_DIR=$CLI_DIR/../clilib
-LOGS_DIR=$CLI_DIR/../logs
+LIB_DIR=$CLI_DIR/clilib
 CLASSPATH=.
 
 for i in `ls $LIB_DIR/*.jar`
@@ -24,4 +23,4 @@ do
   CLASSPATH="$CLASSPATH:$i"
 done
 
-exec "$JAVACMD" $JAVA_OPTIONS -Dcli.logs.dir="$LOGS_DIR" -classpath $CLASSPATH org.artifactory.cli.main.ArtifactoryCli "$@"
+exec "$JAVACMD" $JAVA_OPTIONS -classpath $CLASSPATH org.artifactory.cli.main.ArtifactoryCli "$@"

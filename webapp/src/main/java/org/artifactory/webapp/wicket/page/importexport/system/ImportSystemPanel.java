@@ -26,8 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusEntry;
+import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
@@ -47,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Yoav Landman
@@ -68,9 +66,6 @@ public class ImportSystemPanel extends TitledPanel {
     @WicketProperty
     private boolean verbose;
 
-    @WicketProperty
-    private boolean includeMetadata;
-
     final StyledCheckbox copyCheckbox;
     final StyledCheckbox symLinkCheckbox;
 
@@ -82,7 +77,7 @@ public class ImportSystemPanel extends TitledPanel {
         symLinkCheckbox = new StyledCheckbox("useSymLinks", new PropertyModel(this, "useSymLinks"));
         symLinkCheckbox.setOutputMarkupId(true);
 
-        final MultiStatusHolder status = new MultiStatusHolder();
+        final StatusHolder status = new StatusHolder();
         status.setStatus("Idle.", log);
         Form importForm = new Form("importForm");
         add(importForm);
@@ -109,10 +104,6 @@ public class ImportSystemPanel extends TitledPanel {
         verboseCheckbox.setRequired(false);
         importForm.add(verboseCheckbox);
         importForm.add(new HelpBubble("verboseHelp", "HINT: You can monitor the log in the 'System Logs' page."));
-
-        importForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        importForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export."));
 
         copyCheckbox.setEnabled(false);
         copyCheckbox.setRequired(false);
@@ -146,7 +137,6 @@ public class ImportSystemPanel extends TitledPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                status.reset();
                 //If the path denotes an archive extract it first, else use the directory
                 de.schlichtherle.io.File file = new de.schlichtherle.io.File(importFromPath);
                 File importFromFolder = null;
@@ -184,13 +174,7 @@ public class ImportSystemPanel extends TitledPanel {
                     importSettings.setUseSymLinks(useSymLinks);
                     importSettings.setFailIfEmpty(true);
                     importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
                     context.importFrom(importSettings, status);
-                    List<StatusEntry> warnings = status.getWarnings();
-                    if (!warnings.isEmpty()) {
-                        warn(warnings.size() + " Warnings have been produces during the export. " +
-                                "Please review the log for further information.");
-                    }
                     if (status.isError()) {
                         String msg = "Error while importing system from '" + importFromPath +
                                 "': " + status.getStatusMsg();
@@ -209,6 +193,7 @@ public class ImportSystemPanel extends TitledPanel {
                     if (file.isArchive()) {
                         //Delete the extracted dir
                         try {
+                            de.schlichtherle.io.File.umount();
                             if (importFromFolder != null) {
                                 FileUtils.deleteDirectory(importFromFolder);
                             }

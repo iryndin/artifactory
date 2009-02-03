@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
  * @author Yossi Shaul
  */
 @Test
-public class ChecksumPolicyIgnoreAndGenerateTest extends ChecksumPolicyBaseTest {
+public class ChecksumPolicyIgnoreAndGenerateTest extends ChecksumPolicyBaseTest{
     private ChecksumPolicyIgnoreAndGenerate policy;
 
     @BeforeClass
@@ -24,7 +24,7 @@ public class ChecksumPolicyIgnoreAndGenerateTest extends ChecksumPolicyBaseTest 
     }
 
     @Override
-    public void checksumsMatch() {
+    public void checksumsMatches() {
         boolean ok = policy.verifyChecksum(matchedChecksums);
         Assert.assertTrue(ok, "Policy should ignore any checksum errors");
     }
@@ -49,5 +49,5 @@ public class ChecksumPolicyIgnoreAndGenerateTest extends ChecksumPolicyBaseTest 
         Assert.assertEquals(checksum, notMatchedChecksums.getActual(), "Should always return the actual value");
         checksum = policy.getChecksum(noOriginalChecksum);
         Assert.assertEquals(checksum, noOriginalChecksum.getActual(), "Should always return the actual value");
-    }
+    }    
 }

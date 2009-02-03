@@ -10,7 +10,7 @@ import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoResolver;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.actionable.model.FileActionableItem;
 import org.artifactory.webapp.actionable.model.FolderActionableItem;

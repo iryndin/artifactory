@@ -19,8 +19,8 @@ package org.artifactory.webapp.servlet;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.api.request.ArtifactoryResponse;
-import org.artifactory.util.ExceptionUtils;
-import org.artifactory.util.LoggingUtils;
+import org.artifactory.utils.ExceptionUtils;
+import org.artifactory.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

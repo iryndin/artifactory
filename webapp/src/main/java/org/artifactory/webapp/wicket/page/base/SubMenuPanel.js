@@ -9,7 +9,7 @@ var SubMenuPanel = {
 
         if (isOpened) {
             // close menu
-            CookieUtils.setCookie(cookieName, 'false');
+            CookieUtils.clearCookie(cookieName);
             menuItem.className = menuItem.className.replace(/menu-group-opened/, 'menu-group-enabled');
             menuGroup.className = SubMenuPanel.CLOSED_CSS;
         } else {

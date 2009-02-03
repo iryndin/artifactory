@@ -35,7 +35,6 @@ import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.resource.ArtifactResource;
-import org.artifactory.security.AccessLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +67,6 @@ public class SearchServiceImpl implements SearchService {
     private AuthorizationService authService;
 
     public List<SearchResult> searchArtifacts(SearchControls controls) {
-
-        if (!authService.isAuthenticated() ||
-                (authService.isAnonymous() && !authService.isAnonAccessEnabled())) {
-            AccessLogger.unauthorizedSearch();
-            return Collections.emptyList();
-        }
         long start = System.currentTimeMillis();
         String search = controls.getSearch();
         if (search == null) {
@@ -134,11 +127,11 @@ public class SearchServiceImpl implements SearchService {
     }
 
     /**
-     * Convert a string to a JCR search expression literal, suitable for use in jcr:like() (inside XPath queries). The
-     * characters -, ', " and \ have special meaning, and must be escaped with a backslash to obtain their literal
-     * value. This method doesn't escape the characters '%' and '_' to allow users to use wildcards. The characters '*'
-     * and '?' are converted to '%' or '_' respectively to allow using both types of wildcards. See JSR-170 spec v1.0,
-     * Sec. 6.6.5.1.
+     * Convert a string to a JCR search expression literal, suitable for use in jcr:like() (inside XPath queries).
+     * The characters -, ', " and \ have special meaning, and must be escaped with a backslash to obtain their literal
+     * value. This method doesn't escape the characters '%' and '_' to allow users to use wildcards.
+     * The characters '*' and '?' are converted to '%' or '_' respectively to allow using both types of wildcards.
+     * See JSR-170 spec v1.0, Sec. 6.6.5.1.
      *
      * @param expression A string to escape.
      * @return A valid XPath 2.0 string literal suitable for use in jcr:like(), including enclosing '%'.

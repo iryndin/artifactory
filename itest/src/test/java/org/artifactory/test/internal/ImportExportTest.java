@@ -234,7 +234,7 @@ public class ImportExportTest extends ArtifactoryTestBase {
         }
     }
 
-    @Test(enabled = false)
+    @Test
     public void importExportFullNormalBeta2() throws Exception {
         File baseExportDir = new File(getClass().getResource("/export/v130beta2").toURI());
         ImportSettings settings = new ImportSettings(baseExportDir);
@@ -247,7 +247,7 @@ public class ImportExportTest extends ArtifactoryTestBase {
         checkStatus(status);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class, enabled = false)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void importExportTooOld() throws Exception {
         File baseExportDir = new File(getClass().getResource("/export/v125u1").toURI());
         ImportSettings settings = new ImportSettings(baseExportDir);

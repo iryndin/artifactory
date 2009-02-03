@@ -25,7 +25,7 @@
     <groupId>org.artifactory</groupId>
     <artifactId>artifactory-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0</version>
+    <version>1.3.0-rc-1</version>
     <name>Artifactory</name>
     <url>http://www.jfrog.org/sites/artifactory/latest/</url>
 
@@ -133,7 +133,6 @@
         <module>wagon</module>
         <module>config</module>
         <module>api</module>
-        <module>common</module>
         <module>core</module>
         <module>rest</module>
         <module>webapp</module>
@@ -353,7 +352,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>1.5.6</version>
+                <version>1.5.1</version>
             </dependency>
 
             <dependency>
@@ -710,7 +709,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.3.1</version>
+                <version>1.3</version>
             </dependency>
 
             <dependency>

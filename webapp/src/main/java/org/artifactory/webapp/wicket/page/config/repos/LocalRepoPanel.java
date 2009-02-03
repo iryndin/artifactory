@@ -1,19 +1,10 @@
 package org.artifactory.webapp.wicket.page.config.repos;
 
-import org.apache.commons.lang.WordUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.validation.validator.NumberValidator;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import static org.artifactory.descriptor.repo.SnapshotVersionBehavior.DEPLOYER;
-import static org.artifactory.descriptor.repo.SnapshotVersionBehavior.UNIQUE;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
@@ -45,69 +36,21 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
         TitledBorder advanced = new TitledBorder("advanced");
         form.add(advanced);
 
-        final TextField maxUniqueSnapshots = new TextField("maxUniqueSnapshots", Integer.class) {
-            @Override
-            public boolean isEnabled() {
-                boolean toEnable = isUniqueSelected();
-                if (toEnable) {
-                    setModelObject(0);
-                }
-                return toEnable;
-            }
-        };
-        maxUniqueSnapshots.add(NumberValidator.range(0, Integer.MAX_VALUE));
-        maxUniqueSnapshots.setRequired(true);
-        maxUniqueSnapshots.setOutputMarkupPlaceholderTag(true);
-        maxUniqueSnapshots.setOutputMarkupId(true);
-        advanced.add(maxUniqueSnapshots);
-        Label maxUniqueSnapshotsLabel = new Label("maxUniqueSnapshotsLabel", "Max Unique Snapshots");
-        maxUniqueSnapshotsLabel.setOutputMarkupPlaceholderTag(true);
-        maxUniqueSnapshotsLabel.setOutputMarkupId(true);
-        advanced.add(maxUniqueSnapshotsLabel);
-        advanced.add(new TextArea("includesPattern"));
-        advanced.add(new TextArea("excludesPattern"));
+        advanced.add(new TextField("maxUniqueSnapshots", Integer.class));
+        advanced.add(new TextField("includesPattern"));
+        advanced.add(new TextField("excludesPattern"));
 
-        SchemaHelpBubble maxUniqueSnapshotsHelp = new SchemaHelpBubble("maxUniqueSnapshots.help");
-        maxUniqueSnapshotsHelp.setOutputMarkupPlaceholderTag(true);
-        maxUniqueSnapshotsHelp.setOutputMarkupId(true);
-        advanced.add(maxUniqueSnapshotsHelp);
+        SnapshotVersionBehavior[] versions = SnapshotVersionBehavior.values();
+        advanced.add(new DropDownChoice("snapshotVersionBehavior", Arrays.asList(versions)));
+        advanced.add(new SchemaHelpBubble("maxUniqueSnapshots.help"));
         advanced.add(new SchemaHelpBubble("includesPattern.help"));
         advanced.add(new SchemaHelpBubble("excludesPattern.help"));
         advanced.add(new SchemaHelpBubble("snapshotVersionBehavior.help"));
-        SnapshotVersionBehavior[] versions = SnapshotVersionBehavior.values();
-        final DropDownChoice snapshotVersionDropDown =
-                new DropDownChoice("snapshotVersionBehavior", Arrays.asList(versions));
-        snapshotVersionDropDown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(maxUniqueSnapshots);
-            }
-        });
-        snapshotVersionDropDown.setChoiceRenderer(new SnapshotVersionChoiceRenderer());
-
-        advanced.add(snapshotVersionDropDown);
     }
 
     @Override
     public void handleCreate(CentralConfigDescriptor descriptor) {
         LocalRepoDescriptor localRepo = getRepoDescriptor();
         getEditingDescriptor().addLocalRepository(localRepo);
-    }
-
-    private boolean isUniqueSelected() {
-        LocalRepoDescriptor descriptor = getRepoDescriptor();
-        boolean isUnique = UNIQUE.equals(descriptor.getSnapshotVersionBehavior());
-        boolean isDeployer = DEPLOYER.equals(descriptor.getSnapshotVersionBehavior());
-        return (isUnique || isDeployer);
-    }
-
-    private class SnapshotVersionChoiceRenderer extends ChoiceRenderer {
-        @Override
-        public Object getDisplayValue(Object object) {
-            if (object instanceof SnapshotVersionBehavior) {
-                return ((SnapshotVersionBehavior) object).getDisplayName();
-            }
-            return WordUtils.capitalizeFully(object.toString());
-        }
     }
 }

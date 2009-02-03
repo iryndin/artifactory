@@ -436,16 +436,6 @@ public class SecurityServiceImplTest {
         verify(aclManagerMock);
     }
 
-    @Test
-    public void userPasswordMatches() {
-        setSimpleUserAuthentication("user");
-
-        assertTrue(service.userPasswordMatches("password"));
-        assertFalse(service.userPasswordMatches(""));
-        assertFalse(service.userPasswordMatches("Password"));
-        assertFalse(service.userPasswordMatches("blabla"));
-    }
-
     private void expectAclScan() {
         expect(aclManagerMock.getAllPermissionTargets()).andReturn(permissionTargets);
         expect(aclManagerMock.findAclById(permissionTargets.get(0))).andReturn(testAcls.get(0));
@@ -516,7 +506,7 @@ public class SecurityServiceImplTest {
     private Authentication setSimpleUserAuthentication(String username, String... groups) {
         SimpleUser simpleUser = createNonAdminUser(username, groups);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                simpleUser, "password", SimpleUser.USER_GAS);
+                simpleUser, null, SimpleUser.USER_GAS);
         securityContext.setAuthentication(authenticationToken);
         return authenticationToken;
     }

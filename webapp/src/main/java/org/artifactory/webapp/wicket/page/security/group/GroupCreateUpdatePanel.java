@@ -93,6 +93,11 @@ public class GroupCreateUpdatePanel extends CreateUpdatePanel<GroupInfo> {
                     ModalHandler.closeCurrent(target);
                 }
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
         return submit;
     }

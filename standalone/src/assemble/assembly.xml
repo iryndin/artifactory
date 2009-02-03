@@ -75,14 +75,14 @@
             </excludes>
         </fileSet>
 
-        <!-- add the cli dependencies to clilib. the cli already prepared the files -->
+        <!-- add the cli dependencies to bin/clilib. the cli already prepared the files -->
         <fileSet>
             <directory>${project.basedir}/../cli/target/clilib</directory>
-            <outputDirectory>clilib</outputDirectory>
+            <outputDirectory>bin/clilib</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/../cli/target</directory>
-            <outputDirectory>clilib</outputDirectory>
+            <outputDirectory>bin/clilib</outputDirectory>
             <includes>
                 <include>artifactory-cli-${project.version}.jar</include>
             </includes>

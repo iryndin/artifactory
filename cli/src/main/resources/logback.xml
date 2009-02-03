@@ -11,7 +11,7 @@
         </layout>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <File>${cli.logs.dir}/cli.log</File>
+        <File>cli.log</File>
         <Append>true</Append>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%d [%-5p] \(%-13F:%L{10}\) - %m%n</pattern>
@@ -24,13 +24,11 @@
     <logger name="org.artifactory.cli">
         <level value="INFO"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </logger>
     <logger name="UrlBasedCommand">
         <level value="INFO"/>
         <appender-ref ref="CONSOLENONEWLINE"/>
-    </logger>
-    <logger name="DumpStatusHolder">
-        <level value="DEBUG"/>
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 </configuration>

@@ -3,7 +3,7 @@ package org.artifactory.config;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

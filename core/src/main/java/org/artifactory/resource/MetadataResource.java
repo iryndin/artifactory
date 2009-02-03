@@ -19,7 +19,7 @@ package org.artifactory.resource;
 import org.artifactory.api.fs.MetadataInfo;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -76,7 +76,7 @@ public class MetadataResource implements RepoResource {
         return ContentType.applicationXml.getMimeType();
     }
 
-    public long getCacheAge() {
+    public long getAge() {
         long lastUpdated = info.getLastModified();
         if (lastUpdated <= 0) {
             return -1;

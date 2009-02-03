@@ -7,6 +7,6 @@ import org.apache.wicket.Session;
  */
 public class AccessDeniedPage extends BaseMessagePage {
     public AccessDeniedPage() {
-        Session.get().error("Access Denied: You do not have access to the requested page.");
+        Session.get().error("Access Denied: You do not have access to the page you requested.");
     }
 }

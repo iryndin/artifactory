@@ -33,16 +33,17 @@ import org.slf4j.LoggerFactory;
 public class ExportJob extends QuartzCommand {
     private static final Logger log = LoggerFactory.getLogger(ExportJob.class);
 
-    public static final String REPO_KEY = "repoKey";
+    public static final String REPO_KEY = "RepoKey";
 
-    @Override
     protected void onExecute(JobExecutionContext callbackContext) throws JobExecutionException {
         StatusHolder status = null;
         try {
             JobDataMap jobDataMap = callbackContext.getJobDetail().getJobDataMap();
             String repoKey = (String) jobDataMap.get(REPO_KEY);
-            ExportSettings settings = (ExportSettings) jobDataMap.get(ExportSettings.class.getName());
-            status = (StatusHolder) jobDataMap.get(StatusHolder.class.getName());
+            ExportSettings settings = (ExportSettings)
+                    jobDataMap.get(ExportSettings.class.getName());
+            status = (StatusHolder)
+                    jobDataMap.get(StatusHolder.class.getName());
             InternalRepositoryService service =
                     InternalContextHelper.get().beanForType(InternalRepositoryService.class);
             if (repoKey != null) {
@@ -52,9 +53,9 @@ public class ExportJob extends QuartzCommand {
             }
         } catch (Exception e) {
             if (status != null) {
-                status.setError("Error occured during export: " + e.getMessage(), e, log);
+                status.setError("Received Unhandled Exception", e, log);
             } else {
-                log.error("Error occured during export", e);
+                log.error("Received Unhandled Exception", e);
             }
         }
     }

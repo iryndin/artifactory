@@ -3,7 +3,6 @@ package org.artifactory.webapp.wicket.common.component.dnd.select;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
@@ -46,22 +45,27 @@ public class DragDropSelection<T> extends FormComponentPanel {
         this(id, new Model((Serializable) choices), renderer);
     }
 
+
     public DragDropSelection(final String id, IModel model, final List<T> choices) {
         this(id, model, new Model((Serializable) choices));
     }
+
 
     public DragDropSelection(final String id, IModel model, final List<T> choices,
                              final IChoiceRenderer renderer) {
         this(id, model, new Model((Serializable) choices), renderer);
     }
 
+
     public DragDropSelection(String id, IModel choicesModel) {
         this(id, choicesModel, StringChoiceRenderer.getInstance());
     }
 
+
     public DragDropSelection(String id, IModel model, IModel choicesModel) {
         this(id, model, choicesModel, StringChoiceRenderer.getInstance());
     }
+
 
     public DragDropSelection(String id, IModel choicesModel, IChoiceRenderer renderer) {
         super(id);
@@ -89,7 +93,7 @@ public class DragDropSelection<T> extends FormComponentPanel {
 
         HiddenField textField = new HiddenField("selection", new TargetSelectionModel());
         textField.setOutputMarkupId(true);
-        textField.add(newOnOrderChangeEventBehavior("onOrderChanged"));
+        textField.add(newOnOrderChangeEventBehavior());
         add(textField);
 
         add(new Label("sourceTitle", new TitleModel("selection.source")));
@@ -97,15 +101,10 @@ public class DragDropSelection<T> extends FormComponentPanel {
 
         // add init script
         HtmlTemplate template = new HtmlTemplate("initScript");
-        template.setParameter("widgetClassName", getWidgetClassName());
         template.setParameter("panelId", new MarkupIdModel());
         template.setParameter("targetListId", new PropertyModel(targetList, "markupId"));
         template.setParameter("textFieldId", new PropertyModel(textField, "markupId"));
         add(template);
-    }
-
-    protected String getWidgetClassName() {
-        return "artifactory.DragDropSelection";
     }
 
     @Override
@@ -116,8 +115,8 @@ public class DragDropSelection<T> extends FormComponentPanel {
     protected void onOrderChanged(AjaxRequestTarget target) {
     }
 
-    protected IBehavior newOnOrderChangeEventBehavior(String event) {
-        return new OnOrderChangedEventBehavior(event);
+    protected OnOrderChangedEventBehavior newOnOrderChangeEventBehavior() {
+        return new OnOrderChangedEventBehavior();
     }
 
     public IModel getChoices() {
@@ -210,8 +209,8 @@ public class DragDropSelection<T> extends FormComponentPanel {
     }
 
     public class OnOrderChangedEventBehavior extends AjaxFormComponentUpdatingBehavior {
-        private OnOrderChangedEventBehavior(String event) {
-            super(event);
+        private OnOrderChangedEventBehavior() {
+            super("onOrderChanged");
         }
 
         @Override

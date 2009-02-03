@@ -1,7 +1,5 @@
 package org.artifactory.version;
 
-import org.artifactory.api.version.ArtifactoryVersioning;
-import org.artifactory.api.version.VersionHolder;
 import org.jdom.Document;
 import org.jdom.Element;
 

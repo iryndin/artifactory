@@ -70,7 +70,7 @@ public class MetadataReader125 implements MetadataReader {
                 result.add(new MetadataEntry(fileMetadataName, xmlContent));
             } else {
                 status.setError("Failed to import xml metadata from '" +
-                        file.getAbsolutePath() + "' since it does not contain any known XML tag <file> <folder>.",
+                        file.getAbsolutePath() + "' since it does not contains any known XML tag <file> <folder>.",
                         log);
             }
         } catch (IOException e) {

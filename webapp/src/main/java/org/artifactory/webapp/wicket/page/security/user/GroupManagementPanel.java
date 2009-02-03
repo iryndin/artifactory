@@ -47,7 +47,8 @@ public class GroupManagementPanel extends FieldSetPanel {
                 if (selectedGroup != null && !selectedUsernames.isEmpty()) {
                     userGroupService.addUsersToGroup(
                             selectedGroup, selectedUsernames);
-                    info("Successfully added selected users  to group '" + selectedGroup +"'.");
+                    info("Successfully added group '" + selectedGroup +
+                            "' to selected users.");
                     // refresh the users table
                     usersListPanel.refreshUsersList(target);
                     FeedbackUtils.refreshFeedback(target);
@@ -62,7 +63,7 @@ public class GroupManagementPanel extends FieldSetPanel {
                 if (selectedGroup != null && !selectedUsernames.isEmpty()) {
                     userGroupService.removeUsersFromGroup(
                             selectedGroup, selectedUsernames);
-                    info("Successfully removed selected users from group'" + selectedGroup + "'.");
+                    info("Successfully removed group '" + selectedGroup + "' from selected users.");
                     // refresh the users table
                     usersListPanel.refreshUsersList(target);
                     FeedbackUtils.refreshFeedback(target);

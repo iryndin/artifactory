@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.test.mock.MockServer;
 import org.mortbay.jetty.Server;
 import org.mortbay.xml.XmlConfiguration;
 import org.slf4j.Logger;
@@ -31,28 +30,16 @@ public class ArtifactoryServer {
 
     private String testName;
     private String configName;
-    private MockServer mockServer;
     protected Server jetty;
 
     public ArtifactoryServer(String testName) {
         this(testName, DEFAULT_CONFIG);
     }
 
-    public ArtifactoryServer(String testName, MockServer mockServerInstance) {
-        this(testName, DEFAULT_CONFIG, mockServerInstance);
-    }
-
     public ArtifactoryServer(String testName, String configName) {
         Assert.assertNotNull(testName);
         this.configName = configName;
         this.testName = testName;
-    }
-
-    public ArtifactoryServer(String testName, String configName, MockServer mockServerInstance) {
-        Assert.assertNotNull(testName);
-        this.configName = configName;
-        this.testName = testName;
-        this.mockServer = mockServerInstance;
     }
 
     public void start() throws IOException {
@@ -130,14 +117,7 @@ public class ArtifactoryServer {
             if (is == null) {
                 throw new IllegalArgumentException("Could not find a configuration resource at: " + configPath);
             }
-            if (mockServer != null) {
-                String configText = IOUtils.toString(is);
-                String modifiedConfig = configText.replaceAll("@mock_host@", mockServer.getSelectedURL());
-                InputStream modifiedStream = IOUtils.toInputStream(modifiedConfig);
-                bis = new BufferedInputStream(modifiedStream);
-            } else {
-                bis = new BufferedInputStream(is);
-            }
+            bis = new BufferedInputStream(is);
             File targetConfigFile = new File(ArtifactoryHome.getEtcDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
             bos = new BufferedOutputStream(new FileOutputStream(targetConfigFile));
             IOUtils.copy(bis, bos);

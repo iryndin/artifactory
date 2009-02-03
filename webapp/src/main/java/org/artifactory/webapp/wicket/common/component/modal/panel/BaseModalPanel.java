@@ -1,5 +1,7 @@
 package org.artifactory.webapp.wicket.common.component.modal.panel;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -142,8 +144,10 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
         setInitialHeight(height);
     }
 
-    public String getCookieName() {
-        return getClass().getSimpleName();
+    public MarkupContainer addWithId(final Component child) {
+        add(child);
+        child.setOutputMarkupId(true);
+        return this;
     }
 
     public void close(AjaxRequestTarget target) {

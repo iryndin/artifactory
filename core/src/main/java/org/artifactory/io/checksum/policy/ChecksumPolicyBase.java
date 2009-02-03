@@ -55,15 +55,4 @@ public abstract class ChecksumPolicyBase implements ChecksumPolicy {
                 throw new IllegalArgumentException("No checksum policy found for type " + type);
         }
     }
-
-    /**
-     * @return The checksum policy type this checksum policy implements.
-     */
-    abstract ChecksumPolicyType getChecksumPolicyType();
-
-    @Override
-    public String toString() {
-        return getChecksumPolicyType().toString();
-    }
-
 }

@@ -42,14 +42,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.actionable.action.ItemAction;
@@ -73,9 +69,6 @@ import java.util.Set;
  */
 public class GeneralTabPanel extends Panel {
 
-    @SpringBean
-    private RepositoryService repositoryService;
-
     private RepoAwareActionableItem repoItem;
 
     public GeneralTabPanel(String id, RepoAwareActionableItem repoItem) {
@@ -93,43 +86,13 @@ public class GeneralTabPanel extends Panel {
         addActions(repoItem);
 
         add(new VirtualRepoListPanel("virtualRepoList", repoItem));
-        addMessage();
-    }
-
-    private void addMessage() {
-        RepeatingView messages = new RepeatingView("message");
-        add(messages);
-
-        // don't check folders
-        if (repoItem.getItemInfo().isFolder()) {
-            return;
-        }
-
-        RepoPath repoPath = repoItem.getRepoPath();
-
-        // display warning for unaccepted file
-        boolean accepted = repositoryService.isRepoPathAccepted(repoPath);
-        if (!accepted) {
-            Label message = new Label(messages.newChildId(), getString("repo.unaccepted", null));
-            message.add(new CssClass("warn"));
-            messages.add(message);
-        }
-
-        // display warning for unhandled file
-        boolean handled = repositoryService.isRepoPathHandled(repoPath);
-        if (!handled) {
-            Label message = new Label(messages.newChildId(), getString("repo.unhandled", null));
-            message.add(new CssClass("warn"));
-            messages.add(message);
-        }
     }
 
     private boolean shouldDisplayDistributionManagement() {
         if (repoItem instanceof LocalRepoActionableItem) {
             // display distribution mgmt only if the repo handles releases or snapshots
             LocalRepoDescriptor localRepo = repoItem.getRepo();
-            boolean shouldDisplay = (localRepo.isHandleReleases() || localRepo.isHandleSnapshots());
-            return shouldDisplay;
+            return localRepo.isHandleReleases() || localRepo.isHandleSnapshots();
         } else {
             return false;
         }
@@ -211,7 +174,11 @@ public class GeneralTabPanel extends Panel {
                     ContextHelper.get().getRepositoryService().getMavenArtifactInfo(itemInfo);
             long size = file.getSize();
             //If we are looking at a cached item, check the expiry from the remote repository
-            String ageStr = DurationFormatUtils.formatDuration(file.getAge(), "d'd' H'h' m'm' s's'");
+            String ageStr = "non-cached";
+            long age = file.getAge();
+            if (age > 0) {
+                ageStr = DurationFormatUtils.formatDuration(age, "d'd' H'h' m'm' s's'");
+            }
             ageLabel.setValue(ageStr);
             sizeLabel.setValue(FileUtils.byteCountToDisplaySize(size));
             groupIdLabel.setValue(mavenInfo.getGroupId());

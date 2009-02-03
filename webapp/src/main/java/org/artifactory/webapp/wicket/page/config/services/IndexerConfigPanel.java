@@ -1,9 +1,12 @@
 package org.artifactory.webapp.wicket.page.config.services;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.repo.RepositoryService;
@@ -12,14 +15,16 @@ import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.webapp.wicket.common.component.CancelButton;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
-import org.artifactory.webapp.wicket.common.component.dnd.select.sorted.SortedDragDropSelection;
+import org.artifactory.webapp.wicket.common.component.border.fieldset.FieldSetBorder;
+import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledActionPanel;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
-import org.artifactory.webapp.wicket.page.config.services.cron.CronNextDatePanel;
+import org.artifactory.webapp.wicket.utils.CronUtils;
 import org.artifactory.webapp.wicket.utils.validation.CronExpValidator;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +44,9 @@ public class IndexerConfigPanel extends TitledActionPanel {
     public IndexerConfigPanel(String id, Form form) {
         super(id);
 
+        TitledBorder border = new FieldSetBorder("border");
+        add(border);
+
         MutableCentralConfigDescriptor centralConfig =
                 centralConfigService.getDescriptorForEditing();
         indexer = centralConfig.getIndexer();
@@ -49,16 +57,27 @@ public class IndexerConfigPanel extends TitledActionPanel {
         }
 
         setModel(new CompoundPropertyModel(indexer));
-        final TextField cronExpField = new TextField("cronExp");
-        cronExpField.add(CronExpValidator.getInstance());
-        add(cronExpField);
-        add(new SchemaHelpBubble("cronExp.help"));
-
-        add(new CronNextDatePanel("cronNextDatePanel", cronExpField));
-
+        final TextField textField = new TextField("cronExp");
+        textField.add(CronExpValidator.getInstance());
+        border.add(textField);
+        border.add(new SchemaHelpBubble("cronExp.help"));
+        String nextRun = getNextRunTime(textField.getValue());
+        final Label nextRunLabel = new Label("cronExpNextRun", nextRun);
+        nextRunLabel.setOutputMarkupId(true);
+        border.add(nextRunLabel);
+        //TODO: [by yl] Scheduled run calculation button can easily be made a component
+        SimpleButton calculateButton = new SimpleButton("calculate", form, "Check next run...") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                nextRunLabel.setModel(new Model(getNextRunTime(textField.getValue())));
+                target.addComponent(nextRunLabel);
+            }
+        };
+        calculateButton.setDefaultFormProcessing(false);
+        border.add(calculateButton);
         List<RepoDescriptor> repos = repositoryService.getLocalAndRemoteRepoDescriptors();
-        add(new SortedDragDropSelection<RepoDescriptor>("excludedRepositories", repos));
-        add(new SchemaHelpBubble("excludedRepositories.help"));
+        border.add(new ListMultipleChoice("excludedRepositories", repos));
+        border.add(new SchemaHelpBubble("excludedRepositories.help"));
 
         addDefaultButton(createSaveButton(form));
         addButton(new CancelButton(form));
@@ -69,6 +88,21 @@ public class IndexerConfigPanel extends TitledActionPanel {
      */
     public IndexerDescriptor getIndexer() {
         return indexer;
+    }
+
+    private String getNextRunTime(String cronExpression) {
+        if (org.apache.commons.lang.StringUtils.isEmpty(cronExpression)) {
+            return "The cron expression is blank.";
+        }
+        if (CronUtils.isValid(cronExpression)) {
+            Date nextExecution = CronUtils.getNextExecution(cronExpression);
+            return formatDate(nextExecution);
+        }
+        return "The cron expression is invalid.";
+    }
+
+    private String formatDate(Date nextRunDate) {
+        return nextRunDate.toString();
     }
 
     private SimpleButton createSaveButton(Form form) {
@@ -88,6 +122,11 @@ public class IndexerConfigPanel extends TitledActionPanel {
                 info("Services settings successfully updated.");
                 FeedbackUtils.refreshFeedback(target);
                 target.addComponent(this);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                FeedbackUtils.refreshFeedback(target);
             }
         };
     }

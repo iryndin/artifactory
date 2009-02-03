@@ -39,6 +39,8 @@ public class SaveIndexMessage extends FutureWorkMessage<Boolean> {
     }
 
     public SaveIndexMessage(RepoIndexerData repoIndexerData) {
-        super(WorkAction.SAVE_INDEX_FILE, repoIndexerData.getIndexFolderRepoPath(), new Action(repoIndexerData));
+        super(WorkAction.SAVE_INDEX_FILE,
+                repoIndexerData.getIndexFolderRepoPath(),
+                new Action(repoIndexerData));
     }
 }

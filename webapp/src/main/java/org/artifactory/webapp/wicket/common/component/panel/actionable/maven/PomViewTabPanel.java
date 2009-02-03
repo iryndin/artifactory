@@ -64,7 +64,7 @@ public class PomViewTabPanel extends Panel {
 
     private void addDependencySection() {
         FileInfo fileInfo = new FileInfo(repoItem.getRepoPath());
-        MavenArtifactInfo artifactInfo = MavenArtifactInfo.fromRepoPath(fileInfo.getRepoPath());
+        MavenArtifactInfo artifactInfo = MavenArtifactInfo.buildFromPath(fileInfo.getRepoPath());
 
         StringBuilder sb = new StringBuilder();
         sb.append("<dependency>\n");

@@ -10,7 +10,7 @@ public class DelegateEventBehavior extends JavascriptEvent {
     public DelegateEventBehavior(final String event, final Component delegate) {
         super(event, new AbstractReadOnlyModel() {
             public Object getObject() {
-                return "dojo.byId('" + delegate.getMarkupId() + "')." + event + "(event);";
+                return "get('" + delegate.getMarkupId() + "')." + event + "(event);";
             }
         });
         delegate.setOutputMarkupId(true);

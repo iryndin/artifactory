@@ -20,11 +20,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
+import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.md.MetadataReader;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +64,10 @@ public class MetadataReaderImpl implements MetadataReader {
             status.setDebug("Importing metadata from '" + metadataFile.getPath() + "'.", log);
 
             try {
-                // metadata name is the name of the file without the extension
-                String metadataName = PathUtils.stripExtension(metadataFileName);
+                String metadataName = metadataFileName;
+                if (!MavenNaming.isMavenMetadataFileName(metadataFileName)) {
+                    metadataName = metadataFileName.substring(0, metadataFileName.length() - extension.length() - 1);
+                }
                 String xmlContent = FileUtils.readFileToString(metadataFile);
                 MetadataEntry metadataEntry = createMetadataEntry(metadataName, xmlContent);
                 result.add(metadataEntry);

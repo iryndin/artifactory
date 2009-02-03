@@ -19,6 +19,7 @@ var StyledRadio = {
             } else {
                 button.className = 'styled-checkbox styled-checkbox-unchecked';
             }
+            button['cssBefore-hover'] = button.className;
         });
     }
 };

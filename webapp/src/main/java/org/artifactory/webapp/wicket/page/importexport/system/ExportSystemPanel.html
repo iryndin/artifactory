@@ -5,20 +5,15 @@
             <label>Target export dir</label>
 
             <div class="value">
-                <input wicket:id="exportToPath" type="text" class="path-field"/>
+                <input wicket:id="exportToPath" type="text" class="path_field"/>
                 <span wicket:id="fileBrowser"></span>
             </div>
         </div>
 
-        <div class="field field-sep">
-            <input wicket:id="includeMetadata" type="checkbox"/>
-            <span wicket:id="includeMetadataHelp"/>
-        </div>
-        <div class="field field-sep">
+        <div class="field-sep">
             <input wicket:id="m2Compatible" type="checkbox"/>
-            <span wicket:id="m2CompatibleHelp"/>
         </div>
-        <div class="field field-sep">
+        <div>
             <input wicket:id="createArchive" type="checkbox"/>
         </div>
 

@@ -164,15 +164,12 @@
         <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
             <param name="path" value="${rep.home}/index"/>
             <param name="useCompoundFile" value="true"/>
-            <!-- Default is 100 -->
-            <param name="minMergeDocs" value="500"/>
+            <param name="minMergeDocs" value="100"/>
             <param name="maxMergeDocs" value="10000"/>
             <param name="volatileIdleTime" value="3"/>
-            <!-- Default is 10: more segments quicker the indexing but slower the searching -->
             <param name="mergeFactor" value="10"/>
             <param name="maxFieldLength" value="10000"/>
-            <!-- Default is 10 -->
-            <param name="bufferSize" value="100"/>
+            <param name="bufferSize" value="10"/>
             <param name="cacheSize" value="1000"/>
             <param name="forceConsistencyCheck" value="false"/>
             <param name="enableConsistencyCheck" value="true"/>
@@ -180,15 +177,13 @@
             <param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
             <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
             <param name="respectDocumentOrder" value="false"/>
-            <param name="resultFetchSize" value="700"/>
-            <param name="supportHighlighting" value="true"/>
+            <param name="resultFetchSize" value="500"/>
             <!--
-            Use 5 background threads for text extraction that takes more than 100 milliseconds
+            Use 3 background threads for text extraction that takes more than 100 milliseconds
             -->
-            <param name="extractorPoolSize" value="5"/>
+            <param name="extractorPoolSize" value="3"/>
             <param name="extractorTimeout" value="100"/>
-            <!-- Default is 100 -->
-            <param name="extractorBackLogSize" value="500"/>
+            <param name="extractorBackLogSize" value="100"/>
             <!-- Indexing configuration -->
             <!--<param name="indexingConfiguration" value="${rep.home}/index/index_config.xml"/>-->
         </SearchIndex>

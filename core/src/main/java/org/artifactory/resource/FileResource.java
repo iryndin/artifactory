@@ -18,7 +18,7 @@ package org.artifactory.resource;
 
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -75,7 +75,7 @@ public class FileResource implements RepoResource {
         return info.getMimeType();
     }
 
-    public long getCacheAge() {
+    public long getAge() {
         long lastUpdated = info.getLastUpdated();
         if (lastUpdated <= 0) {
             return -1;

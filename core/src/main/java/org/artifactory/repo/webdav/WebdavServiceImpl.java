@@ -183,17 +183,11 @@ public class WebdavServiceImpl implements WebdavService {
     public void handleMkcol(ArtifactoryRequest request,
             ArtifactoryResponse response) throws IOException {
         RepoPath repoPath = request.getRepoPath();
-        final LocalRepo repo = getLocalRepo(request, response);
-        //Return 405 if folder exists
-        if (repo.itemExists(repoPath.getPath())) {
-            response.setStatus(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            return;
-        }
         //Check that we are allowed to write
         checkCanDeploy(repoPath, response);
+        final LocalRepo repo = getLocalRepo(request, response);
         JcrFolder targetFolder = repo.getLockedJcrFolder(repoPath, true);
         targetFolder.mkdirs();
-        // Return 201 when element created
         response.setStatus(HttpStatus.SC_CREATED);
     }
 

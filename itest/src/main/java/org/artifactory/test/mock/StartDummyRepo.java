@@ -36,8 +36,8 @@ public class StartDummyRepo {
      * Main function, starts the jetty server.
      */
     public static void main(String[] args) {
-        System.out.println("Starting Mock Server");
         Server server = null;
+
         try {
             log.info("Starting the Mock Server");
             URL configUrl = StartDummyRepo.class.getResource("/mock/jetty.xml");
@@ -55,24 +55,20 @@ public class StartDummyRepo {
                     throw new Exception("Server was unable to start after 30 sec");
                 }
             }
-            System.out.println("Mock Server started");
             log.info("Mock Server started");
             if (args != null && args.length > 0) {
                 for (String arg : args) {
                     File xml = new File(arg);
                     if (xml.exists()) {
                         String fileName = xml.getName();
-                        System.out.println("Adding test from " + fileName);
                         log.info("Adding test from " + fileName);
                         mockServer.addTest(fileName.substring(0, (fileName.length() - 4)),
                                 FileUtils.readFileToString(xml, "utf-8"));
                     }
                 }
             }
-            System.out.println("Mock Server fully configured");
+
         } catch (Exception e) {
-            System.err.println("Mock Server start failure: " + e);
-            e.printStackTrace();
             log.fatal("Could not start the Jetty server: " + e, e);
             if (server != null) {
                 try {

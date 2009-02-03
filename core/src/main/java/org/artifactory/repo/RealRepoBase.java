@@ -24,15 +24,17 @@ import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.util.PathMatcher;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathMatcher;
+import org.artifactory.utils.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 
-public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBase<T> implements RealRepo<T> {
+public abstract class RealRepoBase<T extends RealRepoDescriptor>
+        extends RepoBase<T> implements RealRepo<T> {
+
     private static final Logger log = LoggerFactory.getLogger(RealRepoBase.class);
 
     private List<String> includes;
@@ -40,7 +42,6 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
 
     protected RealRepoBase(InternalRepositoryService repositoryService) {
         super(repositoryService);
-        this.excludes = PathMatcher.getDefaultExcludes();
     }
 
     public RealRepoBase(InternalRepositoryService repositoryService, T descriptor) {
@@ -51,9 +52,15 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
     @Override
     public void setDescriptor(T descriptor) {
         super.setDescriptor(descriptor);
-        this.includes = PathUtils.delimitedListToStringList(descriptor.getIncludesPattern(), ",", "\r\n\f ");
-        this.excludes = PathUtils.delimitedListToStringList(descriptor.getExcludesPattern(), ",", "\r\n\f ");
-        excludes.addAll(PathMatcher.getDefaultExcludes());
+        this.includes = PathUtils.delimitedListToStringList(
+                descriptor.getIncludesPattern(), ",", "\r\n\f ");
+        this.excludes = PathUtils.delimitedListToStringList(
+                descriptor.getExcludesPattern(), ",", "\r\n\f ");
+        if (excludes.isEmpty()) {
+            excludes = null;
+        } else {
+            excludes.addAll(PathMatcher.DEFAULT_EXCLUDES);
+        }
     }
 
     public boolean isHandleReleases() {
@@ -80,6 +87,7 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         return getDescriptor().getMaxUniqueSnapshots();
     }
 
+    @SuppressWarnings({"OverlyComplexMethod"})
     public boolean accepts(String path) {
         // TODO: Refactor this using RepoPath
         String toCheck = path;
@@ -89,7 +97,11 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         } else if (NamingUtils.isMetadata(path)) {
             toCheck = NamingUtils.getMetadataParentPath(path);
         }
-        return PathMatcher.matches(toCheck, includes, excludes);
+        List<String> toExcludes = excludes;
+        if (excludes != null && !excludes.isEmpty()) {
+            toExcludes = PathMatcher.DEFAULT_EXCLUDES;
+        }
+        return PathMatcher.matches(toCheck, includes, toExcludes);
     }
 
     public boolean handles(String path) {
@@ -97,7 +109,7 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         if (NamingUtils.isMetadata(path) || NamingUtils.isChecksum(path) || MavenNaming.isIndex(path)) {
             return true;
         }
-        boolean snapshot = MavenNaming.isSnapshot(path);
+        boolean snapshot = NamingUtils.isSnapshot(path);
         if (snapshot && !isHandleSnapshots()) {
             if (log.isDebugEnabled()) {
                 log.debug("{} rejected '{}': not handling snapshots.", this, path);
@@ -118,7 +130,7 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
 
     public StatusHolder assertValidPath(RepoPath repoPath) {
         StatusHolder statusHolder = new StatusHolder();
-        statusHolder.setActivateLogging(log.isDebugEnabled());
+        statusHolder.setActivateLogging(false);
         if (isBlackedOut()) {
             statusHolder.setError(
                     "The repository '" + this.getKey() + "' is blacked out and cannot accept artifact '" + repoPath +

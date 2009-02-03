@@ -1,7 +1,7 @@
 package org.artifactory.webapp.wicket.application.sitemap;
 
 import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
@@ -161,30 +161,20 @@ public class MenuNode implements TreeNode, Serializable {
         return parent.getCookieName() + "." + parent.getIndex(this);
     }
 
-    public Boolean isOpened() {
-        if (isLeaf()) {
-            return false;
-        }
-
-        String cookieValue = getCookie(getCookieName());
-        if (StringUtils.isEmpty(cookieValue)) {
-            return null;
-        }
-
-        return Boolean.TRUE.toString().equals(cookieValue);
+    public boolean isOpened() {
+        return !isLeaf() && isNotEmpty(getCookie(getCookieName()));
     }
 
-    public void setOpened(Boolean opened) {
+    public void setOpened(boolean opened) {
         if (isLeaf()) {
             return;
         }
 
-        if (opened == null) {
+        if (opened) {
+            setCookie(getCookieName(), Boolean.TRUE);
+        } else {
             clearCookie(getCookieName());
-            return;
         }
-
-        setCookie(getCookieName(), opened);
     }
 
     protected IAuthorizationStrategy getAuthorizationStrategy() {

@@ -68,6 +68,7 @@ public interface JcrRepoService {
     @Lock(transactional = true, readOnly = true)
     List<JcrFsItem> getChildren(JcrFolder folder, boolean withLock);
 
+    @Lock(transactional = true)
     boolean delete(JcrFsItem fsItem);
 
     /**
@@ -103,6 +104,4 @@ public interface JcrRepoService {
 
     @Lock(transactional = true)
     List<String> getChildrenNames(String absPath);
-
-    void trash(List<JcrFsItem> items);
 }

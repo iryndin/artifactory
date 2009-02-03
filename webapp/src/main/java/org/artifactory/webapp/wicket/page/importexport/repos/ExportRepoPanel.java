@@ -22,8 +22,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusEntry;
+import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.repo.BackupService;
 import org.artifactory.api.repo.RepositoryService;
@@ -35,7 +34,6 @@ import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledChec
 import org.artifactory.webapp.wicket.common.component.file.browser.button.FileBrowserButton;
 import org.artifactory.webapp.wicket.common.component.file.path.PathAutoCompleteTextField;
 import org.artifactory.webapp.wicket.common.component.file.path.PathMask;
-import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
 import org.slf4j.Logger;
@@ -65,9 +63,6 @@ public class ExportRepoPanel extends TitledPanel {
 
     @WicketProperty
     private boolean m2Compatible;
-
-    @WicketProperty
-    private boolean includeMetadata;
 
     public ExportRepoPanel(String string) {
         super(string);
@@ -112,12 +107,6 @@ public class ExportRepoPanel extends TitledPanel {
         exportForm.add(browserButton);
 
         exportForm.add(new StyledCheckbox("m2Compatible", new PropertyModel(this, "m2Compatible")));
-        exportForm.add(new HelpBubble("m2CompatibleHelp",
-                "Include Maven 2 repository metadata and checksum files as part of the export"));
-        exportForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        exportForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export.\n" +
-                        "(Maven 2 metadata is unaffected by this setting)"));
 
         SimpleButton exportButton = new SimpleButton("export", exportForm, "Export") {
             @Override
@@ -125,34 +114,19 @@ public class ExportRepoPanel extends TitledPanel {
                 try {
                     //If we chose "All" run manual backup to dest dir, else export a single repo
                     ExportSettings exportSettings = new ExportSettings(exportToPath);
-                    exportSettings.setIncludeMetadata(includeMetadata);
                     exportSettings.setM2Compatible(m2Compatible);
-                    MultiStatusHolder status = new MultiStatusHolder();
                     if (ImportExportReposPage.ALL_REPOS.equals(sourceRepoKey)) {
-                        backupService.backupRepos(exportToPath, exportSettings, status);
+                        backupService.backupRepos(exportToPath, exportSettings);
                     } else {
+                        final StatusHolder status = new StatusHolder();
                         repositoryService.exportRepo(sourceRepoKey, exportSettings, status);
                     }
-                    List<StatusEntry> warnings = status.getWarnings();
-                    if (!warnings.isEmpty()) {
-                        warn(warnings.size() + " Warnings have been produces during the export. " +
-                                "Please review the log for further information.");
-                    }
-                    if (status.isError()) {
-                        String message = status.getStatusMsg();
-                        Throwable exception = status.getException();
-                        if (exception != null) {
-                            message = exception.getMessage();
-                        }
-                        error("Failed to export from: " + sourceRepoKey + "' to '" + exportToPath + "'. Cause: " +
-                                message);
-                    } else {
-                        info("Successfully exported '" + sourceRepoKey + "' to '" + exportToPath + "'.");
-                    }
+                    info("Successfully exported '" + sourceRepoKey + "' to '" + exportToPath +
+                            "'.");
                 } catch (Exception e) {
-                    String message = "Exception occured during export: ";
-                    error(message + e.getMessage());
-                    log.error(message, e);
+                    String message =
+                            "Failed to export '" + sourceRepoKey + "' to '" + exportToPath + "': " + e.getMessage();
+                    error(message);
                 }
                 FeedbackUtils.refreshFeedback(target);
                 target.addComponent(form);

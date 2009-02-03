@@ -16,10 +16,6 @@
  */
 package org.artifactory.update.security;
 
-import org.artifactory.update.security.v125.AclsConverter;
-import org.artifactory.update.security.v125.UserPermissionsConverter;
-import org.artifactory.update.security.v130beta1.RepoPathAclConverter;
-import org.artifactory.update.security.v130beta1.SimpleUserConverter;
 import org.artifactory.version.ArtifactoryVersion;
 import org.artifactory.version.ConverterUtils;
 import org.artifactory.version.VersionComparator;
@@ -40,22 +36,14 @@ public enum ArtifactorySecurityVersion {
             throw new IllegalStateException(
                     "Reading security data from backup of Artifactory version older than 1.2.5-rc6 is not supported!");
         }},
-    v125u1(ArtifactoryVersion.v125, ArtifactoryVersion.v125u1, new UserPermissionsConverter(), new AclsConverter()),
-    v130beta2(ArtifactoryVersion.v130beta1, ArtifactoryVersion.v130beta2,
-            new SimpleUserConverter(), new RepoPathAclConverter()),
-    v130rc1(ArtifactoryVersion.v130beta3, ArtifactoryVersion.v130rc1),
-    current(ArtifactoryVersion.v130rc2, ArtifactoryVersion.getCurrent());
+    v130beta2(ArtifactoryVersion.v125, ArtifactoryVersion.v130beta2,
+            new SimpleUserConverter(),
+            new RepoPathAclConverter()),
+    current(ArtifactoryVersion.v130beta3, ArtifactoryVersion.getCurrent());
 
     private final VersionComparator comparator;
     private final XmlConverter[] converters;
 
-    /**
-     * Represents Artifactory security version. For each change in the security files new security version is created.
-     *
-     * @param from       Artifactory version this security version started at
-     * @param until      Last Artifactory version this security version was valid
-     * @param converters List of converters needed to convert the security.xml of this version to the next one
-     */
     ArtifactorySecurityVersion(ArtifactoryVersion from, ArtifactoryVersion until, XmlConverter... converters) {
         this.comparator = new VersionComparator(from, until);
         this.converters = converters;
@@ -77,7 +65,7 @@ public enum ArtifactorySecurityVersion {
         return converters;
     }
 
-    public String convert(String securityXmlAsString) {
+    public String convert(String in) {
         // First create the list of converters to apply
         List<XmlConverter> converters = new ArrayList<XmlConverter>();
 
@@ -89,7 +77,7 @@ public enum ArtifactorySecurityVersion {
             }
         }
 
-        return ConverterUtils.convert(converters, securityXmlAsString);
+        return ConverterUtils.convert(converters, in);
     }
 
     public static ArtifactorySecurityVersion getSecurityVersion(ArtifactoryVersion version) {
@@ -103,8 +91,8 @@ public enum ArtifactorySecurityVersion {
             }
         }
         if (result == null || result == notSupported) {
-            throw new IllegalStateException("Reading security data from backup of Artifactory version "
-                    + version + " is not supported!");
+            throw new IllegalStateException(
+                    "Reading security data from backup of Artifactory version " + version + " is not supported!");
         }
         return result;
     }

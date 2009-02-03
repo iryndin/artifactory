@@ -29,8 +29,6 @@ public interface ArtifactoryContext extends ImportableExportable {
 
     public <T> T beanForType(Class<T> type);
 
-    public Object getBean(String name);
-
     RepositoryService getRepositoryService();
 
     AuthorizationService getAuthorizationService();

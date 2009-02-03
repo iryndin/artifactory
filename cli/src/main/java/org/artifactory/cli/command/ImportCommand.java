@@ -5,8 +5,6 @@ import org.artifactory.cli.common.Command;
 import org.artifactory.cli.common.UrlBasedCommand;
 import org.artifactory.cli.main.CliOption;
 import org.artifactory.cli.main.CommandDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -16,20 +14,13 @@ import java.io.File;
  * @author Noam Tenne
  */
 public class ImportCommand extends UrlBasedCommand implements Command {
-    private final static Logger log = LoggerFactory.getLogger(ImportCommand.class);
 
     /**
      * Default constructor
      */
     public ImportCommand() {
-        super(
-                CommandDefinition.imp,
-                CliOption.verbose,
-                CliOption.noMetadata,
-                CliOption.syncImport,
-                CliOption.symlinks,
-                CliOption.failOnError,
-                CliOption.failIfEmpty);
+        super(CommandDefinition.imp, CliOption.noMetadata, CliOption.symlinks, CliOption.syncImport, CliOption.verbose,
+                CliOption.failFast, CliOption.failIfEmpty);
     }
 
     /**
@@ -54,11 +45,8 @@ public class ImportCommand extends UrlBasedCommand implements Command {
             settings.setCopyToWorkingFolder(false);
         }
         settings.setVerbose(CliOption.verbose.isSet());
-        settings.setFailFast(CliOption.failOnError.isSet());
+        settings.setFailFast(CliOption.failFast.isSet());
         settings.setFailIfEmpty(CliOption.failIfEmpty.isSet());
-
-        log.info("Sending import request to server from path: {}", importFrom.getPath());
-
         // TODO: The repo list
         //settings.setReposToImport();
         post(systemUri, settings, null);

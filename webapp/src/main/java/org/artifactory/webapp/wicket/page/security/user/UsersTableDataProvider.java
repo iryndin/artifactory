@@ -8,7 +8,9 @@ import org.artifactory.api.security.UserGroupService;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.webapp.wicket.utils.ListPropertySorter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Data provider for the users table.
@@ -65,36 +67,15 @@ class UsersTableDataProvider extends SortableDataProvider {
     }
 
     private List<UserModel> getFilteredUsers() {
-        // get selected users
-        Set<UserModel> selectedUsers = getSelectedUsers();
-
         List<UserInfo> allUsers = userGroupService.getAllUsers(true);
         List<UserModel> users = new ArrayList<UserModel>();
         for (UserInfo userInfo : allUsers) {
             //Don't list anonymous and excluded users
             if (!userInfo.isAnonymous() && includedByFilter(userInfo)) {
-                UserModel userModel = new UserModel(userInfo);
-                users.add(userModel);
-
-                // persist selection
-                if (selectedUsers.contains(userModel)) {
-                    userModel.setSelected(true);
-                }
+                users.add(new UserModel(userInfo));
             }
         }
         return users;
-    }
-
-    private Set<UserModel> getSelectedUsers() {
-        Set<UserModel> selectedUsers = new HashSet<UserModel>();
-        if (users != null) {
-            for (UserModel userModel : users) {
-                if (userModel.isSelected()) {
-                    selectedUsers.add(userModel);
-                }
-            }
-        }
-        return selectedUsers;
     }
 
     /**

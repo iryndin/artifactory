@@ -45,6 +45,4 @@ public interface CentralConfigDescriptor extends Descriptor {
      * @return true if the global offline mode is set.
      */
     boolean isOfflineMode();
-
-    ProxyDescriptor getDefaultProxy();
 }

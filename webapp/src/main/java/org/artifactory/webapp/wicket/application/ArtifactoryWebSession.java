@@ -73,7 +73,8 @@ public class ArtifactoryWebSession extends AuthenticatedWebSession {
         } catch (AuthenticationException e) {
             authenticated = false;
             if (log.isDebugEnabled()) {
-                log.debug("Fail to authenticate " + username + "/" + DigestUtils.md5Hex(password), e);
+                log.debug(
+                        "Fail to authenticate " + username + "/" + DigestUtils.md5Hex(password), e);
             }
         }
         return authenticated;
@@ -134,8 +135,7 @@ public class ArtifactoryWebSession extends AuthenticatedWebSession {
     private static class SecurityServiceLocator implements IProxyTargetLocator {
         public Object locateProxyTarget() {
             ArtifactoryContext context = ContextHelper.get();
-            // get the "ui" authentication manager (no password encryption stuff)
-            AuthenticationManager security = (AuthenticationManager) context.getBean("authenticationManager");
+            AuthenticationManager security = context.beanForType(AuthenticationManager.class);
             return security;
         }
     }

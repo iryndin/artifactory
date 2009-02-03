@@ -128,6 +128,14 @@ public class LoginPanel extends TitledActionPanel {
                     }
                 }
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                super.onError(target, form);
+                target.addComponent(LoginPanel.this);
+                FeedbackUtils.refreshFeedback(target);
+            }
         }
     }
+
 }

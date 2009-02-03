@@ -77,10 +77,12 @@ public class ArtifactoryVersionReader {
 
     private static ArtifactoryVersion findClosestMatch(String versionString, String revisionString) {
         int artifactoryRevision = Integer.parseInt(revisionString);
-        log.warn("Version " + versionString + " is not an official realease version. " +
-                "The closest revision to " + artifactoryRevision + " will be used to determine the current version.\n" +
-                "Warning: This version is unsupported! Reading backup data may not work!\n" +
-                "Specifying an explicit version in artadmin commands is recommended.");
+        log.warn("Version " + versionString + " is not part of the realeased versions. " +
+                "The actual version will be determined by the closest revision from " +
+                artifactoryRevision + ". Becareful: This action is not the one supported!\n" +
+                "Reading the backup folder may or may not work!\n" +
+                "For Information: Using the Command Line Tool and providing the version by hand " +
+                "is preferable in this case.");
         for (ArtifactoryVersion version : ArtifactoryVersion.values()) {
             if (version.getRevision() >= artifactoryRevision) {
                 return version;

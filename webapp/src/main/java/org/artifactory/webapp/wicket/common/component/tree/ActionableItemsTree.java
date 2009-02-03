@@ -44,7 +44,7 @@ import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.ItemNotFoundException;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 import org.artifactory.webapp.actionable.ActionableItem;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.actionable.action.ItemActionListener;
@@ -71,7 +71,6 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
 
     public ActionableItemsTree(String id, ActionableItemsProvider itemsProvider) {
         super(id);
-
         this.itemsProvider = itemsProvider;
         setRootLess(true);
         HierarchicActionableItem root = itemsProvider.getRoot();
@@ -86,15 +85,14 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
     }
 
     /**
-     * Builds a tree and set the selected path to the input repo path. If the repoPath is null or not found, we use the
-     * default view.
-     *
-     * @param id            The wicket id
+     * Builds a tree and set the selected path to the input repo path.
+     * If the repoPath is null or not found, we use the default view.
+     * @param id    The wicket id
      * @param itemsProvider Actionable items provider
-     * @param repoPath      The path to select
+     * @param repoPath  The path to select
      */
     public ActionableItemsTree(String id, ActionableItemsProvider itemsProvider,
-                               RepoPath repoPath) {
+            RepoPath repoPath) {
         this(id, itemsProvider);
 
         if (repoPath == null) {
@@ -169,7 +167,6 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
     @Override
     protected void populateTreeItem(final WebMarkupContainer item, int level) {
         super.populateTreeItem(item, level);
-        item.get("nodeLink:label").add(new CssClass("node-label"));
 
         item.add(new AjaxEventBehavior("oncontextmenu") {
             @Override
@@ -188,7 +185,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
     }
 
     @Override
-    public void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
+    protected void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
         super.onJunctionLinkClicked(target, node);
         boolean expanded = isNodeExpanded(node);
         ActionableItemTreeNode actionableItemTreeNode = (ActionableItemTreeNode) node;
@@ -223,7 +220,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
 
     @Override
     protected Component newJunctionLink(MarkupContainer parent, String id, String imageId,
-                                        TreeNode node) {
+            TreeNode node) {
         //Collapse empty nodes
         ActionableItemTreeNode mutableTreeNode = (ActionableItemTreeNode) node;
         ActionableItem userObject = mutableTreeNode.getUserObject();
@@ -261,27 +258,24 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
             ActionableItemTreeNode parentNode = node.getParent();
             //Update the parent
             if (parentNode != null) {
-                //Do not remove the repositories themselves
-                if (parentNode.equals(rootNode)) {
-                    node.removeAllChildren();
-                } else {
+                if (!parentNode.equals(rootNode)) {
+                    //Do not remove the repositories themselves
                     node.removeFromParent();
                 }
                 ITreeState state = getTreeState();
                 state.expandNode(parentNode);
             }
-            e.getTarget().appendJavascript("dijit.byId('browseTree').layout();");
         }
     }
 
     /**
-     * Returns the deepest node matching the given path. For example if the parent look like parent/child/1 and we ask
-     * for child/1/2/3 the returned node will be child/1.
-     *
-     * @param parentNode The parent node of the path.
-     * @param path       The path relative to the parent node we are looking for.
-     * @return The deepest node under the parent node for the given path. If no node under the parent matches part of
-     *         the path, the parent path is returned.
+     * Returns the deepest node matching the given path.
+     * For example if the parent look like parent/child/1 and we ask for child/1/2/3
+     * the returned node will be child/1.
+     * @param parentNode    The parent node of the path.
+     * @param path          The path relative to the parent node we are looking for.
+     * @return The deepest node under the parent node for the given path. If no node
+     *          under the parent matches part of the path, the parent path is returned.
      */
     private ActionableItemTreeNode getNodeAt(ActionableItemTreeNode parentNode, String path) {
         String firstPart = PathUtils.getPathFirstPart(path);
@@ -309,7 +303,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener {
     }
 
     private static void setChildren(ActionableItemTreeNode node,
-                                    List<? extends ActionableItem> children) {
+            List<? extends ActionableItem> children) {
         node.removeAllChildren();
         for (ActionableItem child : children) {
             ActionableItemTreeNode newChildNode = new ActionableItemTreeNode(child);

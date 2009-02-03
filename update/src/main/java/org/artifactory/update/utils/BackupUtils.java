@@ -44,7 +44,7 @@ public class BackupUtils {
         File propFile = new File(backupFolder, ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE);
         if (!propFile.exists()) {
             throw new RuntimeException("Backup folder " + backupFolder.getAbsolutePath() +
-                    " does not contain file " + propFile.getName());
+                    " does not contains file " + propFile.getName());
         }
 
         return ArtifactoryVersionReader.read(propFile).getVersion();

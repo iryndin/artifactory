@@ -15,11 +15,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
-import org.artifactory.descriptor.repo.HttpRepoDescriptor;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
+import org.artifactory.descriptor.repo.*;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.component.CancelDefaultDecorator;
 import static org.artifactory.webapp.wicket.common.component.CreateUpdateAction.CREATE;
@@ -37,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -113,28 +108,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
             protected Component newToolbar(String id) {
                 return new SchemaHelpBubble(id, getHelpModel("localRepositoriesMap"));
             }
-
-            @Override
-            protected List<AbstractLink> getItemActions(LocalRepoDescriptor itemObject, String linkId) {
-                List<AbstractLink> links = super.getItemActions(itemObject, linkId);
-                if (getDescriptorForEditing().getLocalRepositoriesMap().size() == 1) {
-                    // don't allow deletion of the last local repository
-                    removeDeleteLink(links);
-                }
-                return links;
-            }
-
-            private void removeDeleteLink(List<AbstractLink> links) {
-                Iterator<AbstractLink> linkIterator = links.iterator();
-                while (linkIterator.hasNext()) {
-                    AbstractLink link = linkIterator.next();
-                    if (link instanceof DeleteRepoLink) {
-                        linkIterator.remove();
-                    }
-                }
-            }
         });
-
     }
 
     private void addRemoteReposList() {
@@ -296,7 +270,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         @Override
         protected void populateItem(final ListItem item) {
             super.populateItem(item);
-            item.add(new AjaxEventBehavior("ondblclick") {
+            item.add(new AjaxEventBehavior("oncontextmenu") {
                 @SuppressWarnings({"unchecked"})
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
@@ -314,7 +288,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         }
 
         @Override
-        protected List<AbstractLink> getItemActions(final T itemObject, String linkId) {
+        protected List<? extends AbstractLink> getItemActions(final T itemObject, String linkId) {
             List<AbstractLink> links = new ArrayList<AbstractLink>();
             links.add(new EditLink(linkId) {
                 @Override
@@ -351,7 +325,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         protected abstract void saveRepos(List<T> repos);
 
         protected void assertLegalReorderedList(List<? extends RepoDescriptor> newList,
-                Collection<? extends RepoDescriptor> original) {
+                                                Collection<? extends RepoDescriptor> original) {
             log.debug("Original ordered list: {}", original);
             log.debug("New ordered list: {}", newList);
             // make sure that the new reordered list contains the same repositories count and the

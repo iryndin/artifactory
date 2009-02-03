@@ -101,7 +101,7 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
         String repoKey = repo.getKey();
         JcrFolder repoDir = repo.getRootFolder();
         //Use a file based dir with a temp file to conserve memory
-        File dir = org.artifactory.util.FileUtils.createRandomDir(
+        File dir = org.artifactory.utils.FileUtils.createRandomDir(
                 ArtifactoryHome.getTmpDir(), "artifactory.index." + repoKey + ".");
         Directory indexDir = FSDirectory.getDirectory(dir);
         List<IndexCreator> indexCreators = new ArrayList<IndexCreator>(1);

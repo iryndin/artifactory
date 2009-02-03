@@ -1,16 +1,8 @@
 package org.artifactory.webapp.wicket.page.security.acl;
 
-import org.artifactory.api.security.AceInfo;
-import org.artifactory.api.security.AclInfo;
-import org.artifactory.api.security.GroupInfo;
-import org.artifactory.api.security.UserGroupService;
-import org.artifactory.api.security.UserInfo;
+import org.artifactory.api.security.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Yossi Shaul
@@ -19,7 +11,8 @@ public class PermissionTargetAceInfoRowDataProvider extends BaseSortableAceInfoR
     private AclInfo aclInfo;
     private UserGroupService userGroupService;
 
-    public PermissionTargetAceInfoRowDataProvider(UserGroupService userGroupService, AclInfo aclInfo) {
+    public PermissionTargetAceInfoRowDataProvider(UserGroupService userGroupService,
+                                                  AclInfo aclInfo) {
         this.userGroupService = userGroupService;
         this.aclInfo = aclInfo;
         loadData();
@@ -56,8 +49,9 @@ public class PermissionTargetAceInfoRowDataProvider extends BaseSortableAceInfoR
         return userGroupService.getAllUsers(false);
     }
 
-    private void addAceRow(List<AceInfoRow> rows, Map<AceInfo, AceInfo> aces, String username, boolean group) {
-        AceInfo aceInfo = new AceInfo(username, group, 0);
+    private void addAceRow(List<AceInfoRow> rows,
+                           Map<AceInfo, AceInfo> aces, String principal, boolean group) {
+        AceInfo aceInfo = new AceInfo(principal, group, 0);
         AceInfo existingAceInfo = aces.get(aceInfo);
         if (existingAceInfo == null) {
             aclInfo.getAces().add(aceInfo);

@@ -3,7 +3,6 @@ package org.artifactory.webapp.wicket.page.config.repos;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.ChecksumPolicyType;
@@ -86,14 +85,11 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
         advanced.add(new TextField("maxUniqueSnapshots", Integer.class));
         advanced.add(new SchemaHelpBubble("maxUniqueSnapshots.help"));
 
-        advanced.add(new TextArea("includesPattern"));
+        advanced.add(new TextField("includesPattern"));
         advanced.add(new SchemaHelpBubble("includesPattern.help"));
 
-        advanced.add(new TextArea("excludesPattern"));
+        advanced.add(new TextField("excludesPattern"));
         advanced.add(new SchemaHelpBubble("excludesPattern.help"));
-
-        advanced.add(new TextField("retrievalCachePeriodSecs", Long.class));
-        advanced.add(new SchemaHelpBubble("retrievalCachePeriodSecs.help"));
 
         advanced.add(new TextField("failedRetrievalCachePeriodSecs", Long.class));
         advanced.add(new SchemaHelpBubble("failedRetrievalCachePeriodSecs.help"));

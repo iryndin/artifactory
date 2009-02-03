@@ -32,8 +32,10 @@
 
 package org.artifactory.webapp.wicket.common.component.panel.actionable;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -44,7 +46,7 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.wicket.common.behavior.CssClass;
-import org.artifactory.webapp.wicket.common.component.BooleanColumn;
+import org.artifactory.webapp.wicket.common.component.CheckboxColumn;
 import org.artifactory.webapp.wicket.common.component.table.SortableTable;
 import org.artifactory.webapp.wicket.page.security.acl.AceInfoRow;
 
@@ -89,13 +91,31 @@ public class PermissionsTabPanel extends Panel {
             }
         });
 
-        columns.add(new BooleanColumn(new Model("Delete"), "delete", "delete"));
-        columns.add(new BooleanColumn(new Model("Deploy"), "deploy", "deploy"));
-        columns.add(new BooleanColumn(new Model("Read"), "read", "read"));
+        columns.add(new DisabledCheckboxColumn("Delete", "delete", "delete", this));
+        columns.add(new DisabledCheckboxColumn("Deploy", "deploy", "deploy", this));
+        columns.add(new DisabledCheckboxColumn("Read", "read", "read", this));
 
         PermissionsTabTableDataProvider dataProvider =
                 new PermissionsTabTableDataProvider(userGroupService, authService, repoPath);
 
         add(new SortableTable("recipients", columns, dataProvider, 10));
+    }
+
+
+    private static class DisabledCheckboxColumn extends CheckboxColumn {
+        public DisabledCheckboxColumn(String title, String expression, String sortProperty,
+                                      WebMarkupContainer container) {
+            super(title, expression, sortProperty, container);
+        }
+
+        @Override
+        protected boolean isEnabled(Object row) {
+            return false;
+        }
+
+        @Override
+        protected void doUpdate(Object row, boolean checked, AjaxRequestTarget target) {
+            // not updatable
+        }
     }
 }

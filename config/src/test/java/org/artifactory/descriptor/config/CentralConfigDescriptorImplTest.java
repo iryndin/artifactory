@@ -7,7 +7,7 @@ import org.artifactory.descriptor.repo.ProxyDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.security.SecurityDescriptor;
-import org.artifactory.util.AlreadyExistsException;
+import org.artifactory.utils.AlreadyExistsException;
 import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -81,8 +81,6 @@ public class CentralConfigDescriptorImplTest {
         assertTrue(cc.isKeyAvailable("proxy22"));
         cc.setSecurity(new SecurityDescriptor());
         assertTrue(cc.isKeyAvailable("ldap1"));
-
-        assertFalse(cc.isKeyAvailable("repo"));
     }
 
     public void repositoriesExistence() {

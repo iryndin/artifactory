@@ -16,7 +16,7 @@
  */
 package org.artifactory.jcr;
 
-import org.artifactory.util.LoggingUtils;
+import org.artifactory.utils.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

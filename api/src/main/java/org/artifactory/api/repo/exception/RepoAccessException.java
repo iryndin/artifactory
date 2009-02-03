@@ -39,14 +39,16 @@ public class RepoAccessException extends Exception {
     private final RepoPath repoPath;
     private final String action;
 
-    public RepoAccessException(String message, RepoPath repoPath, String action, String username) {
+    public RepoAccessException(String message, RepoPath repoPath,
+            String action, String username) {
         super(message);
         this.username = username;
         this.repoPath = repoPath;
         this.action = action;
     }
 
-    public RepoAccessException(String message, RepoPath repoPath, String action, String username, Throwable cause) {
+    public RepoAccessException(String message, RepoPath repoPath,
+            String action, String username, Throwable cause) {
         super(message, cause);
         this.username = username;
         this.repoPath = repoPath;
@@ -55,7 +57,7 @@ public class RepoAccessException extends Exception {
 
     @Override
     public String getMessage() {
-        return super.getMessage() + " Action '" + action + "' is unauthorized for user '" + username + "' on '" +
-                repoPath + "'.";
+        return super.getMessage() + " Action '" + action + "' is unauthorized for user '" +
+                username + "' on '" + repoPath + "'.";
     }
 }

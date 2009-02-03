@@ -24,7 +24,6 @@
  */
 package org.artifactory.webapp.servlet;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.config.SpringConfResourceLoader;
@@ -44,12 +43,11 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryContextConfigurer.class);
 
     public void contextInitialized(ServletContextEvent event) {
-        long start = System.currentTimeMillis();
         ArtifactoryHome.assertInitialized();
 
         String versionNumber = ConstantsValue.artifactoryVersion.getString();
         String revision = ConstantsValue.artifactoryRevision.getString();
-        log.info(
+        System.out.println(
                 "\n" +
                         "               _   _  __           _\n" +
                         "    /\\        | | (_)/ _|         | |\n" +
@@ -75,13 +73,8 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
             throw new RuntimeException(e);
         }
         //Register the context for easy retreival for faster destroy
-        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, context);
-        log.info("\n" +
-                "###########################################################\n" +
-                "### Artifactory successfully started (" +
-                String.format("%-17s", (DurationFormatUtils.formatPeriod(start, System.currentTimeMillis(), "s")) +
-                        " seconds)") + " ###\n" +
-                "###########################################################\n");
+        servletContext.setAttribute(
+                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, context);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

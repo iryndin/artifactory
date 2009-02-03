@@ -27,23 +27,23 @@
 
     <div wicket:id="artifactBorder">
         <form wicket:id="artifactForm" class="artifact-form">
-            <div class="field required">
+            <div class="field">
                 <label>GroupId</label>
 
                 <div class="value">
-                    <input wicket:id="groupId" type="text" class="text"/>
+                    <input wicket:id="group" type="text" class="text"/>
                 </div>
             </div>
 
-            <div class="field required field-sep">
+            <div class="field field-sep">
                 <label>ArtifactId</label>
 
                 <div class="value">
-                    <input wicket:id="artifactId" type="text" class="text"/>
+                    <input wicket:id="artifact" type="text" class="text"/>
                 </div>
             </div>
 
-            <div class="field required field-sep">
+            <div class="field field-sep">
                 <label>Version</label>
 
                 <div class="value">
@@ -59,11 +59,17 @@
                 </div>
             </div>
 
-            <div class="field required field-sep">
-                <label>Type</label>
+            <div class="field field-sep">
+                <label>Packaging</label>
 
                 <div class="value">
-                    <input wicket:id="type" type="text" class="text"/>
+                    <input wicket:id="packaging" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-sep">
+                <div class="value">
+                    <input wicket:id="deployPom" type="checkbox" widgetId="deployPom" class="text"/>
                 </div>
             </div>
 
@@ -72,12 +78,6 @@
 
                 <div class="value">
                     <select wicket:id="targetRepo" class="medium"/>
-                </div>
-            </div>
-
-            <div class="field field-sep">
-                <div class="value">
-                    <input wicket:id="deployPom" type="checkbox" widgetId="deployPom" class="text"/>
                 </div>
             </div>
 

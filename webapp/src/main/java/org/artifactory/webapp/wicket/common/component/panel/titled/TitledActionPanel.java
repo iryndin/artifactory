@@ -43,7 +43,7 @@ public abstract class TitledActionPanel extends TitledPanel {
     }
 
     private void init() {
-        buttonsContainer = new RepeatingView("buttons");
+        buttonsContainer = new RepeatingView("myButton");
         add(buttonsContainer);
     }
 
@@ -79,9 +79,5 @@ public abstract class TitledActionPanel extends TitledPanel {
 
     private void addButton(Component button) {
         buttonsContainer.add(button);
-    }
-
-    public RepeatingView getButtonsContainer() {
-        return buttonsContainer;
     }
 }

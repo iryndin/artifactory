@@ -17,6 +17,7 @@
 package org.artifactory.webapp.wicket.page.browse.simplebrowser;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
@@ -47,7 +48,12 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Yoav Landman
@@ -120,7 +126,7 @@ public class VirtualRepoBrowserPanel extends TitledPanel {
                         String key = (String) item.getModelObject();
                         String href = hrefPrefix + "/" + key + "/" + finalDirectoryPath;
                         ExternalLink link = new ExternalLink("repoKey", href, key);
-                        link.add(new CssClass("item-link"));
+                        link.add(new AttributeAppender("class", new Model("cellItemLink"), " "));
                         item.add(link);
                     }
                 };

@@ -25,65 +25,39 @@ import org.artifactory.cli.common.OptionInfo;
  * @date Sep 1, 2008
  */
 public enum CliOption implements Option {
-    host(
-            "The remote artifactory server IP or host name with optional port number. Default: localhost:8081",
-            "host name/ip address"),
-    ssl(
-            "Use https instead of http. Default is false"),
-    timeout(
-            "Set the timeout of the HTTP connection. Default: 900 seconds = 15 minutes.",
-            "network timeout secs"),
-    url(
-            "The root URL of the artifactory REST API. The default is http://[host]/artifactory/api",
-            "rest api root url"),
-    username(
-            "Username to use when connecting to a remote artifactory",
-            "username"),
-    password(
-            "Password to use (clear) when connecting to a remote artifactory",
-            "password"),
-    noMetadata(
-            "Exclude artifactory specific metadata when importing/exporting. Default: false"),
-    symlinks(
-            "Use symbolic links to the original import path file (no file copying done). Default: false"),
-    syncImport(
-            "Import directly into artifactory without using the background import process. Default: false"),
-    bypassFiltering(
-            "Ignore exiting repository content filtering rules during the export process. Default: false"),
-    createArchive(
-            "Zip the resulting folder after the export (very slow)"),
-    dest(
-            "The destination folder for the new export files. Default: dumpExport",
-            "destination folder"),
-    version(
-            "The version of the old artifactory if it cannot be automatically determined", "version name"),
-    repos(
-            "Export only a specified list of repositories. Default: " + DumpCommand.EXPORT_ALL_NON_CACHED_REPOS,
-            "repo names separated by ':'"),
-    noconvert(
-            "Do not auto convert local repository names of artifactory v1.2.5 and earlier to Virtual repositories. " +
-                    "Default: false"),
-    security(
-            "Only dump a security definitions file, and no repositories. Default: false"),
-    caches(
-            "Include cached repositories in the export (by default caches are not exported). " +
-                    "If the repos option is used this option will be ignored. Default: false"),
-    verbose(
-            "Display maximum execution details. Default: false"),
-    failOnError(
-            "Fail on the first error. Default: false"),
-    failIfEmpty(
-            "Fail when encountering empty source directories. Default: false"),
-    update(
-            "Post a file with update data to the artifactory server",
-            "path to update data file"),
-    destFile(
-            "The destination file for this command's result.",
-            "dest file path"),
-    overwrite(
-            "When set, if the destination file exists, the command will overwrite it."),
-    m2(
-            "Create .m2 compatible metadata (sha1, md5 and maven-metadata.xml files) when exporting");
+    server("The remote Artifactory server IP or host name with optional port number. " +
+            "The default is localhost:8081", true, "the server host or ip"),
+    ssl("Activate https instead of http. Default is false"),
+    timeout("Set the timeout of the HTTP connection. The default is 900secs = 15mins.", true, "timeout in seconds"),
+    url("The root URL of the Artifactry REST API. The default is http://[servername]/artifactory/api", true,
+            "root url to rest api"),
+    username("Optional username to use when connecting to the remote Artifactory", true, "username"),
+    password("The users's clear text password", true, "password"),
+    noMetadata("Exclude metadata information when importing/exporting"),
+    symlinks("Use symbolic links to the original import path file (no file copying)"),
+    syncImport("Import directly into Artifactory without using the background import process"),
+    bypassFiltering("Avoid using exiting repository filtering rules during the export process"),
+    createArchive("Zip the resulting folder after the export (slow)"),
+    dest("the destination folder for the new export files. Default value: tmpExport", true, "destination folder"),
+    version("the actual version of the old Artifactory if the Update Manager cannot find it", true, "version name"),
+    repo("export only a specified list of repositories. Default value: " +
+            DumpCommand.EXPORT_ALL_NON_CACHED_REPOS, true, "repo names separated by ':'"),
+    norepo("does not export the repositories, just convert config and security"),
+    convert("activate the Local and Virtual repository names conversion"),
+    noconvert("does not activate the Local and Virtual repository names conversion during a full export"),
+    security("only export the security file from DB, and set the norepo flag"),
+    caches("include cached repositories in the export (by default caches are not exported). " +
+            "If repo option is passed this option will be ignored"),
+    //TODO: [by yl] Can we remove "basedir"?
+    basedir("specify the base directory", true, "path of directory"),
+    verbose("display maximum details"),
+    failFast("fail at first error"),
+    failIfEmpty("fail at empty directories"),
+    time("time of export", true, "The date of the export"),
+    update("replace target with new file", true, "The path to the file"),
+    destFile("The destination file for this action's output.", true, "Path of file"),
+    overwrite("When set, if the destination file exists, the command will overwrite it."),
+    m2("Create .m2 compatible metadata (sha1, md5 and maven-metadata.xml files) when exporting");
 
     private final Option option;
 
@@ -91,8 +65,12 @@ public enum CliOption implements Option {
         this.option = new OptionInfo(name(), description);
     }
 
-    CliOption(String description, String paramDescription) {
-        this.option = new OptionInfo(name(), description, true, paramDescription);
+    CliOption(String description, boolean needExtraParam, String paramDescription) {
+        this.option = new OptionInfo(name(), description, needExtraParam, paramDescription);
+    }
+
+    CliOption(String optName, String description, boolean needExtraParam, String paramDescription) {
+        this.option = new OptionInfo(optName, description, needExtraParam, paramDescription);
     }
 
     public String getDescription() {

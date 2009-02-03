@@ -66,7 +66,6 @@ public class RemoveAction extends RepoAwareItemAction {
         //Remove panel
         WebMarkupContainer nodaPanelContainer = event.getTargetComponents().getNodePanelContainer();
         BrowseRepoPanel browseRepoPanel = (BrowseRepoPanel) nodaPanelContainer.getParent();
-
         //Create dummy panel
         Panel dummy = new EmptyPanel("nodePanel");
         dummy.setOutputMarkupId(true);

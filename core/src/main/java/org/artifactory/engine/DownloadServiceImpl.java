@@ -21,6 +21,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.config.CentralConfigService;
@@ -36,7 +37,6 @@ import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.io.checksum.Checksum;
 import org.artifactory.io.checksum.ChecksumCalculator;
-import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.LocalCacheRepo;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
@@ -60,6 +60,7 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,10 @@ public class DownloadServiceImpl implements InternalDownloadService {
      * <pre>http://localhost:8080/artifactory/repo/org/codehaus/xdoclet/xdoclet/2.0.5-SNAPSHOT/xdoclet-2.0.5-SNAPSHOT.jar</pre>
      * or with a target local repo:
      * <pre>http://localhost:8080/artifactory/local-repo/ant/ant-antlr/1.6.5/ant-antlr-1.6.5.jar</pre>
+     *
+     * @param request
+     * @param response
+     * @throws IOException
      */
     public void process(ArtifactoryRequest request, ArtifactoryResponse response)
             throws IOException, FileExpectedException {
@@ -163,6 +168,11 @@ public class DownloadServiceImpl implements InternalDownloadService {
      * Iterate over a list of repos until a resource is found in one of them, and return that resource (content or just
      * head information) on the response. The first resource that is found is returned. The order of searching is: local
      * repos, cache repos and remote repos (unless request originated from another Artifactory).
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
      */
     private void processStandard(ArtifactoryRequest request, ArtifactoryResponse response)
             throws IOException, FileExpectedException {
@@ -240,7 +250,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
                         log.warn(repo + ": found multiple resource instances of '" + resourcePath +
                                 "' in local repositories.");
                     } else {
-                        log.debug("{}: found local res: {}", repo, resourcePath);
+                        log.debug(repo + ": found local res: " + resourcePath);
                         foundInLocalRepo = true;
                     }
                 }
@@ -251,7 +261,9 @@ public class DownloadServiceImpl implements InternalDownloadService {
             }
             //If we haven't found one yet, or this one is newer than the one found, take it
             if (latestRes == null || res.getLastModified() > latestRes.getLastModified()) {
-                log.debug("{}: found newer res: {}", repo, resourcePath);
+                if (log.isDebugEnabled()) {
+                    log.debug(repo + ": found newer res: " + resourcePath);
+                }
                 latestRes = res;
                 latestArtifactRepo = repo;
             }
@@ -275,14 +287,15 @@ public class DownloadServiceImpl implements InternalDownloadService {
     /**
      * Iterate over the repos and return the latest resource found (content or just head information) on the response.
      */
-    @SuppressWarnings("OverlyComplexMethod")
-    private void processMetadata(ArtifactoryRequest request, ArtifactoryResponse response) throws IOException {
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "OverlyComplexMethod"})
+    private void processMetadata(ArtifactoryRequest request, ArtifactoryResponse response)
+            throws IOException, FileExpectedException {
         String path = request.getPath();
         //Traverse the local, caches and remote repositories
         //Make sure local repos are always searched first
         List<RealRepo> repositories = assembleSearchRepositoriesList(request);
         boolean foundInLocalRepo = false;
-        Metadata mergedMetadata = null;
+        Metadata metadata = null;
         String origMetadataContent = null;
         long mergedMetadataLastModifiedTime = -1;
         for (RealRepo repo : repositories) {
@@ -296,7 +309,9 @@ public class DownloadServiceImpl implements InternalDownloadService {
             } else {
                 //If found inside a local repsoitory, take the latest out of the local repo only
                 if (repo.isLocal()) {
-                    log.debug("{}: found local res: {}", repo, path);
+                    if (log.isDebugEnabled()) {
+                        log.debug(repo + ": found local res: " + path);
+                    }
                     foundInLocalRepo = true;
                 }
                 ResourceStreamHandle handle;
@@ -320,19 +335,20 @@ public class DownloadServiceImpl implements InternalDownloadService {
                     MetadataXpp3Reader reader = new MetadataXpp3Reader();
                     Metadata foundMetadata = reader.read(new StringReader(origMetadataContent));
                     //Merge with old metadata or create new one if doesn't exit
-                    if (mergedMetadata != null) {
-                        mergedMetadata.merge(foundMetadata);
+                    if (metadata != null) {
+                        metadata.merge(foundMetadata);
                         //Remember the latest metdata resource that has been merged
                         mergedMetadataLastModifiedTime = Math.max(mergedMetadataLastModifiedTime,
                                 res.getLastModified());
                     } else {
-                        mergedMetadata = foundMetadata;
+                        metadata = foundMetadata;
                     }
                 } catch (IOException e) {
                     //Handle IOExceptions
                     if (e instanceof InterruptedIOException) {
-                        String msg = this + ": Timeout occured when retrieving metadata for " +
-                                res.getRepoPath() + " (" + e.getMessage() + ").";
+                        String msg =
+                                this + ": Timeout occured when retrieving metadata for " + res.getRepoPath() + " (" +
+                                        e.getMessage() + ").";
                         response.sendError(HttpStatus.SC_NOT_FOUND, msg, log);
                         return;
                     }
@@ -344,12 +360,12 @@ public class DownloadServiceImpl implements InternalDownloadService {
                 }
             }
             if (log.isDebugEnabled()) {
-                log.debug(res.getRepoPath() + " last modified " + centralConfig.format(res.getLastModified()));
+                log.debug(res.getRepoPath().toString() + " last modified "
+                        + centralConfig.format(res.getLastModified()));
             }
-        }   // end repositories iteration
-
+        }
         //Not found
-        if (mergedMetadata == null) {
+        if (metadata == null) {
             String msg = "Artifact metadata not found for '" + path + "'.";
             response.sendError(HttpStatus.SC_NOT_FOUND, msg, log);
         } else {
@@ -359,23 +375,32 @@ public class DownloadServiceImpl implements InternalDownloadService {
             String metadataContent;
             if (mergedMetadataLastModifiedTime > 0) {
                 //Found and merged - return the merged metadata
-                log.debug("Merged artifact metadata found for '{}'.", path);
-                metadataContent = MavenUtils.mavenMetadataToString(mergedMetadata);
-                CachedChecksumEntry cachedChecksumEntry = mergedMetadataChecksums.get(checkSumRepoPath);
+                if (log.isDebugEnabled()) {
+                    log.debug("Merged artifact metadata found for '" + path + "'.");
+                }
+                MetadataXpp3Writer writer = new MetadataXpp3Writer();
+                StringWriter stringWriter = new StringWriter();
+                writer.write(stringWriter, metadata);
+                metadataContent = stringWriter.toString();
+                CachedChecksumEntry cachedChecksumEntry =
+                        mergedMetadataChecksums.get(checkSumRepoPath);
                 if (cachedChecksumEntry == null ||
                         (cachedChecksumEntry != null &&
                                 (mergedMetadataLastModifiedTime > cachedChecksumEntry.lastUpdated) ||
                                 metadataContent.length() != cachedChecksumEntry.metadataContentLength)) {
                     //Calculate the checksum and cache it if newer metadata was merged or
-                    //metadata length was changed (e.g. due to removal/replacement of a contributing repo
+                    //metadata length was changed (e.g. due to removal/replacement of a
+                    //contributing repo
                     ByteArrayInputStream bais = new ByteArrayInputStream(metadataContent.getBytes("utf-8"));
                     Checksum[] checksums = ChecksumCalculator.calculate(bais, ChecksumType.sha1);
                     String checksumContent = checksums[0].getChecksum();
-                    mergedMetadataChecksums.put(checkSumRepoPath,
-                            new CachedChecksumEntry(checksumContent, metadataContent.length()));
+                    mergedMetadataChecksums
+                            .put(checkSumRepoPath, new CachedChecksumEntry(checksumContent, metadataContent.length()));
                 }
             } else {
-                log.debug("Non-merged artifact metadata found for '{}'.", path);
+                if (log.isDebugEnabled()) {
+                    log.debug("Non-merged artifact metadata found for '" + path + "'.");
+                }
                 //Found and not merged - return the original metadata
                 metadataContent = origMetadataContent;
                 //Remove a stale entry from the metadata checksums cache
@@ -449,7 +474,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
 
     //Send the response back to the client
     private void respond(ArtifactoryRequest request, ArtifactoryResponse response, RealRepo repo, RepoResource res)
-            throws IOException {
+            throws IOException, FileExpectedException {
         try {
             //Send head response if that's what were asked for
             if (request.isHeadOnly()) {

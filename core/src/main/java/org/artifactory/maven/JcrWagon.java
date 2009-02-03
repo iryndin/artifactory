@@ -72,7 +72,6 @@ public class JcrWagon extends AbstractWagon {
         final Resource wagonRes = new Resource(resName);
         createParentDirectories(dest);
         ResourceStreamHandle handle = null;
-        FileOutputStream fileOutputStream = null;
         try {
             RepoResource res = repo.getInfo(resName);
             if (!res.isFound()) {
@@ -85,8 +84,7 @@ public class JcrWagon extends AbstractWagon {
                     wagonRes.setLastModified(lastModified);
                     fireGetStarted(wagonRes, dest);
                     //Do the actual resource transfer into the temp file
-                    fileOutputStream = new FileOutputStream(dest);
-                    IOUtils.copy(handle.getInputStream(), fileOutputStream);
+                    IOUtils.copy(handle.getInputStream(), new FileOutputStream(dest));
                     //Update the checksums
                     TransferEvent transferEvent =
                             new TransferEvent(JcrWagon.this, wagonRes,
@@ -109,7 +107,6 @@ public class JcrWagon extends AbstractWagon {
             if (handle != null) {
                 handle.close();
             }
-            IOUtils.closeQuietly(fileOutputStream);
         }
     }
 

@@ -22,7 +22,6 @@ public class BackupDescriptorTest {
         Assert.assertEquals(backup.getRetentionPeriodHours(),
                 BackupDescriptor.DEFAULT_RETENTION_PERIOD_HOURS,
                 "Retention period should be {} by default");
-        Assert.assertFalse(backup.isCreateArchive(), "Is create archive should be false by default");
-        //Assert.assertFalse(backup.isIncrementalBackup(), "Is incremental backup should be false by default");
     }
+
 }

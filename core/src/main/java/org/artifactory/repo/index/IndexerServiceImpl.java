@@ -12,7 +12,7 @@ import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.util.ExceptionUtils;
+import org.artifactory.utils.ExceptionUtils;
 import org.quartz.CronExpression;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;

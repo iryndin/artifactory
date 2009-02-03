@@ -66,20 +66,18 @@ public class BackupServiceImpl implements InternalBackupService {
     }
 
     public void init() {
-        List<BackupDescriptor> backupDescriptors = centralConfig.getDescriptor().getBackups();
-        if (backupDescriptors.isEmpty()) {
+        List<BackupDescriptor> descriptors = centralConfig.getDescriptor().getBackups();
+        if (descriptors.isEmpty()) {
             log.info("No backups configured. Backups is disabled.");
             return;
         }
-        for (int i = 0; i < backupDescriptors.size(); i++) {
-            BackupDescriptor backupDescriptor = null;
+        for (int i = 0; i < descriptors.size(); i++) {
+            BackupDescriptor descriptor = null;
             try {
-                backupDescriptor = backupDescriptors.get(i);
-                if (backupDescriptor.isEnabled()) {
-                    activateBackup(backupDescriptor, i);
-                }
+                descriptor = descriptors.get(i);
+                activateBackup(descriptor, i);
             } catch (Exception e) {
-                log.warn("activation of backup number " + i + ":" + backupDescriptor + " failed:" +
+                log.warn("activation of backup number " + i + ":" + descriptor + " failed:" +
                         e.getMessage(), e);
             }
         }
@@ -99,7 +97,7 @@ public class BackupServiceImpl implements InternalBackupService {
     }
 
     private void activateBackup(BackupDescriptor descriptor, int index) {
-        descriptor.getBackupDir();  // will also create the backup dir
+        descriptor.getBackupDir();
         String cronExp = descriptor.getCronExp();
         try {
             // Check cron validity
@@ -111,7 +109,7 @@ public class BackupServiceImpl implements InternalBackupService {
                             e.getMessage() + ").");
             return;
         }
-        JobDetail jobDetail = new JobDetail("backupJob#" + index, null, BackupJob.class);
+        JobDetail jobDetail = new JobDetail("backupJob#1" + index, null, BackupJob.class);
         jobDetail.getJobDataMap().put("index", index);
         //Schedule the croned backup
         if (cronExp != null) {
@@ -138,8 +136,8 @@ public class BackupServiceImpl implements InternalBackupService {
         }
     }
 
-    public void backupRepos(File backupDir, ExportSettings exportSettings, MultiStatusHolder multiStatusHolder) {
-        backupRepos(backupDir, Collections.<RealRepoDescriptor>emptyList(), multiStatusHolder, exportSettings);
+    public void backupRepos(File backupDir, ExportSettings exportSettings) {
+        backupRepos(backupDir, Collections.<RealRepoDescriptor>emptyList(), new MultiStatusHolder(), exportSettings);
     }
 
     public void backupRepos(File backupDir, List<RealRepoDescriptor> excludeRepositories,
@@ -150,34 +148,45 @@ public class BackupServiceImpl implements InternalBackupService {
         repositoryService.exportTo(settings, status);
     }
 
-    public boolean backupSystem(InternalArtifactoryContext context, int backupIndex) {
-        BackupDescriptor backup = getBackup(backupIndex);
-        if (backup == null) {
+    /**
+     * @param time
+     * @param context
+     * @param backupIndex
+     * @return true if backup was successful
+     */
+    public boolean backupSystem(Date time, InternalArtifactoryContext context, int backupIndex) {
+        BackupDescriptor descriptor = getBackup(backupIndex);
+        if (descriptor == null) {
             return false;
         }
-        List<RealRepoDescriptor> excludeRepositories = backup.getExcludedRepositories();
+        List<RealRepoDescriptor> excludeRepositories = descriptor.getExcludedRepositories();
         List<LocalRepoDescriptor> backedupRepos = getBackedupRepos(excludeRepositories);
-        File backupDir = backup.getBackupDir();
+        File backupDir = descriptor.getBackupDir();
         StatusHolder status = new MultiStatusHolder();
-        boolean createArchive = backup.isCreateArchive();
-        boolean incremental = backup.isIncremental();
-        //Date backupTime = retentionPeriod > 0 ? new Date() : null;
+        boolean createArchive = descriptor.isCreateArchive();
+        int retentionPeriod = descriptor.getRetentionPeriodHours();
+        Date backupTime = retentionPeriod > 0 ? time : null;
         //You cannot backup in place (retention period of 0) and archive backup at the same time
-        if (incremental && createArchive) {
-            log.warn("An incremental backup cannot be archived!\n" +
-                    "Please change the configuration of backup " + backup.getKey() + ".");
+        if (backupTime == null && createArchive) {
+            log.warn("An in place backup cannot be archived!\n" +
+                    "Please change the configuration of backup no. " + (backupIndex + 1) + ".");
             createArchive = false;
         }
         ExportSettings settings = new ExportSettings(backupDir);
         settings.setRepositories(backedupRepos);
         settings.setCreateArchive(createArchive);
-        settings.setIncremental(incremental);
+        settings.setTime(backupTime);
         context.exportTo(settings, status);
 
-        boolean successful = !status.isError();
-        return successful;
+        return !status.isError();
     }
 
+    /**
+     * Iterate (non-recursively) on all folders/files in the backup dir and delete them if they are older than "now"
+     *
+     * @param now
+     * @param backupIndex
+     */
     public void cleanupOldBackups(Date now, int backupIndex) {
         BackupDescriptor descriptor = getBackup(backupIndex);
         if (descriptor == null) {

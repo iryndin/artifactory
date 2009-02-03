@@ -104,6 +104,12 @@ public abstract class RepoConfigCreateUpdatePanel<E extends RepoDescriptor> exte
                 FeedbackUtils.refreshFeedback(target);
                 close(target);
             }
+
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                super.onError(target, form);
+                FeedbackUtils.refreshFeedback(target);
+            }
         };
     }
 

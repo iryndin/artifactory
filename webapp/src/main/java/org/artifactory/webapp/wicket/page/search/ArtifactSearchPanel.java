@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
@@ -41,7 +42,6 @@ import org.artifactory.api.search.SearchService;
 import org.artifactory.common.ConstantsValue;
 import org.artifactory.webapp.actionable.event.ItemEventTargetComponents;
 import org.artifactory.webapp.wicket.common.ajax.ImmediateAjaxIndicatorDecorator;
-import org.artifactory.webapp.wicket.common.behavior.CssClass;
 import org.artifactory.webapp.wicket.common.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.webapp.wicket.common.component.SimpleButton;
 import org.artifactory.webapp.wicket.common.component.TextContentPanel;
@@ -54,7 +54,6 @@ import org.artifactory.webapp.wicket.common.component.table.SingleSelectionTable
 import org.artifactory.webapp.wicket.common.component.table.columns.ActionsColumn;
 import org.artifactory.webapp.wicket.utils.ListPropertySorter;
 import org.artifactory.webapp.wicket.utils.WebUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,7 +104,7 @@ public class ArtifactSearchPanel extends TitledPanel {
                         result.getSearchResult().getPath();
                 String name = result.getSearchResult().getName();
                 ExternalLink link = new ExternalLink(componentId, href, name);
-                link.add(new CssClass("item-link"));
+                link.add(new AttributeAppender("class", new Model("cellItemLink"), " "));
                 cellItem.add(link);
             }
         });
@@ -208,14 +207,13 @@ public class ArtifactSearchPanel extends TitledPanel {
             try {
                 searchResults = searchService.searchArtifacts(searchControls);
             } catch (Exception e) {
-                Session.get().error("There was an error in the search query.");
+                Session.get().error("There was an error in the search query");
                 results = Collections.emptyList();
                 return;
             }
 
             if (searchResults.isEmpty()) {
-                Session.get().warn(String.format("No Artifacts Found for '%s'.",
-                        HtmlUtils.htmlEscape(searchControls.getSearch())));
+                Session.get().warn("No Artifacts Found.");
             }/* else {
                 Session.get().info(format("Found %s Artifacts Matching '%s'", searchResults.size(), HtmlUtils.htmlEscape(searchControls.getSearch())));
             }*/

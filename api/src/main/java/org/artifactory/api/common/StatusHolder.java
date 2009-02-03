@@ -119,7 +119,8 @@ public class StatusHolder implements Serializable {
         addError(statusMsg, CODE_INTERNAL_ERROR, null, logger, true);
     }
 
-    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable, Logger logger, boolean warn) {
+    protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable,
+            Logger logger, boolean warn) {
         StatusEntry result;
         if (warn) {
             result = new StatusEntry(statusCode, StatusEntryLevel.WARNING, statusMsg, throwable);
@@ -147,7 +148,6 @@ public class StatusHolder implements Serializable {
         return result;
     }
 
-    @SuppressWarnings({"OverlyComplexMethod"})
     protected void logEntry(StatusEntry entry, Logger logger) {
         boolean isExternalLogActive = (logger != null);
         String statusMessage = entry.getStatusMessage();
@@ -160,6 +160,7 @@ public class StatusHolder implements Serializable {
             Throwable throwable = entry.getException();
             if (isVerbose()) {
                 log.error(statusMessage, throwable);
+
             } else {
                 log.error(statusMessage);
             }
@@ -232,7 +233,6 @@ public class StatusHolder implements Serializable {
         activateLogging = true;
     }
 
-    @Override
     public String toString() {
         return "StatusHolder{" +
                 "activateLogging=" + activateLogging +

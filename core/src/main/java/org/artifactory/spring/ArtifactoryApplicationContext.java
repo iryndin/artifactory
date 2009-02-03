@@ -30,7 +30,6 @@ import org.artifactory.api.security.SecurityService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ArtifactoryProperties;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.TaskService;
@@ -230,10 +229,6 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         return beanForType(JcrService.class);
     }
 
-    public JcrRepoService getJcrRepoService() {
-        return beanForType(JcrRepoService.class);
-    }
-
     public void importFrom(ImportSettings settings, StatusHolder status) {
         status.setStatus("### Beginning full system import ###", log);
         // First sync status and settings
@@ -242,8 +237,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         // First check the version of the folder imported
         ArtifactoryVersion backupVersion = BackupUtils.findVersion(settings.getBaseDir());
         // We don't support import from 125 and before
-        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125;
-        if (backupVersion.before(supportFrom)) {
+        ArtifactoryVersion supportFrom = ArtifactoryVersion.v125u1;
+        if (backupVersion.beforeOrEqual(supportFrom)) {
             throw new IllegalArgumentException("Folder " + settings.getBaseDir().getAbsolutePath() +
                     " contain an export from a version older than " + supportFrom.getValue() + ".\n" +
                     "Please use Artifactory Command Line command dump to import from theses versions!");
@@ -263,8 +258,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         log.info("Beginning full system export...");
         status.setStatus("Creating export directory", log);
         String timestamp;
-        boolean incremental = settings.isIncremental();
-        if (!incremental) {
+        boolean inPlace = settings.isInplace();
+        if (!inPlace) {
             DateFormat formatter = new SimpleDateFormat("yyyyMMdd.HHmmss");
             timestamp = formatter.format(settings.getTime());
         } else {
@@ -275,7 +270,7 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         //Only create a temp dir when not doing in-place backup (time == null), otherwise do
         //in-place and make sure all exports except repositories delete their target or write to temp before exporting
         File tmpExportDir;
-        if (incremental) {
+        if (inPlace) {
             //Will alwyas be baseDir/CURRENT_TIME_EXPORT_DIR_NAME
             tmpExportDir = new File(baseDir, timestamp);
             try {
@@ -319,10 +314,10 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             return;
         }
         exportSystemProperties(exportSettings, status);
-        if (incremental && settings.isCreateArchive()) {
+        if (inPlace && settings.isCreateArchive()) {
             log.warn("Cannot create archive for an in place backup.");
         }
-        if (!incremental) {
+        if (!inPlace) {
             //Create an archive if necessary
             if (settings.isCreateArchive()) {
                 createArchive(status, timestamp, baseDir, tmpExportDir);
@@ -355,8 +350,9 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             File tmpExportDir) {
         status.setStatus("Creating archive...", log);
         File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
+        new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
         try {
-            new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
+            de.schlichtherle.io.File.umount();
         } catch (Exception e) {
             throw new RuntimeException("Failed to create system export archive.", e);
         } finally {

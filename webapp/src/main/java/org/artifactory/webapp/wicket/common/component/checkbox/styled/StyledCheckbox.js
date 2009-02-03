@@ -10,19 +10,13 @@ var StyledCheckbox = {
     onclick: function(button) {
         var checkbox = button.parentNode.getElementsByTagName('input')[0];
         checkbox.checked = !checkbox.checked;
-        StyledCheckbox.updateStyle(button, checkbox.checked);
-    },
 
-    update: function(checkbox) {
-        var button = checkbox.parentNode.getElementsByTagName('button')[0];
-        StyledCheckbox.updateStyle(button, checkbox.checked);
-    },
-
-    updateStyle: function(button, checked) {
-        if (checked) {
+        if (checkbox.checked) {
             button.className = 'styled-checkbox styled-checkbox-checked';
+            button.blur();
         } else {
             button.className = 'styled-checkbox styled-checkbox-unchecked';
         }
+        button['cssBefore-hover'] = button.className;
     }
 };

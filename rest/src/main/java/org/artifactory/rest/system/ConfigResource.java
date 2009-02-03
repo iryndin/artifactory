@@ -20,7 +20,7 @@ package org.artifactory.rest.system;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.util.FileUtils;
+import org.artifactory.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

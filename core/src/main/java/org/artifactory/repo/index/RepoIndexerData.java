@@ -71,7 +71,6 @@ public class RepoIndexerData {
                 return;
             }
 
-            //TODO: [by yl] Stagger remote index downloads
             DefaultIndexUpdater indexUpdater = new DefaultIndexUpdater();
             Maven maven = InternalContextHelper.get().beanForType(Maven.class);
             WagonManager wagonManager = maven.getWagonManager();

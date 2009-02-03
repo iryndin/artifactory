@@ -34,13 +34,15 @@ public enum ArtifactoryCache {
             CacheType.REAL_REPO, ElementReferenceType.SOFT, true, true,
             ConstantsValue.metadataIdleTimeSecs, null, 200),
     missed(
-            CacheType.REMOTE_REPO, ElementReferenceType.HARD, false, false, null, null, 100) {
+            CacheType.REMOTE_REPO, ElementReferenceType.SOFT, false, false,
+            null, null, 100) {
         @Override
         public long getIdleTime(RemoteRepoDescriptor descriptor) {
             return descriptor.getMissedRetrievalCachePeriodSecs() * 1000L;
         }},
     failed(
-            CacheType.REMOTE_REPO, ElementReferenceType.HARD, false, false, null, null, 100) {
+            CacheType.REMOTE_REPO, ElementReferenceType.SOFT, false, false,
+            null, null, 100) {
         @Override
         public long getIdleTime(RemoteRepoDescriptor descriptor) {
             return descriptor.getFailedRetrievalCachePeriodSecs() * 1000L;

@@ -5,12 +5,12 @@ function FeedbackMessage(message, level) {
 
 var AggregateFeedbackPanel = {
     onClear: function(panelId) {
-        var panel = dojo.byId(panelId);
+        var panel = get(panelId);
         dojo._setOpacity(panel, 0);
     },
 
     onShow: function(panelId) {
-        var panel = dojo.byId(panelId);
+        var panel = get(panelId);
 
         // count messages & get max width
         var count = {
@@ -21,7 +21,7 @@ var AggregateFeedbackPanel = {
 
         var width = 0;
         var messages = panel.getElementsByTagName('li');
-        dojo.forEach(messages, function(li) {
+        foreach(messages, function(li) {
             count[li.level]++;
             width = Math.max(width, li.firstChild.offsetWidth);
         });
@@ -30,7 +30,7 @@ var AggregateFeedbackPanel = {
         var title = AggregateFeedbackPanel.getTitle(count);
         if (title) {
             // give same width to all messages
-            dojo.forEach(messages, function(li) {
+            foreach(messages, function(li) {
                 li.firstChild.style.width = width + 'px';
             });
 
@@ -45,11 +45,12 @@ var AggregateFeedbackPanel = {
 
         // scroll to messages
         setTimeout(function() {
-            DomUtils.scrollIntoView(panel);
+            panel.scrollIntoView();
         }, 100);
 
         // notify effect
-        dojo.fadeIn({node: panel, duration: 500}).play();
+        var notify = dojo.fadeIn({node: panel,duration: 500}).play();
+        notify.play();
     },
 
     getTitle: function(count) {

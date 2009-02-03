@@ -19,7 +19,7 @@ package org.artifactory.api.fs;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
+import org.artifactory.utils.PathUtils;
 
 import java.util.Set;
 
@@ -65,7 +65,8 @@ public class FileInfo extends ItemInfo implements RepoResourceInfo {
     }
 
     public long getAge() {
-        return getLastModified() != 0 ? System.currentTimeMillis() - getLastModified() : -1;
+        return getLastUpdated() != 0 ?
+                System.currentTimeMillis() - getLastUpdated() : -1;
     }
 
     public String getMimeType() {
