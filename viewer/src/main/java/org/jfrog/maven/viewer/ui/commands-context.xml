@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="windowCommandManager"
+          class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
+        <property name="sharedCommandIds">
+            <list>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="menuBar"
+          class="org.springframework.richclient.command.CommandGroupFactoryBean">
+        <property name="members">
+            <list>
+                <ref bean="fileMenu"/>
+                <ref bean="viewMenu"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="fileMenu"
+          class="org.springframework.richclient.command.CommandGroupFactoryBean">
+        <property name="members">
+            <list>
+                <value>createGraphFromFile</value>
+                <value>createGraphById</value>
+                <value>separator</value>
+                <value>saveAs</value>
+                <value>separator</value>
+                <bean class="org.springframework.richclient.command.support.ExitCommand"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="viewMenu"
+          class="org.springframework.richclient.command.CommandGroupFactoryBean">
+        <property name="members">
+            <list>
+                <value>scopeMenu</value>
+                <value>separator</value>
+                <value>filterByGroup</value>
+                <value>clearFilterByGroup</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="scopeMenu"
+          class="org.springframework.richclient.command.CommandGroupFactoryBean">
+        <property name="members">
+            <list>
+                <value>showCompileScope</value>
+                <value>showRuntimeScope</value>
+                <value>showTestScope</value>
+                <value>showProvidedScope</value>
+                <value>showSystemScope</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="showCompileScope"
+          class="org.jfrog.maven.viewer.ui.command.ShowScopeCommand">
+        <property name="scope" value="compile"/>
+        <property name="selected" value="true"/>
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="showRuntimeScope"
+          class="org.jfrog.maven.viewer.ui.command.ShowScopeCommand">
+        <property name="scope" value="runtime"/>
+        <property name="selected" value="true"/>
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="showTestScope"
+          class="org.jfrog.maven.viewer.ui.command.ShowScopeCommand">
+        <property name="scope" value="test"/>
+        <property name="selected" value="true"/>
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="showProvidedScope"
+          class="org.jfrog.maven.viewer.ui.command.ShowScopeCommand">
+        <property name="scope" value="provided"/>
+        <property name="selected" value="true"/>
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="showSystemScope"
+          class="org.jfrog.maven.viewer.ui.command.ShowScopeCommand">
+        <property name="scope" value="system"/>
+        <property name="selected" value="true"/>
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="filterByGroup"
+          class="org.jfrog.maven.viewer.ui.command.FilterByGroupIdCommand">
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="clearFilterByGroup"
+          class="org.jfrog.maven.viewer.ui.command.ClearGroupIdFilterCommand">
+        <property name="enabled" value="false"/>
+    </bean>
+
+    <bean id="createGraphFromFile"
+          class="org.jfrog.maven.viewer.ui.command.CreateGraphFromFileCommand">
+        <property name="artifactFactory" ref="artifactFactory"/>
+    </bean>
+
+    <bean id="createGraphById"
+          class="org.jfrog.maven.viewer.ui.command.CreateGraphByIdCommand">
+        <property name="artifactFactory" ref="artifactFactory"/>
+    </bean>
+
+    <bean id="saveAs"
+          class="org.jfrog.maven.viewer.ui.command.SaveAsCommand">
+        <property name="enabled" value="false"/>
+    </bean>
+</beans>

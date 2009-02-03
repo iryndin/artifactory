@@ -16,14 +16,12 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.common.ResourceStreamHandle;
-import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
-import org.artifactory.descriptor.repo.RemoteRepoType;
-import org.artifactory.resource.RepoResource;
+import org.artifactory.engine.ResourceStreamHandle;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 
-public interface RemoteRepo<T extends RemoteRepoDescriptor> extends RealRepo<T> {
+public interface RemoteRepo extends Repo {
     long getRetrievalCachePeriodSecs();
 
     boolean isStoreArtifactsLocally();
@@ -32,35 +30,31 @@ public interface RemoteRepo<T extends RemoteRepoDescriptor> extends RealRepo<T> 
 
     LocalCacheRepo getLocalCacheRepo();
 
+    void setHardFail(boolean hardFail);
+
+    void setRetrievalCachePeriodSecs(long snapshotCachePeriod);
+
+    void setStoreArtifactsLocally(boolean cacheArtifactsLocally);
+
     /**
      * Retrieves a resource from the remote repository
      *
+     * @param relPath
      * @return A handle for the remote resource
+     * @throws IOException
      */
     ResourceStreamHandle retrieveResource(String relPath) throws IOException;
 
-    /**
-     * Retrieves a resource remotely if the remote resource was found and is newer
-     */
-    ResourceStreamHandle conditionalRetrieveResource(String relPath) throws IOException;
-
     long getFailedRetrievalCachePeriodSecs();
 
+    void setFailedRetrievalCachePeriodSecs(long badRretrievalCachePeriodSecs);
+
+    @XmlElement(defaultValue = "43200", required = false)
     long getMissedRetrievalCachePeriodSecs();
+
+    void setMissedRetrievalCachePeriodSecs(long missedRetrievalCachePeriodSecs);
 
     void clearCaches();
 
-    /**
-     * Removes a path from the repository caches (missed and failed)
-     *
-     * @param path The path to remove from the cache. The path is relative path from the repository root.
-     * @param removeSubPaths    If true will also remove any sub paths from the caches.
-     */
-    void removeFromCaches(String path, boolean removeSubPaths);
-
-    boolean isOffline();
-
-    RemoteRepoType getType();
-
-    ResourceStreamHandle downloadAndSave(RepoResource res, RepoResource targetResource) throws IOException;
+    void removeFromCaches(String path);    
 }
