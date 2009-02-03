@@ -1,0 +1,16 @@
+Artifactory uses some unreleased artifact versions and some artifacts not
+currently deployed on the public Maven repositories.
+
+Here are these exotic dependencies:
+wicket:
+ Subversion: http://svn.apache.org/repos/asf/incubator/wicket/branches/wicket-1.x rev#514450
+ jfrog.org deployment (snapshot):
+  3rdp-snapshots@repo
+  version 1.3-incubating-SNAPSHOT
+
+spring:
+ Maven repository: http://ndeloof.free.fr/maven2 (for mavenized spring sub-modules)
+
+collections-generic:
+ Binaries download: http://sourceforge.net/project/showfiles.php?group_id=139125
+ jfrog.org deployment: 3rdp-releases@repo

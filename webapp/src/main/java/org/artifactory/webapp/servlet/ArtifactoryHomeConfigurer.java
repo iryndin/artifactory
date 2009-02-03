@@ -16,11 +16,12 @@
  */
 package org.artifactory.webapp.servlet;
 
-import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.ArtifactoryHome;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.File;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -28,23 +29,32 @@ import javax.servlet.ServletContextListener;
 public class ArtifactoryHomeConfigurer implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent event) {
-        if (ArtifactoryHome.getEtcDir() == null) {
-            // Artifactory home not initialized
-            ArtifactoryHome.findArtifactoryHome(new ServletLogger(event.getServletContext()));
-            ArtifactoryHome.create();
+        ServletContext servletContext = event.getServletContext();
+        servletContext.log("Determining " + ArtifactoryHome.SYS_PROP + "...");
+        servletContext
+                .log("Looking for '-D" + ArtifactoryHome.SYS_PROP + "=<path>' vm parameter...");
+        String home = System.getProperty(ArtifactoryHome.SYS_PROP);
+        if (home == null) {
+            servletContext.log("Could not find vm parameter.");
+            //Try the environment var
+            servletContext
+                    .log("Looking for " + ArtifactoryHome.ENV_VAR + " environment variable...");
+            home = System.getenv(ArtifactoryHome.ENV_VAR);
+            if (home == null) {
+                servletContext.log("Could not find environment variable.");
+                home = new File(System.getProperty("user.home", "."), ".artifactory")
+                        .getAbsolutePath();
+                servletContext.log("Defaulting to '" + home + "'...");
+            } else {
+                servletContext.log("Found environment variable value: " + home + ".");
+            }
+            System.setProperty(ArtifactoryHome.SYS_PROP, home);
+        } else {
+            servletContext.log("Found vm parameter value: " + home + ".");
         }
-    }
-
-    private static class ServletLogger implements ArtifactoryHome.SimpleLog {
-        private final ServletContext servletContext;
-
-        private ServletLogger(ServletContext servletContext) {
-            this.servletContext = servletContext;
-        }
-
-        public void log(String message) {
-            servletContext.log(message);
-        }
+        home = home.replace('\\', '/');
+        servletContext.log("Using artifactory.home at '" + home + "'.");
+        ArtifactoryHome.create();
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
