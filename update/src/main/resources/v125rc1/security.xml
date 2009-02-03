@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
            http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
 
-    <bean id="security" class="org.artifactory.security.SecurityManager">
+    <bean id="security" class="org.artifactory.security.ArtifactorySecurityManager">
         <property name="authenticationProvider" ref="daoAuthenticationProvider"/>
         <property name="aclProvider" ref="aclProvider"/>
     </bean>

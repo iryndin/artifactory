@@ -16,249 +16,153 @@
  */
 package org.artifactory.jcr.fs;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.io.FileUtils;
+import com.thoughtworks.xstream.XStream;
 import org.apache.commons.io.IOUtils;
 import static org.apache.jackrabbit.JcrConstants.*;
-import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.config.ExportSettings;
-import org.artifactory.api.config.ImportSettings;
-import org.artifactory.api.fs.ChecksumInfo;
-import org.artifactory.api.fs.FileAdditionalInfo;
-import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.ChecksumType;
-import org.artifactory.api.mime.ContentType;
-import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.api.repo.exception.maven.BadPomException;
-import org.artifactory.api.stat.StatsInfo;
-import org.artifactory.common.ArtifactoryHome;
+import org.apache.jackrabbit.value.DateValue;
+import org.apache.jackrabbit.value.LongValue;
+import org.apache.jackrabbit.value.StringValue;
+import org.apache.log4j.Logger;
+import org.artifactory.config.xml.ArtifactoryXmlFactory;
+import org.artifactory.config.xml.EntityResolvingContentHandler;
+import org.artifactory.fs.FileMetadata;
+import org.artifactory.fs.FsItemMetadata;
+import org.artifactory.io.NonClosingInputStream;
 import org.artifactory.io.checksum.Checksum;
 import org.artifactory.io.checksum.ChecksumInputStream;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
-import org.artifactory.io.checksum.policy.ChecksumPolicyException;
-import org.artifactory.jcr.JcrService;
-import org.artifactory.jcr.lock.LockingException;
-import org.artifactory.jcr.lock.LockingHelper;
-import org.artifactory.jcr.md.MetadataDefinition;
+import org.artifactory.io.checksum.ChecksumType;
+import org.artifactory.jcr.JcrCallback;
+import org.artifactory.jcr.JcrSessionWrapper;
+import org.artifactory.jcr.JcrWrapper;
+import org.artifactory.jcr.NodeLock;
 import org.artifactory.maven.MavenUtils;
-import org.artifactory.repo.LocalRepo;
-import org.artifactory.schedule.TaskService;
-import org.artifactory.schedule.quartz.QuartzCommand;
-import org.artifactory.schedule.quartz.QuartzTask;
-import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.PathUtils;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.process.StatusHolder;
+import org.artifactory.spring.ContextHelper;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import sun.net.www.MimeTable;
 
+import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
-import java.util.Set;
+import java.util.Calendar;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class JcrFile extends JcrFsItem<FileInfo> {
-    private static final Logger log = LoggerFactory.getLogger(JcrFile.class);
-
-    private static final String WORKING_COPY_ABS_PATH = "workingCopyAbsPath";
-
+public class JcrFile extends JcrFsItem {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(JcrFile.class);
     public static final String NT_ARTIFACTORY_FILE = "artifactory:file";
     public static final String NT_ARTIFACTORY_JAR = "artifactory:archive";
-    public static final String PROP_ARTIFACTORY_CONTENT_UNCOMMITTED = "artifactory:uncommitted";
-    public static final String PROP_ARTIFACTORY_ARCHIVE_ENTRY = "artifactory:archiveEntry";
+    public static final String NT_ARTIFACTORY_XML_CONTENT = "artifactory:xmlContent";
     public static final String NODE_ARTIFACTORY_XML = "artifactory:xml";
+    public static final String MIX_ARTIFACTORY_XML_AWARE = "artifactory:xmlAware";
+    public static final String PROP_ARTIFACTORY_ARCHIVE_ENTRY = "artifactory:archiveEntry";
+    public static final String PROP_ARTIFACTORY_DOWNLOAD_COUNT = "artifactory:downloadCount";
+    public static final String PROP_ARTIFACTORY_LAST_UPDATED = "artifactory:lastUpdated";
+    public static final String PROP_ARTIFACTORY_MD5 = "artifactory:" + ChecksumType.md5.alg();
+    public static final String PROP_ARTIFACTORY_SHA1 = "artifactory:" + ChecksumType.sha1.alg();
+    private static XStream xstream;
 
-    private boolean uncommitted;
-
-    @Override
-    protected FileInfo createInfo(RepoPath repoPath) {
-        return new FileInfo(repoPath);
-    }
-
-    @Override
-    protected FileInfo createInfo(FileInfo copy) {
-        return new FileInfo(copy);
-    }
-
-    public JcrFile(RepoPath repoPath, LocalRepo repo) {
-        super(repoPath, repo);
-    }
-
-    public JcrFile(JcrFile copy, LocalRepo repo) {
-        super(copy, repo);
-        this.uncommitted = copy.uncommitted;
-    }
-
-    /**
-     * Constructor used when reading JCR content and creating JCR file item from it. Will not create anything in JCR but
-     * will read the JCR content of the node.
-     *
-     * @param fileNode the JCR node this file represent
-     * @param repo
-     * @throws RepositoryRuntimeException if the node a file or cannot be read
-     */
-    public JcrFile(Node fileNode, LocalRepo repo) {
-        super(fileNode, repo);
-    }
-
-    @Override
-    protected void setAdditionalInfoFields(Node node) throws RepositoryException {
-        FileInfo fileInfo = getInfo();
-        if (isUncommitted(node)) {
-            uncommitted = true;
-            File workingCopy = getWorkingCopyFile();
-            ContentType ct = NamingUtils.getContentType(workingCopy.getName());
-            String mimeType = ct.getMimeType();
-            fileInfo.setSize(workingCopy.length());
-            fileInfo.setMimeType(mimeType);
-            fileInfo.setLastModified(workingCopy.lastModified());
-        } else {
-            Node resNode = getResourceNode(node);
-            fileInfo.setSize(resNode.getProperty(JCR_DATA).getLength());
-            fileInfo.setMimeType(resNode.getProperty(JCR_MIMETYPE).getString());
-            long lastModified = getJcrLastModified(node);
-            if (lastModified > 0) {
-                fileInfo.setLastModified(lastModified);
-            }
+    public static JcrFile create(
+            JcrFolder parentFolder, String name, long lastModified, InputStream in)
+            throws RepositoryException, IOException {
+        String targetPath = parentFolder.getPath() + "/" + name;
+        //Create a temp folder node and add the file there
+        Node parentNode = parentFolder.getNode();
+        Session session = parentNode.getSession();
+        Node rootNode = session.getRootNode();
+        Node tempParentNode =
+                rootNode.addNode(name + "_" + System.currentTimeMillis(), "nt:folder");
+        JcrFile file = new JcrFile(tempParentNode, targetPath, name, lastModified, in);
+        //Lock both the parent and the grandparent nodes in order to avoid a situation of
+        //pending changes on the parent node (we locked a child folder first in the same
+        //transaction). For example, the version metadata.xml is deployed (by the deployer)
+        //after the artifact metadata and the after the artifacts. We cannot unlock the children
+        //(required for locking the parent - no pending changes on children) without saving them
+        //first which will compromise the 'atomicity' of the transaction.
+        //Do not go up with locking more than 2 levels in order not to fail on pending changes
+        //(grandparent node was already locked so you cannot lock the grand-grandparent).
+        //We assume we are not importing files under the root node (or getParent() will fail).
+        //-
+        //For an artifact deploy this locks the artifactId and last group suffix folders.
+        //We need to be watching http://issues.apache.org/jira/browse/JCR-314, since this is a
+        //pretty coarse locking scope.
+        //See also the discussion at: http://www.nabble.com/Jackrabbit-Performance-Tuning---Large-%22Transaction%22---Concurrent-Access-to-Repository-t3095196.html)
+        Node grandParentNode = parentNode.getParent();
+        if (!NodeLock.isLockedByCurrentSession(parentNode)) {
+            NodeLock.lock(grandParentNode);
+            NodeLock.lock(parentNode);
         }
-        FileAdditionalInfo additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
-        if (additionalInfo != null) {
-            fileInfo.setAdditionalInfo(additionalInfo);
+        //Remove any existing node with the same file name
+        if (parentNode.hasNode(name)) {
+            Node oldFileNode = parentNode.getNode(name);
+            oldFileNode.remove();
         }
+        //Move the imported file from the temp parent to the real parent node
+        file.renameTo(targetPath);
+        //Delete the temp parent node
+        tempParentNode.remove();
+        return file;
     }
 
-    @Override
-    protected void setMandatoryInfoFields() {
-        super.setMandatoryInfoFields();
-        long length = getLength();
-        if (length != 0) {
-            getInfo().setSize(length);
-        }
+
+    public static JcrFile create(JcrFolder parent, String name, InputStream in)
+            throws IOException {
+        Node parentNode = parent.getNode();
+        return new JcrFile(parentNode, null, name, System.currentTimeMillis(), in);
     }
 
-    @Override
-    protected long getJcrLastModified(Node node) throws RepositoryException {
-        // The file last modified is on the resource node
-        return super.getJcrLastModified(getResourceNode(node));
-    }
-
-    /**
-     * fill the data file from stream
-     */
-    public void fillData(InputStream in) {
-        fillData(System.currentTimeMillis(), in);
-    }
-
-    /**
-     * Fill the jcr file system item (file) from stream under the parent folder. This constructor creates the entry in
-     * JCR, and so should be called from a transactional scope. Fill the JCR content of this file from the input stream
-     *
-     * @param lastModified the date of modification of this file
-     * @param in           the input stream for this file content. Will be closed in this method.
-     * @throws RepositoryRuntimeException if the parentNode cannot be read or the JCR node elements cannot be created
-     * @throws LockingException           if the JCrFile is immutable or not locked for this thread
-     */
-    public void fillData(long lastModified, InputStream in) {
-        if (!isMutable()) {
-            throw new LockingException("Cannot modified immutable " + this);
-        }
+    public JcrFile(Node fileNode) {
+        super(fileNode);
+        //Sanity check
         try {
-            createOrGetFileNode(getParentNode(), getName());
-            setResourceNode(in, lastModified, true);
-            saveModifiedInfo();
-        } catch (Exception e) {
-            throw new RepositoryRuntimeException(
-                    "Failed to create file node resource at '" + getAbsolutePath() + "'.", e);
-        }
-    }
-
-    /**
-     * Create a new jcr file system item (file) from a file under the parent folder. This constructor creates the entry
-     * in JCR, and so should be called from a transactional scope. Fill the JCR content of this file from the input
-     * stream
-     *
-     * @param file   The file system content file
-     * @param status
-     * @throws RepositoryRuntimeException if the parentNode cannot be read or the JCR node elements cannot be created
-     * @throws IOException                if the stream cannot be read or closed
-     */
-    public void importFrom(File file, ImportSettings settings, StatusHolder status) throws IOException {
-        try {
-            createOrGetFileNode(getParentNode(), getName());
-            importFrom(settings, status);
-            FileInfo info = getInfo();
-            long lastModified = info.getLastModified();
-            if (lastModified <= 0) {
-                lastModified = file.lastModified();
+            if (!isFileNode(fileNode)) {
+                throw new RuntimeException("Node is not a file node.");
             }
-            long actualSize = file.length();
-            if (info.getSize() != 0 && info.getSize() != actualSize) {
-                status.setWarning("Imported file " + file.getAbsolutePath() + " has an actual size of " + actualSize +
-                        " when information size is " + info.getSize(), log);
-                info.setSize(actualSize);
-            }
-            super.setMandatoryInfoFields();
-            //Determine how to process the file - either store it in wc as a copy, or as a symlink
-            //or just import it directly
-            if (settings.isCopyToWorkingFolder()) {
-                File targetWcFile = getWorkingCopyFile();
-                FileUtils.forceMkdir(targetWcFile.getParentFile());
-                if (settings.isUseSymLinks()) {
-                    //Create a symlink in the wokring copy
-                    org.artifactory.util.FileUtils.createSymLink(file, targetWcFile);
-                } else {
-                    //Copy the file to the working copy, overriding any previously existing file
-                    FileUtils.copyFile(file, targetWcFile);
-                }
-                //Sanity check
-                if (!targetWcFile.exists()) {
-                    log.error("Failed to import '" + file.getAbsolutePath() +
-                            "' into working copy file '" + targetWcFile.getAbsolutePath() + "'.");
-                }
-                //Create a place holder content (empty JCR_DATA)
-                Node node = getNode();
-                node.setProperty(PROP_ARTIFACTORY_CONTENT_UNCOMMITTED, true);
-                uncommitted = true;
-                Node resourceNode = getJcrService().getOrCreateNode(node, JCR_CONTENT, NT_RESOURCE);
-                //Add mandatory jcr:lastModified and jcr:mimeType
-                setContentType(resourceNode, file.getName(), info);
-                setLastModified(resourceNode, lastModified);
-                //Add empty jcr:data (mandatory)
-                resourceNode.setProperty(JCR_DATA, new ByteArrayInputStream(new byte[]{}));
-            } else {
-                // Save checksum for later compare
-                String md5 = info.getMd5();
-                String sha1 = info.getSha1();
-                //Stream the file directly into JCR
-                InputStream is = null;
-                try {
-                    is = new BufferedInputStream(new FileInputStream(file));
-                    setResourceNode(is, lastModified, false);
-                } finally {
-                    IOUtils.closeQuietly(is);
-                }
-                if (PathUtils.hasText(md5) && !info.getMd5().equals(md5)) {
-                    status.setWarning("Received file " + getRepoPath() + " with Checksum error on MD5 actual=" +
-                            info.getMd5() + " expected=" + md5, log);
-                }
-                if (PathUtils.hasText(sha1) && !info.getSha1().equals(sha1)) {
-                    status.setWarning("Received file " + getRepoPath() + " with Checksum error on SHA1 actual=" +
-                            info.getSha1() + " expected=" + sha1, log);
-                }
-            }
-            getMdService().setXmlMetadata(this, info.getInernalXmlInfo());
         } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException(
-                    "Failed to create file node resource at '" + getAbsolutePath() + "'.", e);
+            throw new RuntimeException("Failed to create Jcr File.", e);
+        }
+    }
+
+    public JcrFile(String absPath) {
+        super(absPath);
+    }
+
+    public JcrFile(String parent, String child) {
+        super(parent, child);
+    }
+
+    public JcrFile(File parent, String child) {
+        super(parent, child);
+    }
+
+    protected JcrFile(Node parentNode, String targetAbsPath, String name, long lastModified,
+            InputStream in) throws IOException {
+        super(parentNode, targetAbsPath, name);
+        if (targetAbsPath == null) {
+            targetAbsPath = getAbsolutePath();
+        }
+        setLastUpdated(System.currentTimeMillis());
+        setDownloadCount(0);
+        if (in.available() > 0) {
+            try {
+                setResourceNode(in, lastModified);
+            } catch (RepositoryException e) {
+                throw new RuntimeException(
+                        "Failed to create file node resource at '" + targetAbsPath + "'.", e);
+            }
+        } else {
+            throw new IOException("A file cannot be of zero length: " + targetAbsPath);
         }
     }
 
@@ -268,329 +172,271 @@ public class JcrFile extends JcrFsItem<FileInfo> {
      * @return the last update time as UTC milliseconds
      */
     public long getLastUpdated() {
-        return getInfo().getLastUpdated();
+        try {
+            return getPropValue(PROP_ARTIFACTORY_LAST_UPDATED).getDate().getTimeInMillis();
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve node file's last updated time.", e);
+        }
     }
 
     public long getLastModified() {
-        return getInfo().getLastModified();
+        Node resourceNode = getResourceNode();
+        try {
+            Property prop = resourceNode.getProperty(JCR_LASTMODIFIED);
+            return prop.getDate().getTimeInMillis();
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve file node's last modified time.", e);
+        }
     }
 
     public String getMimeType() {
-        return getInfo().getMimeType();
+        Node resourceNode = getResourceNode();
+        try {
+            Property prop = resourceNode.getProperty(JCR_MIMETYPE);
+            return prop.getString();
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve file node's myme type.", e);
+        }
     }
 
     public long getDownloadCount() {
-        StatsInfo statsInfo = getMdService().getXmlMetadataObject(this, StatsInfo.class);
-        return statsInfo.getDownloadCount();
+        try {
+            return getPropValue(PROP_ARTIFACTORY_DOWNLOAD_COUNT).getLong();
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve node file's download count.", e);
+        }
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(lastUpdated);
+        DateValue value = new DateValue(calendar);
+        setPropValue(PROP_ARTIFACTORY_LAST_UPDATED, value);
     }
 
     public String getChecksum(ChecksumType checksumType) {
-        if (checksumType.equals(ChecksumType.sha1)) {
-            return getInfo().getSha1();
-        } else if (checksumType.equals(ChecksumType.md5)) {
-            return getInfo().getMd5();
-        } else {
-            log.warn("Skipping unknown checksum type: " + checksumType + ".");
-            return null;
+        try {
+            return getPropValue("artifactory:" + checksumType.alg()).getString();
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve modified-by.", e);
         }
     }
 
-    @Override
-    public void setLastUpdated(long lastUpdated) {
-        if (!isMutable()) {
-            throw new LockingException("Cannot modified immutable " + this);
-        }
-        getInfo().setLastUpdated(lastUpdated);
-        saveModifiedInfo();
+    public void setDownloadCount(long downloadCount) {
+        LongValue value = new LongValue(downloadCount);
+        setPropValue(PROP_ARTIFACTORY_DOWNLOAD_COUNT, value);
     }
 
-    public void updateDownloadCount() {
-        StatsInfo statsInfo = getMdService().getXmlMetadataObject(this, StatsInfo.class, true);
-        statsInfo.setDownloadCount(statsInfo.getDownloadCount() + 1);
-        getMdService().setXmlMetadata(this, statsInfo);
-    }
-
-    public static class ExtractWorkingCopyFileJob extends QuartzCommand {
-        @Override
-        protected void onExecute(JobExecutionContext callbackContext) {
-            JobDataMap map = callbackContext.getMergedJobDataMap();
-            String wcAbsPath = (String) map.get(WORKING_COPY_ABS_PATH);
-            StatusHolder status = (StatusHolder) map.get(StatusHolder.class.getName());
-            try {
-                JcrService service = InternalContextHelper.get().getJcrService();
-                boolean success = service.commitSingleFile(wcAbsPath);
-                if (success) {
-                    status.setDebug("File " + wcAbsPath + " was committed succesfully", log);
-                } else {
-                    status.setStatus(HttpStatus.SC_NOT_FOUND, "File " + wcAbsPath + " was deleted",
-                            log);
-                }
-            } catch (Exception e) {
-                status.setError("Cannot commit single file " + wcAbsPath, e, log);
+    public void setXmlAware(boolean xmlAware) {
+        try {
+            Node node = getNode();
+            if (xmlAware && !isXmlAware()) {
+                node.addMixin(MIX_ARTIFACTORY_XML_AWARE);
+            } else if (isXmlAware()) {
+                node.removeMixin(MIX_ARTIFACTORY_XML_AWARE);
             }
+        } catch (RepositoryException e) {
+            throw new RuntimeException(
+                    "Failed to " + (xmlAware ? "set" : "unset") + " the xmlAware property.", e);
         }
     }
 
     /**
-     * Retrieve JCR content, and do working copy commit if needed.
+     * Get a resource stream and increment the download counter
      *
-     * @return null if deleted, the InputStream of the content of the file otherwise
+     * @return the resource stream
      */
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    public InputStream getStreamForDownload() {
+        InputStream is = getStream();
+        //Update the download count
+        LongValue value = new LongValue(getDownloadCount() + 1);
+        setPropValue(PROP_ARTIFACTORY_DOWNLOAD_COUNT, value);
+        return is;
+    }
+
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public InputStream getStream() {
+        Node resNode = getResourceNode();
         try {
-            if (uncommitted) {
-                JcrFile meLocked = (JcrFile) LockingHelper.getIfLockedByMe(getRepoPath());
-                if (meLocked != null) {
-                    if (extractWorkingCopyFile()) {
-                        return null;
-                    }
-                } else {
-                    QuartzTask task = new QuartzTask(ExtractWorkingCopyFileJob.class, "ExtractWorkingCopyFile");
-                    StatusHolder status = new StatusHolder();
-                    task.addAttribute(StatusHolder.class.getName(), status);
-                    task.addAttribute(WORKING_COPY_ABS_PATH, getAbsolutePath());
-                    TaskService taskService = InternalContextHelper.get().getTaskService();
-                    taskService.startTask(task);
-                    boolean wasReadLocked = LockingHelper.releaseReadLock(getRepoPath());
-                    taskService.waitForTaskCompletion(task.getToken());
-                    if (status.isError()) {
-                        IOException exception = new IOException(status.getStatusMsg());
-                        exception.initCause(status.getException());
-                        throw exception;
-                    }
-                    if (status.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                        // was deleted
-                        return null;
-                    }
-                    if (wasReadLocked) {
-                        LockingHelper.reacquireReadLock(getRepoPath());
-                    }
-                    // TODO: May be return the workingCopyFile
-                    /*
-                    File file = getWorkingCopyFile();
-                    return FileUtils.openInputStream(file);
-                    */
-                }
-            }
-            Node node = getNode();
-            Node resNode = getResourceNode(node);
             Value attachedDataValue = resNode.getProperty(JCR_DATA).getValue();
             InputStream is = attachedDataValue.getStream();
             return is;
         } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException(
-                    "Failed to retrieve file node's " + getRepoPath() + " data stream.", e);
-        } catch (IOException e) {
-            throw new RepositoryRuntimeException(
-                    "Failed to retrieve file node's " + getRepoPath() + " data stream.", e);
+            throw new RuntimeException("Failed to retrieve file node's data stream.", e);
         }
     }
 
-    /**
-     * Fill JCR data with the working copy file, and return delete status.
-     *
-     * @return true if deleted, false otherwise
-     * @throws RepositoryException
-     */
-    public boolean extractWorkingCopyFile() throws RepositoryException {
-        File workingCopyFile = getWorkingCopyFile();
-        //If we have a an uncommitted resource content, try to import it from the working copy
-        Node node = getNode();
-        if (!isUncommitted(node)) {
-            // Someone did it
-            uncommitted = false;
-            if (workingCopyFile.exists()) {
-                // Delete the WC file left over
-                deleteWcFile(workingCopyFile);
-            }
-            return isDeleted();
-        }
-        if (workingCopyFile.exists()) {
-            BufferedInputStream bis = null;
-            try {
-                bis = new BufferedInputStream(new FileInputStream(workingCopyFile));
-                setResourceNode(bis, workingCopyFile.lastModified(), false);
-                if (log.isDebugEnabled()) {
-                    log.debug("Imported working copy file at '" +
-                            workingCopyFile.getAbsolutePath() + " into '" + getPath() +
-                            "'.");
-                }
-                //Remove the file and the uncommitted mark
-                node.setProperty(PROP_ARTIFACTORY_CONTENT_UNCOMMITTED, (Value) null);
-                saveBasicInfo();
-                //Double check that we can save the tx before deleting the physical file
-                getJcrService().getManagedSession().save();
-                deleteWcFile(workingCopyFile);
-            } catch (IOException e) {
-                //File might have been imported in parallel/removed
-                log.warn("Failed to import working copy file at '" +
-                        workingCopyFile.getAbsolutePath() + " into '" + getPath() + "'", e);
-            } finally {
-                IOUtils.closeQuietly(bis);
-            }
-        } else {
-            log.error("Cannot find the working copy file at '" +
-                    workingCopyFile.getAbsolutePath() + " for uncommitted file at '" +
-                    getPath() + "'. Removing inconsistent node.");
-            //Remove the bad file
-            delete();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean delete() {
-        boolean result = super.delete();
-        File workingCopyFile = getWorkingCopyFile();
-        if (workingCopyFile.exists()) {
-            deleteWcFile(workingCopyFile);
-        }
-        return result;
-    }
-
-    private void deleteWcFile(File workingCopyFile) {
-        boolean deleted = workingCopyFile.delete();
-        if (!deleted) {
-            log.warn("Failed to delete imported file: " + workingCopyFile.getAbsolutePath() +
-                    ". File might have been removed externally.");
-        }
-    }
-
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public long getSize() {
-        return getInfo().getSize();
+        if (!exists()) {
+            return 0;
+        }
+        Node resNode = getResourceNode();
+        try {
+            long size = resNode.getProperty(JCR_DATA).getLength();
+            return size;
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to retrieve file node's size.", e);
+        }
     }
 
-    @Override
+    public void getXmlStream(OutputStream out) {
+        if (!isXmlAware()) {
+            throw new RuntimeException("No xml to export.");
+        }
+        try {
+            Node xmlNode = getNode().getNode(NODE_ARTIFACTORY_XML);
+            Session session = xmlNode.getSession();
+            String absPath = xmlNode.getPath();
+            session.exportDocumentView(absPath, out, false, false);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve file node's xml stream.", e);
+        }
+    }
+
+    public boolean isXmlAware() {
+        try {
+            return getNode().isNodeType(MIX_ARTIFACTORY_XML_AWARE);
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to get node mixins", e);
+        }
+    }
+
     public boolean isDirectory() {
         return false;
     }
 
-    @Override
-    public JcrFsItem save() {
-        if (isDeleted()) {
-            throw new IllegalStateException("Cannot save item " + getRepoPath() + " it is schedule for deletion");
-        }
-        //Node fileNode = createOrGetFileNode(getParentNode(), getName());
-        //saveModifiedInfo();
-        return new JcrFile(getNode(), getLocalRepo());
+    public void export(File targetFile) {
+        export(targetFile, false);
     }
 
-    @Override
-    public boolean isIdentical(JcrFsItem item) {
-        if (!(item instanceof JcrFile)) {
-            return false;
+    public void export(File targetFile, boolean includeMetadata) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Exporting file '" + getRelativePath() + "'...");
         }
-        JcrFile jcrFile = (JcrFile) item;
-        return this.uncommitted == jcrFile.uncommitted && super.isIdentical(item);
-    }
-
-    @Override
-    public int zap(long expiredLastUpdated) {
-        if (MavenNaming.isNonUniqueSnapshot(getPath())) {
-            // zap has a meaning only on non unique snapshot files
-            setLastUpdated(expiredLastUpdated);
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    public void exportTo(ExportSettings settings, StatusHolder status) {
-        status.setDebug("Exporting file '" + getRelativePath() + "'...", log);
-        File targetFile = new File(settings.getBaseDir(), getRelativePath());
-        try {
-            exportFileContent(targetFile, status, settings);
-
-            if (settings.isIncludeMetadata()) {
-                exportMetadata(targetFile, status, settings.isIncremental());
-            }
-            if (settings.isM2Compatible()) {
-                writeChecksums(targetFile.getParentFile(), getInfo().getChecksumsInfo(), targetFile.getName(),
-                        getLastModified());
-            }
-        } catch (FileNotFoundException e) {
-            status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
-        } catch (Exception e) {
-            status.setError("Failed to export " + getAbsolutePath() + " to file '" +
-                    targetFile.getPath() + "'.", e, log);
-        }
-    }
-
-    private void exportFileContent(File targetFile, StatusHolder status, ExportSettings settings)
-            throws IOException {
-        if (settings.isIncremental() && targetFile.exists()) {
-            // incremental export - only export the file if it is newer
-            if (getInfo().getLastModified() <= targetFile.lastModified()) {
-                log.debug("Skipping not modified file {}", getPath());
-                return;
-            }
-        }
-        log.debug("Exporting file content to {}", targetFile.getAbsolutePath());
         OutputStream os = null;
         InputStream is = null;
         try {
             os = new BufferedOutputStream(new FileOutputStream(targetFile));
             is = getStream();
-            if (is == null) {
-                // File was deleted
-                throw new FileNotFoundException();
-            }
-
             IOUtils.copy(is, os);
-            if (getLastModified() >= 0) {
-                targetFile.setLastModified(getLastModified());
+            long modified = getLastModified();
+            if (modified >= 0) {
+                targetFile.setLastModified(modified);
             }
+            if (includeMetadata) {
+                FileMetadata metadata = getMetadata();
+                File parentFile = targetFile.getParentFile();
+                File metadataFile =
+                        new File(parentFile, targetFile.getName() + FsItemMetadata.SUFFIX);
+                IOUtils.closeQuietly(os);
+                os = new BufferedOutputStream(new FileOutputStream(metadataFile));
+                XStream xstream = getXStream();
+                xstream.toXML(metadata, os);
+                if (modified >= 0) {
+                    metadataFile.setLastModified(modified);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to export to file '" +
+                    targetFile.getPath() + "'.", e);
         } finally {
+            IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(os);
+        }
+    }
+
+    private synchronized static XStream getXStream() {
+        if (xstream == null) {
+            xstream = new XStream();
+            xstream.processAnnotations(FileMetadata.class);
+        }
+        return xstream;
+    }
+
+    public void exportTo(File exportDir, StatusHolder status) {
+        File targetFile = new File(exportDir, getRelativePath());
+        export(targetFile, true);
+    }
+
+    public void importFrom(String basePath, StatusHolder status) {
+        InputStream is = null;
+        try {
+            //Read metadata into the node
+            File file = new File(basePath, getRelativePath());
+            File parentFile = file.getParentFile();
+            File metadataFile = new File(parentFile, file.getName() + FsItemMetadata.SUFFIX);
+            if (metadataFile.exists()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Importing metadata from '" + metadataFile.getPath() + "'.");
+                }
+                IOUtils.closeQuietly(is);
+                is = new BufferedInputStream(new FileInputStream(metadataFile));
+                XStream xstream = getXStream();
+                FileMetadata metadata = (FileMetadata) xstream.fromXML(is);
+                String name = metadata.getArtifactoryName();
+                setArtifactoryName(name != null ? name : file.getName());
+                if (!getNode().hasProperty(PROP_ARTIFACTORY_REPO_KEY)) {
+                    //Do not override the repo key (when importing to a repo with a different key)
+                    setRepoKey(metadata.getRepoKey());
+                }
+                setLastUpdated(System.currentTimeMillis());
+                setModifiedBy(metadata.getModifiedBy());
+                setXmlAware(metadata.isXmlAware());
+                Node resNode = getResourceNode();
+                resNode.setProperty(JCR_ENCODING, "utf-8");
+                Calendar lastModified = Calendar.getInstance();
+                resNode.setProperty(JCR_LASTMODIFIED, lastModified);
+            } else {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("No metadata found for '" + file.getPath() + "'.");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to file import into '" + getRelativePath() + "'.",
+                    e);
+        } finally {
             IOUtils.closeQuietly(is);
         }
     }
 
-    @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-    public void importFrom(ImportSettings settings, StatusHolder status) {
-        File baseDir = settings.getBaseDir();
-        if (baseDir == null) {
-            String message = "Cannot import null directory '" + baseDir + "'.";
-            IllegalArgumentException ex = new IllegalArgumentException(message);
-            status.setError("Import Error", ex, log);
-            return;
-        }
-        File file = new File(baseDir, getRelativePath());
-        if (!file.exists() || file.isDirectory()) {
-            String message = "Cannot import non existant file or directory '" + file.getAbsolutePath() + "' into " +
-                    this.getRepoPath();
-            IllegalArgumentException ex = new IllegalArgumentException(message);
-            status.setError("Import Error", ex, log);
-            return;
-        }
+    public FileMetadata getMetadata() {
+        Node node = getNode();
+        long downloadCount = 0;
         try {
-            //Read metadata into the node
-            importMetadata(file, status, settings);
-        } catch (Exception e) {
-            String msg = "Failed to import file " + file.getAbsolutePath() + " into '" + getRepoPath() + "'.";
-            status.setError(msg, e, log);
+            if (node.hasProperty(PROP_ARTIFACTORY_DOWNLOAD_COUNT)) {
+                downloadCount = getDownloadCount();
+            }
+        } catch (RepositoryException ignored) {
         }
+        return new FileMetadata(
+                getRepoKey(),
+                getRelativePath(),
+                getArtifactoryName(),
+                getCreated(),
+                getModifiedBy(),
+                getLastUpdated(),
+                getLastModified(),
+                downloadCount,
+                isXmlAware());
     }
 
-    public void importInternalMetadata(MetadataDefinition definition, Object md) {
-        // For the moment we support only FileInfo as transient MD
-        if (definition.getMetadataName().equals(FileInfo.ROOT) && md instanceof FileInfo) {
-            FileInfo importedFileInfo = (FileInfo) md;
-            FileInfo info = getInfo();
-            info.setAdditionalInfo(importedFileInfo.getInernalXmlInfo());
-            info.setMimeType(importedFileInfo.getMimeType());
-            info.setSize(importedFileInfo.getSize());
-            updateTimestamps(importedFileInfo, info);
-        } else {
-            throw new IllegalStateException(
-                    "Metadata " + definition + " for object " + md + " is not supported has transient!");
+    /**
+     * OVERIDDEN FROM FILE BEGIN
+     */
+
+    @Override
+    public long lastModified() {
+        if (!exists()) {
+            return 0;
         }
+        return getLastModified();
     }
 
     @Override
     public long length() {
-        return getLength();
+        return getSize();
     }
 
     @Override
@@ -630,8 +476,91 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     @Override
     public boolean setLastModified(long time) {
-        Node resourceNode = getResourceNode(getNode());
-        return setLastModified(resourceNode, time);
+        Node resourceNode = getResourceNode();
+        Calendar lastModifiedCalendar = Calendar.getInstance();
+        lastModifiedCalendar.setTimeInMillis(time);
+        try {
+            resourceNode.setProperty(JCR_LASTMODIFIED, lastModifiedCalendar);
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to set file node's last modified time.", e);
+        }
+        return true;
+    }
+
+    /**
+     * OVERIDDEN FROM FILE END
+     */
+
+    void setResourceNode(InputStream in, long lastModified)
+            throws RepositoryException, IOException {
+        String name = getName();
+        MimeTable mimeTable = ArtifactoryXmlFactory.getMimeTable();
+        String mimeType = mimeTable.getContentTypeFor(name);
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+        //Check whether to create the file as xml (w. xml-aware imported data) or regular file
+        boolean xml = MavenUtils.isXml(name);
+        if (xml) {
+            setXmlAware(xml);
+        }
+        Node node = getNode();
+        //Remove any existing content node
+        if (node.hasNode(JCR_CONTENT)) {
+            Node oldresourceNode = node.getNode(JCR_CONTENT);
+            oldresourceNode.remove();
+        }
+        Node resourceNode = node.addNode(JCR_CONTENT, NT_RESOURCE);
+        resourceNode.setProperty(JCR_MIMETYPE, mimeType);
+        //Default encoding
+        resourceNode.setProperty(JCR_ENCODING, "utf-8");
+        //If it is an xml document import its native xml content into the repo
+        if (xml) {
+            in.mark(Integer.MAX_VALUE);
+            //If it is a pom, verify that its groupId/artifactId/version match the dest path
+            if (MavenUtils.isPom(name)) {
+                MavenUtils.validatePomTargetPath(in, getRelativePath());
+                in.reset();
+            }
+            //Reset the stream
+            Node xmlNode = node.addNode(NODE_ARTIFACTORY_XML, NT_ARTIFACTORY_XML_CONTENT);
+            importXml(xmlNode, in);
+            //session.importXML(absPath, in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            in.reset();
+        }
+        //Check if needs to create checksum and not checksum file
+        InputStream resourceInputStream;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Calculating checksum for '" + name + "'.");
+        }
+        resourceInputStream = new ChecksumInputStream(in,
+                new Checksum(name, ChecksumType.md5),
+                new Checksum(name, ChecksumType.sha1));
+        //Do this after xml import since Jackrabbit 1.4
+        //org.apache.jackrabbit.core.value.BLOBInTempFile.BLOBInTempFile will close the stream
+        resourceNode.setProperty(JCR_DATA, resourceInputStream);
+        setLastModified(lastModified);
+        Checksum[] checksums = ((ChecksumInputStream) resourceInputStream).getChecksums();
+        for (Checksum checksum : checksums) {
+            //Save the checksum
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Saving checksum for '" + name + "' (checksum=" +
+                        checksum.getChecksum() + ").");
+            }
+            String checksumStr = checksum.getChecksum();
+            ChecksumType checksumType = checksum.getType();
+            setPropValue("artifactory:" + checksumType.alg(), new StringValue(checksumStr));
+        }
+    }
+
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    private Node getResourceNode() {
+        try {
+            Node resNode = getNode().getNode(JCR_CONTENT);
+            return resNode;
+        } catch (RepositoryException e) {
+            throw new RuntimeException("Failed to get resource node.", e);
+        }
     }
 
     public static boolean isFileNode(Node node) throws RepositoryException {
@@ -639,197 +568,48 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         return JcrFile.NT_ARTIFACTORY_FILE.equals(primaryNodeType.getName());
     }
 
-    public File getWorkingCopyFile() {
-        File wcDir = ArtifactoryHome.getWorkingCopyDir();
-        return new File(wcDir, getPath());
-    }
-
     /**
-     * Do not import metadata,index folders and checksums
+     * Import xml with characters entity resolving
+     *
+     * @param xmlNode
+     * @param in
+     * @throws RepositoryException
+     * @throws IOException
      */
-    public static boolean isStorable(String name) {
-        return !name.endsWith(ItemInfo.METADATA_FOLDER) && !NamingUtils.isChecksum(name);
-    }
-
-    /**
-     * OVERIDDEN FROM java.io.File END
-     */
-
-    private void setResourceNode(InputStream in, long lastModified, boolean updateInfo)
+    private static void importXml(Node xmlNode, InputStream in)
             throws RepositoryException, IOException {
-        Node node = getNode();
-        Node resourceNode = getJcrService().getOrCreateNode(node, JCR_CONTENT, NT_RESOURCE);
-        String name = getName();
-        FileInfo info = getInfo();
-        ContentType ct = setContentType(resourceNode, name, info);
-        //If it is an XML document save the XML in memory since marking does not always work on the
-        //remote stream, and import its xml content into the repo for indexing
-        if (ct.isXml()) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            IOUtils.copy(in, bos);
-            in.close();
-            byte[] xmlBytes = bos.toByteArray();
-            //Stream is replaced!
-            in = new ByteArrayInputStream(xmlBytes);
-            //Default encoding
-            resourceNode.setProperty(JCR_ENCODING, "utf-8");
-            //Get
-            in.mark(Integer.MAX_VALUE);
-            //If it is a pom, verify that its groupId/artifactId/version match the dest path
-            if (MavenNaming.isPom(name)) {
-                try {
-                    MavenUtils.validatePomTargetPath(in, getRelativePath());
-                } catch (BadPomException e) {
-                    throw new RepositoryException("Could not store POM file.", e);
-                }
-                in.reset();
+        JcrWrapper jcr = ContextHelper.get().getJcr();
+        final String absPath = xmlNode.getPath();
+        ContentHandler contentHandler = jcr.doInSession(new JcrCallback<ContentHandler>() {
+            @SuppressWarnings({"UnnecessaryLocalVariable"})
+            public ContentHandler doInJcr(JcrSessionWrapper session) throws RepositoryException {
+                ContentHandler contentHandler = session.getImportContentHandler(
+                        absPath, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+                return contentHandler;
             }
-            Node xmlNode = getJcrService().getOrCreateUnstructuredNode(node, NODE_ARTIFACTORY_XML);
-            getJcrService().importXml(xmlNode, in);
-            //Reset the stream
-            in.reset();
-        }
+        });
+        EntityResolvingContentHandler resolvingContentHandler =
+                new EntityResolvingContentHandler(contentHandler);
+        NonClosingInputStream ncis = null;
         try {
-            fillJcrData(resourceNode, name, in, lastModified, info, updateInfo);
-        } finally {
-            //Make sure the replaced stream is closed (orginal stream is taken care of by caller)
-            if (ct.isXml()) {
-                IOUtils.closeQuietly(in);
-            }
-        }
-    }
-
-    @SuppressWarnings({"MethodMayBeStatic"})
-    private ContentType setContentType(Node resourceNode, String name, FileInfo info)
-            throws RepositoryException {
-        ContentType ct = NamingUtils.getContentType(name);
-        String mimeType = ct.getMimeType();
-        resourceNode.setProperty(JCR_MIMETYPE, mimeType);
-        info.setMimeType(mimeType);
-        return ct;
-    }
-
-    @SuppressWarnings({"OverlyComplexMethod"})
-    private void fillJcrData(Node resourceNode, String name, InputStream in, long lastModified,
-            FileInfo info, boolean updateInfo) throws RepositoryException {
-
-        //Check if needs to create checksum and not checksum file
-        log.debug("Calculating checksums for '{}'.", name);
-        Checksum[] checksums = getChecksumsToCompute();
-        ChecksumInputStream resourceInputStream = new ChecksumInputStream(in, checksums);
-
-        //Do this after xml import: since Jackrabbit 1.4
-        //org.apache.jackrabbit.core.value.BLOBInTempFile.BLOBInTempFile will close the stream
-        resourceNode.setProperty(JCR_DATA, resourceInputStream);
-        setLastModified(resourceNode, lastModified);
-
-        // set the actual checksums on the file extra info
-        setFileActualChecksums(info, checksums);
-
-        // apply the checksum policy
-        LocalRepo repository = getLocalRepo();
-        ChecksumPolicy policy = repository.getChecksumPolicy();
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
-        boolean passes = policy.verify(checksumInfos);
-        if (!passes) {
-            throw new ChecksumPolicyException(policy, checksumInfos, name);
-        }
-
-        long actualSize = getLength();
-        if (updateInfo) {
-            //Update the info
-            info.setLastModified(lastModified);
-            info.setLastUpdated(System.currentTimeMillis());
-            info.setSize(actualSize);
-        } else {
-            // Sanity check on the size
-            if (info.getSize() != actualSize) {
-                // Print message only if info actually present
-                if (info.getSize() != 0) {
-                    log.warn("Received file " + getRepoPath() + " with size info " + info.getSize() +
-                            " but actual size is " + actualSize);
+            SAXParserFactory factory = ArtifactoryXmlFactory.getFactory();
+            SAXParser parser = factory.newSAXParser();
+            ncis = new NonClosingInputStream(in);
+            parser.parse(ncis, resolvingContentHandler);
+        } catch (ParserConfigurationException e) {
+            // Here ncis is always null
+            throw new RepositoryException("SAX parser configuration error", e);
+        } catch (SAXException se) {
+            //Check for wrapped repository exception
+            Exception e = se.getException();
+            if (e != null && e instanceof RepositoryException) {
+                if (ncis != null) {
+                    ncis.forceClose();
                 }
-                info.setSize(actualSize);
-            }
-        }
-    }
-
-    private void setFileActualChecksums(FileInfo info, Checksum[] checksums) {
-        Set<ChecksumInfo> checksumInfos = info.getChecksums();
-        for (Checksum checksum : checksums) {
-            ChecksumType checksumType = checksum.getType();
-            String calculatedChecksum = checksum.getChecksum();
-            ChecksumInfo checksumInfo = getChecksumInfo(checksumType, checksumInfos);
-            if (checksumInfo != null) {
-                // set the actual checksum
-                checksumInfo.setActual(calculatedChecksum);
-                // original checksum migh be null
-                String originalChecksum = checksumInfo.getOriginal();
-                if (!checksumInfo.checksumsMatch()) {
-                    log.debug("Checksum mismatch {}. original: {} calculated: {}",
-                            new String[]{checksumType.toString(), originalChecksum, calculatedChecksum});
-                }
+                throw (RepositoryException) e;
             } else {
-                log.warn(checksumType + " checksum info not found for '" + info.getRepoPath().getPath() +
-                        ". Creating one with empty original checksum.");
-                ChecksumInfo missingChecksumInfo = new ChecksumInfo(checksumType);
-                missingChecksumInfo.setActual(calculatedChecksum);
-                info.addChecksumInfo(missingChecksumInfo);
+                LOGGER.warn("Failed to parse XML stream to import into '" + absPath + "'.", e);
             }
         }
-    }
-
-    private ChecksumInfo getChecksumInfo(ChecksumType type, Set<ChecksumInfo> infos) {
-        for (ChecksumInfo info : infos) {
-            if (type.equals(info.getType())) {
-                return info;
-            }
-        }
-        return null;
-    }
-
-    private Checksum[] getChecksumsToCompute() {
-        ChecksumType[] checksumTypes = ChecksumType.values();
-        Checksum[] checksums = new Checksum[checksumTypes.length];
-        for (int i = 0; i < checksumTypes.length; i++) {
-            checksums[i] = new Checksum(checksumTypes[i]);
-        }
-        return checksums;
-    }
-
-    private Node getResourceNode(Node node) {
-        try {
-            Node resNode = node.getNode(JCR_CONTENT);
-            return resNode;
-        } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException("Failed to get resource node for " + getRepoPath(), e);
-        }
-    }
-
-    private long getLength() {
-        if (!exists()) {
-            return 0;
-        }
-        Node node = getNode();
-        return getLength(node);
-    }
-
-    private long getLength(Node node) {
-        try {
-            long size;
-            if (isUncommitted(node)) {
-                size = getWorkingCopyFile().length();
-            } else {
-                Node resNode = getResourceNode(node);
-                size = resNode.getProperty(JCR_DATA).getLength();
-            }
-            return size;
-        } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException("Failed to retrieve file node's size.", e);
-        }
-    }
-
-    private boolean isUncommitted(Node node) throws RepositoryException {
-        return node.hasProperty(PROP_ARTIFACTORY_CONTENT_UNCOMMITTED);
     }
 }

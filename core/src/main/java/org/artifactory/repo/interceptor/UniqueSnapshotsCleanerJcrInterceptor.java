@@ -18,16 +18,13 @@ package org.artifactory.repo.interceptor;
 
 import org.apache.commons.collections15.SortedBag;
 import org.apache.commons.collections15.bag.TreeBag;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.resource.RepoResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -35,24 +32,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoInterceptor {
-    private static final Logger log =
-            LoggerFactory.getLogger(UniqueSnapshotsCleanerJcrInterceptor.class);
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER =
+            Logger.getLogger(UniqueSnapshotsCleanerJcrInterceptor.class);
 
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public InputStream beforeResourceSave(RepoResource res, LocalRepo repo, InputStream in)
             throws Exception {
         return in;
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "ConstantConditions"})
     public void afterResourceSave(final RepoResource res, final LocalRepo repo) throws Exception {
-        String path = res.getRepoPath().getPath();
-        JcrFile file = repo.getLockedJcrFile(path, true);
-        if (!NamingUtils.isSnapshotMetadata(path)) {
+        String path = res.getPath();
+        JcrFile file = (JcrFile) repo.getFsItem(path);
+        if (!MavenUtils.isSnapshotMetadata(path)) {
             return;
         }
         int maxUniqueSnapshots = repo.getMaxUniqueSnapshots();
@@ -63,8 +64,9 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             List<ItemDesc> itemsByDate = new ArrayList<ItemDesc>();
             for (JcrFsItem child : children) {
                 String name = child.getName();
-                if (MavenNaming.isVersionUniqueSnapshot(name)) {
-                    String childTimeStamp = MavenNaming.getUniqueSnapshotVersionTimestamp(name);
+                Matcher m = MavenUtils.UNIQUE_SNAPSHOT_NAME_PATTERN.matcher(name);
+                if (m.matches()) {
+                    String childTimeStamp = m.group(3);
                     Date childLastUpdated = MavenUtils.timestampToDate(childTimeStamp);
                     //Add it to the sorted set - newer items closer to the head
                     ItemDesc newDesc = new ItemDesc(child, childLastUpdated);
@@ -88,8 +90,9 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             itemsByDate.removeAll(itemsToKeep);
             for (ItemDesc item : itemsByDate) {
                 item.item.delete();
-                if (log.isInfoEnabled()) {
-                    log.info("Removed old unique snapshot '" + item.item.getRelativePath() + "'.");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(
+                            "Removed old unique snapshot '" + item.item.getRelativePath() + "'.");
                 }
             }
         }
@@ -108,7 +111,6 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             return -1 * lastModified.compareTo(o.lastModified);
         }
 
-        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -121,7 +123,6 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
 
         }
 
-        @Override
         public int hashCode() {
             int result;
             result = item.hashCode();

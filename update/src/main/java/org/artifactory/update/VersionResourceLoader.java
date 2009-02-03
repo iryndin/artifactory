@@ -17,11 +17,14 @@
 package org.artifactory.update;
 
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.io.UrlResourceLoader;
 
 import java.io.InputStream;
 
 /**
- * User: freds Date: Jun 2, 2008 Time: 10:15:08 PM
+ * User: freds
+ * Date: Jun 2, 2008
+ * Time: 10:15:08 PM
  */
 public class VersionResourceLoader implements ResourceStreamHandle {
     private final String resourceName;
@@ -34,14 +37,14 @@ public class VersionResourceLoader implements ResourceStreamHandle {
     public InputStream getInputStream() {
         if (delegate == null) {
             delegate = new UrlResourceLoader(
-                    VersionsHolder.getOriginalVersion().findResource(resourceName));
+                    VersionsHolder.getOriginalVersion()
+                            .findResource(resourceName));
         }
         return delegate.getInputStream();
     }
 
     public void close() {
-        if (delegate != null) {
+        if (delegate != null)
             delegate.close();
-        }
     }
 }

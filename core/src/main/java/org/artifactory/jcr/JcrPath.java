@@ -16,20 +16,16 @@
  */
 package org.artifactory.jcr;
 
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.util.PathUtils;
-
 import java.io.File;
 
 /**
- * This singleton is reposible for providing the path structure in the JCR DB, and for converting RepoPath to absPath
- * (in JCR) and vice-versa. User: freds Date: Jun 4, 2008 Time: 11:36:11 PM
+ * User: freds Date: Jun 4, 2008 Time: 11:36:11 PM
  */
+@SuppressWarnings({"MethodMayBeStatic"})
 public class JcrPath {
 
-    protected static final String REPOS_FOLDER = "repositories";
-    protected static final String CONFIGURATION_FOLDER = "configuration";
-    protected static final String TRASH_FOLDER = "trash";
+    protected static final String REPO_ROOT = "repositories";
+    protected static final String NODE_CONFIGURATION = "configuration";
 
     /**
      * Strange stuff of a child class overidable singleton
@@ -48,64 +44,22 @@ public class JcrPath {
     }
 
     public String getRepoJcrRootPath() {
-        return "/" + REPOS_FOLDER;
+        return "/" + REPO_ROOT;
     }
 
     public String getOcmJcrRootPath() {
-        return "/" + CONFIGURATION_FOLDER;
-    }
-
-    public String getTrashJcrRootPath() {
-        return "/" + TRASH_FOLDER;
+        return "/" + NODE_CONFIGURATION;
     }
 
     public String getRepoJcrPath(String repoKey) {
-        return "/" + REPOS_FOLDER + "/" + repoKey;
+        return "/" + REPO_ROOT + "/" + repoKey;
     }
 
     public String getOcmClassJcrPath(String classKey) {
-        return "/" + CONFIGURATION_FOLDER + "/" + classKey;
-    }
-
-    /**
-     * @param exportDir The base export direcotry
-     * @return The base directory under the exportDir to which repositories are exported
-     */
-    public File getRepositoriesExportDir(File exportDir) {
-        return new File(exportDir, REPOS_FOLDER);
+        return "/" + NODE_CONFIGURATION + "/" + classKey;
     }
 
     public File getRepoExportDir(File exportDir, String repoKey) {
-        return new File(getRepositoriesExportDir(exportDir), repoKey);
-    }
-
-    public String getAbsolutePath(RepoPath repoPath) {
-        String key = repoPath.getRepoKey();
-        String relPath = repoPath.getPath();
-        String absPath = getRepoJcrPath(key) + (relPath.length() > 0 ? "/" + relPath : "");
-        return absPath;
-    }
-
-    public RepoPath getRepoPath(String absPath) {
-        String modifiedAbsPath = absPath.replace('\\', '/');
-        String repoJcrRootPath = getRepoJcrRootPath();
-        String repoKey = repoKeyFromPath(modifiedAbsPath);
-        String relPath = PathUtils.formatRelativePath(
-                modifiedAbsPath.substring(repoJcrRootPath.length() + repoKey.length() + 1));
-        RepoPath repoPath = new RepoPath(repoKey, relPath);
-        return repoPath;
-    }
-
-    private String repoKeyFromPath(String absPath) {
-        String repoJcrRootPath = JcrPath.get().getRepoJcrRootPath();
-        int idx = absPath.indexOf(repoJcrRootPath);
-        if (idx == -1) {
-            throw new IllegalArgumentException("Path '" + absPath + "' is not a repository path.");
-        }
-        int repoKeyEnd = absPath.indexOf("/", repoJcrRootPath.length() + 1);
-        int repoKeyBegin = repoJcrRootPath.length() + 1;
-        String repoKey = repoKeyEnd > 0 ? absPath.substring(repoKeyBegin, repoKeyEnd) :
-                absPath.substring(repoKeyBegin);
-        return repoKey;
+        return new File(new File(exportDir, REPO_ROOT), repoKey);
     }
 }

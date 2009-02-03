@@ -1,7 +1,6 @@
 package org.artifactory.update.test;
 
-import static org.testng.Assert.*;
-import org.testng.annotations.Test;
+import junit.framework.TestCase;
 
 import java.io.File;
 
@@ -10,13 +9,11 @@ import java.io.File;
  * Date: Jun 11, 2008
  * Time: 3:26:22 PM
  */
-public class TestFileIO {
-    @Test
+public class TestFileIO extends TestCase {
     public void testFileReturns() throws Exception {
         String tmpFileName = System.getProperty("java.io.tmpdir");
         assertNotNull(tmpFileName);
         File tmpFolder = new File(tmpFileName);
-        tmpFolder.deleteOnExit();
         assertTrue(tmpFolder.exists());
         File testFolder = new File(tmpFolder, "FolderTest-" + System.currentTimeMillis());
         assertFalse(testFolder.exists());

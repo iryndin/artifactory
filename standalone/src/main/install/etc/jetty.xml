@@ -39,7 +39,6 @@
     </Call>
 
     <!-- AJP13 Connector configuration -->
-    <!--
     <Call name="addConnector">
         <Arg>
             <New class="org.mortbay.jetty.ajp.Ajp13SocketConnector">
@@ -47,7 +46,6 @@
             </New>
         </Arg>
     </Call>
-    -->
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- To add a HTTPS SSL listener                                     -->

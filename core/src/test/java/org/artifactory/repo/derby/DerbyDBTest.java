@@ -16,6 +16,7 @@ import java.sql.Statement;
 /**
  * User: freds Date: Jun 14, 2007 Time: 10:58:02 AM
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class DerbyDBTest {
     enum JcrTable {
         DEFAULT_BINVAL, DEFAULT_NODE, DEFAULT_PROP, DEFAULT_REFS, REP_FSENTRY,

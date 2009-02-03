@@ -17,6 +17,7 @@
 package org.artifactory.io;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.artifactory.common.ResourceStreamHandle;
 
 import java.io.InputStream;
@@ -25,6 +26,10 @@ import java.io.InputStream;
  * Created by IntelliJ IDEA. User: yoav
  */
 public class SimpleResourceStreamHandle implements ResourceStreamHandle {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(NonClosingInputStream.class);
+
+
     private final InputStream is;
 
     public SimpleResourceStreamHandle(InputStream is) {

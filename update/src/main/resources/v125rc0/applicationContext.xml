@@ -24,12 +24,20 @@
         <constructor-arg value="META-INF/artifactory.properties"/>
     </bean>
 
+    <bean id="centralConfig" class="org.artifactory.config.CentralConfigFactoryBean"/>
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
         <property name="url" value="jdbc:derby:${artifactory.home}/data/appdb;create=true"/>
     </bean>
 
     <bean id="maven" class="org.artifactory.maven.Maven"/>
+
+    <bean id="keyVal" class="org.artifactory.keyval.KeyVals">
+        <constructor-arg ref="dataSource"/>
+        <property name="version" value="${artifactory.version}"/>
+        <property name="revision" value="${artifactory.revision}"/>
+    </bean>
 
     <import resource="scheduling.xml"/>
     <import resource="security.xml"/>

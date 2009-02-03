@@ -28,14 +28,13 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.bundle.AbstractBundlePersistenceManager;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.apache.jackrabbit.spi.Name;
-import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
+import org.apache.log4j.Logger;
+import org.artifactory.ArtifactoryConstants;
+import org.artifactory.ArtifactoryHome;
 import org.artifactory.common.ResourceStreamHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 import java.util.ArrayList;
@@ -45,18 +44,18 @@ import java.util.List;
 /**
  * User: freds Date: Jun 3, 2008 Time: 12:14:52 PM
  */
-public class InitJcrRepoStrategy {
-    private static final Logger log = LoggerFactory.getLogger(InitJcrRepoStrategy.class);
+public class InitJcrRepoStrategy implements JcrCallback<Node> {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(InitJcrRepoStrategy.class);
 
-    private final JcrServiceImpl jcrService;
-
+    protected final JcrWrapper jcrWrapper;
     protected static final String ARTIFACTORY_NAMESPACE_PREFIX = "artifactory";
     protected static final String ARTIFACTORY_NAMESPACE = "http://artifactory.jfrog.org/1.0";
     protected static final String OCM_NAMESPACE_PREFIX = "ocm";
     protected static final String OCM_NAMESPACE = "http://jackrabbit.apache.org/ocm";
 
-    public InitJcrRepoStrategy(JcrService jcrService) {
-        this.jcrService = (JcrServiceImpl) jcrService;
+    public InitJcrRepoStrategy(JcrWrapper jcrWrapper) {
+        this.jcrWrapper = jcrWrapper;
     }
 
     public JackrabbitRepository createJcrRepository(ResourceStreamHandle repoXml) {
@@ -64,7 +63,7 @@ public class InitJcrRepoStrategy {
         try {
             RepositoryConfig repoConfig = RepositoryConfig.create(
                     repoXml.getInputStream(), ArtifactoryHome.getJcrRootDir().getAbsolutePath());
-            if (ConstantsValue.jcrFixConsistency.getBoolean()) {
+            if (ArtifactoryConstants.fixConsistency) {
                 WorkspaceConfig wsConfig =
                         (WorkspaceConfig) repoConfig.getWorkspaceConfigs().iterator().next();
                 PersistenceManagerConfig pmConfig = wsConfig.getPersistenceManagerConfig();
@@ -74,9 +73,10 @@ public class InitJcrRepoStrategy {
                 if (pm instanceof AbstractBundlePersistenceManager) {
                     pmConfig.getParameters().put("consistencyCheck", "true");
                     pmConfig.getParameters().put("consistencyFix", "true");
-                    log.info("Fix consistency requested on '" + className + "'.");
+                    LOGGER.info("Fix consistency requested on '" + className + "'.");
                 } else {
-                    log.warn("Fix consistency requested on a persistence manager that does not support this feature.");
+                    LOGGER.warn("Fix consistency requested on a persistence manager that " +
+                            "does not support this feature.");
                 }
             }
             repository = RepositoryImpl.create(repoConfig);
@@ -88,40 +88,35 @@ public class InitJcrRepoStrategy {
         return repository;
     }
 
-    public void init() {
+    @SuppressWarnings({"unchecked"})
+    public Node doInJcr(JcrSessionWrapper session) throws RepositoryException {
         try {
-            JcrSession session = jcrService.getManagedSession();
             Workspace workspace = session.getWorkspace();
-            registerNamespaces(workspace);
-            registerTypes(workspace, jcrService.getArtifactoryNodeTypes());
+            initNamespaces(workspace);
+            registerTypes(workspace, jcrWrapper.getArtifactoryNodeTypes());
             initializeOcm();
             initializeRepoRoot();
-            initializeTrash();
         } catch (Exception e) {
-            log.error("Cannot initialize JCR repository " + e.getMessage(), e);
-            throw new RuntimeException("Cannot initialize JCR repository " + e.getMessage(), e);
+            throw new RepositoryException("Failed to set up the jcr repository.", e);
         }
+        return null;
     }
 
     protected void initializeRepoRoot() {
-        jcrService.getOrCreateUnstructuredNode(JcrPath.get().getRepoJcrRootPath());
+        jcrWrapper.getOrCreateUnstructuredNode(JcrPath.get().getRepoJcrRootPath());
     }
 
     protected void initializeOcm() throws ClassNotFoundException {
-        if (jcrService.OCM_CLASSES != null) {
+        if (jcrWrapper.getOcmClassesList() != null) {
             //Create the ocm configuration root
-            jcrService.getOrCreateUnstructuredNode(JcrPath.get().getOcmJcrRootPath());
+            jcrWrapper.getOrCreateUnstructuredNode(JcrPath.get().getOcmJcrRootPath());
             //Register the ocm classes
             List<Class> ocmClasses = new ArrayList<Class>();
-            for (String className : jcrService.OCM_CLASSES) {
+            for (String className : jcrWrapper.getOcmClassesList()) {
                 ocmClasses.add(getClass().getClassLoader().loadClass(className));
             }
-            jcrService.setOcmMapper(new AnnotationMapperImpl(ocmClasses));
+            jcrWrapper.setOcmMapper(new AnnotationMapperImpl(ocmClasses));
         }
-    }
-
-    protected void initializeTrash() {
-        jcrService.getOrCreateUnstructuredNode(JcrPath.get().getTrashJcrRootPath());
     }
 
     protected void registerTypes(Workspace workspace, NodeTypeDef[] types)
@@ -142,7 +137,7 @@ public class InitJcrRepoStrategy {
                 try {
                     ntReg.reregisterNodeType(ntd);
                 } catch (RepositoryException e) {
-                    throw new RepositoryRuntimeException("The underlying schema has changed. " +
+                    throw new RuntimeException("The underlying schema has changed. " +
                             "Please start with a clean installation of Artifactory " +
                             "and import your previously exported system to it.", e);
                 }
@@ -150,19 +145,19 @@ public class InitJcrRepoStrategy {
         }
     }
 
-    protected void registerNamespaces(Workspace workspace) throws RepositoryException {
+    @SuppressWarnings({"MethodMayBeStatic"})
+    protected void initNamespaces(Workspace workspace) throws RepositoryException {
         //Register the artifactory ns if it is not registered already
         NamespaceRegistry nsReg = workspace.getNamespaceRegistry();
         List<String> nsPrefixes = Arrays.asList(nsReg.getPrefixes());
         if (!nsPrefixes.contains(ARTIFACTORY_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(ARTIFACTORY_NAMESPACE_PREFIX, ARTIFACTORY_NAMESPACE);
+            nsReg.registerNamespace(
+                    ARTIFACTORY_NAMESPACE_PREFIX,
+                    ARTIFACTORY_NAMESPACE);
         }
         if (!nsPrefixes.contains(OCM_NAMESPACE_PREFIX)) {
-            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX, OCM_NAMESPACE);
+            nsReg.registerNamespace(OCM_NAMESPACE_PREFIX,
+                    OCM_NAMESPACE);
         }
-    }
-
-    protected JcrService getJcrService() {
-        return jcrService;
     }
 }

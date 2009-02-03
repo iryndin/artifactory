@@ -8,16 +8,16 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
            http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
 
-    <bean id="backup" class="org.artifactory.backup.BackupServiceImpl">
+    <bean id="backup" class="org.artifactory.backup.BackupManager">
         <constructor-arg ref="centralConfig"/>
         <constructor-arg ref="scheduler"/>
     </bean>
 
-    <bean id="scheduler" class="org.artifactory.schedule.ArtifactorySchedulerFactoryBean">
+    <bean id="scheduler" class="org.artifactory.scheduling.ArtifactorySchedulerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="quartzProperties">
             <props>
-                <prop key="org.quartz.jobStore.driverDelegateClass">org.artifactory.schedule.DerbyDelegate</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.artifactory.scheduling.DerbyDelegate</prop>
                 <!--<prop key="jobFactory">org.springframework.scheduling.quartz.SpringBeanJobFactory</prop>-->
             </props>
         </property>

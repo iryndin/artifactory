@@ -16,7 +16,7 @@
  */
 package org.artifactory.standalone.main;
 
-import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.ArtifactoryHome;
 import org.mortbay.jetty.Server;
 import org.mortbay.xml.XmlConfiguration;
 
@@ -52,7 +52,6 @@ public class Main {
                     System.out.println("Starting jetty from URL configuration " + args[0]);
                     configUrl = new URL(args[0]);
                 }
-                ArtifactoryHome.create();
             } else {
                 //Trying to find Artifactory home and then /etc/jetty.xml under it
                 ArtifactoryHome.create();

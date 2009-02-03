@@ -1,72 +1,85 @@
 package org.artifactory.webapp.wicket.utils;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.artifactory.api.repo.RepoPath;
-import static org.artifactory.webapp.servlet.RepoFilter.ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH;
-import static org.artifactory.webapp.servlet.RepoFilter.ATTR_ARTIFACTORY_REPOSITORY_PATH;
-import org.artifactory.webapp.servlet.RequestUtils;
+import org.artifactory.repo.RepoPath;
+import org.artifactory.webapp.servlet.RepoFilter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
 public abstract class WebUtils {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(WebUtils.class);
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public static String getWicketServletContextUrl() {
         WebRequest request = getWebRequest();
         HttpServletRequest httpRequest = request.getHttpServletRequest();
-        return RequestUtils.getServletContextUrl(httpRequest);
+        return getServletContextUrl(httpRequest);
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    public static String getServletContextUrl(HttpServletRequest httpRequest) {
+        final String url = httpRequest.getScheme() + "://" +
+                httpRequest.getServerName() + ":" +
+                httpRequest.getServerPort() +
+                httpRequest.getContextPath();
+        return url;
+    }
+
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public static WebRequest getWebRequest() {
         WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
-        if (webRequestCycle == null) {
-            return null;
-        }
-        return webRequestCycle.getWebRequest();
+        WebRequest request = webRequestCycle.getWebRequest();
+        return request;
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public static WebResponse getWebResponse() {
         WebRequestCycle webRequestCycle = (WebRequestCycle) RequestCycle.get();
-        return webRequestCycle.getWebResponse();
+        WebResponse response = webRequestCycle.getWebResponse();
+        return response;
     }
 
-    public static Map<String, String> getHeadersMap() {
-        Map<String, String> map = new HashMap<String, String>();
-        HttpServletRequest request = getWebRequest().getHttpServletRequest();
-        if (request != null) {
-            Enumeration headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                String headerName = (String) headerNames.nextElement();
-                map.put(headerName.toUpperCase(), request.getHeader(headerName));
-            }
-        }
-        return map;
-    }
-
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public static RepoPath getRepoPath(WebRequest request) {
         HttpServletRequest httpServletRequest = request.getHttpServletRequest();
-        return (RepoPath) httpServletRequest.getAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH);
+        RepoPath repoPath = (RepoPath) httpServletRequest.getAttribute(
+                RepoFilter.ATTR_ARTIFACTORY_REPOSITORY_PATH);
+        return repoPath;
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public static void removeRepoPath(WebRequest request, boolean storeAsRemoved) {
         HttpServletRequest httpServletRequest = request.getHttpServletRequest();
         RepoPath removedRepoPath = getRepoPath(request);
-        httpServletRequest.removeAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH);
+        httpServletRequest.removeAttribute(RepoFilter.ATTR_ARTIFACTORY_REPOSITORY_PATH);
         if (removedRepoPath != null && storeAsRemoved) {
-            httpServletRequest.setAttribute(ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH, removedRepoPath);
+            httpServletRequest.setAttribute(
+                    RepoFilter.ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH, removedRepoPath);
         }
     }
 
-    public static boolean isAuthPresent(WebRequest request) {
-        return RequestUtils.isAuthHeaderPresent(request.getHttpServletRequest());
+    public static boolean isWicketRequest(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        return queryString != null && queryString.startsWith("wicket");
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    public static boolean isAuthPresent(WebRequest request) {
+        return isAuthPresent(request.getHttpServletRequest());
+    }
+
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    public static boolean isAuthPresent(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        boolean authExists = header != null && header.startsWith("Basic ");
+        return authExists;
+    }
 }

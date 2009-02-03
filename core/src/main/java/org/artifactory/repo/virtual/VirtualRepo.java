@@ -18,10 +18,7 @@ package org.artifactory.repo.virtual;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
-import org.artifactory.api.repo.VirtualRepoItem;
-import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
+import org.apache.log4j.Logger;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.repo.LocalCacheRepo;
@@ -30,90 +27,109 @@ import org.artifactory.repo.RealRepo;
 import org.artifactory.repo.RemoteRepo;
 import org.artifactory.repo.Repo;
 import org.artifactory.repo.RepoBase;
-import org.artifactory.repo.service.InternalRepositoryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
-        implements Repo<VirtualRepoDescriptor> {
-    private static final Logger log = LoggerFactory.getLogger(VirtualRepo.class);
+@XmlType(name = "VirtualRepoType",
+        propOrder = {"artifactoryRequestsCanRetrieveRemoteArtifacts", "repositories"})
+@XmlAccessorType(XmlAccessType.PROPERTY)
+public class VirtualRepo extends RepoBase implements Repo {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(VirtualRepo.class);
 
+    private static final long serialVersionUID = 1L;
+
+    public static final String GLOBAL_VIRTUAL_REPO_KEY = "repo";
+
+    /*@XmlElement(name = "repositories")
+    @XmlJavaTypeAdapter(RepositoriesListAdapter.class)*/
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "UnusedDeclaration"})
+    @XmlIDREF
+    @XmlElementWrapper(name = "repositories")
+    @XmlElement(name = "repositoryRef", type = RepoBase.class, required = false)
+    //JAXB only field
+    private List<Repo> repositories;
+
+    private boolean artifactoryRequestsCanRetrieveRemoteArtifacts;
+
+    @XmlTransient
     private OrderedMap<String, LocalRepo> localRepositoriesMap =
             new ListOrderedMap<String, LocalRepo>();
+    @XmlTransient
     private OrderedMap<String, RemoteRepo> remoteRepositoriesMap =
             new ListOrderedMap<String, RemoteRepo>();
+    @XmlTransient
     private OrderedMap<String, VirtualRepo> virtualRepositoriesMap =
             new ListOrderedMap<String, VirtualRepo>();
 
-    private OrderedMap<String, VirtualRepo> searchableVirtualRepositories =
-            new ListOrderedMap<String, VirtualRepo>();
-    private OrderedMap<String, LocalRepo> searchableLocalRepositories =
-            new ListOrderedMap<String, LocalRepo>();
-    private OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories =
-            new ListOrderedMap<String, LocalCacheRepo>();
-    private OrderedMap<String, RemoteRepo> searchableRemoteRepositories =
-            new ListOrderedMap<String, RemoteRepo>();
-
-    protected VirtualRepo(InternalRepositoryService repositoryService) {
-        super(repositoryService);
-    }
-
-    public VirtualRepo(InternalRepositoryService repositoryService,
-            VirtualRepoDescriptor descriptor) {
-        this(repositoryService);
-        setDescriptor(descriptor);
+    public VirtualRepo() {
     }
 
     /**
-     * Special ctor for the default global repo
+     * Used for the global virtual repo
+     *
+     * @param key
+     * @param localRepositoriesMap
+     * @param remoteRepositoriesMap
      */
-    public VirtualRepo(InternalRepositoryService service, VirtualRepoDescriptor descriptor,
-            OrderedMap<String, LocalRepo> localRepositoriesMap,
-            OrderedMap<String, RemoteRepo> remoteRepositoriesMap) {
-        this(service);
+    public VirtualRepo(String key, OrderedMap<String, LocalRepo> localRepositoriesMap,
+                       OrderedMap<String, RemoteRepo> remoteRepositoriesMap) {
+        setKey(key);
         this.localRepositoriesMap = localRepositoriesMap;
         this.remoteRepositoriesMap = remoteRepositoriesMap;
-        setDescriptor(descriptor);
     }
 
-    /**
-     * Must be called after all repositories were built because we save references to other repositories.
-     */
-    @SuppressWarnings({"unchecked"})
+    public boolean isReal() {
+        return false;
+    }
+
     public void init() {
-        //Split the repositories into local, remote and virtual
-        List<RepoDescriptor> repositories = getDescriptor().getRepositories();
-        for (RepoDescriptor repoDescriptor : repositories) {
-            String key = repoDescriptor.getKey();
-            Repo repo = getRepositoryService().nonCacheRepositoryByKey(key);
-            if (repoDescriptor.isReal()) {
-                RealRepoDescriptor realRepoDescriptor = (RealRepoDescriptor) repoDescriptor;
-                if (realRepoDescriptor.isLocal()) {
-                    localRepositoriesMap.put(key, (LocalRepo) repo);
+        //Split the repositories into local and remote
+        for (Repo repo : repositories) {
+            String repoKey = repo.getKey();
+            if (repo.isReal()) {
+                RealRepo realRepo = (RealRepo) repo;
+                if (realRepo.isLocal()) {
+                    LocalRepo localRepo = localRepositoriesMap.put(repoKey, (LocalRepo) realRepo);
+                    //Test for repositories with the same key
+                    if (localRepo != null) {
+                        //Throw an error since jaxb swallows exceptions
+                        throw new Error(
+                                "Duplicate local repository key " + repoKey +
+                                        " in virtual repository configuration: " + getKey() + ".");
+                    }
                 } else {
-                    remoteRepositoriesMap.put(key, (RemoteRepo) repo);
+                    RemoteRepo remoteRepo =
+                            remoteRepositoriesMap.put(repoKey, (RemoteRepo) realRepo);
+                    //Test for repositories with the same key
+                    if (remoteRepo != null) {
+                        //Throw an error since jaxb swallows exceptions
+                        throw new Error(
+                                "Duplicate virtual remote key " + repoKey +
+                                        " in virtual repository configuration: " + getKey() + ".");
+                    }
                 }
             } else {
-                // it is a virtual repository
-                virtualRepositoriesMap.put(key, (VirtualRepo) repo);
+                VirtualRepo virtualRepo = virtualRepositoriesMap.put(repoKey, (VirtualRepo) repo);
+                //Test for repositories with the same key
+                if (virtualRepo != null) {
+                    //Throw an error since jaxb swallows exceptions
+                    throw new Error(
+                            "Duplicate virtual repository key " + repoKey +
+                                    " in virtual repository configuration: " + getKey() + ".");
+                }
             }
         }
-    }
-
-    /**
-     * Another init method to assemble the search repositories. Must be called after the init() method!
-     */
-    public void initSearchRepositoryLists() {
-        deeplyAssembleSearchRepositoryLists(
-                searchableVirtualRepositories,
-                searchableLocalRepositories,
-                searchableLocalCacheRepositories,
-                searchableRemoteRepositories);
     }
 
     public List<RealRepo> getLocalAndRemoteRepositories() {
@@ -133,9 +149,9 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
 
     public List<LocalCacheRepo> getLocalCaches() {
         List<LocalCacheRepo> localCaches = new ArrayList<LocalCacheRepo>();
-        for (RemoteRepo remoteRepo : remoteRepositoriesMap.values()) {
-            if (remoteRepo.isStoreArtifactsLocally()) {
-                localCaches.add(remoteRepo.getLocalCacheRepo());
+        for (RemoteRepo repo : remoteRepositoriesMap.values()) {
+            if (repo.isStoreArtifactsLocally()) {
+                localCaches.add(repo.getLocalCacheRepo());
             }
         }
         return localCaches;
@@ -153,40 +169,63 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         return repos;
     }
 
-    public OrderedMap<String, VirtualRepo> getSearchableVirtualRepositories() {
-        return searchableVirtualRepositories;
-    }
-
-    public OrderedMap<String, LocalRepo> getSearchableLocalRepositories() {
-        return searchableLocalRepositories;
-    }
-
-    public OrderedMap<String, LocalCacheRepo> getSearchableLocalCacheRepositories() {
-        return searchableLocalCacheRepositories;
-    }
-
-    public OrderedMap<String, RemoteRepo> getSearchableRemoteRepositories() {
-        return searchableRemoteRepositories;
-    }
-
+    @XmlElement(defaultValue = "false", required = false)
     public boolean isArtifactoryRequestsCanRetrieveRemoteArtifacts() {
-        return getDescriptor().isArtifactoryRequestsCanRetrieveRemoteArtifacts();
+        return artifactoryRequestsCanRetrieveRemoteArtifacts;
+    }
+
+    public void setArtifactoryRequestsCanRetrieveRemoteArtifacts(
+            boolean artifactoryRequestsCanRetrieveRemoteArtifacts) {
+        this.artifactoryRequestsCanRetrieveRemoteArtifacts =
+                artifactoryRequestsCanRetrieveRemoteArtifacts;
+    }
+
+    //PERF: [by yl] Cache this data locally
+    public void deeplyAssembleRepositoryLists(
+            OrderedMap<String, VirtualRepo> virtualRepos,
+            OrderedMap<String, LocalRepo> localRepos,
+            OrderedMap<String, LocalCacheRepo> localCacheRepos,
+            OrderedMap<String, RemoteRepo> remoteRepos) {
+        virtualRepos.put(getKey(), this);
+        //Add its local repositories
+        localRepos.putAll(getLocalRepositoriesMap());
+        //Add the caches
+        List<LocalCacheRepo> allCaches = getLocalCaches();
+        for (LocalCacheRepo cache : allCaches) {
+            localCacheRepos.put(cache.getKey(), cache);
+        }
+        //Add the remote repositories
+        remoteRepos.putAll(getRemoteRepositoriesMap());
+        //Add any contained virtual repo
+        List<VirtualRepo> childrenVirtualRepos = getVirtualRepositories();
+        //Avoid infinite loop - stop if already processed virtual repo is encountered
+        for (VirtualRepo childVirtualRepo : childrenVirtualRepos) {
+            String key = childVirtualRepo.getKey();
+            if (virtualRepos.get(key) != null) {
+                String virtualRepoKeys = "";
+                List<String> list = new ArrayList<String>(virtualRepos.keySet());
+                int size = list.size();
+                for (int i = 0; i < size; i++) {
+                    virtualRepoKeys += "'" + list.get(i) + "'";
+                    if (i < size - 1) {
+                        virtualRepoKeys += ", ";
+                    }
+                }
+                LOGGER.warn(
+                        "Repositories list assembly has been truncated to avoid recursive loop " +
+                                "on the virtual repo '" + key +
+                                "'. Already processed virtual repositories: " + virtualRepoKeys +
+                                ".");
+                return;
+            } else {
+                childVirtualRepo.deeplyAssembleRepositoryLists(
+                        virtualRepos, localRepos, localCacheRepos, remoteRepos);
+            }
+        }
     }
 
     public LocalRepo localRepositoryByKey(String key) {
         return localRepositoriesMap.get(key);
-    }
-
-    public Repo nonCacheRepositoryByKey(String key) {
-        Repo repo = localRepositoryByKey(key);
-        if (repo != null) {
-            return repo;
-        }
-        repo = remoteRepositoryByKey(key);
-        if (repo != null) {
-            return repo;
-        }
-        return virtualRepositoriesMap.get(key);
     }
 
     public OrderedMap<String, LocalRepo> getLocalRepositoriesMap() {
@@ -204,7 +243,8 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
     /**
      * Gets a local or cache repository by key
      *
-     * @param key The key for a cache can either be the remote repository one or the cache one(ends with "-cache")
+     * @param key The key for a cache can either be the remote repository one or the cache one(ends
+     *            with "-cache")
      * @return
      */
     public LocalRepo localOrCachedRepositoryByKey(String key) {
@@ -235,7 +275,7 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         OrderedMap<String, VirtualRepo> virtualRepos =
                 new ListOrderedMap<String, VirtualRepo>();
         //Assemble the virtual repo deep search lists
-        deeplyAssembleSearchRepositoryLists(
+        deeplyAssembleRepositoryLists(
                 virtualRepos, new ListOrderedMap<String, LocalRepo>(),
                 new ListOrderedMap<String, LocalCacheRepo>(),
                 new ListOrderedMap<String, RemoteRepo>());
@@ -248,6 +288,7 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         return items;
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public List<VirtualRepoItem> getChildren(String path) {
         //Collect the items under the virtual directory viewed from all local repositories
         List<LocalRepo> repoList = getLocalAndCachedRepositories();
@@ -256,11 +297,11 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
             if (!repo.itemExists(path)) {
                 continue;
             }
-            JcrFolder dir = (JcrFolder) repo.getJcrFsItem(path);
+            JcrFolder dir = (JcrFolder) repo.getFsItem(path);
             List<JcrFsItem> items = dir.getItems();
             for (JcrFsItem item : items) {
                 String itemPath = item.getRelativePath();
-                VirtualRepoItem repoItem = new VirtualRepoItem(item.getInfo());
+                VirtualRepoItem repoItem = new VirtualRepoItem(item);
                 //Check if we already have this item
                 if (!children.containsKey(itemPath)) {
                     //Initialize
@@ -275,51 +316,5 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor>
         }
         List<VirtualRepoItem> items = new ArrayList<VirtualRepoItem>(children.values());
         return items;
-    }
-
-    private void deeplyAssembleSearchRepositoryLists(
-            OrderedMap<String, VirtualRepo> searchableVirtualRepositories,
-            OrderedMap<String, LocalRepo> searchableLocalRepositories,
-            OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories,
-            OrderedMap<String, RemoteRepo> searchableRemoteRepositories) {
-        searchableVirtualRepositories.put(getKey(), this);
-        //Add its local repositories
-        searchableLocalRepositories.putAll(getLocalRepositoriesMap());
-        //Add the caches
-        List<LocalCacheRepo> allCaches = getLocalCaches();
-        for (LocalCacheRepo cache : allCaches) {
-            searchableLocalCacheRepositories.put(cache.getKey(), cache);
-        }
-        //Add the remote repositories
-        searchableRemoteRepositories.putAll(getRemoteRepositoriesMap());
-        //Add any contained virtual repo
-        List<VirtualRepo> childrenVirtualRepos = getVirtualRepositories();
-        //Avoid infinite loop - stop if already processed virtual repo is encountered
-        for (VirtualRepo childVirtualRepo : childrenVirtualRepos) {
-            String key = childVirtualRepo.getKey();
-            if (searchableVirtualRepositories.get(key) != null) {
-                String virtualRepoKeys = "";
-                List<String> list = new ArrayList<String>(searchableVirtualRepositories.keySet());
-                int size = list.size();
-                for (int i = 0; i < size; i++) {
-                    virtualRepoKeys += "'" + list.get(i) + "'";
-                    if (i < size - 1) {
-                        virtualRepoKeys += ", ";
-                    }
-                }
-                log.warn(
-                        "Repositories list assembly has been truncated to avoid recursive loop " +
-                                "on the virtual repo '" + key +
-                                "'. Already processed virtual repositories: " + virtualRepoKeys +
-                                ".");
-                return;
-            } else {
-                childVirtualRepo.deeplyAssembleSearchRepositoryLists(
-                        searchableVirtualRepositories,
-                        searchableLocalRepositories,
-                        searchableLocalCacheRepositories,
-                        searchableRemoteRepositories);
-            }
-        }
     }
 }
