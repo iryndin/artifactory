@@ -1,0 +1,28 @@
+<wicket:extend>
+    <div wicket:id="virtualRepoFields" class="virtual-repo-fields">
+        <div class="field field-sep">
+            <label>Repositories</label>
+            <span wicket:id="repositories.help"/>
+
+            <div class="value">
+                <div wicket:id="repositories"/>
+            </div>
+        </div>
+
+        <div class="field field-sep">
+            <label>Resolved Repositories</label>
+            <span wicket:id="resolvedRepo.help"/>
+
+            <div wicket:id="resolvedRepoWrapper" class="value list">
+                <div wicket:id="resolvedRepo">
+                    <span wicket:id="key"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="field field-sep">
+            <input wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts" type="checkbox" class="text"/>
+            <span wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts.help"/>
+        </div>
+    </div>
+</wicket:extend>
