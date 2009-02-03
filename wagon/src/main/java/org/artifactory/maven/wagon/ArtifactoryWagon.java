@@ -16,6 +16,7 @@
  */
 package org.artifactory.maven.wagon;
 
+import org.apache.log4j.Logger;
 import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.apache.maven.wagon.repository.Repository;
 
@@ -38,6 +39,9 @@ import org.apache.maven.wagon.repository.Repository;
  * </pre>
  */
 public class ArtifactoryWagon extends HttpWagon {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ArtifactoryWagon.class);
+
     public static final String URL_SCHEME = "repo://";
 
     private Repository repository;
