@@ -16,26 +16,17 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.descriptor.DescriptorAware;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.repo.service.InternalRepositoryService;
-
 import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public interface Repo<T extends RepoDescriptor> extends DescriptorAware<T>, Serializable {
+public interface Repo extends Serializable {
     String getKey();
 
     String getDescription();
 
-    /**
-     * @see org.artifactory.descriptor.repo.RepoDescriptor#isReal()
-     */
     boolean isReal();
 
     void init();
-
-    InternalRepositoryService getRepositoryService();
 }

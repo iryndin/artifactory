@@ -16,7 +16,7 @@
  */
 package org.artifactory.webapp.servlet;
 
-import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.ArtifactoryHome;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

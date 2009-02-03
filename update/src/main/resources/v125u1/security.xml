@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
            http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
 
-    <bean id="security" class="org.artifactory.security.SecurityManager">
+    <bean id="security" class="org.artifactory.security.ArtifactorySecurityManager">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="aclProvider" ref="aclProvider"/>
         <property name="userDetailsService" ref="userDetailsService"/>
@@ -79,7 +79,7 @@
             <ref local="ldapAuthenticatorSelector"/>
         </constructor-arg>
         <constructor-arg index="1">
-            <bean class="org.artifactory.security.ldap.DaoLdapAuthoritiesPopulator">
+            <bean class="org.artifactory.security.DaoLdapAuthoritiesPopulator">
                 <property name="userDetailsService">
                     <ref local="userDetailsService"/>
                 </property>

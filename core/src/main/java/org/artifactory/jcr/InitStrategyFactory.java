@@ -20,7 +20,7 @@ package org.artifactory.jcr;
  * User: freds Date: Jun 3, 2008 Time: 12:20:00 PM
  */
 public class InitStrategyFactory {
-    public InitJcrRepoStrategy getInitJcrRepoStrategy(JcrService factory) {
-        return new InitJcrRepoStrategy(factory);
+    public InitJcrRepoStrategy getInitJcrRepoStrategy(JcrWrapper jcrWrapper) {
+        return new InitJcrRepoStrategy(jcrWrapper);
     }
 }

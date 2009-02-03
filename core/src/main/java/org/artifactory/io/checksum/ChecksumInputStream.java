@@ -16,6 +16,8 @@
  */
 package org.artifactory.io.checksum;
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,8 @@ import java.io.InputStream;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public class ChecksumInputStream extends BufferedInputStream {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ChecksumInputStream.class);
 
     private final Checksum[] checksums;
 
@@ -36,18 +40,15 @@ public class ChecksumInputStream extends BufferedInputStream {
         return checksums;
     }
 
-    @Override
     public int read(byte b[]) throws IOException {
         return read(b, 0, b.length);
     }
 
-    @Override
     public int read() throws IOException {
         byte b[] = new byte[1];
         return read(b);
     }
 
-    @Override
     public int read(byte b[], int off, int len) throws IOException {
         int bytesRead = super.read(b, off, len);
         if (bytesRead > 0) {

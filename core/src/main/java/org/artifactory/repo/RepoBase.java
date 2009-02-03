@@ -16,77 +16,56 @@
  */
 package org.artifactory.repo;
 
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.jcr.md.MetadataService;
-import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.spring.InternalContextHelper;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlType;
 
-public abstract class RepoBase<T extends RepoDescriptor> implements Repo<T> {
-    private T descriptor;
-    private InternalRepositoryService repositoryService;
+@XmlType(name = "RepoType", propOrder = {"key", "description"})
+public abstract class RepoBase implements Repo {
 
-    protected RepoBase(InternalRepositoryService repositoryService) {
-        this.repositoryService = repositoryService;
-    }
+    @SuppressWarnings({"UnusedDeclaration"})
+    private static final org.apache.log4j.Logger LOGGER =
+            org.apache.log4j.Logger.getLogger(RepoBase.class);
 
-    protected RepoBase(InternalRepositoryService repositoryService, T descriptor) {
-        this(repositoryService);
-        setDescriptor(descriptor);
-    }
+    private String key;
+    private String description;
 
-    public void setDescriptor(T descriptor) {
-        this.descriptor = descriptor;
-    }
-
-    public T getDescriptor() {
-        return descriptor;
-    }
-
-    public InternalRepositoryService getRepositoryService() {
-        return repositoryService;
-    }
-
+    @XmlID
+    @XmlElement(required = true)
     public String getKey() {
-        return descriptor.getKey();
+        return key;
     }
 
+    @XmlElement(defaultValue = "default description", required = false)
     public String getDescription() {
-        return descriptor.getDescription();
+        return description;
     }
 
-    public boolean isReal() {
-        return getDescriptor().isReal();
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String toString() {
-        return getKey();
+        return key;
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof RepoBase)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RepoBase base = (RepoBase) o;
-        return descriptor.equals(base.descriptor);
+        Repo base = (Repo) o;
+        return key.equals(base.getKey());
+
     }
 
-    @Override
     public int hashCode() {
-        return descriptor.hashCode();
-    }
-
-    protected final AuthorizationService getAuthorizationService() {
-        // TODO: Analyze the optimization if made as a member
-        return InternalContextHelper.get().getAuthorizationService();
-    }
-
-    protected final MetadataService getMetadataService() {
-        return InternalContextHelper.get().beanForType(MetadataService.class);
+        return key.hashCode();
     }
 }

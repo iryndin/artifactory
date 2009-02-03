@@ -17,56 +17,44 @@
 package org.artifactory.repo;
 
 import org.apache.maven.model.Model;
-import org.artifactory.api.config.ImportableExportable;
-import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.io.checksum.policy.ChecksumPolicy;
+import org.artifactory.config.ExportableConfig;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.resource.ArtifactResource;
 import org.artifactory.resource.RepoResource;
 
-import javax.jcr.Node;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
-public interface LocalRepo<T extends LocalRepoDescriptor>
-        extends RealRepo<T>, ImportableExportable, JcrFsItemFactory {
+public interface LocalRepo extends RealRepo, ExportableConfig {
 
-    JcrFolder getRootFolder();
+    JcrFsItem getFsItem(String relPath);
+
+    JcrFolder getFolder();
 
     boolean itemExists(String relPath);
 
+    boolean fileNodeExists(String relPath);
+
     SnapshotVersionBehavior getSnapshotVersionBehavior();
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     Model getModel(ArtifactResource pa);
 
     String getPomContent(ArtifactResource pa);
 
-    RepoResource saveResource(RepoResource res, InputStream stream) throws IOException;
+    void saveResource(RepoResource res, InputStream stream) throws IOException;
 
-    void undeploy(RepoPath repoPath);
+    void importFromDir(File dir, boolean singleTransation, boolean ignoreMissingDir);
 
-    String getRepoRootPath();
+    void exportToDir(File dir);
+
+    void undeploy(String path);
+
+    String getRepoPath();
 
     void delete();
 
     boolean isAnonAccessEnabled();
-
-    String getPomContent(ItemInfo itemInfo);
-
-    boolean shouldProtectPathDeletion(String relPath);
-
-    List<String> getChildrenNames(String relPath);
-
-    void updateCache(JcrFsItem fsItem);
-
-    String getAbsolutePath(Node node);
-
-    ChecksumPolicy getChecksumPolicy();
-
-    void onDelete(JcrFsItem fsItem);
 }

@@ -257,11 +257,11 @@
     created programmtically using CacheManager.add(String cacheName)
     -->
     <defaultCache
-            maxElementsInMemory="1000"
+            maxElementsInMemory="10000"
             eternal="false"
-            timeToIdleSeconds="300"
-            timeToLiveSeconds="300"
-            overflowToDisk="false"
+            timeToIdleSeconds="900"
+            timeToLiveSeconds="900"
+            overflowToDisk="true"
             maxElementsOnDisk="10000000"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"

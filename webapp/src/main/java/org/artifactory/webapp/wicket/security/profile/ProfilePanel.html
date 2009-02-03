@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+    </script>
+</wicket:head>
+
+<body>
+<wicket:extend>
+    <form wicket:id="userForm">
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="form_label">Current Password</td>
+                <td>
+                    <input wicket:id="currentPassword" type="password" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">New Password</td>
+                <td>
+                    <input wicket:id="newPassword" type="password" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Retype password</td>
+                <td>
+                    <input wicket:id="retypedPassword" type="password" class="medium"/>
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="button" wicket:id="submit"/>
+    </form>
+
+</wicket:extend>
+</body>
+</html>

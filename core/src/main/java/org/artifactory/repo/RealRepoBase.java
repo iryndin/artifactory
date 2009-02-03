@@ -16,123 +16,172 @@
  */
 package org.artifactory.repo;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.fs.ItemInfo;
-import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
-import org.artifactory.api.repo.RepoPath;
-import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.util.PathMatcher;
-import org.artifactory.util.PathUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.fs.FsItemMetadata;
+import org.artifactory.maven.MavenUtils;
+import org.artifactory.resource.ArtifactResource;
+import org.codehaus.plexus.util.SelectorUtils;
+import org.codehaus.plexus.util.StringUtils;
 
-import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.io.File;
 
+@XmlType(name = "RealRepoType", propOrder = {"blackedOut", "handleReleases", "handleSnapshots",
+        "maxUniqueSnapshots", "includesPattern", "excludesPattern"})
+public abstract class RealRepoBase extends RepoBase implements RealRepo {
 
-public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBase<T> implements RealRepo<T> {
-    private static final Logger log = LoggerFactory.getLogger(RealRepoBase.class);
+    @SuppressWarnings({"UnusedDeclaration"})
+    private static final org.apache.log4j.Logger LOGGER =
+            org.apache.log4j.Logger.getLogger(RealRepoBase.class);
 
-    private List<String> includes;
-    private List<String> excludes;
+    public static final File TEMP_FOLDER =
+            new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
 
-    protected RealRepoBase(InternalRepositoryService repositoryService) {
-        super(repositoryService);
-        this.excludes = PathMatcher.getDefaultExcludes();
+    private boolean blackedOut;
+    private boolean handleReleases = true;
+    private boolean handleSnapshots = true;
+    private int maxUniqueSnapshots;
+    private String includesPattern;
+    private String excludesPattern;
+
+    @XmlTransient
+    private String[] includes;
+    @XmlTransient
+    private String[] excludes;
+
+    public boolean isReal() {
+        return true;
     }
 
-    public RealRepoBase(InternalRepositoryService repositoryService, T descriptor) {
-        this(repositoryService);
-        setDescriptor(descriptor);
-    }
-
-    @Override
-    public void setDescriptor(T descriptor) {
-        super.setDescriptor(descriptor);
-        this.includes = PathUtils.delimitedListToStringList(descriptor.getIncludesPattern(), ",", "\r\n\f ");
-        this.excludes = PathUtils.delimitedListToStringList(descriptor.getExcludesPattern(), ",", "\r\n\f ");
-        excludes.addAll(PathMatcher.getDefaultExcludes());
-    }
-
+    @XmlElement(defaultValue = "true", required = false)
     public boolean isHandleReleases() {
-        return getDescriptor().isHandleReleases();
+        return handleReleases;
     }
 
+    public void setHandleReleases(boolean handleReleases) {
+        this.handleReleases = handleReleases;
+    }
+
+    @XmlElement(defaultValue = "true", required = false)
     public boolean isHandleSnapshots() {
-        return getDescriptor().isHandleSnapshots();
+        return handleSnapshots;
     }
 
+    public void setHandleSnapshots(boolean handleSnapshots) {
+        this.handleSnapshots = handleSnapshots;
+    }
+
+    @XmlElement(defaultValue = "**/*", required = false)
     public String getIncludesPattern() {
-        return getDescriptor().getIncludesPattern();
+        return includesPattern;
     }
 
+    public void setIncludesPattern(String includesPattern) {
+        this.includesPattern = includesPattern;
+        if (!StringUtils.isEmpty(includesPattern)) {
+            includes = StringUtils.split(includesPattern, ",");
+            for (int i = 0; i < includes.length; i++) {
+                String include = includes[i].replace('\\', '/');
+                includes[i] = include;
+            }
+        }
+    }
+
+    @XmlElement(defaultValue = "", required = false)
     public String getExcludesPattern() {
-        return getDescriptor().getExcludesPattern();
+        return excludesPattern;
     }
 
+    public void setExcludesPattern(String excludesPattern) {
+        this.excludesPattern = excludesPattern;
+        if (!StringUtils.isEmpty(excludesPattern)) {
+            excludes = StringUtils.split(excludesPattern, ",");
+            for (int i = 0; i < excludes.length; i++) {
+                String exclude = excludes[i].replace('\\', '/');
+                excludes[i] = exclude;
+            }
+        }
+    }
+
+    @XmlElement(defaultValue = "false", required = false)
     public boolean isBlackedOut() {
-        return getDescriptor().isBlackedOut();
+        return blackedOut;
     }
 
+    @XmlElement(defaultValue = "0", required = false)
     public int getMaxUniqueSnapshots() {
-        return getDescriptor().getMaxUniqueSnapshots();
+        return maxUniqueSnapshots;
+    }
+
+    public void setBlackedOut(boolean blackedOut) {
+        this.blackedOut = blackedOut;
+    }
+
+    public void setMaxUniqueSnapshots(int maxUniqueSnapshots) {
+        this.maxUniqueSnapshots = maxUniqueSnapshots;
     }
 
     public boolean accepts(String path) {
-        // TODO: Refactor this using RepoPath
         String toCheck = path;
-        //For artifactory metadata the pattern apply to the object it represents
-        if (path.endsWith(ItemInfo.METADATA_FOLDER)) {
-            toCheck = path.substring(0, path.length() - ItemInfo.METADATA_FOLDER.length() - 1);
-        } else if (NamingUtils.isMetadata(path)) {
-            toCheck = NamingUtils.getMetadataParentPath(path);
+        // For artifactory metadata the pattern apply to the object it represents
+        if (path.endsWith(FsItemMetadata.SUFFIX)) {
+            toCheck = path.substring(0, path.length() - FsItemMetadata.SUFFIX.length() - 1);
         }
-        return PathMatcher.matches(toCheck, includes, excludes);
+        if (excludes != null) {
+            for (String exclude : excludes) {
+                boolean match = SelectorUtils.match(exclude, toCheck);
+                if (match) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(this + " excludes pattern (" + excludesPattern
+                                + ") rejected path '" + path + "'.");
+                    }
+                    return false;
+                }
+            }
+        }
+        if (includes != null) {
+            for (String include : includes) {
+                if (toCheck.length() < include.length()) {
+                    if (include.startsWith(toCheck)) {
+                        return true;
+                    }
+                }
+                boolean match = SelectorUtils.match(include, toCheck);
+                if (match) {
+                    return true;
+                }
+            }
+        } else {
+            return true;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(this + " includes pattern (" + includesPattern
+                    + ") did not accept path '" + path + "'.");
+        }
+        return false;
     }
 
     public boolean handles(String path) {
-        // TODO: Refactor this using RepoPath
-        if (NamingUtils.isMetadata(path) || NamingUtils.isChecksum(path) || MavenNaming.isIndex(path)) {
+        if (MavenUtils.isXml(path) || MavenUtils.isChecksum(path)) {
             return true;
         }
-        boolean snapshot = MavenNaming.isSnapshot(path);
-        if (snapshot && !isHandleSnapshots()) {
-            if (log.isDebugEnabled()) {
-                log.debug("{} rejected '{}': not handling snapshots.", this, path);
+        boolean snapshot = MavenUtils.isSnapshot(path);
+        if (snapshot && !handleSnapshots) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(this + " rejected '" + path + "': not handling snapshots.");
             }
             return false;
-        } else if (!snapshot && !isHandleReleases()) {
-            if (log.isDebugEnabled()) {
-                log.debug("{} rejected '{}': not handling releases.", this, path);
+        } else if (!snapshot && !handleReleases) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(this + " rejected '" + path + "': not handling releases.");
             }
             return false;
         }
         return true;
     }
 
-    public boolean isLocal() {
-        return getDescriptor().isLocal();
-    }
-
-    public StatusHolder assertValidPath(RepoPath repoPath) {
-        StatusHolder statusHolder = new StatusHolder();
-        statusHolder.setActivateLogging(log.isDebugEnabled());
-        if (isBlackedOut()) {
-            statusHolder.setError(
-                    "The repository '" + this.getKey() + "' is blacked out and cannot accept artifact '" + repoPath +
-                            "'.", HttpStatus.SC_FORBIDDEN, log);
-        } else if (!handles(repoPath.getPath())) {
-            statusHolder.setError("The repository '" + this.getKey() + "' rejected the artifact '" + repoPath +
-                    "' due to its snapshot/release handling policy.",
-                    HttpStatus.SC_FORBIDDEN, log);
-        } else if (!accepts(repoPath.getPath())) {
-            statusHolder.setError("The repository '" + this.getKey() + "' rejected the artifact '" + repoPath +
-                    "' due to its include/exclude patterns settings.",
-                    HttpStatus.SC_FORBIDDEN, log);
-
-        }
-        return statusHolder;
+    public boolean handles(ArtifactResource res) {
+        return handles(res.getPath());
     }
 }
