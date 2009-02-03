@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">        
+<document>
+    <properties>
+        <title>Introduction</title>
+    </properties>
+
+    <body>
+        <section name="Introduction">
+            <div>
+                <p>
+                    Maven2 Dependency Viewer is a utility for graphically visualizing Maven2 dependency graphs.
+                    <br/>
+                    It is using Maven embedder for resolving dependencies and based the Java Universal Network/Graph Framework - Jung – for creating and visualizing the dependency graph.
+                    Spring rich client is used for building the GUI.
+                </p>
+            </div>
+        </section>
+        <section name="Building From Source">
+            <p>Simply checkout the source and run "mvn clean install".</p>
+        </section>
+    </body>
+</document>

@@ -16,48 +16,39 @@
  */
 package org.artifactory.maven;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.artifactory.schedule.quartz.QuartzCommand;
+import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.FileUtils;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.TimerTask;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
-public class WagonManagerTempArtifactsCleaner extends QuartzCommand {
-    private static final Logger log =
-            LoggerFactory.getLogger(WagonManagerTempArtifactsCleaner.class);
-    private static final long MIN_AGE = DateUtils.MILLIS_PER_MINUTE * 5;
+public class WagonManagerTempArtifactsCleaner extends TimerTask {
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(WagonManagerTempArtifactsCleaner.class);
 
     @SuppressWarnings({"unchecked"})
-    @Override
-    protected void onExecute(JobExecutionContext context) throws JobExecutionException {
+    public void run() {
         try {
             File temp = File.createTempFile("maven-artifact", null);
             File tempDir = temp.getParentFile();
             List<File> files = FileUtils.getFiles(tempDir, "maven-artifact*.tmp", null);
-            int count = 0;
+            int count = -1; //Exclude the test temp file
             for (File file : files) {
-                //Only delete files older than 5 mins to avoid interfering with active deployments
-                if (System.currentTimeMillis() - file.lastModified() > MIN_AGE) {
-                    boolean res = file.delete();
-                    if (res && file.equals(temp)) {
-                        count++;
-                    }
+                boolean res = file.delete();
+                if (res) {
+                    count++;
                 }
             }
-            if (log.isDebugEnabled()) {
-                log.debug("WagonManager temp artifacts cleaner deleted " + count + " file(s).");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("WagonManager temp artifacts cleaner deleted " + count + " files.");
             }
         } catch (IOException e) {
-            log.error("WagonManager temp artifacts cleaner failed.", e);
+            LOGGER.error("WagonManager temp artifacts cleaner failed.", e);
         }
     }
 }

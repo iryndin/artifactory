@@ -16,35 +16,28 @@
  */
 package org.artifactory.resource;
 
-import org.artifactory.api.fs.RepoResourceInfo;
-import org.artifactory.api.repo.RepoPath;
+import org.artifactory.cache.Cacheable;
+import org.artifactory.security.SecuredResource;
+
+import java.util.Date;
 
 /**
- * A class used for encapsulating the result of a resource request against a repo
- *
- * @author yoavl
+ * Created by IntelliJ IDEA. User: yoavl
  */
-public interface RepoResource {
+public interface RepoResource extends SecuredResource, Cacheable {
+    String NA = "NA";
 
-    RepoPath getRepoPath();
+    String getDirPath();
 
-    RepoResourceInfo getInfo();
+    String getName();
 
-    String getParentPath();
+    Date getLastModified();
 
-    boolean isFound();
-
-    boolean isExpired();
-
-    boolean isMetadata();
-
-    boolean hasSize();
+    long getLastModifiedTime();
 
     long getSize();
 
-    long getCacheAge();
+    boolean isFound();
 
-    long getLastModified();
-
-    String getMimeType();
+    String getAbsPath();
 }

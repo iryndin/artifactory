@@ -5,15 +5,6 @@
 # processname: artifactory
 # pidfile: /var/run/artifactory.pid
 #
-### BEGIN INIT INFO
-# Provides:          artifactory
-# Required-Start:    $remote_fs $syslog $network
-# Required-Stop:     $remote_fs $syslog $network
-# Default-Start:     3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start Artifactory at boot time
-# Description:       Manages the services needed to run Artifactory - a Maven Proxy
-### END INIT INFO 
 # Startup script for artifactory under *nix systems (it works under NT/cygwin too).
 #
 # Configuration files
@@ -71,7 +62,7 @@
 #      /dev/console
 #      /dev/tty
 #
-# ARTIFACTORY_USER
+# JETTY_USER
 #   The name of the user that will run the java jetty process. The data, backup and logs
 #   folders under ARTIFACTORY_HOME should be writable by this user.
 #   if left empty will run without changing user (no su -).
@@ -260,15 +251,15 @@ then
 fi
 
 ##################################################
-# If ARTIFACTORY_USER set make sure the current user
+# If JETTY_USER set make sure the current user
 # is root or some very peculiar errors appears.
 ##################################################
-if [ -n "$ARTIFACTORY_USER" ]
+if [ -n "$JETTY_USER" ]
 then
   curUser=`id -nu`
   if [ "$curUser" != "root" ]
   then
-    echo "** ERROR: Only root user can change execution user to $ARTIFACTORY_USER"
+    echo "** ERROR: Only root user can change execution user to $JETTY_USER"
     exit 1
   fi
 fi
@@ -363,31 +354,24 @@ fi
 #####################################################
 if [  -z "$ARTIFACTORY_CONSOLE" ]
 then
-  export ARTIFACTORY_CONSOLE=${ARTIFACTORY_HOME}/logs/consoleout.log
-  touch ${ARTIFACTORY_CONSOLE} 2> /dev/null
-  if [ -n "$ARTIFACTORY_USER" ]; then
-    chown ${ARTIFACTORY_USER} ${ARTIFACTORY_CONSOLE}
+  if [ -z "$JETTY_USER" ]; then
+    touch ${ARTIFACTORY_HOME}/logs/consoleout.log 2> /dev/null
+  else
+    su - ${JETTY_USER} -c "touch ${ARTIFACTORY_HOME}/logs/consoleout.log 2"> /dev/null
   fi
-  echo "Created output file $ARTIFACTORY_CONSOLE"
-else
- touch ${ARTIFACTORY_CONSOLE} 2> /dev/null
- if [ -n "$ARTIFACTORY_USER" ]; then
-   chown ${ARTIFACTORY_USER} ${ARTIFACTORY_CONSOLE}
-   echo "Changed owner of $ARTIFACTORY_CONSOLE to $ARTIFACTORY_USER"
- fi
+  if [ -w "${ARTIFACTORY_HOME}/logs/consoleout.log" ]
+  then
+    ARTIFACTORY_CONSOLE=${ARTIFACTORY_HOME}/logs/consoleout.log
+  else
+    if [ -w /dev/console ]
+    then
+      ARTIFACTORY_CONSOLE=/dev/console
+    else
+      ARTIFACTORY_CONSOLE=/dev/tty
+    fi
+  fi
 fi
 
-#####################################################
-# Create the jetty work dir
-#####################################################
-if [ ! -d "${ARTIFACTORY_HOME}/work" ]
-then
-  mkdir ${ARTIFACTORY_HOME}/work 2> /dev/null
-  if [ -n "$ARTIFACTORY_USER" ]
-  then
-    chown ${ARTIFACTORY_USER} -R ${ARTIFACTORY_HOME}/work/
-  fi
-fi
 
 ##################################################
 # Check for JAVA_HOME
@@ -419,7 +403,7 @@ then
                 [ $? = 0 ] || continue
                 VERSION=`expr "$VERSION" : '.*"\(1.[0-9\.]*\)"'`
                 [ "$VERSION" = "" ] && continue
-                expr $VERSION \< 1.5 >/dev/null && continue
+                expr $VERSION \< 1.6 >/dev/null && continue
                 echo $VERSION:$J
             done
         done
@@ -457,11 +441,11 @@ then
   fi
 fi
 
-JAVA_VERSION=`$JAVA -version 2>&1 | head -1 | sed 's/.*1\.\([0-9]\)\..*/\1/'`
+JAVA_VERSION=`expr "$($JAVA -version 2>&1 | head -1)" : '.*1\.\([0-9]\)'`
 
-if [ -z "$JAVA" ] || [ -z "$JAVA_VERSION" ] || [ $JAVA_VERSION -lt 5 ]
+if [ -z "$JAVA" ] || [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" != "6" ]
 then
-    echo "Cannot find a JRE or JDK. Please set JAVA_HOME to a >=1.5 JRE" 2>&2
+    echo "Cannot find a JRE or JDK. Please set JAVA_HOME to a >=1.6 JRE" 2>&2
     exit 1
 fi
 
@@ -487,25 +471,18 @@ esac
 #####################################################
 # Add jetty properties to Java VM options.
 #####################################################
-JAVA_OPTIONS="$JAVA_OPTIONS -Djava.awt.headless=true"
-hasMaxPermSize=`echo "$JAVA_OPTIONS" | grep MaxPermSize`
-if [ -z "$hasMaxPermSize" ]; then
-  JAVA_OPTIONS="$JAVA_OPTIONS -XX:MaxPermSize=64m"
-fi
+JAVA_OPTIONS="$JAVA_OPTIONS -XX:MaxPermSize=64m -Djava.awt.headless=true"
 
 #####################################################
 # This is how the Artifactory server will be started
 #####################################################
 EXEC_FILE="$ARTIFACTORY_HOME/bin/artifactory.init"
-echo "#!/bin/sh" > $EXEC_FILE
-echo "JAVA_OPTIONS=\"$JAVA_OPTIONS\"" >> $EXEC_FILE
-echo "JAVA_HOME=\"$JAVA_HOME\"" >> $EXEC_FILE
-echo "ARTIFACTORY_HOME=\"$ARTIFACTORY_HOME\"" >> $EXEC_FILE
-echo "export JAVA_OPTIONS JAVA_HOME ARTIFACTORY_HOME" >> $EXEC_FILE
-echo "" >> $EXEC_FILE
+echo "export JAVA_OPTIONS=\"$JAVA_OPTIONS\"" > $EXEC_FILE
+echo "export JAVA_HOME=\"$JAVA_HOME\"" >> $EXEC_FILE
+echo "export ARTIFACTORY_HOME=\"$ARTIFACTORY_HOME\"" >> $EXEC_FILE
 cat $ARTIFACTORY_HOME/${ARTIFACTORY_START_FILE} >> $EXEC_FILE
-if [ -n "$ARTIFACTORY_USER" ]; then
-	chown ${ARTIFACTORY_USER} $EXEC_FILE
+if [ -n "$JETTY_USER" ]; then
+	chown ${JETTY_USER} $EXEC_FILE
 fi
 chmod u+x $EXEC_FILE
 RUN_CMD="$EXEC_FILE $CONFIGS"
@@ -519,7 +496,7 @@ RUN_CMD="$EXEC_FILE $CONFIGS"
 #####################################################
 #echo "ARTIFACTORY_HOME     =  $ARTIFACTORY_HOME"
 #echo "JETTY_CONF           =  $JETTY_CONF"
-#echo "ARTIFACTORY_USER           =  $ARTIFACTORY_USER"
+#echo "JETTY_USER           =  $JETTY_USER"
 #echo "ARTIFACTORY_RUN      =  $ARTIFACTORY_RUN"
 #echo "ARTIFACTORY_PID      =  $ARTIFACTORY_PID"
 #echo "ARTIFACTORY_CONSOLE  =  $ARTIFACTORY_CONSOLE"
@@ -527,8 +504,6 @@ RUN_CMD="$EXEC_FILE $CONFIGS"
 #echo "CONFIGS              =  $CONFIGS"
 #echo "JAVA_OPTIONS         =  $JAVA_OPTIONS"
 #echo "JAVA                 =  $JAVA"
-#echo "EXEC_FILE            =  $EXEC_FILE"
-#echo "RUN_CMD              =  $RUN_CMD"
 
 
 ##################################################
@@ -537,29 +512,19 @@ RUN_CMD="$EXEC_FILE $CONFIGS"
 case "$ACTION" in
   start)
         echo "Starting Jetty: "
-        echo "Artifactory home="$ARTIFACTORY_HOME
 
         if [ -f $ARTIFACTORY_PID ]
         then
-            if [ "$(ps -p `cat $ARTIFACTORY_PID` | wc -l)" -gt 1 ]; then
-				# process is still running
-				echo "Already Running!"
-				exit 1
-			else
-				# process not running, but PID file was not deleted
-				echo "Artifactory was not stopped correctly. Removing old pid file"
-				rm $ARTIFACTORY_PID
-            fi
+            echo "Already Running!!"
+            exit 1
         fi
 
         echo "STARTED Jetty `date`" >> $ARTIFACTORY_CONSOLE
 
-        ulimit -n 5000
-
-        if [ -z "$ARTIFACTORY_USER" ]; then
-            nohup sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" >/dev/null &
+        if [ -z "$JETTY_USER" ]; then
+            nohup sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" jetty >/dev/null &
         else
-            su - ${ARTIFACTORY_USER} nohup sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" >/dev/null &
+            su - ${JETTY_USER} nohup sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" jetty >/dev/null &
         fi
         echo $! > $ARTIFACTORY_PID
         echo "Jetty running pid="`cat $ARTIFACTORY_PID`
@@ -594,7 +559,7 @@ case "$ACTION" in
 
         if [ -f $ARTIFACTORY_PID ]
         then
-            echo "Already Running!"
+            echo "Already Running!!"
             exit 1
         fi
 
@@ -605,7 +570,7 @@ case "$ACTION" in
         echo "Checking arguments to Artifactory on Jetty: "
         echo "ARTIFACTORY_HOME     =  $ARTIFACTORY_HOME"
         echo "JETTY_CONF           =  $JETTY_CONF"
-        echo "ARTIFACTORY_USER           =  $ARTIFACTORY_USER"
+        echo "JETTY_USER           =  $JETTY_USER"
         echo "ARTIFACTORY_RUN      =  $ARTIFACTORY_RUN"
         echo "ARTIFACTORY_PID      =  $ARTIFACTORY_PID"
         echo "ARTIFACTORY_CONSOLE  =  $ARTIFACTORY_CONSOLE"

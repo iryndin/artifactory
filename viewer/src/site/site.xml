@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<project name="Maven2 Dependency Viewer">
+    <skin>
+        <groupId>org.jfrog.maven.skins</groupId>
+        <artifactId>jfrog-sf</artifactId>
+        <version>1.0.7</version>
+    </skin>
+    <bannerLeft>
+        <name>jfrog</name>
+        <src>http://www.jfrog.org/images/logos/jfrog.png</src>
+        <href>http://www.jfrog.org</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>Maven2 Dependency Viewer</name>
+        <src></src>
+        <href>index.html</href>
+    </bannerRight>
+    <poweredBy>
+        <logo name="Spring Rich Client" href="http://spring-rich-c.sourceforge.net/"
+              img="http://www.jfrog.org/images/logos/spring_white.png"/>
+        <logo name="JUNG" href="http://jung.sourceforge.net/"
+              img="/images/logos/jung.png"/>
+    </poweredBy>
+    <body>
+        <breadcrumbs>
+            <item href="http://www.jfrog.org" name="jfrog"/>
+            <item href="http://www.jfrog.org/sites/viewer/1.0" name="Maven2 Dependency Viewer 1.0"/>
+        </breadcrumbs>
+        <links>
+            <item name="JIRA" href="http://www.jfrog.org/jira/"/>
+        </links>
+
+        <menu name="Overview">
+            <item name="Introduction" href="introduction.html"/>
+            <item name="Screenshots" href="screenshots.html"/>
+        </menu>
+        <menu name="Help">
+            <item name="Installation" href="install.html"/>
+            <item name="Configuration" href="configuration.html"/>
+        </menu>
+
+        ${reports}
+    </body>
+</project>
