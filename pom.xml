@@ -25,14 +25,18 @@
     <groupId>org.artifactory</groupId>
     <artifactId>artifactory-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0</version>
+    <version>1.2.5-SNAPSHOT</version>
     <name>Artifactory</name>
     <url>http://www.jfrog.org/sites/artifactory/latest/</url>
 
     <scm>
-        <connection>scm:svn:http://subversion.jfrog.org/artifactory/trunk</connection>
-        <developerConnection>scm:svn:http://subversion.jfrog.org/artifactory/trunk</developerConnection>
-        <url>http://subversion.jfrog.org/artifactory/</url>
+        <connection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk
+        </developerConnection>
+        <url>http://artifactory.svn.sourceforge.net/viewvc/artifactory/</url>
     </scm>
 
     <issueManagement>
@@ -40,25 +44,13 @@
         <url>http://www.jfrog.org/jira/browse/RTFACT</url>
     </issueManagement>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <properties>
         <sourceforgeId>175347</sourceforgeId>
         <sourceforgeName>artifactory</sourceforgeName>
-        <spring.version>2.5.5</spring.version>
-        <spring.security.version>2.0.4</spring.security.version>
-        <spring.ldap.version>1.2.1</spring.ldap.version>
-        <wicket.version>1.3.5</wicket.version>
-        <jetty.version>6.1.14</jetty.version>
-        <maven.version>2.0.9</maven.version>
-        <jersey.version>1.0</jersey.version>
-        <slf4j.version>1.5.5</slf4j.version>
+        <spring.version>2.0.5</spring.version>
+        <wicket.version>1.3.0-beta2</wicket.version>
+        <jetty.version>6.1.4</jetty.version>
+        <maven.version>2.0.7</maven.version>
     </properties>
 
     <mailingLists>
@@ -107,48 +99,28 @@
                 <role>Developer</role>
             </roles>
         </developer>
-        <developer>
-            <id>noam.tenne</id>
-            <name>Noam Y. Tenne</name>
-            <email>noamt at jfog.org</email>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
     </developers>
 
-    <description>
-        Artifactory is a Maven 2 enterprise repository. It offers advanced proxying, caching and security facilities to
-        provide a robust, reproducible
-        and independent build environment when using Maven.
-        Artifactory is being used by clients ranging from small startup teams to international corporate teams employing
-        distributed development, thus
-        improving the development experience for tens of thousands of developers.
-        Artifactory exposes a robust artifacts management platform using rich Ajax web UI and can be run out-of-the-box
-        with a simple "unzip and
-        launch".
+    <description>Artifactory is a Maven 2 enterprise repository with advanced features.
+        It is based on JCR (using JackRabbit as the implementation) for artifacts storage and
+        metadata management, with a web UI based on Wicket, and is using Jetty container for
+        fast out-of-the-box startup.
     </description>
 
     <modules>
         <module>wagon</module>
-        <module>config</module>
-        <module>api</module>
-        <module>common</module>
         <module>core</module>
-        <module>rest</module>
         <module>webapp</module>
         <module>standalone</module>
         <module>site</module>
-        <module>cli</module>
-        <module>update</module>
-        <module>itest</module>
     </modules>
 
     <dependencies>
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -159,29 +131,12 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.5</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-server</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>${jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-webmvc</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>2.0</version>
             </dependency>
 
             <dependency>
@@ -217,20 +172,23 @@
 
             <dependency>
                 <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-spring-annot</artifactId>
+                <artifactId>wicket-spring</artifactId>
                 <version>${wicket.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>cglib</groupId>
+                        <artifactId>cglib-nodep</artifactId>
+                    </exclusion>
+                    <!-- asm is required by cglib, but exclude does not work transitively... -->
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>3.1</version>
             </dependency>
 
             <!-- Required by wicket spring proxying -->
@@ -238,7 +196,12 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
                 <version>2.1_3</version>
-                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -254,37 +217,19 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>compile</scope>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.13</version>
             </dependency>
 
-            <!-- bridge from apache commons logging to slf4j -->
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- bridge from java utils logging to slf4j -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>compile</scope>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.3.0</version>
             </dependency>
 
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>0.9.11</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sourceforge.collections</groupId>
+                <groupId>collections-generic</groupId>
                 <artifactId>collections-generic</artifactId>
                 <version>4.01</version>
             </dependency>
@@ -292,100 +237,37 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>3.1</version>
             </dependency>
 
             <dependency>
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
-                <version>3.1</version>
+                <version>3.1-rc1</version>
             </dependency>
 
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-pool</groupId>
-                <artifactId>commons-pool</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.3.03</version>
-                <scope>runtime</scope>
+                <version>1.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-embedder</artifactId>
                 <version>2.0.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-container-default</artifactId>
-                <version>1.0-alpha-9-stable-1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>1.5.6</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>${maven.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-file</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.reporting</groupId>
-                        <artifactId>maven-reporting-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.doxia</groupId>
-                        <artifactId>doxia-sink-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh-external</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jdom</groupId>
-                        <artifactId>jdom</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -410,81 +292,34 @@
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.2</version>
+                <version>2.0</version>
             </dependency>
 
             <!-- Core jaxb classes -->
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.1.7</version>
-                <scope>runtime</scope>
+                <version>2.0.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
-                <version>10.4.2.0</version>
-                <scope>runtime</scope>
+                <version>10.2.2.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>jackrabbit-core</artifactId>
-                <version>1.4.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-jcr-server</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-webdav</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-jcr-commons</artifactId>
-                <version>1.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-ocm</artifactId>
-                <version>1.4-jcr-1385</version>
+                <version>1.3</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- exclude unused text extractor -->
-            <dependency>
-                <groupId>org.apache.jackrabbit</groupId>
-                <artifactId>jackrabbit-text-extractors</artifactId>
-                <version>1.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>poi</groupId>
-                        <artifactId>poi</artifactId>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>pdfbox</groupId>
-                        <artifactId>pdfbox</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>nekohtml</groupId>
-                        <artifactId>nekohtml</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.textmining</groupId>
-                        <artifactId>tm-extractors</artifactId>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -497,25 +332,7 @@
 
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
+                <artifactId>spring-jdbc</artifactId>
                 <version>${spring.version}</version>
             </dependency>
 
@@ -525,278 +342,42 @@
                 <version>${spring.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
             <!-- required for scheduling -->
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
+                <artifactId>spring-support</artifactId>
                 <version>${spring.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>aopalliance</groupId>
-                <artifactId>aopalliance</artifactId>
-                <version>1.0</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.8.1</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>concurrent</groupId>
-                <artifactId>concurrent</artifactId>
-                <version>1.3.4</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>opensymphony</groupId>
+                <groupId>quartz</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.6.3</version>
+                <version>1.6.0</version>
             </dependency>
 
             <dependency>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-                <version>1.0.1B</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${spring.security.version}</version>
+                <groupId>org.acegisecurity</groupId>
+                <artifactId>acegi-security</artifactId>
+                <version>1.0.4</version>
+                <optional>true</optional>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-webmvc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-remoting</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-support</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-dao</artifactId>
-                    </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core-tiger</artifactId>
-                <version>${spring.security.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-support</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-dao</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-acl</artifactId>
-                <version>${spring.security.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-support</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-dao</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.ldap</groupId>
-                <artifactId>spring-ldap-tiger</artifactId>
-                <version>${spring.ldap.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springmodules</groupId>
-                <artifactId>spring-modules-jcr</artifactId>
-                <version>0.9</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jsr170</groupId>
-                        <artifactId>jsr170</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>geronimo-spec</groupId>
-                        <artifactId>geronimo-spec-jta</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>geronimo-spec</groupId>
-                        <artifactId>geronimo-spec-j2ee-connector</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jackrabbit</groupId>
-                        <artifactId>jackrabbit-jca</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jackrabbit</groupId>
-                        <artifactId>jackrabbit-jcr-rmi</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.lucene</groupId>
-                        <artifactId>lucene-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xmlParserAPIs</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jeceira</groupId>
-                        <artifactId>jeceira</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>aparzev</groupId>
-                        <artifactId>doka</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>aparzev</groupId>
-                        <artifactId>commons</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jug</groupId>
-                        <artifactId>jug-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>1.4.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.3.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>de.schlichtherle.io</groupId>
-                <artifactId>truezip</artifactId>
-                <version>6.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-digest</artifactId>
-                <version>1.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-component-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sonatype.nexus</groupId>
-                <artifactId>nexus-indexer</artifactId>
-                <version>1.0-beta-3.1.1</version>
-                <!--<version>1.0-beta-5</version>-->
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-container-default</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.artifact</groupId>
-                        <artifactId>maven-artifact</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jdom</groupId>
-                        <artifactId>jdom</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>dom4j</groupId>
-                        <artifactId>dom4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>1.6.5</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>3.8.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>5.8</version>
-                <scope>test</scope>
-                <classifier>jdk15</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>2.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jetlang</groupId>
-                <artifactId>jetlang</artifactId>
-                <version>0.1.7-m1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jdom</groupId>
-                <artifactId>jdom</artifactId>
-                <version>1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -827,6 +408,14 @@
                 <filtering>true</filtering>
                 <directory>src/main/filtered-resources</directory>
             </resource>
+            <!-- Trick the idea-plugin to include this as a source dir eventhough it's filtered -->
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/filtered-resources</directory>
+                <excludes>
+                    <exclude>**/*</exclude>
+                </excludes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -835,157 +424,92 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                    <encoding>UTF-8</encoding>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jfrog.jade.plugins.development</groupId>
+                <artifactId>jade-idea-plugin</artifactId>
+                <version>1.3.7</version>
+                <configuration>
+                    <jdkName>1.5</jdkName>
+                    <downloadSources>true</downloadSources>
+                    <!--<overwrite>true</overwrite>-->
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.0-alpha-4</version>
+                <artifactId>maven-idea-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <jdkName>1.5</jdkName>
+                    <downloadSources>true</downloadSources>
+                    <!--<overwrite>true</overwrite>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Using this instead of the scm plugin since it allows for offline building -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>maven-buildnumber-plugin</artifactId>
                 <executions>
                     <execution>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>enforce</goal>
+                            <goal>create</goal>
                         </goals>
-                        <configuration>
-                            <rules>
-                                <bannedDependencies>
-                                    <excludes>
-                                        <!-- we use org.jdom:jdom -->
-                                        <exclude>jdom:jdom</exclude>
-                                        <!-- we use cglib:cglib-nodep -->
-                                        <exclude>cglib:cglib</exclude>
-                                        <exclude>log4j:log4j</exclude>
-                                        <!-- avoid the full spring jar -->
-                                        <exclude>org.springframework:spring</exclude>
-                                        <!-- old artifact id -->
-                                        <exclude>xerces:xerces</exclude>
-                                        <!-- wrong group id -->
-                                        <exclude>org.apache.commons:commons-io</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-                                <requirePluginVersions>
-                                    <phases>clean,deploy,site</phases>
-                                </requirePluginVersions>
-                                <requireJavaVersion>
-                                    <version>[1.5.0, 1.6.0),[1.6.0-4,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>2.0.9</version>
-                                </requireMavenVersion>
-                            </rules>
-                            <fail>true</fail>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <!-- fail on local modifications (-Dmaven.buildNumber.doCheck) -->
+                    <!--<doCheck>true</doCheck>-->
+                    <!-- use svn info or update (-Dmaven.buildNumber.doUpdate)-->
+                    <!--<doUpdate>true</doUpdate>-->
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.3</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.3</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.0.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.4.3</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.0-beta-1.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jfrog.maven.skins</groupId>
-                    <artifactId>jfrog-sf</artifactId>
-                    <version>1.0.14</version>
-                </plugin>
-
-                <!-- reporting plugins -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>2.0-beta-6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-report-plugin</artifactId>
-                    <version>2.4.3</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.2</version>
+                    <version>2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jfrog.maven.plugins</groupId>
+                    <artifactId>jfrog-jxr-plugin</artifactId>
+                    <version>2.1-jdk5-3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jxr-plugin</artifactId>
-                    <version>2.1</version>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>1.2</version>
+                    <artifactId>maven-buildnumber-plugin</artifactId>
+                    <version>0.9.4</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>dashboard-maven-plugin</artifactId>
-                    <version>1.0.0-beta-1</version>
+                    <groupId>org.jfrog.maven.skins</groupId>
+                    <artifactId>jfrog-sf</artifactId>
+                    <version>>1.0.13</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -996,32 +520,29 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.0.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
+                <groupId>org.jfrog.maven.plugins</groupId>
+                <artifactId>jfrog-jxr-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-            </plugin>
             <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dashboard-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
@@ -1039,43 +560,52 @@
         <profile>
             <id>jfrog</id>
             <distributionManagement>
+                <site>
+                    <id>jfrog-server</id>
+                    <name>jfrog-sites</name>
+                    <url>scp://tadpole.jfrog.org/srv/www/html/sites/artifactory/1.2</url>
+                </site>
                 <repository>
                     <id>jfrog-libs-releases</id>
                     <name>jfrog-libs-releases</name>
-                    <url>https://repo.jfrog.org/artifactory/libs-releases-local</url>
+                    <url>https://www.jfrog.org/artifactory/libs-releases@repo</url>
                 </repository>
                 <snapshotRepository>
                     <id>jfrog-libs-snapshots</id>
                     <name>jfrog-libs-snapshots</name>
-                    <url>https://repo.jfrog.org/artifactory/libs-snapshots-local</url>
+                    <url>https://www.jfrog.org/artifactory/libs-snapshots@repo</url>
                 </snapshotRepository>
             </distributionManagement>
-        </profile>
-        <profile>
-            <id>artifactory</id>
             <repositories>
                 <repository>
-                    <id>jfrog-releases</id>
+                    <id>jfrog-3rdp-releases</id>
                     <name>The jfrog repository for 3rd party releases</name>
-                    <url>http://repo.jfrog.org/artifactory/libs-releases</url>
+                    <url>http://www.jfrog.org/artifactory/3rdp-releases@repo</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
                 <repository>
-                    <id>jfrog-snapshots</id>
+                    <id>jfrog-3rdp-snapshots</id>
                     <name>The jfrog repository for 3rd party snapshots</name>
-                    <url>http://repo.jfrog.org/artifactory/libs-snapshots</url>
+                    <url>http://www.jfrog.org/artifactory/3rdp-snapshots@repo</url>
                     <releases>
                         <enabled>false</enabled>
                     </releases>
+                </repository>
+                <repository>
+                    <id>jfrog-fallback</id>
+                    <!-- Needed because maven tries to download the skin from a normal repo,
+                    rather than a plugin repo -->
+                    <name>The jfrog repository global entry point</name>
+                    <url>http://www.jfrog.org/artifactory/repo</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>jfrog-plugins-releases</id>
                     <name>The jfrog repository for plugin releases</name>
-                    <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
+                    <url>http://www.jfrog.org/artifactory/plugins-releases@repo</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
@@ -1083,7 +613,7 @@
                 <pluginRepository>
                     <id>jfrog-plugins-snapshots</id>
                     <name>The jfrog repository for plugin snapshots</name>
-                    <url>http://repo.jfrog.org/artifactory/plugins-snapshots</url>
+                    <url>http://www.jfrog.org/artifactory/plugins-snapshots@repo</url>
                     <releases>
                         <enabled>false</enabled>
                     </releases>
@@ -1095,22 +625,22 @@
             <id>ext</id>
             <repositories>
                 <repository>
-                    <id>apache-wicket-1.3.0</id>
-                    <url>http://people.apache.org/%7Efrankbille/releases/apache-wicket-1.3.0/m2-repo</url>
-                    <name>apache-wicket-1.3.0</name>
+                    <id>ndeloof.free.fr</id>
+                    <url>http://ndeloof.free.fr/maven2</url>
+                    <name>Spring Framework</name>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
                 <repository>
-                    <id>nexus-indexer</id>
-                    <url>http://repository.sonatype.org:8081/nexus/content/repositories/releases</url>
-                    <name>nexus-indexer</name>
+                    <id>apache-wicket-1.3.0-beta2</id>
+                    <url>http://people.apache.org/~dashorst/releases/apache-wicket-1.3.0-beta2/m2-repo/</url>
+                    <name>apache-wicket-1.3.0-beta2</name>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
-                <!--<repository>
+                <repository>
                     <id>wicket-stuff</id>
                     <url>http://wicketstuff.org/maven/repository</url>
                     <name>Wicket Snapshots</name>
@@ -1120,12 +650,16 @@
                 </repository>
                 <repository>
                     <id>ibiblio</id>
-                    <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+                    <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
                 </repository>
-                <repository>
-                    <id>repo1-maven1-converted</id>
-                    <url>http://repo1.maven.org/maven2-converted-from-maven1</url>
-                </repository>
+                <!--<repository>
+                    <id>springframework.svn.sourceforge.net</id>
+                    <url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+                    <name>Spring Framework</name>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>-->
                 <repository>
                     <id>springframework-ext.svn.sourceforge.net</id>
                     <url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
@@ -1166,15 +700,7 @@
                 <repository>
                     <id>org.openwfe.prereleases</id>
                     <url>http://maven.openwfe.org/snapshots</url>
-                </repository>-->
-                <!--<repository>
-                    <id>springframework.svn.sourceforge.net</id>
-                    <url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
-                    <name>Spring Framework</name>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>-->
+                </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
