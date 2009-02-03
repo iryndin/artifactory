@@ -248,22 +248,14 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         //Split the path and create each subdir in turn
         String path = getRelativePath();
         int from = 1;
-        boolean result = false;
+        boolean result;
         int to;
         do {
             to = path.indexOf("/", from);
             String subPath = to > 0 ? path.substring(0, to) : path;
-            if (result || !getLocalRepo().itemExists(subPath)) {
-                RepoPath subRepoPath = new RepoPath(getRepoKey(), subPath);
-                JcrFolder subFolder = getLocalRepo().getLockedJcrFolder(subRepoPath, true);
-                result = subFolder.mkdir();
-                if (!result) {
-                    // Not created release write lock early
-                    LockingHelper.removeLockEntry(subFolder.getRepoPath());
-                }
-            } else {
-                result = false;
-            }
+            RepoPath subRepoPath = new RepoPath(getRepoKey(), subPath);
+            JcrFolder subFolder = getLocalRepo().getLockedJcrFolder(subRepoPath, true);
+            result = subFolder.mkdir();
             from = to + 1;
         } while (to > 0);
         return result;
