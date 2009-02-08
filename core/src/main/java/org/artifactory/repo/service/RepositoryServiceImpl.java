@@ -495,7 +495,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
                         String msg = "Error during deployment.";
                         status.setError(msg, e, log);
                         log.error(msg, e);
-                        return;
+                        continue;
                     }
                 }
             }
