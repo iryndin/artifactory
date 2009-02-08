@@ -188,7 +188,7 @@ public class MavenMetadataCalculator implements SessionResource {
 
         // the name of the folder is the version that was deleted
         String fileName = deletedItem.getName();
-        if (!MavenNaming.isVersionUniqueSnapshot(fileName)) {
+        if (!MavenNaming.isUniqueSnapshotFileName(fileName)) {
             log.debug("Not updating metadata of non-unique snapshot deleted for {}", deletedItem);
             return;
         }
@@ -202,7 +202,7 @@ public class MavenMetadataCalculator implements SessionResource {
             for (int i = siblingItems.size() - 1; i >= 0; i--) {
                 JcrFsItem sibling = siblingItems.get(i);
                 String siblingVersion = sibling.getName();
-                if (sibling.isFile() && MavenNaming.isVersionUniqueSnapshot(siblingVersion)) {
+                if (sibling.isFile() && MavenNaming.isUniqueSnapshotFileName(siblingVersion)) {
                     String siblingTimestamp = MavenNaming.getUniqueSnapshotVersionTimestamp(siblingVersion);
                     int siblingBuildNumber = MavenNaming.getUniqueSnapshotVersionBuildNumber(siblingVersion);
                     snapshot.setTimestamp(siblingTimestamp);

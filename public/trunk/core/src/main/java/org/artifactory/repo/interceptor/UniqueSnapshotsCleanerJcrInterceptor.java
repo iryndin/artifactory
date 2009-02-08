@@ -63,7 +63,7 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             List<ItemDesc> itemsByDate = new ArrayList<ItemDesc>();
             for (JcrFsItem child : children) {
                 String name = child.getName();
-                if (MavenNaming.isVersionUniqueSnapshot(name)) {
+                if (MavenNaming.isUniqueSnapshotFileName(name)) {
                     String childTimeStamp = MavenNaming.getUniqueSnapshotVersionTimestamp(name);
                     Date childLastUpdated = MavenUtils.timestampToDate(childTimeStamp);
                     //Add it to the sorted set - newer items closer to the head

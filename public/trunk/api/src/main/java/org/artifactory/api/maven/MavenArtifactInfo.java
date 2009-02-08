@@ -186,7 +186,7 @@ public class MavenArtifactInfo extends MavenUnitInfo {
             boolean snapshot = MavenNaming.isVersionSnapshot(version);
             //Extract the type
             String versionInName = version;
-            if (snapshot && MavenNaming.isVersionUniqueSnapshot(name)) {
+            if (snapshot && MavenNaming.isUniqueSnapshotFileName(name)) {
                 //For uniqueVersion snapshots extract the version pattern for calulating the type
                 versionInName = MavenNaming.getUniqueSnapshotVersionTimestampAndBuildNumber(name);
             }

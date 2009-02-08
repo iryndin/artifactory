@@ -31,7 +31,7 @@ import org.artifactory.resource.RepoResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrCacheRepo extends JcrRepoBase implements LocalCacheRepo {
+public class JcrCacheRepo extends JcrRepoBase<LocalCacheRepoDescriptor> implements LocalCacheRepo {
     private static final Logger log = LoggerFactory.getLogger(LocalCacheRepo.class);
 
     private RemoteRepo remoteRepo;
@@ -119,13 +119,19 @@ public class JcrCacheRepo extends JcrRepoBase implements LocalCacheRepo {
      * @param repoResource The resource to check for expiery
      * @return boolean - True is resource is expired. False if not
      */
-    private boolean isExpired(RepoResource repoResource) {
+    protected boolean isExpired(RepoResource repoResource) {
         String path = repoResource.getRepoPath().getPath();
-        boolean release = MavenNaming.isRelease(path);
-        if (release || MavenNaming.isNonUniqueSnapshot(path)) {
+        //Never expire releases, unique snapshots and non-snapshot metadata
+        if (MavenNaming.isRelease(path)) {
             return false;
+        } else if (MavenNaming.isUniqueSnapshot(path)) {
+            return false;
+        } else {
+            if (MavenNaming.isMavenMetadata(path) && !MavenNaming.isSnapshotMavenMetadata(path)) {
+                return false;
+            }
         }
-        // it is a snapshot
+        //It is a non-unique snapshot or snapshot metadata
         long retrievalCahePeriodMillis = remoteRepo.getRetrievalCachePeriodSecs() * 1000L;
         long cacheAge = repoResource.getCacheAge();
         return cacheAge > retrievalCahePeriodMillis || cacheAge == -1;

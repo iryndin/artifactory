@@ -160,7 +160,7 @@ public class UploadServiceImpl implements InternalUploadService {
     }
 
     private String adjustSnapshotPath(LocalRepo repo, String filePath, MavenArtifactInfo mavenInfo,
-                                      SnapshotVersionBehavior snapshotVersionBehavior, boolean nonUniqueSnapshotVersions) {
+            SnapshotVersionBehavior snapshotVersionBehavior, boolean nonUniqueSnapshotVersions) {
         boolean realArtifact = !NamingUtils.isMetadata(filePath) && !NamingUtils.isChecksum(filePath);
         String adjustedPath = filePath;
         if (realArtifact) {
@@ -174,7 +174,7 @@ public class UploadServiceImpl implements InternalUploadService {
             } else if (snapshotVersionBehavior.equals(SnapshotVersionBehavior.UNIQUE)) {
                 //Replace SNAPSHOT with version timestamp for unique snapshot repo
                 String fileName = PathUtils.getName(filePath);
-                if (!MavenNaming.isVersionUniqueSnapshot(fileName)) {
+                if (!MavenNaming.isUniqueSnapshotFileName(fileName)) {
                     adjustedPath = adjustNonUniqueSnapshotToUnique(repo, filePath, mavenInfo);
                 }
             }
@@ -236,7 +236,7 @@ public class UploadServiceImpl implements InternalUploadService {
     }
 
     private Metadata adjustSnapshotMetadata(ArtifactoryRequest request, LocalRepo repo, String snapshotMetadataPath,
-                                            SnapshotVersionBehavior snapshotVersionBehavior, boolean nonUniqueSnapshotVersions) throws IOException {
+            SnapshotVersionBehavior snapshotVersionBehavior, boolean nonUniqueSnapshotVersions) throws IOException {
         Metadata metadata = MavenUtils.toMavenMetadata(request.getInputStream());
         Versioning versioning = metadata.getVersioning();
         if (versioning != null) {
@@ -352,7 +352,7 @@ public class UploadServiceImpl implements InternalUploadService {
             List<String> chidren = repoService.getChildrenNames(snapshotDirectoryPath);
             for (String child : chidren) {
                 if (fileType == null || fileType.equals(PathUtils.getExtension(child)) &&
-                        MavenNaming.isVersionUniqueSnapshot(child)) {
+                        MavenNaming.isUniqueSnapshotFileName(child)) {
                     int childBuildNumber = MavenNaming.getUniqueSnapshotVersionBuildNumber(child);
                     if (childBuildNumber == buildNum) {
                         log.debug("Found unique snapshot with build number {}: {}", buildNum, child);
