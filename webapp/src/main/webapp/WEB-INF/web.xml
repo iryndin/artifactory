@@ -35,6 +35,11 @@
     </context-param>
 
     <filter>
+        <filter-name>ArtifactoryFilter</filter-name>
+        <filter-class>org.artifactory.webapp.servlet.ArtifactoryFilter</filter-class>
+    </filter>
+
+    <filter>
         <filter-name>AccessFilter</filter-name>
         <filter-class>org.artifactory.webapp.servlet.AccessFilter</filter-class>
     </filter>
@@ -70,6 +75,14 @@
             <param-value>org.artifactory.webapp.wicket.application.ArtifactoryApplication</param-value>
         </init-param>
     </filter>
+
+    <filter-mapping>
+        <filter-name>ArtifactoryFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>AccessFilter</filter-name>

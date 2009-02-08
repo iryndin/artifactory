@@ -9,7 +9,6 @@ import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.artifactory.common.ConstantsValue;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +25,9 @@ public class HttpClientUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
 
     public static void configureUserAgent(HttpClient client) {
-        String artifactoryVersion = ConstantsValue.artifactoryVersion.getString();
-        if (artifactoryVersion.startsWith("$") || artifactoryVersion.contains("SNAPSHOT")) {
-            artifactoryVersion = "development";
-        }
+        String userAgent = HttpUtils.getUserAgent();
         HttpClientParams clientParams = client.getParams();
-        clientParams.setParameter(HttpMethodParams.USER_AGENT, "Artifactory/" + artifactoryVersion);
+        clientParams.setParameter(HttpMethodParams.USER_AGENT, userAgent);
     }
 
     public static void configureProxy(HttpClient client, ProxyDescriptor proxy) {
