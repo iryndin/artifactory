@@ -39,7 +39,7 @@ public class UriValidator extends StringValidator {
             URI parsedUri = new URI(uri);
             String scheme = parsedUri.getScheme();
             if (!allowedSchema(scheme)) {
-                addError(validatable, String.format("Schame '%s' is not allowed", scheme));
+                addError(validatable, String.format("Scheme '%s' is not allowed", scheme));
             }
         } catch (URISyntaxException e) {
             addError(validatable, String.format("'%s' is not a valid url", uri));

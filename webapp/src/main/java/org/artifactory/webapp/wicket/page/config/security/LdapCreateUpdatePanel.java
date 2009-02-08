@@ -156,7 +156,7 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
                 "testPassword.help", "Password to test the ldap connection"));
 
         // Test connection button
-        borderTest.add(createTestConnectionButton(ldapsListPanel));
+        borderTest.add(createTestConnectionButton());
     }
 
     private SimpleButton createSubmitButton(final LdapsListPanel ldapsListPanel) {
@@ -186,12 +186,13 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
         return submit;
     }
 
-    private SimpleButton createTestConnectionButton(final LdapsListPanel ldapsListPanel) {
+    private SimpleButton createTestConnectionButton() {
         SimpleButton submit = new SimpleButton("testLdap", form, "Test Connection") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 LdapSetting ldapSetting = (LdapSetting) form.getModelObject();
                 if (!validateAndUpdateLdapSettings(ldapSetting)) {
+                    FeedbackUtils.refreshFeedback(target);
                     return;
                 }
 
@@ -201,8 +202,7 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
                     return;
                 }
 
-                StatusHolder status = securityService
-                        .testLdapConnection(ldapSetting, testUsername, testPassword);
+                StatusHolder status = securityService.testLdapConnection(ldapSetting, testUsername, testPassword);
 
                 if (status.isError()) {
                     error(status.getStatusMsg());
@@ -233,13 +233,8 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
         return true;
     }
 
-
     protected MutableCentralConfigDescriptor getEditingDescriptor() {
         return centralConfigService.getDescriptorForEditing();
-    }
-
-    private LdapSetting getLdapSetting() {
-        return entity;
     }
 
 }
