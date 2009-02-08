@@ -65,12 +65,26 @@ public class MavenNaming {
         return idx > 0 && idx > path.lastIndexOf('/');
     }
 
+    public static boolean isUniqueSnapshot(String path) {
+        int versionIdx = path.indexOf("SNAPSHOT/");
+        if (versionIdx > 0) {
+            String fileName = PathUtils.getName(path);
+            return isUniqueSnapshotFileName(fileName);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @param path A path to file or directory
      * @return True if the path is for a snapshot file or folder
      */
     public static boolean isSnapshot(String path) {
         boolean result = isNonUniqueSnapshot(path);
+        if (!result) {
+            result = isUniqueSnapshot(path);
+        }
+        //A path ending with just the version dir
         if (!result) {
             int versionIdx = path.indexOf("SNAPSHOT/");
             result = versionIdx > 0 && path.lastIndexOf('/') == versionIdx + 8;
@@ -82,7 +96,7 @@ public class MavenNaming {
     }
 
     public static boolean isRelease(String path) {
-        return !isSnapshot(path) && !isMetadata(path) && !isChecksum(path);
+        return !isSnapshot(path) && !isMavenMetadata(path) && !isChecksum(path);
     }
 
     public static boolean isMetadataChecksum(String path) {
@@ -107,15 +121,16 @@ public class MavenNaming {
         return name.startsWith(NEXUS_INDEX_PREFIX);
     }
 
-    public static boolean isMetadata(String path) {
-        return NamingUtils.isMetadata(path);
+    public static boolean isMavenMetadata(String path) {
+        String fileName = PathUtils.getName(path);
+        return isMavenMetadataFileName(fileName);
     }
 
     public static boolean isSnapshotMavenMetadata(String path) {
         //*-SNAPSHOT/*maven-metadata.xml 
         String parent = new File(path).getParent();
         return parent != null && parent.endsWith("-SNAPSHOT") &&
-                isMetadata(path) && path.endsWith(MAVEN_METADATA_NAME);
+                NamingUtils.isMetadata(path) && path.endsWith(MAVEN_METADATA_NAME);
     }
 
     /**
@@ -148,7 +163,7 @@ public class MavenNaming {
     }
 
     public static boolean isMavenMetadataFileName(String fileName) {
-        return fileName.equals(MAVEN_METADATA_NAME);
+        return MAVEN_METADATA_NAME.equals(fileName);
     }
 
     public static boolean isPom(String path) {
@@ -162,7 +177,7 @@ public class MavenNaming {
      *         <p/>
      *         For example: artifactory-1.0-20081214.090217-4.pom
      */
-    public static boolean isVersionUniqueSnapshot(String fileName) {
+    public static boolean isUniqueSnapshotFileName(String fileName) {
         Matcher matcher = UNIQUE_SNAPSHOT_NAME_PATTERN.matcher(fileName);
         return matcher.matches();
     }

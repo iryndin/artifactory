@@ -34,12 +34,14 @@ public class MavenNamingTest {
     }
 
     public void testIsVersionUniqueSnapshot() {
-        assertTrue(MavenNaming.isVersionUniqueSnapshot("artifact-5.4-20081214.090217-4.pom"));
-        assertTrue(MavenNaming.isVersionUniqueSnapshot("artifact-5.4-20081214.090217-4-classifier.pom"));
-        assertFalse(MavenNaming.isVersionUniqueSnapshot("-20081214.090217-4.pom"), "No artifact id");
-        assertFalse(MavenNaming.isVersionUniqueSnapshot("5.4-20081214.090217-4.pom"), "No artifact id");
-        assertFalse(MavenNaming.isVersionUniqueSnapshot("artifact-5.4-20081214.090217-4"), "no type");
-        assertFalse(MavenNaming.isVersionUniqueSnapshot("artifact-5.4-20081214.090217-4."), "empty type");
+        assertTrue(MavenNaming.isUniqueSnapshot("g/a/1.0-SNAPSHOT/artifact-5.4-20081214.090217-4.pom"));
+        assertFalse(MavenNaming.isUniqueSnapshot("g/a/1.0/artifact-5.4-20081214.090217-4.pom"));
+        assertTrue(MavenNaming.isUniqueSnapshotFileName("artifact-5.4-20081214.090217-4.pom"));
+        assertTrue(MavenNaming.isUniqueSnapshotFileName("artifact-5.4-20081214.090217-4-classifier.pom"));
+        assertFalse(MavenNaming.isUniqueSnapshotFileName("-20081214.090217-4.pom"), "No artifact id");
+        assertFalse(MavenNaming.isUniqueSnapshotFileName("5.4-20081214.090217-4.pom"), "No artifact id");
+        assertFalse(MavenNaming.isUniqueSnapshotFileName("artifact-5.4-20081214.090217-4"), "no type");
+        assertFalse(MavenNaming.isUniqueSnapshotFileName("artifact-5.4-20081214.090217-4."), "empty type");
     }
 
     public void testUniqueVersionTimestamp() {
@@ -66,7 +68,8 @@ public class MavenNamingTest {
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0/maven-metadata.xml"), "Not a snapshot");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0/resource#maven-metadata.xml"), "Not a snapshot");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/other.metadata.xml"), "Not maven metadata");
-        assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/resource#other.metadata.xml"), "Not maven metadata");
+        assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/resource#other.metadata.xml"),
+                "Not maven metadata");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT"), "Not metadata path");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/"), "Not metadata path");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/#matadata-name"), "Not maven metadata");

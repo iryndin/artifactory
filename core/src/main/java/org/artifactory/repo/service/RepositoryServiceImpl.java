@@ -464,7 +464,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
                 public boolean accept(File file) {
                     return !MavenNaming.isChecksum(file) &&
                             !MavenNaming.isIndex(file.getAbsolutePath()) &&
-                            !MavenNaming.isMetadata(file.getAbsolutePath());
+                            !MavenNaming.isMavenMetadata(file.getAbsolutePath());
                 }
             };
             Collection<File> archiveContent = FileUtils.listFiles(
