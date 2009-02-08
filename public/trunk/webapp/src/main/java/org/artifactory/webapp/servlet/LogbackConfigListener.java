@@ -27,8 +27,7 @@ public class LogbackConfigListener implements ServletContextListener {
         // install the java.utils.logging to slf4j bridge
         //SLF4JBridgeHandler.install();
 
-        String intervalString =
-                event.getServletContext().getInitParameter("logbackRefreshInterval");
+        String intervalString = event.getServletContext().getInitParameter("logbackRefreshInterval");
         if (intervalString != null) {
             try {
                 long refreshInterval = Long.parseLong(intervalString);
