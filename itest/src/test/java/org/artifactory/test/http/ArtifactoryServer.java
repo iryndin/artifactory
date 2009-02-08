@@ -67,7 +67,7 @@ public class ArtifactoryServer {
         ArtifactoryHome.setHomeDir(homeDir);
         ArtifactoryHome.create();
         //Set up the logback props
-        ArtifactoryHome.ensureLogbackConfig("file:${artifactory.home}/etc/logback.xml");
+        ArtifactoryHome.getLogbackConfig();
 
         copyArtifactoryConfig(configName);
         try {

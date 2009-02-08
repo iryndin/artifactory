@@ -36,6 +36,7 @@ public abstract class ArtifactoryHome {
     public static final String ARTIFACTORY_CONFIG_FILE = "artifactory.config.xml";
     public static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE = "artifactory.system.properties";
     public static final String ARTIFACTORY_PROPERTIES_FILE = "artifactory.properties";
+    public static final String ARTIFACTORY_JCR_FILE = "repo.xml";
     private static final String LOGBACK_CONFIG_FILE_NAME = "logback.xml";
 
     public static final File TEMP_FOLDER = new File(System.getProperty("java.io.tmpdir"), "artifactory-uploads");
@@ -223,27 +224,22 @@ public abstract class ArtifactoryHome {
     /**
      * Chacks the existence of the logback configuration file under the etc directory. If the file doesn't exist this
      * method will extract a default one from the war.
-     *
-     * @param logbackConfigLocation The location to check
      */
-    public static void ensureLogbackConfig(String logbackConfigLocation) {
-        if ("file:${artifactory.home}/etc/logback.xml".equals(logbackConfigLocation)) {
-            File etcDir = new File(getHomeDir(), "etc");
-            File logbackFile = new File(etcDir, LOGBACK_CONFIG_FILE_NAME);
-            if (!logbackFile.exists()) {
-                try {
-                    //Copy from default
-                    URL configUrl = ArtifactoryHome.class.getResource(
-                            "/META-INF/default/" + LOGBACK_CONFIG_FILE_NAME);
-                    FileUtils.copyURLToFile(configUrl, logbackFile);
-                } catch (IOException e) {
-                    // we don't have the logger configuration - use System.err
-                    System.err.printf("Could not create default %s into %s",
-                            LOGBACK_CONFIG_FILE_NAME, logbackFile);
-                    e.printStackTrace();
-                }
+    public static File getLogbackConfig() {
+        File etcDir = new File(getHomeDir(), "etc");
+        File logbackFile = new File(etcDir, LOGBACK_CONFIG_FILE_NAME);
+        if (!logbackFile.exists()) {
+            try {
+                //Copy from default
+                URL configUrl = ArtifactoryHome.class.getResource("/META-INF/default/" + LOGBACK_CONFIG_FILE_NAME);
+                FileUtils.copyURLToFile(configUrl, logbackFile);
+            } catch (IOException e) {
+                // we don't have the logger configuration - use System.err
+                System.err.printf("Could not create default %s into %s", LOGBACK_CONFIG_FILE_NAME, logbackFile);
+                e.printStackTrace();
             }
         }
+        return logbackFile;
     }
 
     /**
