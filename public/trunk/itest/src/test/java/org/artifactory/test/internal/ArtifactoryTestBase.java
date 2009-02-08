@@ -60,8 +60,6 @@ public abstract class ArtifactoryTestBase {
         ArtifactoryHome.setHomeDir(homeDir);
         ArtifactoryHome.create();
         mockServer = MockServer.start(/*"swamp.jfrog.org",*/ "localhost");
-        //Set up the logback props
-        //ArtifactoryHome.ensureLogbackConfig("file:${artifactory.home}/etc/logback.xml");
         copyArtifactoryConfig(configName);
         context = new ArtifactoryApplicationContext(SpringConfResourceLoader.getConfigurationPaths());
         ArtifactoryContextThreadBinder.bind(context);

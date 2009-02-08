@@ -8,13 +8,10 @@ import org.artifactory.common.ArtifactoryHome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.springframework.util.ResourceUtils;
-import org.springframework.util.SystemPropertyUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 
 /**
  * Configured logback with the config file from etc directory.
@@ -25,22 +22,9 @@ public class LogbackConfigListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent event) {
         ArtifactoryHome.assertInitialized();
+        File logbackConfigFile = ArtifactoryHome.getLogbackConfig();
 
-        String location = event.getServletContext().getInitParameter("logbackConfigLocation");
-
-        ArtifactoryHome.ensureLogbackConfig(location);
-
-        File logbackConfigFile;
-        try {
-            // Resolve system property placeholders before resolving real path.
-            location = SystemPropertyUtils.resolvePlaceholders(location);
-            logbackConfigFile = ResourceUtils.getFile(location);
-
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException(
-                    "Invalid 'logbackConfigLocation' parameter: " + e.getMessage());
-        }
-
+        //TODO: [by yl] Is this necessary (RTFACT-1283)
         // install the java.utils.logging to slf4j bridge
         SLF4JBridgeHandler.install();
 

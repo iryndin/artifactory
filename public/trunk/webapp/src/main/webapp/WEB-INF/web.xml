@@ -27,12 +27,6 @@
     <distributable/>
 
     <context-param>
-        <description>Absolute file URL (e.g. "file:C:/logback.xml) of the Logback config file.</description>
-        <param-name>logbackConfigLocation</param-name>
-        <param-value>file:${artifactory.home}/etc/logback.xml</param-value>
-    </context-param>
-
-    <context-param>
         <description>Interval between config file refresh checks, in milliseconds. If not specified,
             no refresh checks will happen, which avoids starting logback watchdog thread.
         </description>
