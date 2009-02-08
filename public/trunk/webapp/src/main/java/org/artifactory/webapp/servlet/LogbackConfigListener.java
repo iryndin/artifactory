@@ -7,7 +7,6 @@ import ch.qos.logback.core.util.StatusPrinter;
 import org.artifactory.common.ArtifactoryHome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -26,7 +25,7 @@ public class LogbackConfigListener implements ServletContextListener {
 
         //TODO: [by yl] Is this necessary (RTFACT-1283)
         // install the java.utils.logging to slf4j bridge
-        SLF4JBridgeHandler.install();
+        //SLF4JBridgeHandler.install();
 
         String intervalString =
                 event.getServletContext().getInitParameter("logbackRefreshInterval");
@@ -38,8 +37,7 @@ public class LogbackConfigListener implements ServletContextListener {
                 configWatchDog.setDelay(refreshInterval);
                 configWatchDog.start();
             } catch (NumberFormatException e) {
-                System.err.println("Failed to parse logbackRefreshInterval. " +
-                        "Log refresh will not be active.");
+                System.err.println("Failed to parse logbackRefreshInterval. Log refresh will not be active.");
                 loadLogbackConfiguration(logbackConfigFile);
             }
         } else {
