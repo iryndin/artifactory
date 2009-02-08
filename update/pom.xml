@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-api</artifactId>
+            <artifactId>artifactory-common</artifactId>
             <version>${pom.parent.version}</version>
             <scope>compile</scope>
         </dependency>
