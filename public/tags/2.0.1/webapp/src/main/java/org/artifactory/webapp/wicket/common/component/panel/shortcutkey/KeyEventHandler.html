@@ -1,0 +1,27 @@
+<wicket:panel>
+    <input wicket:id="keyCodeField" type="hidden"/>
+    <script wicket:id="initScript" type="text/javascript">
+        (function() {
+            var keys = [${keys}];
+            var input = dojo.byId('${keyCodeField}');
+
+            var keySet = {};
+            dojo.forEach(keys, function(keyCode) {
+                keySet[keyCode] = true;
+            });
+
+            document.documentElement.onkeyup = function(e) {
+                // cancel if ajax is running
+                if (AjaxIndicator.waiting) {
+                    return;
+                }
+
+                var keyCode = e ? e.keyCode : window.event.keyCode;
+                if (keySet[keyCode]) {
+                    input.value = keyCode;
+                    input.onkeyup();
+                }
+            };
+        })();
+    </script>
+</wicket:panel>

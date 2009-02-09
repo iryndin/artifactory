@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Mock Server Suite" thread-count="1" verbose="1" parallel="false">
+    <test name="mockServer">
+        <classes>
+            <class name="org.artifactory.test.http.MockServerStart"/>
+        </classes>
+    </test>
+</suite>
