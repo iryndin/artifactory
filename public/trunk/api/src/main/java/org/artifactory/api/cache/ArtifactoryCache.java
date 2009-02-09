@@ -49,7 +49,7 @@ public enum ArtifactoryCache {
             CacheType.GLOBAL, ElementReferenceType.SOFT, false, false,
             ConstantsValue.metadataIdleTimeSecs, null, 100),
     versioning(
-            CacheType.GLOBAL, ElementReferenceType.HARD, false, true,
+            CacheType.GLOBAL, ElementReferenceType.HARD, false, false,
             ConstantsValue.versioningQueryIntervalSecs, null, 3);
 
     /**
