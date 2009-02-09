@@ -10,7 +10,6 @@ import org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager;
 import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.artifactory.cli.common.BaseCommand;
 import org.artifactory.cli.common.Command;
-import org.artifactory.cli.main.CliOption;
 import org.artifactory.cli.main.CommandDefinition;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.config.JcrConfResourceLoader;
@@ -42,7 +41,7 @@ public class CompressCommand extends BaseCommand implements Command {
      * Constructor
      */
     public CompressCommand() {
-        super(CommandDefinition.compress, CliOption.url, CliOption.username, CliOption.password);
+        super(CommandDefinition.compress);
     }
 
     /**
@@ -138,6 +137,7 @@ public class CompressCommand extends BaseCommand implements Command {
                     String currentTableName = rs.getString("TABLE_NAME").toUpperCase();
                     if ((currentTableName.startsWith(fsSchemaPrefix)) ||
                             (currentTableName.startsWith(pmSchemaPrefix))) {
+                        //System.out.println("Compressing "+currentSchemaName+"."+currentTableName);
                         CallableStatement cs = connection.prepareCall(COMPRESS_COMMAND);
                         cs.setString(1, currentSchemaName);
                         cs.setString(2, currentTableName);
