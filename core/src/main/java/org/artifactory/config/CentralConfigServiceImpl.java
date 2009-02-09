@@ -154,11 +154,11 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
 
     public void saveEditedDescriptorAndReload() {
         if (editedDescriptor == null) {
-            throw new IllegalStateException("Mutable editing descriptor is null");
+            throw new IllegalStateException("Currently edited descriptor is null.");
         }
 
         if (!authService.isAdmin()) {
-            throw new AuthorizationException("Only admin user can save the artifactory config file");
+            throw new AuthorizationException("Only an admin user can save the artifactory configuration.");
         }
 
         // before doing anything do a sanity check that the edited descriptor is valid
