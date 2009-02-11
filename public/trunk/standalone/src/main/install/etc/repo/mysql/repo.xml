@@ -13,6 +13,7 @@
         <param name="url" value="jdbc:mysql://localhost:3306/artifactory?useUnicode=true&amp;characterEncoding=UTF-8"/>
         <param name="user" value="artifactory_user"/>
         <param name="password" value="password"/>
+        <!-- Leave this on "mysql" -->
         <param name="schema" value="mysql"/>
         <param name="schemaObjectPrefix" value="rep_"/>
     </FileSystem>
