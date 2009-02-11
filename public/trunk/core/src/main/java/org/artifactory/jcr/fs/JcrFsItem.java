@@ -36,6 +36,7 @@ import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrSession;
 import org.artifactory.jcr.lock.LockingException;
+import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataAware;
 import org.artifactory.jcr.md.MetadataDefinition;
 import org.artifactory.jcr.md.MetadataDefinitionService;
@@ -358,9 +359,23 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
         if (!isMutable()) {
             throw new LockingException("Cannot modify an immutable item: " + this);
         }
-        deleted = true;
+        setDeleted(true);
         boolean result = getJcrService().delete(this);
         return result;
+    }
+
+    public void bruteForceDelete() {
+        LockingHelper.removeLockEntry(getRepoPath());
+        setDeleted(true);
+        try {
+            Node node = getNode();
+            if (node != null) {
+                node.remove();
+            }
+        } catch (Exception e) {
+            log.warn("Could not brute force delete node: {}", e.getMessage());
+            log.debug("Could not brute force delete node", e);
+        }
     }
 
     public JcrFolder getParentFolder() {

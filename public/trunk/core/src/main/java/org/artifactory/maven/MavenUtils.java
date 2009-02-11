@@ -95,8 +95,7 @@ public class MavenUtils {
                         log.error(msg + " POM consistency checks are suppressed. Broken artifacts might have been " +
                                 "stored in the repository - please resolve this manually.");
                     } else {
-                        throw new BadPomException(msg + " Some artifacts might have been incorrectly imported - " +
-                                "please remove them manually.");
+                        throw new BadPomException(msg);
                     }
                 }
             }
