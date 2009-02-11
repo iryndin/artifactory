@@ -258,7 +258,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             getMdService().setXmlMetadata(this, info.getInernalXmlInfo());
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(
-                    "Failed to create file node resource at '" + getAbsolutePath() + "'.", e);
+                    "Could not create file node resource at '" + getAbsolutePath() + "': " + e.getMessage(), e);
         }
     }
 

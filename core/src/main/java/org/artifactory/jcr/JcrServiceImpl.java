@@ -264,7 +264,11 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             }
             AccessLogger.deployed(repoPath);
         } catch (Exception e) {
-            status.setError("Failed to import file '" + file.getAbsolutePath() + "' into " + jcrFile + ".", e, log);
+            status.setWarning("Could not import file '" + file.getAbsolutePath() + "' into " + jcrFile + ".", e, log);
+            //Remove the file, so that save will not be attempted at the end of the transaction
+            if (jcrFile != null) {
+                jcrFile.bruteForceDelete();
+            }
         }
         return jcrFile;
     }

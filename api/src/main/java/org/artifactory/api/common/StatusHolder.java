@@ -119,6 +119,10 @@ public class StatusHolder implements Serializable {
         addError(statusMsg, CODE_INTERNAL_ERROR, null, logger, true);
     }
 
+    public void setWarning(String statusMsg, Throwable throwable, Logger logger) {
+        addError(statusMsg, CODE_INTERNAL_ERROR, throwable, logger, true);
+    }
+
     protected StatusEntry addError(String statusMsg, int statusCode, Throwable throwable, Logger logger, boolean warn) {
         StatusEntry result;
         if (warn) {
@@ -151,13 +155,25 @@ public class StatusHolder implements Serializable {
     protected void logEntry(StatusEntry entry, Logger logger) {
         boolean isExternalLogActive = (logger != null);
         String statusMessage = entry.getStatusMessage();
+        Throwable throwable = entry.getException();
+        if (!isVerbose() && throwable != null) {
+            //Update the status message for when there's an exception message to append
+            statusMessage += ": " + throwable.getMessage();
+        }
         if (entry.isWarning()) {
-            log.warn(statusMessage);
+            if (isVerbose()) {
+                log.warn(statusMessage, throwable);
+            } else {
+                log.warn(statusMessage);
+            }
             if (isExternalLogActive && logger.isWarnEnabled()) {
-                logger.warn(statusMessage);
+                if (isVerbose()) {
+                    logger.warn(statusMessage, throwable);
+                } else {
+                    logger.warn(statusMessage);
+                }
             }
         } else if (entry.isError()) {
-            Throwable throwable = entry.getException();
             if (isVerbose()) {
                 log.error(statusMessage, throwable);
             } else {
