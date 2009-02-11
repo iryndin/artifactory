@@ -80,7 +80,9 @@ public class FileUploadForm extends Form {
         add(fileUploadField = new FileUploadField("fileInput"));
         //Set maximum upload size
         int uploadMaxSizeMb = centralConfig.getDescriptor().getFileUploadMaxSizeMb();
-        setMaxSize(Bytes.megabytes(uploadMaxSizeMb));
+        if (uploadMaxSizeMb > 0) {
+            setMaxSize(Bytes.megabytes(uploadMaxSizeMb));
+        }
         // Add the progress bar
         add(new UploadProgressBar("progress", this));
     }
