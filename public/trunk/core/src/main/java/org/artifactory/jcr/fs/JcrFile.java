@@ -564,12 +564,14 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             status.setError("Import Error", ex, log);
             return;
         }
-        try {
-            //Read metadata into the node
-            importMetadata(file, status, settings);
-        } catch (Exception e) {
-            String msg = "Failed to import file " + file.getAbsolutePath() + " into '" + getRepoPath() + "'.";
-            status.setError(msg, e, log);
+        if (settings.isIncludeMetadata()) {
+            try {
+                //Read metadata into the node
+                importMetadata(file, status, settings);
+            } catch (Exception e) {
+                String msg = "Failed to import file " + file.getAbsolutePath() + " into '" + getRepoPath() + "'.";
+                status.setError(msg, e, log);
+            }
         }
     }
 
