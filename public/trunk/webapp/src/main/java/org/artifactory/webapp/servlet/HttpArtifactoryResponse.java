@@ -44,10 +44,6 @@ public class HttpArtifactoryResponse extends ArtifactoryResponseBase {
         try {
             if (reason != null) {
                 //Send a description of the reason in the body
-                PrintWriter writer = response.getWriter();
-                writer.write(reason);
-                writer.write("\n\n");
-                writer.flush();
                 response.sendError(statusCode, reason);
             } else {
                 response.sendError(statusCode);
