@@ -304,10 +304,10 @@ public class ProfilePanel extends TitledActionPanel {
         private boolean passwordValid(String enteredCurrentPassword, UserInfo userInfo) {
             String currentPassword = userInfo.getPassword();
             if (!StringUtils.hasText(currentPassword)) {
-                // ldap user - validate using the password in session
+                // external user - validate using the password in session
                 return securityService.userPasswordMatches(enteredCurrentPassword);
             } else {
-                // non-ldap user validate against hashed password in the database
+                // internal user validate against hashed password in the database
                 return currentPassword.equals(DigestUtils.md5Hex(enteredCurrentPassword));
             }
         }
