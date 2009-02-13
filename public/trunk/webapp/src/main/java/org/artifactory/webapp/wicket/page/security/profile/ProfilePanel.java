@@ -283,6 +283,7 @@ public class ProfilePanel extends TitledActionPanel {
             super(id, title);
         }
 
+        @Override
         protected void onSubmit(AjaxRequestTarget target) {
             UserInfo userInfo = loadUserInfo();
             String password = getUserProfile().getCurrentPassword();
