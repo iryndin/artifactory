@@ -385,6 +385,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
         }
     }
 
+    @SuppressWarnings({"OverlyComplexMethod"})
     private List<RealRepo> assembleSearchRepositoriesList(ArtifactoryRequest request) {
         List<RealRepo> repositories = new ArrayList<RealRepo>();
         //Check if we target a specific local (or cache) repo or a virtual repository
@@ -429,19 +430,21 @@ public class DownloadServiceImpl implements InternalDownloadService {
             }
         } else {
             //We are handling a specific local/cache or remote repo request - add the specific repo
-            //Test remote repo fisrt, since the cache may be retrieved by the same name
+            //Test remote repo first, since the cache may be retrieved by the same name
             RemoteRepo remoteRepo = repositoryService.remoteRepositoryByKey(realOrVirtualRepoKey);
+            LocalRepo localOrCacheRepo = repositoryService.localOrCachedRepositoryByKey(realOrVirtualRepoKey);
             if (remoteRepo != null) {
-                repositories.add(remoteRepo);
-            } else {
-                LocalRepo localOrCacheRepo = repositoryService.localOrCachedRepositoryByKey(realOrVirtualRepoKey);
                 if (localOrCacheRepo != null) {
+                    //Add the cache first
                     repositories.add(localOrCacheRepo);
-                } else {
-                    //Will return an empty repositories list (will eventually result in a 404)
-                    log.warn("Failed to find the local or virtual repository '" + realOrVirtualRepoKey +
-                            "' specified in the request.");
                 }
+                repositories.add(remoteRepo);
+            } else if (localOrCacheRepo != null) {
+                repositories.add(localOrCacheRepo);
+            } else {
+                //Will return an empty repositories list (will eventually result in a 404)
+                log.warn("Failed to find the local or virtual repository '" + realOrVirtualRepoKey +
+                        "' specified in the request.");
             }
         }
         return repositories;
