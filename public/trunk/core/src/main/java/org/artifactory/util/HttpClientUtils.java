@@ -25,7 +25,7 @@ public class HttpClientUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
 
     public static void configureUserAgent(HttpClient client) {
-        String userAgent = HttpUtils.getUserAgent();
+        String userAgent = HttpUtils.getArtifactoryUserAgent();
         HttpClientParams clientParams = client.getParams();
         clientParams.setParameter(HttpMethodParams.USER_AGENT, userAgent);
     }

@@ -18,6 +18,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.util.HttpClientUtils;
+import org.artifactory.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -164,6 +165,18 @@ public class VersionInfoServiceImpl implements VersionInfoService {
 
     private void setHeader(GetMethod getMethod, Map<String, String> headersMap, String headerKey) {
         String headerVal = headersMap.get(headerKey.toUpperCase());
+        if ("Referer".equalsIgnoreCase(headerKey)) {
+            //Append the artifactory uagent to the referer
+            if (headerVal == null) {
+                //Fallback to host
+                headerVal = headersMap.get("HOST");
+                if (headerVal == null) {
+                    //Fallback to unknown
+                    headerVal = "UNKNOWN";
+                }
+            }
+            headerVal += ":" + HttpUtils.getArtifactoryUserAgent();
+        }
         if (headerVal != null) {
             getMethod.setRequestHeader(headerKey, headerVal);
         }

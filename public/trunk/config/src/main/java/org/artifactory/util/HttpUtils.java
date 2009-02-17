@@ -12,7 +12,7 @@ public class HttpUtils {
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
 
-    public static String getUserAgent() {
+    public static String getArtifactoryUserAgent() {
         //TODO: [by yl] Can probably cache this calc
         String artifactoryVersion = ConstantsValue.artifactoryVersion.getString();
         if (artifactoryVersion.startsWith("$") || artifactoryVersion.endsWith("SNAPSHOT")) {
