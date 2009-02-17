@@ -559,7 +559,7 @@ case "$ACTION" in
         if [ -z "$ARTIFACTORY_USER" ]; then
             nohup sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" >/dev/null &
         else
-            nohup su - ${ARTIFACTORY_USER} -c "exec sh & $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" >/dev/null &
+            nohup su - ${ARTIFACTORY_USER} --shell=/bin/sh -c "exec $RUN_CMD >>$ARTIFACTORY_CONSOLE 2>&1" >/dev/null &
         fi
         echo $! > $ARTIFACTORY_PID
         echo "Jetty running pid="`cat $ARTIFACTORY_PID`
