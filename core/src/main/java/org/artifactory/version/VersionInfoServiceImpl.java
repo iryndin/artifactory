@@ -205,5 +205,4 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     private ArtifactoryVersioning createServiceUnavailableVersioning() {
         return new ArtifactoryVersioning(VersionHolder.VERSION_UNAVAILABLE, VersionHolder.VERSION_UNAVAILABLE);
     }
-
 }
