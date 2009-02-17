@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.JdkVersion;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -60,6 +61,15 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
                         String.format(" Version: %-19s Revision: %-9s __/ |\n", versionNumber,
                                 revision) +
                         "                                                 |___/\n");
+
+        if (!isJvmSupported()) {
+            String message = "\n\n***************************************************************************\n" +
+                    "*** You have started Artifactory with an unsupported version of Java 6! ***\n" +
+                    "***                Please use Java 6 update 4 and above.                ***\n" +
+                    "***************************************************************************\n";
+            log.warn(message);
+        }
+
         ServletContext servletContext = event.getServletContext();
 
         ApplicationContext context;
@@ -93,5 +103,34 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
         }
         event.getServletContext()
                 .removeAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+    }
+
+    /**
+     * Checks if the user if running JVM 6. If true, make sure it is comptaible (update 4+)
+     *
+     * @return
+     */
+    //TODO [by noam]: find a better way to check the minor versions when on different vendors of the JVM
+    @SuppressWarnings({"EmptyCatchBlock"})
+    private boolean isJvmSupported() {
+        //Make sure to warn user if he is using Java 6 with an update earlier than 4
+        boolean supported = true;
+        if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_16) {
+            String javaVersion = JdkVersion.getJavaVersion();
+            int underscoreIndex = javaVersion.indexOf("_");
+            if (underscoreIndex == -1) {
+                supported = false;
+            } else {
+                int minorVersion = -1;
+                try {
+                    minorVersion = Integer.parseInt(javaVersion.substring(underscoreIndex + 1));
+                } catch (Exception e) {
+                }
+                if (minorVersion < 4) {
+                    supported = false;
+                }
+            }
+        }
+        return supported;
     }
 }
