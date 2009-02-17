@@ -1303,7 +1303,8 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
                 AccessLogger.deleteDenied(repoPath);
                 statusHolder.setError(
                         "Not enough permissions to overwrite artifact '" + repoPath +
-                                "' (needs delete permission).", HttpStatus.SC_FORBIDDEN, log);
+                                "' (user '" + authService.currentUsername() + "' needs DELETE permission).",
+                        HttpStatus.SC_FORBIDDEN, log);
             }
         }
     }
