@@ -62,7 +62,7 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
                                 revision) +
                         "                                                 |___/\n");
 
-        if (!isJvmSupported()) {
+        if (!isUnsupportedJava6()) {
             String message = "\n\n***************************************************************************\n" +
                     "*** You have started Artifactory with an unsupported version of Java 6! ***\n" +
                     "***                Please use Java 6 update 4 and above.                ***\n" +
@@ -112,7 +112,7 @@ public class ArtifactoryContextConfigurer implements ServletContextListener {
      */
     //TODO [by noam]: find a better way to check the minor versions when on different vendors of the JVM
     @SuppressWarnings({"EmptyCatchBlock"})
-    private boolean isJvmSupported() {
+    private boolean isUnsupportedJava6() {
         //Make sure to warn user if he is using Java 6 with an update earlier than 4
         boolean supported = true;
         if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_16) {
