@@ -36,7 +36,7 @@ public class ArtifactoryFilter implements Filter {
     private String userAgent;
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        userAgent = HttpUtils.getUserAgent();
+        userAgent = HttpUtils.getArtifactoryUserAgent();
     }
 
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
