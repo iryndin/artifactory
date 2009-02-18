@@ -16,6 +16,8 @@
  */
 package org.artifactory.spring;
 
+import de.schlichtherle.io.ArchiveException;
+import de.schlichtherle.io.ArchiveDetector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.api.common.StatusHolder;
@@ -52,8 +54,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import de.schlichtherle.io.ArchiveException;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -356,7 +356,8 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
     private void createArchive(StatusHolder status, String timestamp, File baseDir, File tmpExportDir) {
         status.setStatus("Creating archive...", log);
         de.schlichtherle.io.File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
-        boolean successful = new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
+        boolean successful = new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive, ArchiveDetector.NULL, ArchiveDetector.DEFAULT);
+
         try {
             de.schlichtherle.io.File.umount();
         } catch (ArchiveException e) {
