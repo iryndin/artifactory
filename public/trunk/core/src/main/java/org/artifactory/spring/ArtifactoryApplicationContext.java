@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.schlichtherle.io.ArchiveException;
+
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
@@ -351,21 +353,27 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         status.setCallback(exportDir);
     }
 
-    private void createArchive(StatusHolder status, String timestamp, File baseDir,
-            File tmpExportDir) {
+    private void createArchive(StatusHolder status, String timestamp, File baseDir, File tmpExportDir) {
         status.setStatus("Creating archive...", log);
-        File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
+        de.schlichtherle.io.File tmpArchive = new de.schlichtherle.io.File(baseDir, timestamp + ".tmp.zip");
+        boolean successful = new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
         try {
-            new de.schlichtherle.io.File(tmpExportDir).copyAllTo(tmpArchive);
-        } catch (Exception e) {
+            de.schlichtherle.io.File.umount();
+        } catch (ArchiveException e) {
             throw new RuntimeException("Failed to create system export archive.", e);
-        } finally {
-            //Delete the temp archive dir
-            try {
-                FileUtils.deleteDirectory(tmpExportDir);
-            } catch (IOException e) {
-                log.warn("Failed to delete temp export directory.", e);
-            }
+        }
+
+        String tempArchivePath = tmpArchive.getAbsolutePath();
+        if (!successful) {
+            status.setError("Failed to create zip file " + tempArchivePath, log);
+            return;
+        }
+
+        //Delete the temp export dir
+        try {
+            FileUtils.deleteDirectory(tmpExportDir);
+        } catch (IOException e) {
+            log.warn("Failed to delete temp export directory.", e);
         }
 
         // From now on use only java.io.File for the file actions!
@@ -375,14 +383,15 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         if (archive.exists()) {
             boolean deleted = archive.delete();
             if (!deleted) {
-                log.warn("Failed to delete existing final export archive.");
+                status.setWarning("Failed to delete existing final export archive.", log);
             }
         }
         //Rename the archive file
-        File tmpArchiveFile = new File(tmpArchive.getAbsolutePath());
+        File tmpArchiveFile = new File(tempArchivePath);
         boolean success = tmpArchiveFile.renameTo(archive);
         if (!success) {
-            log.error("Failed to move '{}' to '{}'.", tmpArchiveFile.getPath(), archive.getPath());
+            status.setWarning(String.format("Failed to move '%s' to '%s'.",
+                    tmpArchiveFile.getPath(), archive.getPath()), log);
         }
         status.setCallback(archive.getAbsoluteFile());
     }
