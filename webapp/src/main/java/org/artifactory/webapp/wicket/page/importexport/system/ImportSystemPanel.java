@@ -42,6 +42,7 @@ import org.artifactory.webapp.wicket.common.component.file.path.PathAutoComplete
 import org.artifactory.webapp.wicket.common.component.help.HelpBubble;
 import org.artifactory.webapp.wicket.common.component.panel.feedback.FeedbackUtils;
 import org.artifactory.webapp.wicket.common.component.panel.titled.TitledPanel;
+import org.codehaus.plexus.util.Expand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +149,6 @@ public class ImportSystemPanel extends TitledPanel {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 status.reset();
                 //If the path denotes an archive extract it first, else use the directory
-                de.schlichtherle.io.File file = new de.schlichtherle.io.File(importFromPath);
                 File importFromFolder = null;
                 try {
                     if (!importFromPath.exists()) {
@@ -160,17 +160,26 @@ public class ImportSystemPanel extends TitledPanel {
                             error("Directory '" + importFromPath + "' is empty.");
                             return;
                         }
-                        importFromFolder = file;
-
-                    } else if (file.isArchive()) {
+                    } else if (isZip(importFromPath)) {
                         //Extract the archive
                         status.setStatus("Extracting archive...", log);
                         importFromFolder =
                                 new File(ArtifactoryHome.getTmpUploadsDir(),
-                                        file.getName() + "_extract");
+                                        importFromPath.getName() + "_extract");
                         FileUtils.deleteDirectory(importFromFolder);
                         FileUtils.forceMkdir(importFromFolder);
-                        file.copyAllTo(importFromFolder);
+                        //TODO: [by YS] move to ZipUtils
+                        try {
+                            Expand expand = new Expand();
+                            expand.setSrc(importFromPath);
+                            expand.setDest(importFromFolder);
+                            expand.execute();
+                        } catch (Exception e) {
+                            String message = "Failed to extract file " + importFromPath.getAbsolutePath();
+                            error(message);
+                            log.error(message, e);
+                            return;
+                        }
                     } else {
                         error("Failed to import system from '" + importFromPath +
                                 "': Unrecognized file type.");
@@ -206,7 +215,7 @@ public class ImportSystemPanel extends TitledPanel {
                     log.error("Failed to import system.", e);
                 } finally {
                     FeedbackUtils.refreshFeedback(target);
-                    if (file.isArchive()) {
+                    if (isZip(importFromPath)) {
                         //Delete the extracted dir
                         try {
                             if (importFromFolder != null) {
@@ -232,6 +241,10 @@ public class ImportSystemPanel extends TitledPanel {
             }
         });
         //importForm.add(statusLabel);
+    }
+
+    private boolean isZip(File file) {
+        return file.isFile() && file.getName().toLowerCase().endsWith(".zip");
     }
 
     private void updateCheckboxes(AjaxRequestTarget target) {
