@@ -1,0 +1,36 @@
+.collapsible-wrapper {
+    display: inline-block;
+    display: -moz-inline-block;
+    position: relative;
+}
+
+.collapsible-wrapper .collapse-link {
+    position: absolute;
+    right: 0;
+    top: 16px;
+}
+
+.collapsible-wrapper a.collapse-link span {
+    display: none;
+}
+
+.collapsible-wrapper a.collapse-link {
+    width: 8px;
+    height: 8px;
+}
+
+.collapsed a.collapse-link {
+    background: url( "images/menu_expand.gif" ) no-repeat right;
+}
+
+.expanded a.collapse-link {
+    background: url( "images/menu_collapse.gif" ) no-repeat right;
+}
+
+.collapsed .collapsible {
+    display: none;
+}
+
+.collapsed a.collapse-link {
+    right: 10px;
+}
