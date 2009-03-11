@@ -124,10 +124,10 @@ public class DownloadServiceImpl implements InternalDownloadService {
         }
         try {
             //If we try to update snapshots, metadata, poms (caused by expiry or -U)
-            if (request.isSnapshot()) {
-                processSnapshot(request, response);
-            } else if (request.isMetadata()) {
+            if (request.isMetadata()) {
                 processMetadata(request, response);
+            } else if (request.isSnapshot()) {
+                processSnapshot(request, response);
             } else {
                 processStandard(request, response);
             }
