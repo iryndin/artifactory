@@ -500,7 +500,6 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         List<JcrFsItem> children = getJcrService().getChildren(this, true);
         for (JcrFsItem child : children) {
             child.delete();
-            LockingHelper.removeLockEntry(child.getRepoPath());
         }
         return true;
     }
