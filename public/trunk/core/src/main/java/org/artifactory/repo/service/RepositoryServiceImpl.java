@@ -648,8 +648,8 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
             boolean completed = taskService.waitForTaskCompletion(task.getToken());
             if (!completed) {
                 if (!status.isError()) {
-                    // Add Error of no completion
-                    status.setError("The task " + task + " did not complete correctly", log);
+                    // Add error of no completion
+                    status.setError("The task " + task + " did not complete correctly.", log);
                 }
             }
         }
@@ -1093,24 +1093,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
     }
 
     public StatusHolder assertValidPath(RealRepo repo, String path) {
-        StatusHolder statusHolder = new StatusHolder();
-        statusHolder.setActivateLogging(false);
-        if (repo.isBlackedOut()) {
-            statusHolder.setError(
-                    "The repository '" + repo.getKey() + "' is blacked out and cannot accept artifact '" + path +
-                            "'.", HttpStatus.SC_FORBIDDEN, log);
-        } else if (!repo.handles(path)) {
-            statusHolder.setError(
-                    "The repository '" + repo.getKey() + "' rejected the artifact '" + path +
-                            "' due to its snapshot/release handling policy.",
-                    HttpStatus.SC_FORBIDDEN, log);
-        } else if (!repo.accepts(path)) {
-            statusHolder.setError(
-                    "The repository '" + repo.getKey() + "' rejected the artifact '" + path +
-                            "' due to its include/exclude patterns settings.",
-                    HttpStatus.SC_FORBIDDEN, log);
-        }
-        return statusHolder;
+        return repo.assertValidPath(new RepoPath(repo.getKey(), path));
     }
 
     public StatusHolder assertValidDeployPath(LocalRepo repo, String path) {

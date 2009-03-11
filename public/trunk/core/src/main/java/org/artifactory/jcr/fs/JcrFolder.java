@@ -474,7 +474,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                         }
                     } catch (Exception e) {
                         //Just log an error and continue
-                        status.setError("Error at: " + msg, e, log);
+                        status.setWarning("Error importing file: " + msg, e, log);
                     }
                 }
             }

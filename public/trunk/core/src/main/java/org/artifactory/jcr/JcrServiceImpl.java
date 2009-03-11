@@ -658,14 +658,12 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         String relPath = targetPath.substring(relPathStart + repoKey.length() + 1);
         LocalRepo repo = repositoryService.localOrCachedRepositoryByKey(repoKey);
         if (repo == null) {
-            throw new RepositoryRuntimeException(
-                    "The repository '" + repoKey + "' is not configured.");
+            throw new RepositoryRuntimeException("The repository '" + repoKey + "' is not configured.");
         }
         StatusHolder statusHolder = repositoryService.assertValidDeployPath(repo, relPath);
         if (statusHolder.isError()) {
             if (statusHolder.getException() != null) {
-                throw new RepositoryRuntimeException(statusHolder.getStatusMsg(),
-                        statusHolder.getException());
+                throw new RepositoryRuntimeException(statusHolder.getStatusMsg(), statusHolder.getException());
             }
             throw new RepositoryRuntimeException(statusHolder.getStatusMsg());
         }

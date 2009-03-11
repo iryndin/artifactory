@@ -60,4 +60,6 @@ public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
     boolean handles(String path);
 
     int getMaxUniqueSnapshots();
+
+    StatusHolder assertValidPath(RepoPath repoPath);
 }
