@@ -1,5 +1,6 @@
 package org.artifactory.webapp.wicket.common.component.dnd.select;
 
+import org.apache.commons.collections.Unmodifiable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.HeaderContributor;
@@ -51,7 +52,7 @@ public class DragDropSelection<T> extends FormComponentPanel {
     }
 
     public DragDropSelection(final String id, IModel model, final List<T> choices,
-                             final IChoiceRenderer renderer) {
+            final IChoiceRenderer renderer) {
         this(id, model, new Model((Serializable) choices), renderer);
     }
 
@@ -149,7 +150,7 @@ public class DragDropSelection<T> extends FormComponentPanel {
     @SuppressWarnings({"unchecked"})
     private void updateSourceList() {
         sourceList = new ArrayList<T>((Collection<T>) choicesModel.getObject());
-        List<T> selected = (List<T>) getModelObject();
+        Collection<T> selected = (Collection<T>) getModelObject();
         sourceList.removeAll(selected);
     }
 
@@ -171,7 +172,11 @@ public class DragDropSelection<T> extends FormComponentPanel {
     private class TargetListModel extends AbstractReadOnlyModel {
         @Override
         public Object getObject() {
-            return getModelObject();
+            Collection<?> selected = (Collection<?>) getModelObject();
+            if (selected instanceof List) {
+                return selected;
+            }
+            return new ArrayList<Object>(selected);
         }
     }
 
@@ -232,14 +237,24 @@ public class DragDropSelection<T> extends FormComponentPanel {
 
             String selectionString = object.toString();
             String[] selectedIndices = selectionString.split(",");
-            List<T> newListValue = new ArrayList<T>(selectedIndices.length);
+
+            // get newSelection list
+            Object modelObject = getModelObject();
+            Collection<T> newSelection;
+            if (modelObject instanceof Unmodifiable) {
+                newSelection = new ArrayList<T>(selectedIndices.length);
+            } else {
+                newSelection = (Collection<T>) modelObject;
+                newSelection.clear();
+            }
+
+            // fill newSelection
             List<T> choices = (List<T>) choicesModel.getObject();
             for (String index : selectedIndices) {
                 Integer intIndex = Integer.valueOf(index);
-                newListValue.add(choices.get(intIndex));
+                newSelection.add(choices.get(intIndex));
             }
-            setModelObject(newListValue);
+            setModelObject(newSelection);
         }
-
     }
 }
