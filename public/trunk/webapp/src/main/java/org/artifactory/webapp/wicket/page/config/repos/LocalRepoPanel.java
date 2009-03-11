@@ -12,8 +12,7 @@ import org.apache.wicket.validation.validator.NumberValidator;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import static org.artifactory.descriptor.repo.SnapshotVersionBehavior.DEPLOYER;
-import static org.artifactory.descriptor.repo.SnapshotVersionBehavior.UNIQUE;
+import static org.artifactory.descriptor.repo.SnapshotVersionBehavior.*;
 import org.artifactory.webapp.wicket.common.component.CreateUpdateAction;
 import org.artifactory.webapp.wicket.common.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.common.component.checkbox.styled.StyledCheckbox;
@@ -49,9 +48,6 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
             @Override
             public boolean isEnabled() {
                 boolean toEnable = isUniqueSelected();
-                if (toEnable) {
-                    setModelObject(0);
-                }
                 return toEnable;
             }
         };
@@ -80,6 +76,10 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
         snapshotVersionDropDown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
+                LocalRepoDescriptor descriptor = getRepoDescriptor();
+                if (NONUNIQUE.equals(descriptor.getSnapshotVersionBehavior())) {
+                    descriptor.setMaxUniqueSnapshots(0);
+                }
                 target.addComponent(maxUniqueSnapshots);
             }
         });
@@ -96,12 +96,13 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
 
     private boolean isUniqueSelected() {
         LocalRepoDescriptor descriptor = getRepoDescriptor();
-        boolean isUnique = UNIQUE.equals(descriptor.getSnapshotVersionBehavior());
-        boolean isDeployer = DEPLOYER.equals(descriptor.getSnapshotVersionBehavior());
+        SnapshotVersionBehavior snapshotVersionBehavior = descriptor.getSnapshotVersionBehavior();
+        boolean isUnique = UNIQUE.equals(snapshotVersionBehavior);
+        boolean isDeployer = DEPLOYER.equals(snapshotVersionBehavior);
         return (isUnique || isDeployer);
     }
 
-    private class SnapshotVersionChoiceRenderer extends ChoiceRenderer {
+    private static class SnapshotVersionChoiceRenderer extends ChoiceRenderer {
         @Override
         public Object getDisplayValue(Object object) {
             if (object instanceof SnapshotVersionBehavior) {
