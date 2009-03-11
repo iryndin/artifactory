@@ -19,13 +19,14 @@ package org.artifactory.repo.interceptor;
 import org.apache.commons.collections15.SortedBag;
 import org.apache.commons.collections15.bag.TreeBag;
 import org.artifactory.api.maven.MavenNaming;
-import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.maven.MavenUtils;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.resource.RepoResource;
+import org.artifactory.spring.InternalContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +53,15 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
     public void afterResourceSave(final RepoResource res, final LocalRepo repo) throws Exception {
         String path = res.getRepoPath().getPath();
         JcrFile file = repo.getLockedJcrFile(path, true);
-        if (!NamingUtils.isSnapshotMetadata(path)) {
+        if (!MavenNaming.isUniqueSnapshot(path) || MavenNaming.isPom(path)) {
             return;
         }
         int maxUniqueSnapshots = repo.getMaxUniqueSnapshots();
         if (maxUniqueSnapshots > 0) {
             //Read the last updated and delete old unique snapshot artifacts
             JcrFolder snapshotFolder = file.getParentFolder();
-            List<JcrFsItem> children = snapshotFolder.getItems();
+            JcrRepoService jcrRepoService = InternalContextHelper.get().getJcrRepoService();
+            List<JcrFsItem> children = jcrRepoService.getChildren(snapshotFolder, true);
             List<ItemDesc> itemsByDate = new ArrayList<ItemDesc>();
             for (JcrFsItem child : children) {
                 String name = child.getName();
@@ -72,8 +74,7 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
                 }
             }
             Collections.sort(itemsByDate);
-            //Traverse the ordered collection and stop when we collected enough items
-            //(maxUniqueSnapshots)
+            //Traverse the ordered collection and stop when we collected enough items (maxUniqueSnapshots)
             int uniqueSnapshotsCount = 0;
             SortedBag<ItemDesc> itemsToKeep = new TreeBag<ItemDesc>();
             for (ItemDesc item : itemsByDate) {
@@ -86,10 +87,10 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
                 }
             }
             itemsByDate.removeAll(itemsToKeep);
-            for (ItemDesc item : itemsByDate) {
-                item.item.delete();
+            for (ItemDesc itemDesc : itemsByDate) {
+                itemDesc.item.bruteForceDelete();
                 if (log.isInfoEnabled()) {
-                    log.info("Removed old unique snapshot '" + item.item.getRelativePath() + "'.");
+                    log.info("Removed old unique snapshot '" + itemDesc.item.getRelativePath() + "'.");
                 }
             }
         }
