@@ -7,8 +7,6 @@ import org.apache.wicket.model.IModel;
 import org.artifactory.webapp.wicket.common.behavior.JavascriptEvent;
 import org.artifactory.webapp.wicket.common.component.dnd.select.DragDropSelection;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -61,32 +59,9 @@ public class SortedDragDropSelection<T> extends DragDropSelection<T> {
     }
 
     @Override
-    protected void onBeforeRender() {
-        super.onBeforeRender();
-        sortModelObject(getChoices());
-        sortModelObject(getModel());
-    }
-
-    @Override
     protected IBehavior newOnOrderChangeEventBehavior(String event) {
         // no ajax notification
         return new JavascriptEvent(event, "");
     }
 
-    @SuppressWarnings({"unchecked"})
-    private void sortModelObject(IModel listModel) {
-        if (listModel != null) {
-            List<T> list = (List<T>) listModel.getObject();
-            if (list != null) {
-                Collections.sort(list, new ItemComparator());
-            }
-        }
-    }
-
-    public class ItemComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            IChoiceRenderer renderer = getChoiceRenderer();
-            return renderer.getDisplayValue(o1).toString().compareTo(renderer.getDisplayValue(o2).toString());
-        }
-    }
 }

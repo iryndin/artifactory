@@ -1,4 +1,8 @@
 dojo.declare('artifactory.SortedDragDropSelection', artifactory.DragDropSelection, {
+    constructor: function() {
+        this.sort();
+    },
+
     onDrop: function() {
         this.sort();
         this.inherited(arguments);
