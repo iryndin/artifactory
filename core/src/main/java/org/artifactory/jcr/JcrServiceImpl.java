@@ -81,7 +81,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.query.Query;
@@ -757,10 +756,11 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
     }
 
     public void garbageCollect() {
-        Session usession = getUnmanagedSession();
+        JcrSession usession = getUnmanagedSession();
         GarbageCollector gc = null;
         try {
-            gc = ((SessionImpl) usession).createDataStoreGarbageCollector();
+            SessionImpl internalSession = (SessionImpl) usession.getSession();
+            gc = internalSession.createDataStoreGarbageCollector();
             if (gc.getDataStore() == null) {
                 log.info("Datastore not yet initialize. Not running garbage collector...");
             }
