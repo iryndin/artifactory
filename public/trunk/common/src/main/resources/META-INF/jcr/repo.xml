@@ -13,7 +13,7 @@
     </FileSystem>
 
     <!-- http://wiki.apache.org/jackrabbit/DataStore -->
-    <DataStore class="org.apache.jackrabbit.core.data.db.DbDataStore">
+    <DataStore class="org.artifactory.jcr.jackrabbit.ArtifactoryDbDataStore">
         <param name="url" value="jdbc:derby:${rep.home}/store;create=true"/>
         <!--<param name="tablePrefix" value="ds_"/>-->
         <param name="databaseType" value="derby"/>

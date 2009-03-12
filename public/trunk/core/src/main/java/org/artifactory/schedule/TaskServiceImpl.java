@@ -47,16 +47,20 @@ public class TaskServiceImpl implements TaskService {
     private ConcurrentMap<String, TaskBase> activeTasksByToken = new ConcurrentHashMap<String, TaskBase>();
 
     public void init() {
+        // TODO: Minutes and Hours are only in Java 6 :(
         //Start the initial tasks
-        //Check if we use File Data Store, then activate the Garbage collector
-        //Run the datastore gc every 12 hours after 2 hours
+        //Activate the Garbage collector every 20 minutes after 5 minutes
         QuartzTask jcrGarbageCollectorTask =
-                new QuartzTask(JcrGarbageCollector.class, TimeUnit.HOURS.toMillis(12), TimeUnit.HOURS.toMillis(2));
+                new QuartzTask(JcrGarbageCollector.class, TimeUnit.SECONDS.toMillis(3 * 60),
+                        TimeUnit.SECONDS.toMillis(1 * 60));
+        //new QuartzTask(JcrGarbageCollector.class, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(1));
         jcrGarbageCollectorTask.setSingleton(true);
-        //startTask(jcrGarbageCollectorTask);
+        startTask(jcrGarbageCollectorTask);
         //run the wagon leftovers cleanup every 15 minutes after 10 minutes
         QuartzTask wagonManagerTempArtifactsCleanerTask = new QuartzTask(
-                WagonManagerTempArtifactsCleaner.class, TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(10));
+                WagonManagerTempArtifactsCleaner.class, TimeUnit.SECONDS.toMillis(15 * 60),
+                TimeUnit.SECONDS.toMillis(10 * 60));
+        //WagonManagerTempArtifactsCleaner.class, TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(10));
         wagonManagerTempArtifactsCleanerTask.setSingleton(true);
         startTask(wagonManagerTempArtifactsCleanerTask);
         //run the wc committer once

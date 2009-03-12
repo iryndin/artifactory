@@ -5,7 +5,6 @@ import org.apache.jackrabbit.core.config.FileSystemConfig;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
-import org.apache.jackrabbit.core.data.db.DbDataStore;
 import org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager;
 import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.artifactory.cli.common.BaseCommand;
@@ -13,6 +12,7 @@ import org.artifactory.cli.common.Command;
 import org.artifactory.cli.main.CommandDefinition;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.config.JcrConfResourceLoader;
+import org.artifactory.update.jcr.DataStoreIfc;
 import org.artifactory.update.jcr.JcrRepositoryForExport;
 
 import javax.jcr.RepositoryException;
@@ -92,7 +92,7 @@ public class CompressCommand extends BaseCommand implements Command {
      */
     private void compressDataStore(RepositoryImpl repositoryImpl)
             throws RepositoryException, SQLException {
-        DbDataStore dataStore = ((DbDataStore) repositoryImpl.getDataStore());
+        DataStoreIfc dataStore = (DataStoreIfc) repositoryImpl.getDataStore();
         if (canCompress(dataStore.getDatabaseType())) {
             ConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
@@ -104,6 +104,7 @@ public class CompressCommand extends BaseCommand implements Command {
             cs.setShort(5, (short) 1);
             cs.execute();
             connection.commit();
+            crm.close();
         }
     }
 
