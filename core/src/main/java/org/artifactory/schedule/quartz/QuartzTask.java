@@ -44,11 +44,11 @@ public class QuartzTask extends TaskBase {
         this(trigger.getJobDetail().getJobClass(), (Trigger) trigger, trigger.getJobDetail());
     }
 
-    public QuartzTask(Class<? extends QuartzCommand> command, int interval) {
+    public QuartzTask(Class<? extends QuartzCommand> command, long interval) {
         this(command, interval, 0);
     }
 
-    public QuartzTask(Class<? extends QuartzCommand> command, int interval, int initialDelay) {
+    public QuartzTask(Class<? extends QuartzCommand> command, long interval, long initialDelay) {
         this(command, command.getName(), interval, initialDelay);
     }
 
@@ -70,7 +70,7 @@ public class QuartzTask extends TaskBase {
      * @param interval     Interval in milliseconds between executions. 0 means execute only once
      * @param initialDelay Delay in milliseconds before starting the task for the first time starting from now
      */
-    public QuartzTask(Class<? extends QuartzCommand> command, String triggerName, int interval, int initialDelay) {
+    public QuartzTask(Class<? extends QuartzCommand> command, String triggerName, long interval, long initialDelay) {
         this(command, new SimpleTrigger(
                 triggerName, "artifactory",
                 new Date(System.currentTimeMillis() + initialDelay), null,

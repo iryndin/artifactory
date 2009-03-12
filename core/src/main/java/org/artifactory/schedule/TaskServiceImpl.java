@@ -35,6 +35,7 @@ import org.springframework.util.ClassUtils;
 import javax.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yoavl
@@ -48,21 +49,24 @@ public class TaskServiceImpl implements TaskService {
     public void init() {
         //Start the initial tasks
         //Check if we use File Data Store, then activate the Garbage collector
-        //Run the datastore gc every 12 hours
-        QuartzTask jcrGarbageCollectorTask = new QuartzTask(JcrGarbageCollector.class, 43200000);
+        //Run the datastore gc every 12 hours after 2 hours
+        QuartzTask jcrGarbageCollectorTask =
+                new QuartzTask(JcrGarbageCollector.class, TimeUnit.HOURS.toMillis(12), TimeUnit.HOURS.toMillis(2));
         jcrGarbageCollectorTask.setSingleton(true);
         startTask(jcrGarbageCollectorTask);
-        //run the wagon leftovers cleanup every 15 minutes
-        QuartzTask wagonManagerTempArtifactsCleanerTask =
-                new QuartzTask(WagonManagerTempArtifactsCleaner.class, 900000);
+        //run the wagon leftovers cleanup every 15 minutes after 10 minutes
+        QuartzTask wagonManagerTempArtifactsCleanerTask = new QuartzTask(
+                WagonManagerTempArtifactsCleaner.class, TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(10));
         wagonManagerTempArtifactsCleanerTask.setSingleton(true);
         startTask(wagonManagerTempArtifactsCleanerTask);
         //run the wc committer once
-        QuartzTask workingCopyCommitterTask = new QuartzTask(WorkingCopyCommitter.class, 0, 30000);
+        QuartzTask workingCopyCommitterTask =
+                new QuartzTask(WorkingCopyCommitter.class, 0, TimeUnit.SECONDS.toMillis(30));
         workingCopyCommitterTask.setSingleton(true);
         startTask(workingCopyCommitterTask);
         //Empty whatever is left in the trash
-        QuartzTask emptyTrashTask = new QuartzTask(EmptyTrashJob.class, "EmptyTrashOnStartup", 0, 30000);
+        QuartzTask emptyTrashTask =
+                new QuartzTask(EmptyTrashJob.class, "EmptyTrashOnStartup", 0, TimeUnit.SECONDS.toMillis(30));
         startTask(emptyTrashTask);
     }
 
