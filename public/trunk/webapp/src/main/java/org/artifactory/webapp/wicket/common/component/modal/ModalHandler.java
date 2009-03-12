@@ -14,11 +14,10 @@ import org.artifactory.webapp.wicket.common.component.modal.panel.BaseModalPanel
  */
 public class ModalHandler extends ModalWindow implements TitleModel {
     public static final String CONTENT_ID = "content";
-    private static final WebMarkupContainer EMPTY_CONTENT = new WebMarkupContainer(CONTENT_ID);
+    private final WebMarkupContainer EMPTY_CONTENT = new WebMarkupContainer(CONTENT_ID);
 
     /**
-     * <b>DO NOT USE THIS CONSTRUCTOR!</b><br/>
-     * Use <b>ModalHandler.getInstanceFor(this)</b> instead.
+     * <b>DO NOT USE THIS CONSTRUCTOR!</b><br/> Use <b>ModalHandler.getInstanceFor(this)</b> instead.
      *
      * @param id id
      */
