@@ -29,7 +29,7 @@
         <param name="databaseType" value="mysql"/>
         <param name="driver" value="com.mysql.jdbc.Driver"/>
         <param name="minRecordLength" value="512"/>
-        <param name="maxConnections" value="10"/>
+        <param name="maxConnections" value="15"/>
         <param name="copyWhenReading" value="true"/>
     </DataStore>
 

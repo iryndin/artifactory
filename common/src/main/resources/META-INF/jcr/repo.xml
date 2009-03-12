@@ -19,7 +19,7 @@
         <param name="databaseType" value="derby"/>
         <param name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
         <param name="minRecordLength" value="512"/>
-        <param name="maxConnections" value="10"/>
+        <param name="maxConnections" value="30"/>
         <param name="copyWhenReading" value="true"/>
     </DataStore>
 
