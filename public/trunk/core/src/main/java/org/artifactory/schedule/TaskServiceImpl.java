@@ -16,8 +16,6 @@
  */
 package org.artifactory.schedule;
 
-import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.data.FileDataStore;
 import org.artifactory.cache.InternalCacheService;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
@@ -26,7 +24,6 @@ import org.artifactory.jcr.schedule.WorkingCopyCommitter;
 import org.artifactory.jcr.trash.EmptyTrashJob;
 import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
 import org.artifactory.schedule.quartz.QuartzTask;
-import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.util.LoggingUtils;
@@ -51,14 +48,10 @@ public class TaskServiceImpl implements TaskService {
     public void init() {
         //Start the initial tasks
         //Check if we use File Data Store, then activate the Garbage collector
-        InternalArtifactoryContext ctx = InternalContextHelper.get();
-        JcrService jcr = ctx.getJcrService();
-        if (((RepositoryImpl) jcr.getRepository()).getDataStore() instanceof FileDataStore) {
-            //Run the datastore gc every 12 hours
-            QuartzTask jcrGarbageCollectorTask = new QuartzTask(JcrGarbageCollector.class, 43200000);
-            jcrGarbageCollectorTask.setSingleton(true);
-            startTask(jcrGarbageCollectorTask);
-        }
+        //Run the datastore gc every 12 hours
+        QuartzTask jcrGarbageCollectorTask = new QuartzTask(JcrGarbageCollector.class, 43200000);
+        jcrGarbageCollectorTask.setSingleton(true);
+        startTask(jcrGarbageCollectorTask);
         //run the wagon leftovers cleanup every 15 minutes
         QuartzTask wagonManagerTempArtifactsCleanerTask =
                 new QuartzTask(WagonManagerTempArtifactsCleaner.class, 900000);
