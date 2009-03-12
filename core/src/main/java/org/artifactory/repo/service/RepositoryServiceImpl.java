@@ -26,7 +26,6 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.data.db.DbDataStore;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
@@ -96,6 +95,7 @@ import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
+import org.artifactory.update.jcr.DataStoreIfc;
 import org.artifactory.util.PathUtils;
 import org.artifactory.worker.SessionWorkMessages;
 import org.artifactory.worker.WorkMessage;
@@ -1021,7 +1021,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
      */
     private boolean isDerbyDatastore() {
         RepositoryImpl repositoryImpl = (RepositoryImpl) getRepository();
-        DbDataStore dataStore = (DbDataStore) repositoryImpl.getDataStore();
+        DataStoreIfc dataStore = (DataStoreIfc) repositoryImpl.getDataStore();
         String productIdentifier = dataStore.getDatabaseType().toLowerCase();
         return productIdentifier.contains("derby");
     }

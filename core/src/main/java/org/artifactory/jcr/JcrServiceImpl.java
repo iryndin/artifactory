@@ -21,8 +21,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.core.GarbageCollectorFactory;
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.data.GarbageCollector;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.xml.NodeTypeReader;
@@ -48,6 +48,7 @@ import org.artifactory.io.NonClosingInputStream;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
+import org.artifactory.jcr.jackrabbit.ArtifactoryGarbageCollector;
 import org.artifactory.jcr.md.MetadataAware;
 import org.artifactory.jcr.md.MetadataService;
 import org.artifactory.jcr.trash.Trashman;
@@ -757,19 +758,17 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     public void garbageCollect() {
         JcrSession usession = getUnmanagedSession();
-        GarbageCollector gc = null;
+        ArtifactoryGarbageCollector gc = null;
         try {
             SessionImpl internalSession = (SessionImpl) usession.getSession();
-            gc = internalSession.createDataStoreGarbageCollector();
+            gc = GarbageCollectorFactory.createDataStoreGarbageCollector(internalSession);
             if (gc.getDataStore() == null) {
                 log.info("Datastore not yet initialize. Not running garbage collector...");
             }
-            log.debug("Runnning Jackrabbit's datastore garbage collector...");
-            gc.setSleepBetweenNodes(1000);
+            log.debug("Runnning Artifactory JackRabbit's datastore garbage collector...");
             gc.scan();
             gc.stopScan();
-            int count = gc.deleteUnused();
-            log.info("Jackrabbit's datastore garbage collector deleted " + count + " unreferenced item(s).");
+            gc.deleteUnused();
         } catch (Exception e) {
             if (gc != null) {
                 try {
