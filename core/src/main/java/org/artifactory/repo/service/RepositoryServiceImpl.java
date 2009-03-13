@@ -95,7 +95,7 @@ import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
-import org.artifactory.update.jcr.DataStoreIfc;
+import org.artifactory.update.jcr.ArtifactoryDbDataStore;
 import org.artifactory.util.PathUtils;
 import org.artifactory.worker.SessionWorkMessages;
 import org.artifactory.worker.WorkMessage;
@@ -1021,7 +1021,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
      */
     private boolean isDerbyDatastore() {
         RepositoryImpl repositoryImpl = (RepositoryImpl) getRepository();
-        DataStoreIfc dataStore = (DataStoreIfc) repositoryImpl.getDataStore();
+        ArtifactoryDbDataStore dataStore = (ArtifactoryDbDataStore) repositoryImpl.getDataStore();
         String productIdentifier = dataStore.getDatabaseType().toLowerCase();
         return productIdentifier.contains("derby");
     }

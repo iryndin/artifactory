@@ -30,7 +30,7 @@ import java.io.InputStream;
  */
 public class ArtifactoryDbDataRecord extends AbstractDataRecord {
 
-    protected final ArtifactoryDbDataStore store;
+    protected final ArtifactoryDbDataStoreImpl store;
     protected final long length;
 
     /**
@@ -40,7 +40,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * @param identifier
      * @param length
      */
-    public ArtifactoryDbDataRecord(ArtifactoryDbDataStore store,
+    public ArtifactoryDbDataRecord(ArtifactoryDbDataStoreImpl store,
             DataIdentifier identifier,
             long length) {
         super(identifier);
