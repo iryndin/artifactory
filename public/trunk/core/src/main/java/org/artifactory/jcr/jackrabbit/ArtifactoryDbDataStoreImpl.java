@@ -24,7 +24,7 @@ import org.apache.jackrabbit.core.data.db.TempFileInputStream;
 import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.apache.jackrabbit.core.persistence.bundle.util.TrackingInputStream;
 import org.apache.jackrabbit.util.Text;
-import org.artifactory.update.jcr.DataStoreIfc;
+import org.artifactory.update.jcr.ArtifactoryDbDataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,49 +50,40 @@ import java.util.Properties;
 /**
  * A data store implementation that stores the records in a database using JDBC.
  * <p/>
- * Configuration:<br>
- * <ul>
- * <li>&lt;param name="className" value="org.apache.jackrabbit.core.data.db.DbDataStore"/>
- * <li>&lt;param name="{@link #setUrl(String) url}" value="jdbc:postgresql:test"/>
- * <li>&lt;param name="{@link #setUser(String) user}" value="sa"/>
- * <li>&lt;param name="{@link #setPassword(String) password}" value="sa"/>
- * <li>&lt;param name="{@link #setDatabaseType(String) databaseType}" value="postgresql"/>
- * <li>&lt;param name="{@link #setDriver(String) driver}" value="org.postgresql.Driver"/>
- * <li>&lt;param name="{@link #setMinRecordLength(int) minRecordLength}" value="1024"/>
- * <li>&lt;param name="{@link #setMaxConnections(int) maxConnections}" value="2"/>
- * <li>&lt;param name="{@link #setCopyWhenReading(boolean) copyWhenReading}" value="true"/>
- * </ul>
+ * Configuration:<br> <ul> <li>&lt;param name="className" value="org.apache.jackrabbit.core.data.db.DbDataStore"/>
+ * <li>&lt;param name="{@link #setUrl(String) url}" value="jdbc:postgresql:test"/> <li>&lt;param name="{@link
+ * #setUser(String) user}" value="sa"/> <li>&lt;param name="{@link #setPassword(String) password}" value="sa"/>
+ * <li>&lt;param name="{@link #setDatabaseType(String) databaseType}" value="postgresql"/> <li>&lt;param name="{@link
+ * #setDriver(String) driver}" value="org.postgresql.Driver"/> <li>&lt;param name="{@link #setMinRecordLength(int)
+ * minRecordLength}" value="1024"/> <li>&lt;param name="{@link #setMaxConnections(int) maxConnections}" value="2"/>
+ * <li>&lt;param name="{@link #setCopyWhenReading(boolean) copyWhenReading}" value="true"/> </ul>
  * <p/>
  * <p/>
- * Only URL, user name and password usually need to be set.
- * The remaining settings are generated using the database URL sub-protocol from the
- * database type resource file.
+ * Only URL, user name and password usually need to be set. The remaining settings are generated using the database URL
+ * sub-protocol from the database type resource file.
  * <p/>
- * A three level directory structure is used to avoid placing too many
- * files in a single directory. The chosen structure is designed to scale
- * up to billions of distinct records.
+ * A three level directory structure is used to avoid placing too many files in a single directory. The chosen structure
+ * is designed to scale up to billions of distinct records.
  * <p/>
- * For Microsoft SQL Server 2005, there is a problem reading large BLOBs. You will need to use
- * the JDBC driver version 1.2 or newer, and append ;responseBuffering=adaptive to the database URL.
- * Don't append ;selectMethod=cursor, otherwise it can still run out of memory.
- * Example database URL: jdbc:sqlserver://localhost:4220;DatabaseName=test;responseBuffering=adaptive
+ * For Microsoft SQL Server 2005, there is a problem reading large BLOBs. You will need to use the JDBC driver version
+ * 1.2 or newer, and append ;responseBuffering=adaptive to the database URL. Don't append ;selectMethod=cursor,
+ * otherwise it can still run out of memory. Example database URL: jdbc:sqlserver://localhost:4220;DatabaseName=test;responseBuffering=adaptive
  * <p/>
- * By default, the data is copied to a temp file when reading, to avoid problems when reading multiple
- * blobs at the same time.
+ * By default, the data is copied to a temp file when reading, to avoid problems when reading multiple blobs at the same
+ * time.
  * <p/>
- * JFrog Ltd modifications for better concurrency and garbage collection.<br/>
- * Garbage collection is done the opposite way:<br/>
- * <ol><li>First collect all data identifier present in the data store into a toRemove concurrent map.</li>
- * <li>Then activate the scanning of the different persistence manager that will call touch.</li>
- * <li>Touch will remove the entry from the toRemove concurrent map.</li>
- * <li>After scanning bulk deletes from the remaining data identifier in the toRemove map will be send to the DB.
- * The default is 20 lines at a time. It can be tune depending on your DB rollback segment size.</li></ol>
+ * JFrog Ltd modifications for better concurrency and garbage collection.<br/> Garbage collection is done the opposite
+ * way:<br/> <ol><li>First collect all data identifier present in the data store into a toRemove concurrent map.</li>
+ * <li>Then activate the scanning of the different persistence manager that will call touch.</li> <li>Touch will remove
+ * the entry from the toRemove concurrent map.</li> <li>After scanning bulk deletes from the remaining data identifier
+ * in the toRemove map will be send to the DB. The default is 20 lines at a time. It can be tune depending on your DB
+ * rollback segment size.</li></ol>
  *
  * @author freds
  * @date Mar 12, 2009
  */
-public class ArtifactoryDbDataStore implements DataStoreIfc {
-    private static final Logger log = LoggerFactory.getLogger(ArtifactoryDbDataStore.class);
+public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
+    private static final Logger log = LoggerFactory.getLogger(ArtifactoryDbDataStoreImpl.class);
 
     /**
      * The digest algorithm used to uniquely identify records.
@@ -165,77 +156,67 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     protected String tablePrefix = "";
 
     /**
-     * This is the property 'table'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'table' in the [databaseType].properties file, initialized with the default value.
      */
     protected String tableSQL = "DATASTORE";
 
     /**
-     * This is the property 'createTable'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'createTable' in the [databaseType].properties file, initialized with the default value.
      */
     protected String createTableSQL =
             "CREATE TABLE ${tablePrefix}${table}(ID VARCHAR(255) PRIMARY KEY, LENGTH BIGINT, LAST_MODIFIED BIGINT, DATA BLOB)";
 
     /**
-     * This is the property 'insertTemp'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'insertTemp' in the [databaseType].properties file, initialized with the default value.
      */
     protected String insertTempSQL =
             "INSERT INTO ${tablePrefix}${table} VALUES(?, 0, ?, NULL)";
 
     /**
-     * This is the property 'updateData'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'updateData' in the [databaseType].properties file, initialized with the default value.
      */
     protected String updateDataSQL =
             "UPDATE ${tablePrefix}${table} SET DATA=? WHERE ID=?";
 
     /**
-     * This is the property 'updateLastModified'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'updateLastModified' in the [databaseType].properties file, initialized with the default
+     * value.
      */
     protected String updateLastModifiedSQL =
             "UPDATE ${tablePrefix}${table} SET LAST_MODIFIED=? WHERE ID=? AND LAST_MODIFIED<?";
 
     /**
-     * This is the property 'update'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'update' in the [databaseType].properties file, initialized with the default value.
      */
     protected String updateSQL =
             "UPDATE ${tablePrefix}${table} SET ID=?, LENGTH=?, LAST_MODIFIED=? WHERE ID=? AND NOT EXISTS(SELECT ID FROM ${tablePrefix}${table} WHERE ID=?)";
 
     /**
-     * This is the property 'delete'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'delete' in the [databaseType].properties file, initialized with the default value.
      */
     protected String deleteSQL =
             "DELETE FROM ${tablePrefix}${table} WHERE ID=?";
 
     /**
-     * This is the property 'deleteOlder'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'deleteOlder' in the [databaseType].properties file, initialized with the default value.
      */
     protected String deleteOlderSQL =
             "DELETE FROM ${tablePrefix}${table} WHERE ID in ";
 
     /**
-     * This is the property 'selectMeta'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'selectMeta' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectMetaSQL =
             "SELECT LENGTH, LAST_MODIFIED FROM ${tablePrefix}${table} WHERE ID=?";
 
     /**
-     * This is the property 'selectAll'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'selectAll' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectAllSQL =
             "SELECT ID, LENGTH FROM ${tablePrefix}${table}";
 
     /**
-     * This is the property 'selectData'
-     * in the [databaseType].properties file, initialized with the default value.
+     * This is the property 'selectData' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectDataSQL =
             "SELECT ID, DATA FROM ${tablePrefix}${table} WHERE ID=?";
@@ -246,8 +227,7 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     protected String storeStream = STORE_TEMP_FILE;
 
     /**
-     * Write to a temporary file to get the length (slow, but always works).
-     * This is the default setting.
+     * Write to a temporary file to get the length (slow, but always works). This is the default setting.
      */
     public static final String STORE_TEMP_FILE = "tempFile";
 
@@ -262,8 +242,7 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     public static final String STORE_SIZE_MAX = "max";
 
     /**
-     * Copy the stream to a temp file before returning it.
-     * Enabled by default to support concurrent reads.
+     * Copy the stream to a temp file before returning it. Enabled by default to support concurrent reads.
      */
     private boolean copyWhenReading = true;
 
@@ -375,8 +354,7 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * Creates a temp file and copies the data there.
-     * The input stream is closed afterwards.
+     * Creates a temp file and copies the data there. The input stream is closed afterwards.
      *
      * @param in the input stream
      * @return the file
@@ -655,9 +633,8 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * Get the expanded property value. The following placeholders are supported:
-     * ${table}: the table name (the default is DATASTORE) and
-     * ${tablePrefix}: the prefix as set in the configuration (empty by default).
+     * Get the expanded property value. The following placeholders are supported: ${table}: the table name (the default
+     * is DATASTORE) and ${tablePrefix}: the prefix as set in the configuration (empty by default).
      *
      * @param prop         the properties object
      * @param key          the key
@@ -754,8 +731,8 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * Set the database type. By default the sub-protocol of the JDBC database URL is used if it is not set.
-     * It must match the resource file [databaseType].properties. Example: mysql.
+     * Set the database type. By default the sub-protocol of the JDBC database URL is used if it is not set. It must
+     * match the resource file [databaseType].properties. Example: mysql.
      *
      * @param databaseType
      */
@@ -773,9 +750,8 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * Set the database driver class name.
-     * If not set, the default driver class name for the database type is used,
-     * as set in the [databaseType].properties resource; key 'driver'.
+     * Set the database driver class name. If not set, the default driver class name for the database type is used, as
+     * set in the [databaseType].properties resource; key 'driver'.
      *
      * @param driver
      */
@@ -811,8 +787,7 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * Set the database URL.
-     * Example: jdbc:postgresql:test
+     * Set the database URL. Example: jdbc:postgresql:test
      *
      * @param url
      */
@@ -931,8 +906,7 @@ public class ArtifactoryDbDataStore implements DataStoreIfc {
     }
 
     /**
-     * The the copy setting. If enabled,
-     * a stream is always copied to a temporary file when reading a stream.
+     * The the copy setting. If enabled, a stream is always copied to a temporary file when reading a stream.
      *
      * @param copyWhenReading the new setting
      */

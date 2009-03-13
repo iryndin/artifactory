@@ -21,7 +21,7 @@
     <!-- http://wiki.apache.org/jackrabbit/DataStore -->
 
     <!-- MySQL Datastore -->
-    <DataStore class="org.artifactory.jcr.jackrabbit.ArtifactoryDbDataStore">
+    <DataStore class="org.artifactory.jcr.jackrabbit.ArtifactoryDbDataStoreImpl">
         <param name="url" value="jdbc:mysql://localhost:3306/artifactory?useUnicode=true&amp;characterEncoding=UTF-8"/>
         <param name="tablePrefix" value=""/>
         <param name="user" value="artifactory_user"/>

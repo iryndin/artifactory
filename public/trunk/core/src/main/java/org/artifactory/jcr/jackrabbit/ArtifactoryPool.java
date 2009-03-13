@@ -28,14 +28,13 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Implementation of a simple ConnectionRecoveryManager pool.
- * The maximum number of pooled objects can be set, and if more objects
- * are requested the pool waits until one object is put back.
+ * Implementation of a simple ConnectionRecoveryManager pool. The maximum number of pooled objects can be set, and if
+ * more objects are requested the pool waits until one object is put back.
  */
 public class ArtifactoryPool {
     protected final int maxSize;
     protected final List<ConnectionRecoveryManager> all = new CopyOnWriteArrayList<ConnectionRecoveryManager>();
-    protected final ArtifactoryDbDataStore factory;
+    protected final ArtifactoryDbDataStoreImpl factory;
     protected final BlockingQueue<ConnectionRecoveryManager> pool =
             new LinkedBlockingQueue<ConnectionRecoveryManager>();
     private final long timeout = ConstantsValue.lockTimeoutSecs.getLong() / 10L;
@@ -46,15 +45,14 @@ public class ArtifactoryPool {
      * @param factory the db data store
      * @param maxSize the maximum number of objects in the pool.
      */
-    protected ArtifactoryPool(ArtifactoryDbDataStore factory, int maxSize) {
+    protected ArtifactoryPool(ArtifactoryDbDataStoreImpl factory, int maxSize) {
         this.factory = factory;
         this.maxSize = Math.max(1, maxSize);
     }
 
     /**
-     * Get a connection from the pool. This method may open a new connection if
-     * required, or if the maximum number of connections are opened, it will
-     * wait for one to be returned.
+     * Get a connection from the pool. This method may open a new connection if required, or if the maximum number of
+     * connections are opened, it will wait for one to be returned.
      *
      * @return the connection
      */

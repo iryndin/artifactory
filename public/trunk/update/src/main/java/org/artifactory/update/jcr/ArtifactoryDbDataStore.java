@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
  * @author freds
  * @date Mar 12, 2009
  */
-public interface DataStoreIfc extends DataStore {
+public interface ArtifactoryDbDataStore extends DataStore {
     /**
      * Get the database type (if set).
      *

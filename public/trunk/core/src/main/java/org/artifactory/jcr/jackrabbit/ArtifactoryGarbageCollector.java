@@ -49,13 +49,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Garbage collector for DataStore. This implementation is iterates through all
- * nodes and reads the binary properties. To detect nodes that are moved while
- * the scan runs, event listeners are started. Like the well known garbage
- * collection in Java, the items that are still in use are marked. Currently
- * this achieved by updating the modified date of the entries. Newly added
- * entries are detected because the modified date is changed when they are
- * added.
+ * Garbage collector for DataStore. This implementation is iterates through all nodes and reads the binary properties.
+ * To detect nodes that are moved while the scan runs, event listeners are started. Like the well known garbage
+ * collection in Java, the items that are still in use are marked. Currently this achieved by updating the modified date
+ * of the entries. Newly added entries are detected because the modified date is changed when they are added.
  * <p/>
  * Example code to run the data store garbage collection:
  * <pre>
@@ -70,7 +67,7 @@ public class ArtifactoryGarbageCollector {
 
     private final Collection<String> binaryPropertyNames = new HashSet<String>();
 
-    private final ArtifactoryDbDataStore store;
+    private final ArtifactoryDbDataStoreImpl store;
 
     private long startScanTimestamp;
 
@@ -86,15 +83,14 @@ public class ArtifactoryGarbageCollector {
     private int initialCount;
 
     /**
-     * Create a new garbage collector.
-     * This method is usually not called by the application, it is called
-     * by SessionImpl.createDataStoreGarbageCollector().
+     * Create a new garbage collector. This method is usually not called by the application, it is called by
+     * SessionImpl.createDataStoreGarbageCollector().
      *
      * @param list the persistence managers
      */
     public ArtifactoryGarbageCollector(SessionImpl session, IterablePersistenceManager[] list, Session[] sessionList) {
         RepositoryImpl rep = (RepositoryImpl) session.getRepository();
-        store = (ArtifactoryDbDataStore) rep.getDataStore();
+        store = (ArtifactoryDbDataStoreImpl) rep.getDataStore();
         this.pmList = list;
         this.persistenceManagerScan = list != null;
         this.sessionList = sessionList;
@@ -103,9 +99,8 @@ public class ArtifactoryGarbageCollector {
     }
 
     /**
-     * Add all the property names that can have a BINARY type.
-     * ATTENTION: When using this if a property with binary type is not listed,
-     * the garbage collector will delete the data.
+     * Add all the property names that can have a BINARY type. ATTENTION: When using this if a property with binary type
+     * is not listed, the garbage collector will delete the data.
      *
      * @param propNames array of property names
      */
@@ -114,10 +109,10 @@ public class ArtifactoryGarbageCollector {
     }
 
     /**
-     * Scan the repository. The garbage collector will iterate over all nodes in the repository
-     * and update the last modified date. If all persistence managers implement the
-     * IterablePersistenceManager interface, this mechanism will be used; if not, the garbage
-     * collector will scan the repository using the JCR API starting from the root node.
+     * Scan the repository. The garbage collector will iterate over all nodes in the repository and update the last
+     * modified date. If all persistence managers implement the IterablePersistenceManager interface, this mechanism
+     * will be used; if not, the garbage collector will scan the repository using the JCR API starting from the root
+     * node.
      *
      * @return the total size of referenced binary properties
      * @throws javax.jcr.RepositoryException
@@ -166,10 +161,8 @@ public class ArtifactoryGarbageCollector {
     }
 
     /**
-     * Enable or disable using the IterablePersistenceManager interface
-     * to scan the items. This is important for clients that need
-     * the complete Node implementation in the ScanEventListener
-     * callback.
+     * Enable or disable using the IterablePersistenceManager interface to scan the items. This is important for clients
+     * that need the complete Node implementation in the ScanEventListener callback.
      *
      * @param allow true if using the IterablePersistenceManager interface is allowed
      */
@@ -281,7 +274,7 @@ public class ArtifactoryGarbageCollector {
         return result;
     }
 
-    public ArtifactoryDbDataStore getDataStore() {
+    public ArtifactoryDbDataStoreImpl getDataStore() {
         return store;
     }
 

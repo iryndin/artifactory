@@ -12,7 +12,7 @@ import org.artifactory.cli.common.Command;
 import org.artifactory.cli.main.CommandDefinition;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.config.JcrConfResourceLoader;
-import org.artifactory.update.jcr.DataStoreIfc;
+import org.artifactory.update.jcr.ArtifactoryDbDataStore;
 import org.artifactory.update.jcr.JcrRepositoryForExport;
 
 import javax.jcr.RepositoryException;
@@ -92,7 +92,7 @@ public class CompressCommand extends BaseCommand implements Command {
      */
     private void compressDataStore(RepositoryImpl repositoryImpl)
             throws RepositoryException, SQLException {
-        DataStoreIfc dataStore = (DataStoreIfc) repositoryImpl.getDataStore();
+        ArtifactoryDbDataStore dataStore = (ArtifactoryDbDataStore) repositoryImpl.getDataStore();
         if (canCompress(dataStore.getDatabaseType())) {
             ConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
