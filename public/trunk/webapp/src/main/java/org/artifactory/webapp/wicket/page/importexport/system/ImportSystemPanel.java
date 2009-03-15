@@ -160,6 +160,7 @@ public class ImportSystemPanel extends TitledPanel {
                             error("Directory '" + importFromPath + "' is empty.");
                             return;
                         }
+                        importFromFolder = importFromPath;
                     } else if (isZip(importFromPath)) {
                         //Extract the archive
                         status.setStatus("Extracting archive...", log);

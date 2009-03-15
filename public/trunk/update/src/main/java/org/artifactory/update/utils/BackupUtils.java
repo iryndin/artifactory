@@ -38,7 +38,8 @@ public class BackupUtils {
 
     public static ArtifactoryVersion findVersion(File backupFolder) {
         if (backupFolder == null || !backupFolder.exists()) {
-            throw new IllegalArgumentException("Cannot find Artifactory of null or non existent folder");
+            throw new IllegalArgumentException(
+                    "Cannot find Artifactory of null or non existent folder " + backupFolder);
         }
 
         File propFile = new File(backupFolder, ArtifactoryHome.ARTIFACTORY_PROPERTIES_FILE);
