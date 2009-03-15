@@ -24,6 +24,7 @@ import org.apache.jackrabbit.core.data.db.TempFileInputStream;
 import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.apache.jackrabbit.core.persistence.bundle.util.TrackingInputStream;
 import org.apache.jackrabbit.util.Text;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.update.jcr.ArtifactoryDbDataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +104,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     /**
      * The maximum number of rows deleted in one SQL query.
      */
-    protected int batchDeleteSize = 25;
+    protected int batchDeleteSize = ConstantsValue.gcBatchDeleteMaxSize.getInt();
 
     /**
      * The database URL used.
@@ -481,7 +482,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         ConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
         try {
-            // SELECT ID FROM DATASTORE
+            // SELECT ID, LENGTH FROM DATASTORE
             PreparedStatement prep = conn.executeStmt(selectAllSQL, new Object[0]);
             rs = prep.getResultSet();
             while (rs.next()) {
@@ -682,9 +683,10 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         } catch (DataStoreException e) {
             throw new RuntimeException("Could not load all data store identifier: " + e.getMessage(), e);
         }
+        long dataStoreQueryTime = System.currentTimeMillis() - start;
         log.debug("Scanning data store of {} elements and {} bytes in {}ms", new Object[]{
-                toRemove.size(), dataStoreSize, System.currentTimeMillis() - start});
-        return dataStoreSize;
+                toRemove.size(), dataStoreSize, dataStoreQueryTime});
+        return dataStoreQueryTime;
     }
 
     public long getDataStoreSize() {
