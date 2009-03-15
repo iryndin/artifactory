@@ -490,8 +490,8 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 long length = rs.getLong(2);
                 if (!id.startsWith(TEMP_PREFIX)) {
                     result.put(id, length);
+                    totalSize += length;
                 }
-                totalSize += length;
             }
             dataStoreSize = totalSize;
             return result;
