@@ -27,13 +27,13 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.artifactory.common.ConstantsValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -75,12 +75,15 @@ public class ArtifactoryGarbageCollector {
 
     private final IterablePersistenceManager[] pmList;
 
-    private final Session[] sessionList;
+    private final SessionWrapper[] sessionList;
 
     private boolean persistenceManagerScan;
 
     private long initialSize;
     private int initialCount;
+    private long totalBinaryPropertiesQueryTime;
+    private long totalCountBinaryProperties;
+    private long dataStoreQueryTime;
 
     /**
      * Create a new garbage collector. This method is usually not called by the application, it is called by
@@ -93,7 +96,10 @@ public class ArtifactoryGarbageCollector {
         store = (ArtifactoryDbDataStoreImpl) rep.getDataStore();
         this.pmList = list;
         this.persistenceManagerScan = list != null;
-        this.sessionList = sessionList;
+        this.sessionList = new SessionWrapper[sessionList.length];
+        for (int i = 0; i < sessionList.length; i++) {
+            this.sessionList[i] = new SessionWrapper(sessionList[i]);
+        }
         this.startScanTimestamp = 0;
         this.stopScanTimestamp = 0;
     }
@@ -126,38 +132,91 @@ public class ArtifactoryGarbageCollector {
         long now = System.currentTimeMillis();
         if (startScanTimestamp == 0) {
             startScanTimestamp = now;
-            initialSize = store.scanDataStore();
+            dataStoreQueryTime = store.scanDataStore();
+            initialSize = store.getDataStoreSize();
             initialCount = store.nbElementsToClean();
         }
         if (pmList == null || !persistenceManagerScan) {
-            long result = 0L;
-            for (Session aSessionList : sessionList) {
-                result += scanBinaryProperties(aSessionList);
-            }
-            return result;
+            return scanningSessionList();
         } else {
             return scanPersistenceManagers();
         }
     }
 
-    private long scanBinaryProperties(Session session) throws RepositoryException, IllegalStateException, IOException {
-        long result = 0L;
-        for (String propertyName : binaryPropertyNames) {
+    private long scanningSessionList() throws RepositoryException, IOException {
+        totalBinaryPropertiesQueryTime = 0L;
+        totalCountBinaryProperties = 0L;
+        for (SessionWrapper aSessionList : sessionList) {
+            aSessionList.findBinaryProperties();
+            // If one result query cannot find anything (-1) then the total should be -1
+            if (aSessionList.countBinaryProperties >= 0) {
+                totalCountBinaryProperties += aSessionList.countBinaryProperties;
+            } else {
+                totalCountBinaryProperties = -1L;
+            }
+            totalBinaryPropertiesQueryTime += aSessionList.binaryPropertiesQueryTime;
+        }
+        log.debug("Binary properties query execution time for took {} ms and found {} items out of {} in datastore",
+                new Object[]{totalBinaryPropertiesQueryTime, totalCountBinaryProperties, initialCount});
+        boolean activateGc = ((totalCountBinaryProperties < 0) ||
+                (initialCount - totalCountBinaryProperties > ConstantsValue.gcThreshold.getInt()));
+        if (activateGc) {
+            log.debug("Activating GC");
+            long result = 0L;
+            for (SessionWrapper aSessionList : sessionList) {
+                result += aSessionList.readBinaryProperties();
+            }
+            return result;
+        } else {
+            log.debug("GC Threshold not reached. GC not activated");
+            store.clearInUse();
+            return -1L;
+        }
+    }
+
+    private class SessionWrapper {
+        private final Session session;
+        private long binaryPropertiesQueryTime;
+        private long countBinaryProperties;
+        private NodeIterator results;
+
+        SessionWrapper(Session session) {
+            this.session = session;
+        }
+
+        void findBinaryProperties() throws RepositoryException, IllegalStateException, IOException {
             long start = System.currentTimeMillis();
-            String xpathQuery = "/jcr:root//*[@" + propertyName + "]";
+            StringBuilder xpathBuilder = new StringBuilder("/jcr:root//*[");
+            boolean first = true;
+            for (String propertyName : binaryPropertyNames) {
+                if (!first) {
+                    xpathBuilder.append(" or ");
+                }
+                xpathBuilder.append("@").append(propertyName);
+                first = false;
+            }
+            xpathBuilder.append("]");
             Workspace workspace = session.getWorkspace();
             QueryManager queryManager = workspace.getQueryManager();
+            String xpathQuery = xpathBuilder.toString();
             Query queryJar = queryManager.createQuery(xpathQuery, Query.XPATH);
             QueryResult queryResult = queryJar.execute();
-            log.debug("GC query execution timefor {}: {} ms",
-                    xpathQuery,
-                    System.currentTimeMillis() - start);
-            NodeIterator iterator = queryResult.getNodes();
-            while (iterator.hasNext()) {
-                result += this.binarySize(iterator.nextNode());
-            }
+            results = queryResult.getNodes();
+            // Multiple values binary properties affect the threshold calculation but in the safe direction =>
+            // TODO: The system should learn about the multiple binaries so next round of GC the Threshold is accurate
+            countBinaryProperties = results.getSize();
+            binaryPropertiesQueryTime = System.currentTimeMillis() - start;
+            log.debug("GC query execution time for {} took {} ms and found {} items out of {} in datastore",
+                    new Object[]{xpathQuery, binaryPropertiesQueryTime, countBinaryProperties, initialCount});
         }
-        return result;
+
+        long readBinaryProperties() throws RepositoryException, IOException {
+            long result = 0L;
+            while (results.hasNext()) {
+                result += binarySize(results.nextNode());
+            }
+            return result;
+        }
     }
 
     /**
@@ -227,15 +286,20 @@ public class ArtifactoryGarbageCollector {
         checkScanStopped();
         int elToClean = store.nbElementsToClean();
         if (elToClean > 0) {
+            long start = System.currentTimeMillis();
             long result = store.cleanUnreferencedItems();
-            log.info("Artifactory Jackrabbit's datastore garbage collector executed in " +
-                    (System.currentTimeMillis() - startScanTimestamp) + "ms :\n" +
-                    "Scanning took: " + (stopScanTimestamp - startScanTimestamp) + "ms\n" +
-                    "Initial element count: " + initialCount + "\n" +
-                    "Initial total size: " + initialSize + "\n" +
-                    "Elements cleaned: " + elToClean + "\n" +
-                    "Total size cleaned: " + result + "\n" +
-                    "Current total size: " + store.getDataStoreSize()
+            long end = System.currentTimeMillis();
+            log.info("Artifactory Jackrabbit's datastore garbage collector report:\n" +
+                    "Total execution:         " + (end - startScanTimestamp) + "ms :\n" +
+                    "Data Store Query:        " + dataStoreQueryTime + "ms\n" +
+                    "Binary Properties Query: " + totalBinaryPropertiesQueryTime + "ms\n" +
+                    "Total Scanning:          " + (stopScanTimestamp - startScanTimestamp) + "ms\n" +
+                    "Deletion:                " + (end - start) + "ms\n" +
+                    "Initial element count:   " + initialCount + "\n" +
+                    "Initial total size:      " + initialSize + "\n" +
+                    "Elements cleaned:        " + elToClean + "\n" +
+                    "Total size cleaned:      " + result + "\n" +
+                    "Current total size:      " + store.getDataStoreSize()
             );
             return result;
         }
@@ -257,17 +321,21 @@ public class ArtifactoryGarbageCollector {
     private long binarySize(final Node n) throws RepositoryException,
             IllegalStateException, IOException {
         long result = 0;
-        Thread.yield();
-        for (PropertyIterator it = n.getProperties(); it.hasNext();) {
-            Property p = it.nextProperty();
-            if (p.getType() == PropertyType.BINARY) {
-                if (p.getDefinition().isMultiple()) {
-                    long[] lengths = p.getLengths();
-                    for (long length : lengths) {
-                        result += length;
+        for (String propertyName : binaryPropertyNames) {
+            if (n.hasProperty(propertyName)) {
+                Property p = n.getProperty(propertyName);
+                if (p.getType() == PropertyType.BINARY) {
+                    if (p.getDefinition().isMultiple()) {
+                        long[] lengths = p.getLengths();
+                        for (long length : lengths) {
+                            result += length;
+                        }
+                    } else {
+                        result += p.getLength();
                     }
                 } else {
-                    result += p.getLength();
+                    log.error("Declared binary property name " + propertyName + " is not a binary property for node " +
+                            n.getPath());
                 }
             }
         }

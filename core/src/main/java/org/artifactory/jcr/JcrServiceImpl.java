@@ -766,9 +766,11 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
                 log.info("Datastore not yet initialize. Not running garbage collector...");
             }
             log.debug("Runnning Artifactory JackRabbit's datastore garbage collector...");
-            gc.scan();
-            gc.stopScan();
-            gc.deleteUnused();
+            long nbScan = gc.scan();
+            if (nbScan > 0L) {
+                gc.stopScan();
+                gc.deleteUnused();
+            }
         } catch (Exception e) {
             if (gc != null) {
                 try {

@@ -17,6 +17,7 @@
 package org.artifactory.schedule;
 
 import org.artifactory.cache.InternalCacheService;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.schedule.JcrGarbageCollector;
@@ -51,7 +52,8 @@ public class TaskServiceImpl implements TaskService {
         //Start the initial tasks
         //Activate the Garbage collector every 20 minutes after 5 minutes
         QuartzTask jcrGarbageCollectorTask =
-                new QuartzTask(JcrGarbageCollector.class, TimeUnit.SECONDS.toMillis(3 * 60),
+                new QuartzTask(JcrGarbageCollector.class,
+                        TimeUnit.SECONDS.toMillis(ConstantsValue.gcIntervalMins.getInt() * 60),
                         TimeUnit.SECONDS.toMillis(1 * 60));
         //new QuartzTask(JcrGarbageCollector.class, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(1));
         jcrGarbageCollectorTask.setSingleton(true);

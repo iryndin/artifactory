@@ -41,6 +41,9 @@ public enum ConstantsValue {
     artifactoryRevision("revision", null),
     metadataIdleTimeSecs("metadataCacheIdleTimeSecs", "1200"),
     versioningQueryIntervalSecs("versioningQueryIntervalSecs", "43200"),
+    gcIntervalMins("gcIntervalMins", "60"),
+    gcThreshold("gcThreshold", "100"),
+    gcBatchDeleteMaxSize("gcBatchDeleteMaxSize", "30"),
     logsRefreshRateSecs("logs.refreshrate.secs", "10");
 
     static final String SYS_PROP_PREFIX = "artifactory.";
