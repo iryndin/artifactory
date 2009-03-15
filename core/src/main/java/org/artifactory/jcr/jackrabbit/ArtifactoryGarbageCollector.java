@@ -27,7 +27,6 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.artifactory.common.ConstantsValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +80,8 @@ public class ArtifactoryGarbageCollector {
 
     private long initialSize;
     private int initialCount;
+    private long totalBinaryPropertiesCount;
     private long totalBinaryPropertiesQueryTime;
-    private long totalCountBinaryProperties;
     private long dataStoreQueryTime;
 
     /**
@@ -145,47 +144,46 @@ public class ArtifactoryGarbageCollector {
 
     private long scanningSessionList() throws RepositoryException, IOException {
         totalBinaryPropertiesQueryTime = 0L;
-        totalCountBinaryProperties = 0L;
+        totalBinaryPropertiesCount = 0L;
         for (SessionWrapper aSessionList : sessionList) {
-            aSessionList.findBinaryProperties();
-            // If one result query cannot find anything (-1) then the total should be -1
-            if (aSessionList.countBinaryProperties >= 0) {
-                totalCountBinaryProperties += aSessionList.countBinaryProperties;
-            } else {
-                totalCountBinaryProperties = -1L;
-            }
+            totalBinaryPropertiesCount += aSessionList.findBinaryProperties();
             totalBinaryPropertiesQueryTime += aSessionList.binaryPropertiesQueryTime;
         }
-        log.debug("Binary properties query execution time for took {} ms and found {} items out of {} in datastore",
-                new Object[]{totalBinaryPropertiesQueryTime, totalCountBinaryProperties, initialCount});
-        boolean activateGc = ((totalCountBinaryProperties < 0) ||
-                (initialCount - totalCountBinaryProperties > ConstantsValue.gcThreshold.getInt()));
-        if (activateGc) {
-            log.debug("Activating GC");
-            long result = 0L;
-            for (SessionWrapper aSessionList : sessionList) {
-                result += aSessionList.readBinaryProperties();
-            }
-            return result;
-        } else {
-            log.debug("GC Threshold not reached. GC not activated");
-            store.clearInUse();
-            return -1L;
+        log.debug("Binary properties query execution time for took {} ms and found {} nodes",
+                new Object[]{totalBinaryPropertiesQueryTime, totalBinaryPropertiesCount});
+        long result = 0L;
+        for (SessionWrapper aSessionList : sessionList) {
+            result += aSessionList.readBinaryProperties();
         }
+        return result;
     }
 
     private class SessionWrapper {
         private final Session session;
         private long binaryPropertiesQueryTime;
-        private long countBinaryProperties;
         private NodeIterator results;
+        private long totalNotTouched;
 
         SessionWrapper(Session session) {
             this.session = session;
         }
 
-        void findBinaryProperties() throws RepositoryException, IllegalStateException, IOException {
+        long findBinaryProperties() throws RepositoryException, IllegalStateException, IOException {
             long start = System.currentTimeMillis();
+            Workspace workspace = session.getWorkspace();
+            QueryManager queryManager = workspace.getQueryManager();
+            String queryString = getSqlQuery();
+            Query queryBinaryProperties = queryManager.createQuery(queryString, Query.SQL);
+            QueryResult queryResult = queryBinaryProperties.execute();
+            results = queryResult.getNodes();
+            binaryPropertiesQueryTime = System.currentTimeMillis() - start;
+            long size = results.getSize();
+            log.debug("GC query execution time for {} took {} ms and found {} items",
+                    new Object[]{queryString, binaryPropertiesQueryTime, size});
+            return size;
+        }
+
+        String getXPathQuery() {
             StringBuilder xpathBuilder = new StringBuilder("/jcr:root//*[");
             boolean first = true;
             for (String propertyName : binaryPropertyNames) {
@@ -196,18 +194,22 @@ public class ArtifactoryGarbageCollector {
                 first = false;
             }
             xpathBuilder.append("]");
-            Workspace workspace = session.getWorkspace();
-            QueryManager queryManager = workspace.getQueryManager();
             String xpathQuery = xpathBuilder.toString();
-            Query queryJar = queryManager.createQuery(xpathQuery, Query.XPATH);
-            QueryResult queryResult = queryJar.execute();
-            results = queryResult.getNodes();
-            // Multiple values binary properties affect the threshold calculation but in the safe direction =>
-            // TODO: The system should learn about the multiple binaries so next round of GC the Threshold is accurate
-            countBinaryProperties = results.getSize();
-            binaryPropertiesQueryTime = System.currentTimeMillis() - start;
-            log.debug("GC query execution time for {} took {} ms and found {} items out of {} in datastore",
-                    new Object[]{xpathQuery, binaryPropertiesQueryTime, countBinaryProperties, initialCount});
+            return xpathQuery;
+        }
+
+        private String getSqlQuery() {
+            StringBuilder sqlBuilder = new StringBuilder("select * from nt:base where ");
+            boolean first = true;
+            for (String propertyName : binaryPropertyNames) {
+                if (!first) {
+                    sqlBuilder.append(" or ");
+                }
+                sqlBuilder.append(propertyName).append(" IS NOT NULL");
+                first = false;
+            }
+            String xpathQuery = sqlBuilder.toString();
+            return xpathQuery;
         }
 
         long readBinaryProperties() throws RepositoryException, IOException {
@@ -216,6 +218,27 @@ public class ArtifactoryGarbageCollector {
                 result += binarySize(results.nextNode());
             }
             return result;
+        }
+
+        void debugResults() throws RepositoryException {
+            totalNotTouched = 0L;
+            StringBuilder debugBuilder = new StringBuilder();
+            while (results.hasNext()) {
+                int before = store.nbElementsToClean();
+                Node node = results.nextNode();
+                debugBuilder.append("Node ").append(node.getUUID()).append(" '").append(node.getPath()).append("'");
+                for (String propertyName : binaryPropertyNames) {
+                    Property p = node.getProperty(propertyName);
+                    debugBuilder.append(" ").append(p.getName()).append("=").append(p.getLength());
+                }
+                boolean touched = (before - store.nbElementsToClean()) > 0;
+                debugBuilder.append(" touched ").append(touched).append("\n");
+                if (!touched) {
+                    totalNotTouched++;
+                }
+            }
+            debugBuilder.append("\n").append("Total not touched ").append(totalNotTouched);
+            log.debug(debugBuilder.toString());
         }
     }
 
