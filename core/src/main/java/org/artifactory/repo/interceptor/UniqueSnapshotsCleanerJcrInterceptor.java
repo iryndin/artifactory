@@ -88,9 +88,10 @@ public class UniqueSnapshotsCleanerJcrInterceptor implements LocalRepoIntercepto
             }
             itemsByDate.removeAll(itemsToKeep);
             for (ItemDesc itemDesc : itemsByDate) {
-                itemDesc.item.bruteForceDelete();
+                JcrFsItem fsItem = itemDesc.item;
+                fsItem.getLocalRepo().undeploy(fsItem.getRepoPath());
                 if (log.isInfoEnabled()) {
-                    log.info("Removed old unique snapshot '" + itemDesc.item.getRelativePath() + "'.");
+                    log.info("Removed old unique snapshot '" + fsItem.getRelativePath() + "'.");
                 }
             }
         }
