@@ -491,11 +491,11 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
                 } else {
                     try {
                         getTransactionalMe().deploy(targetRepo, artifactInfo, false, file);
+                    } catch (IllegalArgumentException iae) {
+                        status.setWarning(iae.getMessage(), log);
                     } catch (Exception e) {
-                        String msg = "Error during deployment.";
+                        String msg = "Error during deployment";
                         status.setError(msg, e, log);
-                        log.error(msg, e);
-                        continue;
                     }
                 }
             }
