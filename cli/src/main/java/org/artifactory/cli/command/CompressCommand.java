@@ -33,8 +33,9 @@ import java.util.Properties;
  * @author Noam Tenne
  */
 public class CompressCommand extends BaseCommand implements Command {
-    private final String COMPRESS_COMMAND = "CALL SYSCS_UTIL.SYSCS_INPLACE_COMPRESS_TABLE(?, ?, ?, ?, ?)";
-
+    private final String COMPRESS_IP_COMMAND =
+            "CALL SYSCS_UTIL.SYSCS_INPLACE_COMPRESS_TABLE(?, ?, ?, ?, ?)";
+    private final String COMPRESS_COMMAND = "CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)";
     private final String PREFIX_PROPERTY_NAME = "schemaObjectPrefix";
 
     /**
@@ -72,7 +73,8 @@ public class CompressCommand extends BaseCommand implements Command {
         JcrRepositoryForExport repositoryForExport = new JcrRepositoryForExport();
         JcrConfResourceLoader confResourceLoader = new JcrConfResourceLoader("repo.xml");
         repositoryForExport.setRepoXml(confResourceLoader);
-        RepositoryImpl repositoryImpl = ((RepositoryImpl) repositoryForExport.createJcrRepository());
+        RepositoryImpl repositoryImpl =
+                ((RepositoryImpl) repositoryForExport.createJcrRepository());
         try {
             compressWorkspace(repositoryImpl);
             compressDataStore(repositoryImpl);
@@ -97,6 +99,11 @@ public class CompressCommand extends BaseCommand implements Command {
             ConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
             CallableStatement cs = connection.prepareCall(COMPRESS_COMMAND);
+            cs.setString(1, "APP");
+            cs.setString(2, "DATASTORE");
+            cs.setShort(3, (short) 1);
+            cs.execute();
+            cs = connection.prepareCall(COMPRESS_IP_COMMAND);
             cs.setString(1, "APP");
             cs.setString(2, "DATASTORE");
             cs.setShort(3, (short) 1);
@@ -140,6 +147,11 @@ public class CompressCommand extends BaseCommand implements Command {
                             (currentTableName.startsWith(pmSchemaPrefix))) {
                         //System.out.println("Compressing "+currentSchemaName+"."+currentTableName);
                         CallableStatement cs = connection.prepareCall(COMPRESS_COMMAND);
+                        cs.setString(1, currentSchemaName);
+                        cs.setString(2, currentTableName);
+                        cs.setShort(3, (short) 1);
+                        cs.execute();
+                        cs = connection.prepareCall(COMPRESS_IP_COMMAND);
                         cs.setString(1, currentSchemaName);
                         cs.setString(2, currentTableName);
                         cs.setShort(3, (short) 1);
