@@ -161,6 +161,7 @@ public class PermissionTarget implements ObjectIdentity {
         return PermissionTarget.class;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -174,6 +175,7 @@ public class PermissionTarget implements ObjectIdentity {
         return name.equals(target.getName());
     }
 
+    @Override
     public int hashCode() {
         return name.hashCode();
     }
