@@ -98,18 +98,8 @@ public class CompressCommand extends BaseCommand implements Command {
         if (canCompress(dataStore.getDatabaseType())) {
             ConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
-            CallableStatement cs = connection.prepareCall(COMPRESS_COMMAND);
-            cs.setString(1, "APP");
-            cs.setString(2, "DATASTORE");
-            cs.setShort(3, (short) 1);
-            cs.execute();
-            cs = connection.prepareCall(COMPRESS_IP_COMMAND);
-            cs.setString(1, "APP");
-            cs.setString(2, "DATASTORE");
-            cs.setShort(3, (short) 1);
-            cs.setShort(4, (short) 1);
-            cs.setShort(5, (short) 1);
-            cs.execute();
+            executeCall(connection, COMPRESS_COMMAND, "APP", "DATASTORE", 1);
+            executeCall(connection, COMPRESS_IP_COMMAND, "APP", "DATASTORE", 3);
             connection.commit();
             crm.close();
         }
@@ -146,23 +136,35 @@ public class CompressCommand extends BaseCommand implements Command {
                     if ((currentTableName.startsWith(fsSchemaPrefix)) ||
                             (currentTableName.startsWith(pmSchemaPrefix))) {
                         //System.out.println("Compressing "+currentSchemaName+"."+currentTableName);
-                        CallableStatement cs = connection.prepareCall(COMPRESS_COMMAND);
-                        cs.setString(1, currentSchemaName);
-                        cs.setString(2, currentTableName);
-                        cs.setShort(3, (short) 1);
-                        cs.execute();
-                        cs = connection.prepareCall(COMPRESS_IP_COMMAND);
-                        cs.setString(1, currentSchemaName);
-                        cs.setString(2, currentTableName);
-                        cs.setShort(3, (short) 1);
-                        cs.setShort(4, (short) 1);
-                        cs.setShort(5, (short) 1);
-                        cs.execute();
+                        executeCall(connection, COMPRESS_COMMAND, currentSchemaName, currentTableName, 1);
+                        executeCall(connection, COMPRESS_IP_COMMAND, currentSchemaName, currentTableName, 3);
                     }
                 }
                 connection.commit();
             }
         }
+    }
+
+    /**
+     * Executes the given call (does not commit)
+     *
+     * @param connection  Database connection
+     * @param command     Command to execute
+     * @param schemaName  Name of selected schema
+     * @param tableName   Name of selected table
+     * @param paramLength Length of short params needed for the command
+     * @throws SQLException
+     */
+    private void executeCall(Connection connection, String command, String schemaName, String tableName,
+            int paramLength) throws SQLException {
+        CallableStatement cs = connection.prepareCall(command);
+        cs.setString(1, schemaName);
+        cs.setString(2, tableName);
+        paramLength += 3;
+        for (int i = 3; i < paramLength; i++) {
+            cs.setShort(i, (short) 1);
+        }
+        cs.execute();
     }
 
     /**
