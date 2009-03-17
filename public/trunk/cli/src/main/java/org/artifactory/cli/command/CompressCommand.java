@@ -98,8 +98,10 @@ public class CompressCommand extends BaseCommand implements Command {
         if (canCompress(dataStore.getDatabaseType())) {
             ConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
-            executeCall(connection, COMPRESS_COMMAND, "APP", "DATASTORE", 1);
-            executeCall(connection, COMPRESS_IP_COMMAND, "APP", "DATASTORE", 3);
+            final String schemaName = "APP";
+            final String tableName = "DATASTORE";
+            executeCall(connection, COMPRESS_COMMAND, schemaName, tableName, 1);
+            executeCall(connection, COMPRESS_IP_COMMAND, schemaName, tableName, 3);
             connection.commit();
             crm.close();
         }
