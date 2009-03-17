@@ -50,11 +50,11 @@ public class TaskServiceImpl implements TaskService {
     public void init() {
         // TODO: Minutes and Hours are only in Java 6 :(
         //Start the initial tasks
-        //Activate the Garbage collector every 20 minutes after 5 minutes
+        //Activate the Garbage collector every 1 hour after 1 minute
         QuartzTask jcrGarbageCollectorTask =
                 new QuartzTask(JcrGarbageCollector.class,
                         TimeUnit.SECONDS.toMillis(ConstantsValue.gcIntervalMins.getInt() * 60),
-                        TimeUnit.SECONDS.toMillis(1 * 60));
+                        TimeUnit.SECONDS.toMillis(60));
         //new QuartzTask(JcrGarbageCollector.class, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(1));
         jcrGarbageCollectorTask.setSingleton(true);
         startTask(jcrGarbageCollectorTask);
