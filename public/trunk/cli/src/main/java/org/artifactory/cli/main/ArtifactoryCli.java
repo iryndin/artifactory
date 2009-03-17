@@ -16,6 +16,7 @@
  */
 package org.artifactory.cli.main;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.artifactory.cli.command.HelpCommand;
 import org.artifactory.cli.common.Command;
@@ -41,6 +42,9 @@ public class ArtifactoryCli {
 
         if (args.length > 0) {
             String commandName = args[0];
+            if (!StringUtils.isEmpty(commandName)) {
+                commandName = commandName.trim();
+            }
             CommandDefinition commandDefinition;
             try {
                 commandDefinition = CommandDefinition.get(commandName);
