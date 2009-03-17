@@ -156,7 +156,7 @@ public abstract class BaseCommand implements Command {
 
         // After this point we have a commandDefinition usage and getOption go to commandDefinition
         for (; i < args.length; i++) {
-            String arg = args[i];
+            String arg = getCleanArgument(args[i]);
             if (!arg.startsWith(OptionInfo.OPTION_PREFIX)) {
                 System.out.println("Error parsing parameter " + arg);
                 usage();
@@ -197,7 +197,7 @@ public abstract class BaseCommand implements Command {
                 usage();
                 return -1;
             }
-            String arg = args[i];
+            String arg = getCleanArgument(args[i]);
             param.setValue(arg);
             if (param.getValue().startsWith(OptionInfo.OPTION_PREFIX)) {
                 // Unset on error
@@ -296,5 +296,15 @@ public abstract class BaseCommand implements Command {
         }
         ArtifactoryHome.setHomeDir(artifactoryHomeDir);
         log.info("Artifactory Home dir=[" + artifactoryHomeDir.getAbsolutePath() + "]");
+    }
+
+    /**
+     * Returns the given argument after being trimmed of the leading and trailing whitespaces
+     *
+     * @param argument Argument to trim
+     * @return String - Trimmed argument
+     */
+    private String getCleanArgument(String argument) {
+        return argument.trim();
     }
 }
