@@ -312,17 +312,29 @@ public class ArtifactoryGarbageCollector {
             long start = System.currentTimeMillis();
             long result = store.cleanUnreferencedItems();
             long end = System.currentTimeMillis();
+            String cleanResult = "";
+            if (result == 0L) {
+                // Actual deletion planned for next run
+                cleanResult =
+                        "Element count:           " + initialCount + "\n" +
+                                "Total size:              " + initialSize + " bytes\n" +
+                                "Marked for deletion:     " + elToClean;
+            } else {
+                // Did some cleanup
+                cleanResult =
+                        "Deletion execution:      " + (end - start) + "ms\n" +
+                                "Initial element count:   " + initialCount + "\n" +
+                                "Initial size:            " + initialSize + " bytes\n" +
+                                "Elements cleaned:        " + elToClean + "\n" +
+                                "Total size cleaned:      " + result + "\n" +
+                                "Current total size:      " + store.getDataStoreSize();
+            }
             log.info("Artifactory Jackrabbit's datastore garbage collector report:\n" +
                     "Total execution:         " + (end - startScanTimestamp) + "ms :\n" +
                     "Data Store Query:        " + dataStoreQueryTime + "ms\n" +
                     "Binary Properties Query: " + totalBinaryPropertiesQueryTime + "ms\n" +
                     "Total Scanning:          " + (stopScanTimestamp - startScanTimestamp) + "ms\n" +
-                    "Deletion:                " + (end - start) + "ms\n" +
-                    "Initial element count:   " + initialCount + "\n" +
-                    "Initial total size:      " + initialSize + "\n" +
-                    "Elements cleaned:        " + elToClean + "\n" +
-                    "Total size cleaned:      " + result + "\n" +
-                    "Current total size:      " + store.getDataStoreSize()
+                    cleanResult
             );
             return result;
         }
@@ -345,20 +357,31 @@ public class ArtifactoryGarbageCollector {
             IllegalStateException, IOException {
         long result = 0;
         for (String propertyName : binaryPropertyNames) {
-            if (n.hasProperty(propertyName)) {
-                Property p = n.getProperty(propertyName);
-                if (p.getType() == PropertyType.BINARY) {
-                    if (p.getDefinition().isMultiple()) {
-                        long[] lengths = p.getLengths();
-                        for (long length : lengths) {
-                            result += length;
+            try {
+                if (n.hasProperty(propertyName)) {
+                    Property p = n.getProperty(propertyName);
+                    if (p.getType() == PropertyType.BINARY) {
+                        if (p.getDefinition().isMultiple()) {
+                            long[] lengths = p.getLengths();
+                            for (long length : lengths) {
+                                result += length;
+                            }
+                        } else {
+                            result += p.getLength();
                         }
                     } else {
-                        result += p.getLength();
+                        log.error("Declared binary property name " + propertyName +
+                                " is not a binary property for node " +
+                                n.getPath());
                     }
+                }
+            } catch (DataStoreRecordNotFoundException e) {
+                String msg = "Could not read binary property " + propertyName + " on '" + n.getPath() + "' due to:" +
+                        e.getMessage();
+                if (log.isDebugEnabled()) {
+                    log.warn(msg, e);
                 } else {
-                    log.error("Declared binary property name " + propertyName + " is not a binary property for node " +
-                            n.getPath());
+                    log.warn(msg);
                 }
             }
         }

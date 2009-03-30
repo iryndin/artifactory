@@ -683,7 +683,12 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         if (typeName.equals(JcrFolder.NT_ARTIFACTORY_FOLDER)) {
             return new JcrFolder(node, repo);
         } else if (typeName.equals(JcrFile.NT_ARTIFACTORY_FILE)) {
-            return new JcrFile(node, repo);
+            JcrFile result = new JcrFile(node, repo);
+            if (result.isDeleted()) {
+                // does not exists
+                return null;
+            }
+            return result;
         } else {
             return null;
         }

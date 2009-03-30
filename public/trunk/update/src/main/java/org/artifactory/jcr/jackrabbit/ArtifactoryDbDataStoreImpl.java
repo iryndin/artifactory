@@ -43,10 +43,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A data store implementation that stores the records in a database using JDBC.
@@ -251,6 +253,10 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * All data identifiers that are currently in use are in this set until they are garbage collected.
      */
     protected Map<String, Long> toRemove = null;
+    /**
+     * The last set of identifier that where plan for deletion. Garbage collection in 2 pass.
+     */
+    protected Set<String> lastToRemove = null;
     private final Map<Integer, String> deleteQueries = new HashMap<Integer, String>();
     private long dataStoreSize;
 
@@ -379,40 +385,47 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     }
 
     public long cleanUnreferencedItems() throws DataStoreException {
-        if (nbElementsToClean() == 0) {
-            // Nothing to remove
+        if (lastToRemove == null) {
+            lastToRemove = new HashSet<String>(toRemove.keySet());
             return 0L;
         }
-        int size = toRemove.size();
-        if (size <= 0) {
+        if (nbElementsToClean() == 0) {
             // Nothing to remove
+            lastToRemove = null;
             return 0L;
         }
         long result = 0L;
         ConnectionRecoveryManager conn = getConnection();
         try {
-            if (batchDeleteSize > 0 && size > batchDeleteSize) {
-                size = batchDeleteSize;
-            }
-            String[] ids = new String[size];
-            int i = 0;
+            List<String> idToDelete = new ArrayList<String>();
+            List<String> idParsed = new ArrayList<String>();
             for (Map.Entry<String, Long> identifier : toRemove.entrySet()) {
-                ids[i++] = identifier.getKey();
-                result += identifier.getValue();
-                if (i >= size) {
-                    break;
+                String idKey = identifier.getKey();
+                idParsed.add(idKey);
+                if (lastToRemove.contains(idKey)) {
+                    idToDelete.add(idKey);
+                    result += identifier.getValue();
+                    if (idToDelete.size() >= batchDeleteSize) {
+                        break;
+                    }
+                } else {
+                    log.debug("Identifier " + idKey + " was not plan for deletion in previous scan");
                 }
             }
-            // DELETE FROM DATASTORE WHERE ID in ? (toremove)
-            String sql = getDeleteSql(ids.length);
-            PreparedStatement prep = conn.executeStmt(sql, ids);
-            int res = prep.getUpdateCount();
-            if (res != size) {
-                log.error("Deleting IDs " + Arrays.toString(ids) + " returned " + res + " updated");
-            } else {
-                log.debug("Deleted IDs " + Arrays.toString(ids) + " from data store");
+            int sizeToDelete = idToDelete.size();
+            if (sizeToDelete > 0) {
+                // DELETE FROM DATASTORE WHERE ID in ? (toremove)
+                String sql = getDeleteSql(sizeToDelete);
+                String[] ids = idToDelete.toArray(new String[sizeToDelete]);
+                PreparedStatement prep = conn.executeStmt(sql, ids);
+                int res = prep.getUpdateCount();
+                if (res != sizeToDelete) {
+                    log.error("Deleting IDs " + Arrays.toString(ids) + " returned " + res + " updated");
+                } else {
+                    log.debug("Deleted IDs " + Arrays.toString(ids) + " from data store");
+                }
             }
-            for (String id : ids) {
+            for (String id : idParsed) {
                 toRemove.remove(id);
             }
             dataStoreSize -= result;
@@ -450,7 +463,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public Iterator getAllIdentifiers() throws DataStoreException {
         long totalSize = 0L;
         ConnectionRecoveryManager conn = getConnection();
-        ArrayList list = new ArrayList();
+        List<DataIdentifier> list = new ArrayList<DataIdentifier>();
         ResultSet rs = null;
         try {
             // SELECT ID FROM DATASTORE
@@ -532,7 +545,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             PreparedStatement prep = conn.executeStmt(selectMetaSQL, new Object[]{id});
             rs = prep.getResultSet();
             if (!rs.next()) {
-                throw new DataStoreException("Record not found: " + identifier);
+                throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
             }
             long length = rs.getLong(1);
             long lastModified = rs.getLong(2);
@@ -657,7 +670,11 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * @return the data store exception
      */
     protected DataStoreException convert(String cause, Exception e) {
-        log.warn(cause, e);
+        if (log.isDebugEnabled()) {
+            log.warn(cause, e);
+        } else {
+            log.warn(cause + ":" + e.getMessage());
+        }
         if (e instanceof DataStoreException) {
             return (DataStoreException) e;
         } else {
@@ -705,7 +722,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             PreparedStatement prep = conn.executeStmt(selectDataSQL, new Object[]{id});
             rs = prep.getResultSet();
             if (!rs.next()) {
-                throw new DataStoreException("Record not found: " + identifier);
+                throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
             }
             InputStream in = new BufferedInputStream(rs.getBinaryStream(2));
             if (copyWhenReading) {
