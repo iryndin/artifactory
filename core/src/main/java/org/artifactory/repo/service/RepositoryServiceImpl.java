@@ -71,6 +71,7 @@ import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataService;
+import org.artifactory.jcr.schedule.JcrGarbageCollector;
 import org.artifactory.jcr.schedule.WorkingCopyCommitter;
 import org.artifactory.maven.Maven;
 import org.artifactory.maven.MavenUtils;
@@ -947,12 +948,14 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
             taskService.cancelTasks(ExportJob.class, true);
             taskService.stopTasks(IndexerJob.class, false);
             taskService.stopTasks(BackupJob.class, true);
+            taskService.stopTasks(JcrGarbageCollector.class, true);
         }
 
         void endImport() {
             taskService.resumeTasks(WorkingCopyCommitter.class);
             taskService.resumeTasks(IndexerJob.class);
             taskService.resumeTasks(BackupJob.class);
+            taskService.resumeTasks(JcrGarbageCollector.class);
         }
 
         void startExport() {

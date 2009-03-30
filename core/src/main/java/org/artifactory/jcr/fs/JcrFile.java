@@ -41,6 +41,7 @@ import org.artifactory.io.checksum.ChecksumInputStream;
 import org.artifactory.io.checksum.policy.ChecksumPolicy;
 import org.artifactory.io.checksum.policy.ChecksumPolicyException;
 import org.artifactory.jcr.JcrService;
+import org.artifactory.jcr.jackrabbit.DataStoreRecordNotFoundException;
 import org.artifactory.jcr.lock.LockingException;
 import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataDefinition;
@@ -50,6 +51,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.util.ExceptionUtils;
 import org.artifactory.util.PathUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -130,7 +132,18 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 fileInfo.setLastModified(lastModified);
             }
         }
-        FileAdditionalInfo additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
+        FileAdditionalInfo additionalInfo = null;
+        try {
+            additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
+        } catch (RepositoryRuntimeException e) {
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(e, DataStoreRecordNotFoundException.class);
+            if (notFound != null) {
+                log.warn("Jcr file node " + getPath() + " does not have metadata binary content! Deleting entry.");
+                bruteForceDelete();
+                return;
+            }
+            throw e;
+        }
         if (additionalInfo != null) {
             fileInfo.setAdditionalInfo(additionalInfo);
         }
@@ -826,6 +839,10 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 size = resNode.getProperty(JCR_DATA).getLength();
             }
             return size;
+        } catch (DataStoreRecordNotFoundException e) {
+            log.warn("Jcr file node " + getPath() + " does not have binary content! Deleting entry.");
+            bruteForceDelete();
+            return 0L;
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException("Failed to retrieve file node's size.", e);
         }
