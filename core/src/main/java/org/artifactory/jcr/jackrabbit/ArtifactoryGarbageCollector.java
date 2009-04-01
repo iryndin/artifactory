@@ -149,7 +149,7 @@ public class ArtifactoryGarbageCollector {
             totalBinaryPropertiesCount += aSessionList.findBinaryProperties();
             totalBinaryPropertiesQueryTime += aSessionList.binaryPropertiesQueryTime;
         }
-        log.debug("Binary properties query execution time for took {} ms and found {} nodes",
+        log.debug("Binary properties query execution time took {} ms and found {} nodes",
                 new Object[]{totalBinaryPropertiesQueryTime, totalBinaryPropertiesCount});
         long result = 0L;
         for (SessionWrapper aSessionList : sessionList) {
