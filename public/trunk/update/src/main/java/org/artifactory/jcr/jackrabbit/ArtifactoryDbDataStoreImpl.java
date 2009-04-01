@@ -254,7 +254,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      */
     protected Map<String, Long> toRemove = null;
     /**
-     * The last set of identifier that where plan for deletion. Garbage collection in 2 pass.
+     * The last set of identifier that where planned for deletion. Garbage collection in 2 pass.
      */
     protected Set<String> lastToRemove = null;
     private final Map<Integer, String> deleteQueries = new HashMap<Integer, String>();
@@ -409,7 +409,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                         break;
                     }
                 } else {
-                    log.debug("Identifier " + idKey + " was not plan for deletion in previous scan");
+                    log.debug("Identifier " + idKey + " was not planned for deletion in previous scan.");
                 }
             }
             int sizeToDelete = idToDelete.size();
@@ -420,9 +420,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 PreparedStatement prep = conn.executeStmt(sql, ids);
                 int res = prep.getUpdateCount();
                 if (res != sizeToDelete) {
-                    log.error("Deleting IDs " + Arrays.toString(ids) + " returned " + res + " updated");
+                    log.error("Deleting IDs " + Arrays.toString(ids) + " returned " + res + " updated.");
                 } else {
-                    log.debug("Deleted IDs " + Arrays.toString(ids) + " from data store");
+                    log.debug("Deleted IDs " + Arrays.toString(ids) + " from data store.");
                 }
             }
             for (String id : idParsed) {
