@@ -390,6 +390,10 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             Value attachedDataValue = resNode.getProperty(JCR_DATA).getValue();
             InputStream is = attachedDataValue.getStream();
             return is;
+        } catch (DataStoreRecordNotFoundException e) {
+            log.warn("Jcr file node " + getPath() + " does not have binary content! Deleting entry.");
+            bruteForceDelete();
+            return null;
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(
                     "Failed to retrieve file node's " + getRepoPath() + " data stream.", e);
@@ -535,11 +539,11 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         if (settings.isIncremental() && targetFile.exists()) {
             // incremental export - only export the file if it is newer
             if (getInfo().getLastModified() <= targetFile.lastModified()) {
-                log.debug("Skipping not modified file {}", getPath());
+                status.setDebug("Skipping not modified file " + getPath(), log);
                 return;
             }
         }
-        log.debug("Exporting file content to {}", targetFile.getAbsolutePath());
+        status.setDebug("Exporting file content to " + targetFile.getAbsolutePath(), log);
         OutputStream os = null;
         InputStream is = null;
         try {
