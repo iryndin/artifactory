@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+           http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.5.xsd">
+
+    <bean id="scheduler" class="org.artifactory.schedule.ArtifactorySchedulerFactoryBean">
+        <!--<property name="dataSource" ref="dataSource"/>-->
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
+                <!--<prop key="org.quartz.jobStore.driverDelegateClass">org.artifactory.scheduling.DerbyDelegate</prop>-->
+            </props>
+        </property>
+    </bean>
+
+    <bean id="jcrGarbageCollector" class="org.artifactory.jcr.schedule.JcrGarbageCollector"/>
+
+    <bean id="jcrGarbageCollectorScheduledTask"
+          class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <!-- run the datastore gc every 12 hours -->
+        <property name="period" value="43200000"/>
+        <property name="timerTask" ref="jcrGarbageCollector"/>
+    </bean>
+
+    <bean id="wagonManagerTempArtifactsCleanerScheduledTask"
+          class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <!-- run the cleanup every 15 minutes -->
+        <property name="period" value="900000"/>
+        <property name="timerTask">
+            <bean class="org.artifactory.maven.WagonManagerTempArtifactsCleaner"/>
+        </property>
+    </bean>
+
+    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref bean="jcrGarbageCollectorScheduledTask"/>
+                <ref bean="wagonManagerTempArtifactsCleanerScheduledTask"/>
+            </list>
+        </property>
+    </bean>
+</beans>

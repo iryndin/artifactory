@@ -1,0 +1,77 @@
+<wicket:head xmlns:wicket="http://www.w3.org/1999/xhtml">
+    <script type="text/javascript">
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("dijit.layout.BorderContainer");
+
+        var Browser = {
+            // fix browser tree size
+            fixBrowseTree: function() {
+                var browseTree = dojo.byId('browseTree');
+                if (!browseTree) {
+                    return;
+                }
+
+                var newHeight = Math.max(100, document.documentElement.offsetHeight - 215);
+                browseTree.style.height = newHeight + 'px';
+                if (Browser.fixTabPanel) {
+                    Browser.fixTabPanel();
+                }
+            },
+
+            // add splitter
+            initSplitter: function() {
+                var widgets = dojo.parser.instantiate([
+                    dojo.byId('browseTree'),
+                    dojo.byId('treeContentPane'),
+                    dojo.byId('tabsContentPane')
+                ]);
+
+                // override tabsContentPane.resize
+                widgets[2].resize = function() {
+                    // call super
+                    this.inherited('resize', arguments);
+
+                    // call fixTabPanel()
+                    var tabsContainers = dojo.query('.tab-row');
+                    if (tabsContainers.length) {
+                        tabsContainers[0].resizeTabs();
+                    }
+                };
+            }
+        };
+
+        dojo.connect(window, 'onresize', Browser.fixBrowseTree);
+    </script>
+</wicket:head>
+
+<wicket:extend>
+    <div wicket:id="keyEventHandler"></div>
+
+    <div id="browseTree" dojoType="dijit.layout.BorderContainer"
+         liveSplitters="false"
+         orientation="horizontal"
+         sizerWidth="7"
+         persist="false"
+         activeSizing="false">
+
+        <div id="treeContentPane" dojoType="dijit.layout.ContentPane" region="left" splitter="true">
+            <span wicket:id="tree"></span>
+        </div>
+
+        <div id="tabsContentPane" dojoType="dijit.layout.ContentPane" region="center">
+            <span wicket:id="nodePanelContainer">
+                <span wicket:id="nodePanel"/>
+            </span>
+        </div>
+    </div>
+
+    <div wicket:id="contextMenu"></div>
+
+    <script type="text/javascript">
+        DomUtils.addOnRender(function() {
+            Browser.fixBrowseTree();
+            Browser.initSplitter();
+        });
+    </script>
+    <span wicket:id="contentDialog"/>
+</wicket:extend>
