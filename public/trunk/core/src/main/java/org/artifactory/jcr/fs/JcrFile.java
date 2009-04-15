@@ -518,7 +518,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         File targetFile = new File(settings.getBaseDir(), getRelativePath());
         try {
             exportFileContent(targetFile, status, settings);
-
             if (settings.isIncludeMetadata()) {
                 exportMetadata(targetFile, status, settings.isIncremental());
             }
@@ -529,8 +528,11 @@ public class JcrFile extends JcrFsItem<FileInfo> {
         } catch (FileNotFoundException e) {
             status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
         } catch (Exception e) {
-            status.setError("Failed to export " + getAbsolutePath() + " to file '" +
-                    targetFile.getPath() + "'.", e, log);
+            status.setError("Failed to export " + getAbsolutePath() + " to file '" + targetFile.getPath() + "'.", e,
+                    log);
+        } finally {
+            //Release the file read lock immediately
+            LockingHelper.releaseReadLock(getRepoPath());
         }
     }
 

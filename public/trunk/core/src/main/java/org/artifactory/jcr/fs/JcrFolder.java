@@ -308,6 +308,10 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
             }
 
             List<JcrFsItem> list = getItems();
+
+            //Release the folder read lock immediately - no need to hold for children
+            LockingHelper.releaseReadLock(getRepoPath());
+
             if (exportChildren(settings, status, taskService, list)) {
                 // task should stop
                 return;

@@ -500,7 +500,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             status.setError("Export was stopped on " + this, log);
             return;
         }
-        LockingHelper.readLock(rootLockEntry);
         File dir = settings.getBaseDir();
         status.setStatus("Exporting repository '" + getKey() + "' to '" + dir.getAbsolutePath() + "'.", log);
         try {

@@ -348,7 +348,7 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
     /**
      * {@inheritDoc}
      */
-    public List<JcrFsItem> getChildren(JcrFolder folder, boolean withLock) {
+    public List<JcrFsItem> getChildren(JcrFolder folder, boolean writeLock) {
         String absPath = folder.getAbsolutePath();
         JcrSession session = getManagedSession();
         List<JcrFsItem> items = new ArrayList<JcrFsItem>();
@@ -361,7 +361,7 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             while (nodes.hasNext()) {
                 Node node = nodes.nextNode();
                 JcrFsItem item;
-                if (withLock) {
+                if (writeLock) {
                     item = folder.getLocalRepo().getLockedJcrFsItem(node);
                 } else {
                     item = folder.getLocalRepo().getJcrFsItem(node);
