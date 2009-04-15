@@ -348,9 +348,9 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         if (statusHolder.isError()) {
             return new UnfoundRepoResource(repoPath, statusHolder.getStatusMsg());
         }
-        // TODO: Why there is a need for lock here?
         //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getLockedJcrFsItem(path);
+        JcrFsItem item = getJcrFsItem(path);
+        //JcrFsItem item = getLockedJcrFsItem(path);
         if (item == null) {
             return new UnfoundRepoResource(repoPath, "file not found");
         }
@@ -500,7 +500,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             status.setError("Export was stopped on " + this, log);
             return;
         }
-        LockingHelper.readLock(rootLockEntry);
+        //LockingHelper.readLock(rootLockEntry);
         File dir = settings.getBaseDir();
         status.setStatus("Exporting repository '" + getKey() + "' to '" + dir.getAbsolutePath() + "'.", log);
         try {
@@ -573,7 +573,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             } else {
                 //Create the parent folder
                 JcrFile jcrFile = getLockedJcrFile(repoPath, true);
-                // set the file extension checksums (only needed if the file is currently being download)
+                // set the file extension checksums (only needed if the file is currently being downloaded)
                 jcrFile.getInfo().setChecksums(((FileResource) res).getInfo().getChecksums());
                 JcrFolder jcrFolder = getLockedJcrFolder(jcrFile.getParentRepoPath(), true);
                 jcrFolder.mkdirs();
