@@ -349,8 +349,8 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             return new UnfoundRepoResource(repoPath, statusHolder.getStatusMsg());
         }
         //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getJcrFsItem(path);
-        //JcrFsItem item = getLockedJcrFsItem(path);
+        //JcrFsItem item = getJcrFsItem(path);
+        JcrFsItem item = getLockedJcrFsItem(path);
         if (item == null) {
             return new UnfoundRepoResource(repoPath, "file not found");
         }
@@ -500,7 +500,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
             status.setError("Export was stopped on " + this, log);
             return;
         }
-        //LockingHelper.readLock(rootLockEntry);
+        LockingHelper.readLock(rootLockEntry);
         File dir = settings.getBaseDir();
         status.setStatus("Exporting repository '" + getKey() + "' to '" + dir.getAbsolutePath() + "'.", log);
         try {
