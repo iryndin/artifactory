@@ -114,6 +114,9 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <testFailureIgnore>false</testFailureIgnore>
+                            <forkMode>pertest</forkMode>
+                            <argLine>-Xms256m -Xmx512m</argLine>
                             <suiteXmlFiles>
                                 <suiteXmlFile>${basedir}/src/test/resources/testng.xml</suiteXmlFile>
                                 <suiteXmlFile>${basedir}/src/test/resources/testng-http.xml</suiteXmlFile>

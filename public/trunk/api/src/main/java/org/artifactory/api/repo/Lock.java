@@ -24,6 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Create a thread (thus session) scoped lock manager to manage next locking operations scopes.
+ *
  * @author freds
  * @date Oct 27, 2008
  */
@@ -32,7 +34,15 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface Lock {
+    /**
+     * Should start a transaction or join an exiting one
+     */
     boolean transactional() default false;
 
+    /**
+     * Curently not being used???
+     *
+     * @return
+     */
     boolean readOnly() default false;
 }

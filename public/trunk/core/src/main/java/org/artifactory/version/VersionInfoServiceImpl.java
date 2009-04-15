@@ -194,7 +194,7 @@ public class VersionInfoServiceImpl implements VersionInfoService {
         } catch (MalformedURLException e) {
             //Nothing
         }
-        headerVal += ":" + HttpUtils.getArtifactoryUserAgent();
+        headerVal += "/" + HttpUtils.getArtifactoryUserAgent();
         return headerVal;
     }
 
