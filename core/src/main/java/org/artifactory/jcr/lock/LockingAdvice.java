@@ -29,8 +29,7 @@ import org.springframework.beans.factory.BeanFactory;
  * @date Oct 27, 2008
  */
 public class LockingAdvice implements MethodInterceptor {
-    private static final Logger log =
-            LoggerFactory.getLogger(LockingAdvice.class);
+    private static final Logger log = LoggerFactory.getLogger(LockingAdvice.class);
 
     private static final ThreadLocal<InternalLockManager> lockHolder = new ThreadLocal<InternalLockManager>();
     private MethodInterceptor alwaysOnTxInterceptor;

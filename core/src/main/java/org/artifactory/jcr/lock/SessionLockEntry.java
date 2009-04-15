@@ -100,13 +100,11 @@ public class SessionLockEntry {
         try {
             boolean success = lock.tryLock(ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
             if (!success) {
-                throw new LockingException(lockName + " lock on " + getFsItem() +
-                        " not acquired in " + ConstantsValue.lockTimeoutSecs.getLong() +
-                        " seconds");
+                throw new LockingException(lockName + " lock on " + getFsItem() + " not acquired in " +
+                        ConstantsValue.lockTimeoutSecs.getLong() + " seconds");
             }
         } catch (InterruptedException e) {
-            throw new LockingException(
-                    lockName + " lock on " + getFsItem() + " not acquired!", e);
+            throw new LockingException(lockName + " lock on " + getFsItem() + " not acquired!", e);
         }
     }
 
