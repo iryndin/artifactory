@@ -41,7 +41,7 @@
 
     <filter>
         <filter-name>AccessFilter</filter-name>
-        <filter-class>org.artifactory.webapp.servlet.ArtifactoryFilter</filter-class>
+        <filter-class>org.artifactory.webapp.servlet.AccessFilter</filter-class>
         <init-param>
             <param-name>usePathInfo</param-name>
             <param-value>true</param-value>
