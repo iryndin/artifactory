@@ -91,6 +91,7 @@ public class HttpArtifactoryResponse extends ArtifactoryResponseBase {
     }
 
     public void sendOk() {
+        flush();
         setStatus(HttpStatus.SC_OK);
     }
 
