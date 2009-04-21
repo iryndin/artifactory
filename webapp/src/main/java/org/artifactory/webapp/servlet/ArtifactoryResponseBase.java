@@ -42,7 +42,10 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
             status = Status.SUCCESS;
         }
         try {
-            IOUtils.copy(is, os);
+            int bytesCopied = IOUtils.copy(is, os);
+            if (bytesCopied == 0) {
+                log.warn("Zero bytes sent to client.");
+            }
             sendOk();
         } catch (Exception e) {
             exception = e;
