@@ -50,6 +50,10 @@ public class SearchResult implements Info {
         return lastModifiedString;
     }
 
+    public long getLastModified() {
+        return fileInfo.getLastModified();
+    }
+
     public MavenArtifactInfo getArtifact() {
         return artifact;
     }
