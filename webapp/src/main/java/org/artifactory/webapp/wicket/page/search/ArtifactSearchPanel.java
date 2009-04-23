@@ -112,7 +112,7 @@ public class ArtifactSearchPanel extends TitledPanel {
         columns.add(new PropertyColumn(new Model("Path"), "searchResult.relDirPath",
                 "searchResult.relDirPath"));
         columns.add(new PropertyColumn(
-                new Model("Modified"), "searchResult.lastModifiedString",
+                new Model("Modified"), "searchResult.lastModified",
                 "searchResult.lastModifiedString"));
         columns.add(new PropertyColumn(new Model("Repository"), "searchResult.repoKey",
                 "searchResult.repoKey"));
