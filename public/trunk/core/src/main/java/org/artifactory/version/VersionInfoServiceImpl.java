@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
+import org.artifactory.api.repo.exception.ItemNotFoundException;
 import org.artifactory.api.version.ArtifactoryVersioning;
 import org.artifactory.api.version.VersionHolder;
 import org.artifactory.api.version.VersionInfoService;
@@ -33,6 +34,7 @@ import java.util.Map;
  */
 @Service
 public class VersionInfoServiceImpl implements VersionInfoService {
+
     /**
      * URL of remote version info
      */
@@ -159,7 +161,7 @@ public class VersionInfoServiceImpl implements VersionInfoService {
             throw new RuntimeException(e.getMessage());
         }
         if (("".equals(returnedInfo)) || (returnedInfo == null)) {
-            throw new RuntimeException("Requested field was not found.");
+            throw new ItemNotFoundException("Requested field was not found.");
         }
         return VersionParser.parse(returnedInfo);
     }
