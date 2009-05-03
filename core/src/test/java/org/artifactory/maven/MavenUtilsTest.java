@@ -20,7 +20,8 @@ import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.artifactory.api.maven.MavenNaming;
 import org.testng.Assert;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class MavenUtilsTest {
         assertEquals("org.apache.commons/poms/commons-email-1.1.pom", maven1Url);
     }
 
-    public void testToMaven1PathMD5() {
+    public void testToMaven1PathMd5() {
         String maven1Url = MavenNaming.toMaven1Path(
                 "com/sun/commons/logging-api/1.0.4/logging-api-1.0.4.jar.md5");
         assertEquals("com.sun.commons/jars/logging-api-1.0.4.jar.md5", maven1Url);
@@ -61,10 +62,10 @@ public class MavenUtilsTest {
     public void validStringToMetadataNoVersioning() throws IOException {
         Metadata metadata = MavenUtils.toMavenMetadata(
                 "<metadata>\n" +
-                    "<groupId>boo</groupId>\n" +
-                    "<artifactId>boo</artifactId>\n" +
-                    "<version>0.5.1</version>\n" +
-                "</metadata>");
+                        "<groupId>boo</groupId>\n" +
+                        "<artifactId>boo</artifactId>\n" +
+                        "<version>0.5.1</version>\n" +
+                        "</metadata>");
 
         assertEquals(metadata.getGroupId(), "boo");
         assertEquals(metadata.getArtifactId(), "boo");
@@ -75,15 +76,15 @@ public class MavenUtilsTest {
     public void validStringToMetadata() throws IOException {
         Metadata metadata = MavenUtils.toMavenMetadata(
                 "<metadata>\n" +
-                    "<groupId>boo</groupId>\n" +
-                    "<artifactId>boo</artifactId>\n" +
-                    "<version>0.7.0.1921</version>\n" +
-                    "<versioning>\n" +
+                        "<groupId>boo</groupId>\n" +
+                        "<artifactId>boo</artifactId>\n" +
+                        "<version>0.7.0.1921</version>\n" +
+                        "<versioning>\n" +
                         "<versions>\n" +
-                            "<version>0.7.0.1921</version>\n" +
+                        "<version>0.7.0.1921</version>\n" +
                         "</versions>\n" +
-                    "</versioning>\n" +
-                "</metadata>");
+                        "</versioning>\n" +
+                        "</metadata>");
 
         assertEquals(metadata.getGroupId(), "boo");
         Versioning versioning = metadata.getVersioning();
@@ -95,9 +96,9 @@ public class MavenUtilsTest {
     public void nonValidMetadataString() throws IOException {
         MavenUtils.toMavenMetadata(
                 "<metadatablabla\n" +
-                    "<artifactId>boo</artifactId>\n" +
-                    "<version>0.5.1</version>\n" +
-                "</metadata>");
+                        "<artifactId>boo</artifactId>\n" +
+                        "<version>0.5.1</version>\n" +
+                        "</metadata>");
     }
 
     public void inputStreamToMavenMetadata() throws IOException {
