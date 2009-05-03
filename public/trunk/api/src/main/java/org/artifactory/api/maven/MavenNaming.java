@@ -163,12 +163,7 @@ public class MavenNaming {
     }
 
     public static boolean isMavenMetadataFileName(String fileName) {
-        if (MAVEN_METADATA_NAME.equals(fileName)) {
-            return true;
-        }
-        boolean cotainsPrefix = fileName.startsWith(METADATA_PREFIX + "-");
-        boolean isXml = "xml".equalsIgnoreCase(PathUtils.getExtension(fileName));
-        return cotainsPrefix && isXml;
+        return MAVEN_METADATA_NAME.equals(fileName);
     }
 
     public static boolean isPom(String path) {

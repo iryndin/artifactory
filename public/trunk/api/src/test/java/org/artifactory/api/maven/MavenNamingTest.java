@@ -62,6 +62,12 @@ public class MavenNamingTest {
         assertEquals(MavenNaming.getUniqueSnapshotVersionBuildNumber(versionFile), 777);
     }
 
+    public void isMetadata() {
+        assertTrue(MavenNaming.isMavenMetadata("path/1.0-SNAPSHOT/maven-metadata.xml"));
+        assertFalse(MavenNaming.isMavenMetadata(
+                "org/apache/maven/plugins/maven-plugin-plugin/maven-metadata-xyz-snapshots.xml"), "Not maven metadata");
+    }
+
     public void isSnapshotMavenMetadata() {
         assertTrue(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/maven-metadata.xml"));
         assertTrue(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/resource#maven-metadata.xml"));
@@ -74,5 +80,4 @@ public class MavenNamingTest {
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/"), "Not metadata path");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/#matadata-name"), "Not maven metadata");
     }
-
 }
