@@ -31,7 +31,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.repo.RepositoryService;
-import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.util.ExceptionUtils;
@@ -104,9 +103,8 @@ public class ArtifactForm extends Form {
                     FeedbackUtils.refreshFeedback(target);
                 } catch (Exception e) {
                     log.warn("Failed to deploy artifact", e);
-                    Throwable cause = ExceptionUtils.unwrapThrowablesOfTypes(e,
-                            RepoAccessException.class, IllegalArgumentException.class);
-                    error(cause.getMessage());
+                    Throwable cause = ExceptionUtils.getRootCause(e);
+                    error("Failed to deploy artifact " + artifactInfo + ": " + cause.getMessage());
                     FeedbackUtils.refreshFeedback(target);
                 } finally {
                     enable(false);

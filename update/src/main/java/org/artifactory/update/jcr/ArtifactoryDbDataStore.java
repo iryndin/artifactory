@@ -17,7 +17,7 @@
 package org.artifactory.update.jcr;
 
 import org.apache.jackrabbit.core.data.DataStore;
-import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
+import org.artifactory.jcr.jackrabbit.ArtifactoryConnectionRecoveryManager;
 
 import javax.jcr.RepositoryException;
 
@@ -38,5 +38,5 @@ public interface ArtifactoryDbDataStore extends DataStore {
      *
      * @return the new connection
      */
-    ConnectionRecoveryManager createNewConnection() throws RepositoryException;
+    ArtifactoryConnectionRecoveryManager createNewConnection() throws RepositoryException;
 }

@@ -6,12 +6,12 @@ import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager;
-import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.artifactory.cli.common.BaseCommand;
 import org.artifactory.cli.common.Command;
 import org.artifactory.cli.main.CommandDefinition;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.config.JcrConfResourceLoader;
+import org.artifactory.jcr.jackrabbit.ArtifactoryConnectionRecoveryManager;
 import org.artifactory.update.jcr.ArtifactoryDbDataStore;
 import org.artifactory.update.jcr.JcrRepositoryForExport;
 
@@ -96,7 +96,7 @@ public class CompressCommand extends BaseCommand implements Command {
             throws RepositoryException, SQLException {
         ArtifactoryDbDataStore dataStore = (ArtifactoryDbDataStore) repositoryImpl.getDataStore();
         if (canCompress(dataStore.getDatabaseType())) {
-            ConnectionRecoveryManager crm = dataStore.createNewConnection();
+            ArtifactoryConnectionRecoveryManager crm = dataStore.createNewConnection();
             Connection connection = crm.getConnection();
             final String schemaName = "APP";
             final String tableName = "DATASTORE";
@@ -219,8 +219,8 @@ public class CompressCommand extends BaseCommand implements Command {
         Class clazz = persistenceManager.getClass().getSuperclass();
         Field connectionField = clazz.getDeclaredField("connectionManager");
         connectionField.setAccessible(true);
-        ConnectionRecoveryManager crm =
-                (ConnectionRecoveryManager) connectionField.get(persistenceManager);
+        ArtifactoryConnectionRecoveryManager crm =
+                (ArtifactoryConnectionRecoveryManager) connectionField.get(persistenceManager);
         Connection connection = crm.getConnection();
         return connection;
     }

@@ -21,6 +21,16 @@ package org.artifactory.util;
  */
 public abstract class ExceptionUtils {
 
+    public static Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            cause = getRootCause(cause);
+        } else {
+            cause = throwable;
+        }
+        return cause;
+    }
+
     /**
      * Unwrap an exception
      *
