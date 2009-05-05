@@ -21,7 +21,6 @@ import org.apache.jackrabbit.core.data.DataRecord;
 import org.apache.jackrabbit.core.data.DataStoreException;
 import org.apache.jackrabbit.core.data.db.DbDataStore;
 import org.apache.jackrabbit.core.data.db.TempFileInputStream;
-import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.apache.jackrabbit.core.persistence.bundle.util.TrackingInputStream;
 import org.apache.jackrabbit.util.Text;
 import org.artifactory.common.ConstantsValue;
@@ -266,11 +265,11 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public DataRecord addRecord(InputStream stream) throws DataStoreException {
         ResultSet rs = null;
         TempFileInputStream fileInput = null;
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         String id = null, tempId = null;
         try {
             long now;
-            for (int i = 0; i < ConnectionRecoveryManager.TRIALS; i++) {
+            for (int i = 0; i < ArtifactoryConnectionRecoveryManager.TRIALS; i++) {
                 try {
                     now = System.currentTimeMillis();
                     id = org.apache.jackrabbit.uuid.UUID.randomUUID().toString();
@@ -298,16 +297,16 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             MessageDigest digest = getDigest();
             DigestInputStream dIn = new DigestInputStream(stream, digest);
             TrackingInputStream in = new TrackingInputStream(dIn);
-            ConnectionRecoveryManager.StreamWrapper wrapper;
+            ArtifactoryConnectionRecoveryManager.StreamWrapper wrapper;
             if (STORE_SIZE_MINUS_ONE.equals(storeStream)) {
-                wrapper = new ConnectionRecoveryManager.StreamWrapper(in, -1);
+                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(in, -1);
             } else if (STORE_SIZE_MAX.equals(storeStream)) {
-                wrapper = new ConnectionRecoveryManager.StreamWrapper(in, Integer.MAX_VALUE);
+                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(in, Integer.MAX_VALUE);
             } else if (STORE_TEMP_FILE.equals(storeStream)) {
                 File temp = moveToTempFile(in);
                 fileInput = new TempFileInputStream(temp);
                 long length = temp.length();
-                wrapper = new ConnectionRecoveryManager.StreamWrapper(fileInput, length);
+                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(fileInput, length);
             } else {
                 throw new DataStoreException("Unsupported stream store algorithm: " + storeStream);
             }
@@ -395,7 +394,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             return 0L;
         }
         long result = 0L;
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         try {
             List<String> idToDelete = new ArrayList<String>();
             List<String> idParsed = new ArrayList<String>();
@@ -462,7 +461,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      */
     public Iterator getAllIdentifiers() throws DataStoreException {
         long totalSize = 0L;
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         List<DataIdentifier> list = new ArrayList<DataIdentifier>();
         ResultSet rs = null;
         try {
@@ -492,7 +491,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         // No concurrency for the moment
         //Map<String, Long> result = new ConcurrentHashMap<String, Long>();
         long totalSize = 0L;
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
         try {
             // SELECT ID, LENGTH FROM DATASTORE
@@ -536,7 +535,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * {@inheritDoc}
      */
     public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         usesIdentifier(identifier);
         ResultSet rs = null;
         try {
@@ -566,7 +565,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         try {
             initDatabaseType();
             connectionPool = new ArtifactoryPool(this, maxConnections);
-            ConnectionRecoveryManager conn = getConnection();
+            ArtifactoryConnectionRecoveryManager conn = getConnection();
             DatabaseMetaData meta = conn.getConnection().getMetaData();
             log.info("Using JDBC driver " + meta.getDriverName() + " " + meta.getDriverVersion());
             meta.getDriverVersion();
@@ -714,7 +713,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * {@inheritDoc}
      */
     public InputStream getInputStream(DataIdentifier identifier) throws DataStoreException {
-        ConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
         try {
             String id = identifier.toString();
@@ -836,8 +835,8 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * {@inheritDoc}
      */
     public synchronized void close() {
-        List<ConnectionRecoveryManager> list = connectionPool.getAll();
-        for (ConnectionRecoveryManager conn : list) {
+        List<ArtifactoryConnectionRecoveryManager> list = connectionPool.getAll();
+        for (ArtifactoryConnectionRecoveryManager conn : list) {
             conn.close();
         }
         list.clear();
@@ -867,9 +866,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         }
     }
 
-    protected ConnectionRecoveryManager getConnection() throws DataStoreException {
+    protected ArtifactoryConnectionRecoveryManager getConnection() throws DataStoreException {
         try {
-            ConnectionRecoveryManager conn = connectionPool.get();
+            ArtifactoryConnectionRecoveryManager conn = connectionPool.get();
             conn.setAutoReconnect(true);
             return conn;
         } catch (InterruptedException e) {
@@ -879,7 +878,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         }
     }
 
-    protected void putBack(ConnectionRecoveryManager conn) throws DataStoreException {
+    protected void putBack(ArtifactoryConnectionRecoveryManager conn) throws DataStoreException {
         try {
             connectionPool.add(conn);
         } catch (InterruptedException e) {
@@ -910,8 +909,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      *
      * @return the new connection
      */
-    public ConnectionRecoveryManager createNewConnection() throws RepositoryException {
-        ConnectionRecoveryManager conn = new ConnectionRecoveryManager(false, driver, url, user, password);
+    public ArtifactoryConnectionRecoveryManager createNewConnection() throws RepositoryException {
+        ArtifactoryConnectionRecoveryManager conn =
+                new ArtifactoryConnectionRecoveryManager(false, driver, url, user, password);
         return conn;
     }
 

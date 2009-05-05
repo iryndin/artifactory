@@ -16,7 +16,6 @@
  */
 package org.artifactory.jcr.jackrabbit;
 
-import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 import org.artifactory.common.ConstantsValue;
 
 import javax.jcr.RepositoryException;
@@ -33,10 +32,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class ArtifactoryPool {
     protected final int maxSize;
-    protected final List<ConnectionRecoveryManager> all = new CopyOnWriteArrayList<ConnectionRecoveryManager>();
+    protected final List<ArtifactoryConnectionRecoveryManager> all =
+            new CopyOnWriteArrayList<ArtifactoryConnectionRecoveryManager>();
     protected final ArtifactoryDbDataStoreImpl factory;
-    protected final BlockingQueue<ConnectionRecoveryManager> pool =
-            new LinkedBlockingQueue<ConnectionRecoveryManager>();
+    protected final BlockingQueue<ArtifactoryConnectionRecoveryManager> pool =
+            new LinkedBlockingQueue<ArtifactoryConnectionRecoveryManager>();
     private final long timeout = ConstantsValue.lockTimeoutSecs.getLong() / 10L;
 
     /**
@@ -56,8 +56,8 @@ public class ArtifactoryPool {
      *
      * @return the connection
      */
-    protected ConnectionRecoveryManager get() throws InterruptedException, RepositoryException {
-        ConnectionRecoveryManager o = pool.poll();
+    protected ArtifactoryConnectionRecoveryManager get() throws InterruptedException, RepositoryException {
+        ArtifactoryConnectionRecoveryManager o = pool.poll();
         if (o == null) {
             if (all.size() < maxSize) {
                 o = factory.createNewConnection();
@@ -79,7 +79,7 @@ public class ArtifactoryPool {
      *
      * @param o the connection
      */
-    protected void add(ConnectionRecoveryManager o) throws InterruptedException {
+    protected void add(ArtifactoryConnectionRecoveryManager o) throws InterruptedException {
         pool.add(o);
     }
 
@@ -88,7 +88,7 @@ public class ArtifactoryPool {
      *
      * @return all connections
      */
-    protected List<ConnectionRecoveryManager> getAll() {
+    protected List<ArtifactoryConnectionRecoveryManager> getAll() {
         return all;
     }
 }
