@@ -17,6 +17,7 @@
 package org.artifactory.api.mime;
 
 import org.artifactory.api.maven.MavenNaming;
+import org.artifactory.api.util.Pair;
 import org.artifactory.util.PathUtils;
 
 import java.io.File;
@@ -77,6 +78,24 @@ public class NamingUtils {
     public static boolean isChecksum(String path) {
         ContentType ct = getContentType(path);
         return ct.isChecksum();
+    }
+
+    public static Pair<String, String> getMetadtaNameAndParent(String path) {
+        int mdPrefixIdx = path.lastIndexOf(METADATA_PREFIX);
+        String name = null;
+        String parent = null;
+        if (mdPrefixIdx >= 0) {
+            name = path.substring(mdPrefixIdx + METADATA_PREFIX.length());
+            parent = path.substring(0, mdPrefixIdx);
+        } else {
+            //Fallback to checking maven metadata
+            final File file = new File(path);
+            if (MavenNaming.MAVEN_METADATA_NAME.equals(file.getName())) {
+                name = MavenNaming.MAVEN_METADATA_NAME;
+                parent = file.getParent();
+            }
+        }
+        return new Pair<String, String>(name, parent);
     }
 
     public static boolean isMetadata(String path) {

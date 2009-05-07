@@ -2,6 +2,7 @@ package org.artifactory.api.maven;
 
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
+import org.artifactory.api.util.Pair;
 import org.artifactory.util.PathUtils;
 
 import java.io.File;
@@ -127,10 +128,10 @@ public class MavenNaming {
     }
 
     public static boolean isSnapshotMavenMetadata(String path) {
-        //*-SNAPSHOT/*maven-metadata.xml 
-        final File file = new File(path);
-        String parent = file.getParent();
-        return parent != null && parent.endsWith("-SNAPSHOT") && isMavenMetadataFileName(file.getName());
+        final Pair<String, String> nameAndParent = NamingUtils.getMetadtaNameAndParent(path);
+        String name = nameAndParent.getFirst();
+        String parent = nameAndParent.getSecond();
+        return parent != null && parent.endsWith("-SNAPSHOT") && isMavenMetadataFileName(name);
     }
 
     /**
