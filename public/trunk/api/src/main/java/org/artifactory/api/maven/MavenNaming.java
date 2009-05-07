@@ -128,9 +128,9 @@ public class MavenNaming {
 
     public static boolean isSnapshotMavenMetadata(String path) {
         //*-SNAPSHOT/*maven-metadata.xml 
-        String parent = new File(path).getParent();
-        return parent != null && parent.endsWith("-SNAPSHOT") &&
-                NamingUtils.isMetadata(path) && path.endsWith(MAVEN_METADATA_NAME);
+        final File file = new File(path);
+        String parent = file.getParent();
+        return parent != null && parent.endsWith("-SNAPSHOT") && isMavenMetadataFileName(file.getName());
     }
 
     /**
@@ -163,7 +163,8 @@ public class MavenNaming {
     }
 
     public static boolean isMavenMetadataFileName(String fileName) {
-        return MAVEN_METADATA_NAME.equals(fileName);
+        return MAVEN_METADATA_NAME.equals(fileName) ||
+                fileName.endsWith(NamingUtils.METADATA_PREFIX + MAVEN_METADATA_NAME);
     }
 
     public static boolean isPom(String path) {

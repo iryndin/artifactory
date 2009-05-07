@@ -64,6 +64,8 @@ public class MavenNamingTest {
 
     public void isMetadata() {
         assertTrue(MavenNaming.isMavenMetadata("path/1.0-SNAPSHOT/maven-metadata.xml"));
+        assertTrue(MavenNaming.isMavenMetadata("path/1.0-SNAPSHOT#maven-metadata.xml"));
+        assertTrue(MavenNaming.isMavenMetadata("path/1.0#maven-metadata.xml"));
         assertFalse(MavenNaming.isMavenMetadata(
                 "org/apache/maven/plugins/maven-plugin-plugin/maven-metadata-xyz-snapshots.xml"), "Not maven metadata");
     }
