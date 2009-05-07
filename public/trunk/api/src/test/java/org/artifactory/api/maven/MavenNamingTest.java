@@ -72,7 +72,8 @@ public class MavenNamingTest {
 
     public void isSnapshotMavenMetadata() {
         assertTrue(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/maven-metadata.xml"));
-        assertTrue(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/resource#maven-metadata.xml"));
+        assertTrue(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT#maven-metadata.xml"));
+        assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/resource#maven-metadata.xml"));
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0/maven-metadata.xml"), "Not a snapshot");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0/resource#maven-metadata.xml"), "Not a snapshot");
         assertFalse(MavenNaming.isSnapshotMavenMetadata("path/1.0-SNAPSHOT/other.metadata.xml"), "Not maven metadata");
