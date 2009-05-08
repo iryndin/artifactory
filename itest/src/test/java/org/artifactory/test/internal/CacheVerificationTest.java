@@ -158,8 +158,7 @@ public class CacheVerificationTest extends ArtifactoryTestBase {
      * @return ArtifactoryResponseStub
      * @throws IOException
      */
-    private ArtifactoryResponseStub makeDelayedRequest(MockTest test, boolean fail,
-            String artifactPath)
+    private ArtifactoryResponseStub makeDelayedRequest(MockTest test, boolean fail, String artifactPath)
             throws IOException {
         MockPathTest delayedPath;
 
