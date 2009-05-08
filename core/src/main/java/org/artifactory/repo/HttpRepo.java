@@ -16,7 +16,15 @@
  */
 package org.artifactory.repo;
 
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
@@ -227,6 +235,14 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         clientParams.setSoTimeout(socketTimeoutMillis);
         //Limit the retries to a signle retry
         clientParams.setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(1, false));
+        //Set the host
+        String host;
+        try {
+            host = new URL(getUrl()).getHost();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Cannot parse the url " + getUrl(), e);
+        }
+        client.getHostConfiguration().setHost(host);
         //Set the local address if exists
         String localAddress = getLocalAddress();
         if (!StringUtils.isEmpty(localAddress)) {
@@ -236,8 +252,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
             } catch (UnknownHostException e) {
                 throw new RuntimeException("Invalid local address: " + localAddress, e);
             }
-            HostConfiguration hostConf = client.getHostConfiguration();
-            hostConf.setLocalAddress(address);
+            client.getHostConfiguration().setLocalAddress(address);
         }
         //Set the proxy
         ProxyDescriptor proxy = getProxy();
@@ -245,15 +260,10 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         //Set authentication
         String username = getUsername();
         if (username != null) {
-            try {
-                String host = new URL(getUrl()).getHost();
-                clientParams.setAuthenticationPreemptive(true);
-                Credentials creds = new UsernamePasswordCredentials(username, getPassword());
-                AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
-                client.getState().setCredentials(scope, creds);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("Cannot parse the url " + getUrl(), e);
-            }
+            clientParams.setAuthenticationPreemptive(true);
+            Credentials creds = new UsernamePasswordCredentials(username, getPassword());
+            AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
+            client.getState().setCredentials(scope, creds);
         }
         return client;
     }

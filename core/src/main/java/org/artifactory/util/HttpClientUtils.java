@@ -35,26 +35,29 @@ public class HttpClientUtils {
             HostConfiguration hostConf = client.getHostConfiguration();
             hostConf.setProxy(proxy.getHost(), proxy.getPort());
             if (proxy.getUsername() != null) {
+                Credentials creds = null;
                 if (proxy.getDomain() == null) {
-                    Credentials creds = new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword());
-                    //This will exclude the NTLM authentication scheme so that the proxy won't barf
+                    creds = new UsernamePasswordCredentials(proxy.getUsername(), proxy.getPassword());
+                    //This will demote the NTLM authentication scheme so that the proxy won't barf
                     //when we try to give it traditional credentials. If the proxy doesn't do NTLM
                     //then this won't hurt it (jcej at tragus dot org)
-                    List<String> authPrefs = Arrays.asList(AuthPolicy.DIGEST, AuthPolicy.BASIC);
+                    List<String> authPrefs = Arrays.asList(AuthPolicy.DIGEST, AuthPolicy.BASIC, AuthPolicy.NTLM);
                     client.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
-                    client.getState().setProxyCredentials(AuthScope.ANY, creds);
                 } else {
                     try {
-                        Credentials creds = new NTCredentials(proxy.getUsername(),
+                        //TODO: [by yl] Might want to use localAddress if specified, instead of getLocalHost()
+                        creds = new NTCredentials(proxy.getUsername(),
                                 proxy.getPassword(), InetAddress.getLocalHost().getHostName(),
                                 proxy.getDomain());
-                        client.getState().setProxyCredentials(AuthScope.ANY, creds);
                     } catch (UnknownHostException e) {
                         log.error("Failed to determine required local hostname for NTLM credentials.", e);
                     }
                 }
+                if (creds != null) {
+                    client.getState().setProxyCredentials(AuthScope.ANY, creds);
+                    client.getParams().setAuthenticationPreemptive(true);
+                }
             }
         }
     }
-
 }
