@@ -65,6 +65,9 @@ public enum ArtifactoryConfigVersion {
             ArtifactoryVersion.v130rc1),
     OneThreeFive("http://artifactory.jfrog.org/xsd/1.3.5",
             "http://www.jfrog.org/xsd/artifactory-v1_3_5.xsd",
+            ArtifactoryVersion.v205),
+    OneThreeFiveOne("http://artifactory.jfrog.org/xsd/1.3.5.1",
+            "http://www.jfrog.org/xsd/artifactory-v1_3_5_1.xsd",
             ArtifactoryVersion.getCurrent());
 
     private final String xsdUri;

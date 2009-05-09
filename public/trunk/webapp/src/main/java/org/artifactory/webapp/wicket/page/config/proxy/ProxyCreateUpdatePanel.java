@@ -37,6 +37,7 @@ import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.artifactory.webapp.wicket.utils.validation.JcrNameValidator;
 import org.artifactory.webapp.wicket.utils.validation.UniqueXmlIdValidator;
 import org.artifactory.webapp.wicket.utils.validation.XsdNCNameValidator;
+import org.springframework.util.StringUtils;
 
 /**
  * Proxies configuration panel.
@@ -49,7 +50,7 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
     private CentralConfigService centralConfigService;
 
     public ProxyCreateUpdatePanel(CreateUpdateAction action, ProxyDescriptor proxyDescriptor,
-                                  ProxiesListPanel proxiesListPanel) {
+            ProxiesListPanel proxiesListPanel) {
         super(action, proxyDescriptor);
         setWidth(380);
 
@@ -76,6 +77,7 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         passwordField.setResetPassword(false);
         border.add(passwordField);
 
+        border.add(new TextField("ntHost"));
         border.add(new TextField("domain"));
 
         // Cancel button
@@ -91,14 +93,19 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         border.add(new SchemaHelpBubble("port.help"));
         border.add(new SchemaHelpBubble("username.help"));
         border.add(new SchemaHelpBubble("password.help"));
+        border.add(new SchemaHelpBubble("ntHost.help"));
         border.add(new SchemaHelpBubble("domain.help"));
-
     }
 
     private SimpleButton createSubmitButton(final ProxiesListPanel proxiesListPanel) {
         String submitCaption = isCreate() ? "Create" : "Save";
         return new SimpleButton("submit", form, submitCaption) {
+            @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
+                if (StringUtils.hasText(entity.getDomain()) && !StringUtils.hasText(entity.getNtHost())) {
+                    error("Please specify a NT host value to use with the NT domain.");
+                    return;
+                }
                 if (isCreate()) {
                     getEditingDescriptor().addProxy(entity);
                     centralConfigService.saveEditedDescriptorAndReload();

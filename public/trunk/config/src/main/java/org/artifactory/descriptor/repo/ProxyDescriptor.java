@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "ProxyType", propOrder = {"key", "host", "port", "username", "password", "domain"})
+@XmlType(name = "ProxyType", propOrder = {"key", "host", "port", "username", "password", "ntHost", "domain"})
 public class ProxyDescriptor implements Descriptor {
 
     @XmlID
@@ -37,6 +37,7 @@ public class ProxyDescriptor implements Descriptor {
 
     private String username;
     private String password;
+    private String ntHost;
     private String domain;
 
     public String getKey() {
@@ -77,6 +78,14 @@ public class ProxyDescriptor implements Descriptor {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getNtHost() {
+        return ntHost;
+    }
+
+    public void setNtHost(String ntHost) {
+        this.ntHost = ntHost;
     }
 
     public String getDomain() {
