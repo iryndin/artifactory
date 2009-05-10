@@ -95,4 +95,21 @@ public class ProxyDescriptor implements Descriptor {
     public void setDomain(String domain) {
         this.domain = domain;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProxyDescriptor that = (ProxyDescriptor) o;
+        return key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
 }
