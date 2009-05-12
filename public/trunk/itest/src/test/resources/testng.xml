@@ -30,4 +30,9 @@
             <class name="org.artifactory.test.internal.TestInitOrderAndIndexer"/>
         </classes>
     </test>
+    <test name="concurrentSnapshots">
+        <classes>
+            <class name="org.artifactory.test.internal.ConcurrentSnapshotsTest"/>
+        </classes>
+    </test>
 </suite>
