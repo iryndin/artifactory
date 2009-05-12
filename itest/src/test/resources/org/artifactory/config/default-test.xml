@@ -65,6 +65,7 @@
             <description>Local repository for third party snapshots</description>
             <handleReleases>false</handleReleases>
             <handleSnapshots>true</handleSnapshots>
+            <snapshotVersionBehavior>non-unique</snapshotVersionBehavior>
         </localRepository>
     </localRepositories>
 
