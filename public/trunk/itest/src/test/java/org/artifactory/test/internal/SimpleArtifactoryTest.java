@@ -66,15 +66,13 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
         upload(repoPath, "resources/test.jar");
     }
 
-    @Test(invocationCount = 10, threadPoolSize = 10,
+    @Test(invocationCount = 20, threadPoolSize = 1,
             description = "Mimic maven parallel uploading of pom + snapshot version metadata, in order to check " +
                     "dealock handling.")
     public void concurrentSnapshotPartsUpload() throws Exception {
-        //-/xbow-local/com/cisco/nm/vms/build/csm-app-parent/xbowr1-SNAPSHOT/csm-app-parent-xbowr1-20090507.121120-53.pom
-        //-/xbow-local/com/cisco/nm/vms/build/csm-app-parent/xbowr1-SNAPSHOT/maven-metadata.xml
-        Callable<?> c1 = new Callable() {
+        Callable<?> pom1Call = new Callable() {
             public String call() throws Exception {
-                log.info("........... Deploying POM");
+                log.info("........... Deploying POM1");
                 bindThreadContext();
                 ArtifactoryContextThreadBinder.bind(context);
                 RepoPath repoPath =
@@ -83,7 +81,18 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
                 return null;
             }
         };
-        Callable<?> c2 = new Callable<String>() {
+        Callable<?> pom2Call = new Callable() {
+            public String call() throws Exception {
+                log.info("........... Deploying POM2");
+                bindThreadContext();
+                ArtifactoryContextThreadBinder.bind(context);
+                RepoPath repoPath =
+                        new RepoPath("ext-snapshots-local", "test-group/test/1.0-SNAPSHOT/test-20090511.121120-2.pom");
+                upload(repoPath, "resources/test-1.0-SNAPSHOT.pom");
+                return null;
+            }
+        };
+        Callable<?> metadataCall = new Callable<String>() {
             public String call() throws Exception {
                 log.info("........... Deploying MAVEN-METADATA");
                 bindThreadContext();
@@ -95,8 +104,8 @@ public class SimpleArtifactoryTest extends ArtifactoryTestBase {
         };
 
         ExecutorService executorService = Executors.newCachedThreadPool();
-        Future<?> result1 = executorService.submit(c1);
-        Future<?> result2 = executorService.submit(c2);
+        Future<?> result1 = executorService.submit(pom1Call);
+        Future<?> result2 = executorService.submit(metadataCall);
         try {
             result1.get();
             result2.get();
