@@ -18,6 +18,10 @@ class ArtifactoryRequestStub extends ArtifactoryRequestBase {
         this("repo", path);
     }
 
+    public ArtifactoryRequestStub(RepoPath repoPath) {
+        this(repoPath.getRepoKey(), repoPath.getPath());
+    }
+
     public ArtifactoryRequestStub(String repoKey, String path) {
         setRepoPath(new RepoPath(repoKey, path));
         uri = "localhost:8080/" + repoKey + "/" + path;
