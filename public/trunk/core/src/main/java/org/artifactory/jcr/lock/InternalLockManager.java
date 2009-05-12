@@ -68,8 +68,10 @@ public class InternalLockManager {
         SessionLockEntry sessionLockEntry = getSessionLockEntry(lockEntry.getRepoPath());
         if (sessionLockEntry == null) {
             sessionLockEntry = new SessionLockEntry(lockEntry);
+            log.trace("Creating new SLE for {}", lockEntry.getRepoPath());
             getLocks().put(lockEntry.getRepoPath(), sessionLockEntry);
         } else {
+            log.trace("Reusing existing SLE for {}", lockEntry.getRepoPath());
             sessionLockEntry.setFsItem(lockEntry.getFsItem());
         }
         return sessionLockEntry;

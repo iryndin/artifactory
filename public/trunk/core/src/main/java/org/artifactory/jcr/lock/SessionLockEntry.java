@@ -35,7 +35,7 @@ public class SessionLockEntry {
     private final ReentrantReadWriteLock lock;
     private JcrFsItem lockedFsItem;
     private JcrFsItem immutableFsItem;
-    private Lock readLock = null;
+    private Lock acquiredReadLock = null;
 
     public SessionLockEntry(LockEntry lockEntry) {
         this.lock = lockEntry.getLock();
@@ -44,13 +44,14 @@ public class SessionLockEntry {
     }
 
     public void acquireReadLock() {
-        if (readLock != null) {
+        log.trace("Acquiring READ lock for {}", getFsItem());
+        if (acquiredReadLock != null) {
             // already done
             return;
         }
-        ReentrantReadWriteLock.ReadLock lock = getReadLock();
+        ReentrantReadWriteLock.ReadLock lock = getAcquiredReadLock();
         acquire("Read", lock);
-        readLock = lock;
+        acquiredReadLock = lock;
     }
 
     public ReentrantReadWriteLock getLock() {
@@ -81,12 +82,13 @@ public class SessionLockEntry {
     }
 
     public void acquireWriteLock() {
+        log.trace("Acquiring WRITE lock for {}", getFsItem());
         if (isLockedByMe()) {
             // already done
             return;
         }
         JcrFsItem item = getFsItem();
-        if (readLock != null) {
+        if (acquiredReadLock != null) {
             //log.trace("Upgrading from read lock to write lock on '{}'", item);
             throw new LockingException("Cannot acquire write lock if has read lock for " + item);
         }
@@ -113,16 +115,8 @@ public class SessionLockEntry {
     }
 
     public void unlock() {
-        if (readLock != null) {
-            try {
-                readLock.unlock();
-            } finally {
-                readLock = null;
-            }
-        }
-        if (isLockedByMe()) {
-            getWriteLock().unlock();
-        }
+        releaseReadLock();
+        releaseWriteLock();
     }
 
     public void updateCache() {
@@ -137,7 +131,7 @@ public class SessionLockEntry {
         }
     }
 
-    private ReentrantReadWriteLock.ReadLock getReadLock() {
+    private ReentrantReadWriteLock.ReadLock getAcquiredReadLock() {
         return getLock().readLock();
     }
 
@@ -166,14 +160,22 @@ public class SessionLockEntry {
      * @return true if read lock was acquired, false otherwise
      */
     public boolean releaseReadLock() {
+        log.trace("Releasing READ lock for {}", getFsItem());
         try {
-            if (readLock != null) {
-                readLock.unlock();
+            if (acquiredReadLock != null) {
+                acquiredReadLock.unlock();
                 return true;
             }
             return false;
         } finally {
-            readLock = null;
+            acquiredReadLock = null;
+        }
+    }
+
+    private void releaseWriteLock() {
+        log.trace("Releasing WRITE lock for {}", getFsItem());
+        if (isLockedByMe()) {
+            getWriteLock().unlock();
         }
     }
 }
