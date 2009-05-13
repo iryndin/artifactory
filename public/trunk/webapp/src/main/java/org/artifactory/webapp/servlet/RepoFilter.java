@@ -25,6 +25,7 @@ import org.artifactory.api.request.ArtifactoryResponse;
 import org.artifactory.api.request.DownloadService;
 import org.artifactory.api.request.UploadService;
 import org.artifactory.api.webdav.WebdavService;
+import org.artifactory.security.HttpAuthenticationDetails;
 import org.artifactory.util.PathUtils;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.slf4j.Logger;
@@ -176,7 +177,9 @@ public class RepoFilter implements Filter {
 
     private static String requestDebugString(HttpServletRequest request) {
         String queryString = request.getQueryString();
-        String str = request.hashCode() + ": " + RequestUtils.getServletPathFromRequest(request) +
+        String str = request.hashCode() + ": " +
+                request.getMethod() + " (" + new HttpAuthenticationDetails(request).getRemoteAddress() + ") " +
+                RequestUtils.getServletPathFromRequest(request) +
                 (queryString != null ? queryString : "");
         return str;
     }
