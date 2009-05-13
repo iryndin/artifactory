@@ -5,20 +5,25 @@ import org.apache.commons.io.IOUtils;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.context.ArtifactoryContextThreadBinder;
+import org.artifactory.api.repo.RepoPath;
+import org.artifactory.api.request.DownloadService;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.config.SpringConfResourceLoader;
+import org.artifactory.engine.InternalUploadService;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.security.SecurityServiceInternal;
 import org.artifactory.spring.ArtifactoryApplicationContext;
 import org.artifactory.test.mock.MockServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.AbstractAuthenticationToken;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -58,12 +63,20 @@ public abstract class ArtifactoryTestBase {
         //Delete the home dir
         FileUtils.deleteDirectory(homeDir);
         ArtifactoryHome.setHomeDir(homeDir);
+        onBeforeHomeCreate();
+
         ArtifactoryHome.create();
-        mockServer = MockServer.start(/*"swamp.jfrog.org",*/ "localhost");
+        if (shouldRunMockServer()) {
+            mockServer = MockServer.start(/*"swamp.jfrog.org",*/ "localhost");
+        }
         copyArtifactoryConfig(configName);
         context = new ArtifactoryApplicationContext(SpringConfResourceLoader.getConfigurationPaths());
         ArtifactoryContextThreadBinder.bind(context);
         log.info("Test setup completed for tsts " + testName);
+    }
+
+    protected boolean shouldRunMockServer() {
+        return true;
     }
 
     @AfterTest
@@ -123,7 +136,9 @@ public abstract class ArtifactoryTestBase {
                 throw new IllegalArgumentException("Could not find a configuration resource at: " + configPath);
             }
             String configText = IOUtils.toString(is);
-            String modifiedConfig = configText.replaceAll("@mock_host@", mockServer.getSelectedURL());
+            String modifiedConfig =
+                    shouldRunMockServer() ? configText.replaceAll("@mock_host@", mockServer.getSelectedURL()) :
+                            configText;
             InputStream modifiedStream = IOUtils.toInputStream(modifiedConfig);
             bis = new BufferedInputStream(modifiedStream);
             File targetConfigFile = new File(ArtifactoryHome.getEtcDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
@@ -167,5 +182,29 @@ public abstract class ArtifactoryTestBase {
 
     public String getHomePath() {
         return ARTIFACTORY_TEST_HOME;
+    }
+
+    protected ArtifactoryResponseStub download(RepoPath repoPath) throws IOException {
+        DownloadService downloadService = context.beanForType(DownloadService.class);
+        ArtifactoryRequestStub request = new ArtifactoryRequestStub(repoPath);
+        ArtifactoryResponseStub response = new ArtifactoryResponseStub();
+        downloadService.process(request, response);
+        return response;
+    }
+
+    protected void upload(RepoPath repoPath, String classpathRes) throws IOException {
+        InternalUploadService uploadService = context.beanForType(InternalUploadService.class);
+        ArtifactoryRequestStub request = new ArtifactoryRequestStub(repoPath.getRepoKey(), "/" + repoPath.getPath());
+        Resource resource = context.getResource("classpath:" + classpathRes);
+        request.setInputStream(resource.getInputStream());
+        ArtifactoryResponseStub response = new ArtifactoryResponseStub();
+
+        uploadService.process(request, response);
+
+        Assert.assertTrue(response.isSuccessful(),
+                "Failure status: " + response.getStatus() + " reason:" + response.getReason() + " for " + repoPath);
+    }
+
+    protected void onBeforeHomeCreate() throws Exception {
     }
 }
