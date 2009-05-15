@@ -96,4 +96,17 @@
         <level value="DEBUG"/>
         <appender-ref ref="IMPORT.EXPORT"/>
     </logger>
+    <!--
+    <logger name="org.artifactory.webapp.servlet.RepoFilter">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.jcr.lock.SessionLockEntry">
+        <level value="TRACE"/>
+    </logger>
+    -->
+    <!--
+    <logger name="org.artifactory.jcr.lock.InternalLockManager">
+        <level value="TRACE"/>
+    </logger>
+    -->
 </configuration>
