@@ -68,8 +68,8 @@ public class ArtifactoryPool {
             }
         }
         if (o == null) {
-            throw new RepositoryException("No connections available in " + timeout + "ms" +
-                    " and number of connections " + all.size());
+            throw new RepositoryException(
+                    "No connections available in " + timeout + " seconds and number of connections " + all.size());
         }
         return o;
     }

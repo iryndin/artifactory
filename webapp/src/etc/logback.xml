@@ -2,13 +2,13 @@
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%date [%-5level] \(%logger{32}:%line\) %message%n</pattern>
+            <pattern>%d [%thread] [%-5level] \(%logger{32}:%line\) %message%n</pattern>
         </layout>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${artifactory.home}/logs/artifactory.log</File>
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%date [%-5level] \(%logger{32}:%line\) %message%n</pattern>
+            <pattern>%date [%thread] [%-5level] \(%logger{32}:%line\) %message%n</pattern>
         </layout>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <FileNamePattern>${artifactory.home}/logs/artifactory.%i.log.zip</FileNamePattern>
@@ -96,11 +96,15 @@
         <level value="DEBUG"/>
         <appender-ref ref="IMPORT.EXPORT"/>
     </logger>
+
     <!--
     <logger name="org.artifactory.webapp.servlet.RepoFilter">
         <level value="DEBUG"/>
     </logger>
     <logger name="org.artifactory.jcr.lock.SessionLockEntry">
+        <level value="TRACE"/>
+    </logger>
+    <logger name="org.artifactory.repo.jcr.JcrRepoBase">
         <level value="TRACE"/>
     </logger>
     -->

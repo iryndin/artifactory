@@ -44,7 +44,7 @@ public class SessionLockEntry {
     }
 
     public void acquireReadLock() {
-        log.trace(Thread.currentThread().hashCode() + ": Acquiring READ lock on {}", getFsItem());
+        log.trace("Acquiring READ lock on {}", getFsItem());
         if (acquiredReadLock != null) {
             // already done
             return;
@@ -82,7 +82,7 @@ public class SessionLockEntry {
     }
 
     public void acquireWriteLock() {
-        log.trace(Thread.currentThread().hashCode() + ": Acquiring WRITE lock on {}", getFsItem());
+        log.trace("Acquiring WRITE lock on {}", getFsItem());
         if (isLockedByMe()) {
             // already done
             return;
@@ -161,7 +161,7 @@ public class SessionLockEntry {
      * @return true if read lock was acquired, false otherwise
      */
     public boolean releaseReadLock() {
-        log.trace(Thread.currentThread().hashCode() + ": Releasing READ lock on {}", getFsItem());
+        log.trace("Releasing READ lock on {}", getFsItem());
         try {
             if (acquiredReadLock != null) {
                 acquiredReadLock.unlock();
@@ -174,7 +174,7 @@ public class SessionLockEntry {
     }
 
     private void releaseWriteLock() {
-        log.trace(Thread.currentThread().hashCode() + ": Releasing WRITE lock on {}", getFsItem());
+        log.trace("Releasing WRITE lock on {}", getFsItem());
         if (isLockedByMe()) {
             getWriteLock().unlock();
         }

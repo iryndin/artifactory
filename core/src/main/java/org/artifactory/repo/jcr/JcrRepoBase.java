@@ -23,7 +23,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.config.BaseSettings;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.fs.FileInfo;
@@ -39,7 +38,6 @@ import org.artifactory.api.repo.exception.ItemNotFoundException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
@@ -537,14 +535,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         JcrFolder rootFolder = new JcrFolder((JcrFolder) rootLockEntry.getFsItem(), this);
         LockingHelper.writeLock(new LockEntry(rootLockEntry, rootFolder));
         return rootFolder;
-    }
-
-    protected long getTimeToWait(BaseSettings settings) {
-        long timeToWait = ConstantsValue.failFastLockTimeoutSecs.getLong();
-        if (!settings.isFailFast()) {
-            timeToWait = ConstantsValue.lockTimeoutSecs.getLong();
-        }
-        return timeToWait;
     }
 
     /**
