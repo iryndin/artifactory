@@ -177,7 +177,7 @@ public class RepoFilter implements Filter {
 
     private static String requestDebugString(HttpServletRequest request) {
         String queryString = request.getQueryString();
-        String str = request.hashCode() + ": " +
+        String str = Thread.currentThread().hashCode() + ": " +
                 request.getMethod() + " (" + new HttpAuthenticationDetails(request).getRemoteAddress() + ") " +
                 RequestUtils.getServletPathFromRequest(request) +
                 (queryString != null ? queryString : "");

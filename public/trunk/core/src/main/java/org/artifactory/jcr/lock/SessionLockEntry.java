@@ -44,7 +44,7 @@ public class SessionLockEntry {
     }
 
     public void acquireReadLock() {
-        log.trace("Acquiring READ lock for {}", getFsItem());
+        log.trace(Thread.currentThread().hashCode() + ": Acquiring READ lock on {}", getFsItem());
         if (acquiredReadLock != null) {
             // already done
             return;
@@ -82,15 +82,16 @@ public class SessionLockEntry {
     }
 
     public void acquireWriteLock() {
-        log.trace("Acquiring WRITE lock for {}", getFsItem());
+        log.trace(Thread.currentThread().hashCode() + ": Acquiring WRITE lock on {}", getFsItem());
         if (isLockedByMe()) {
             // already done
             return;
         }
         JcrFsItem item = getFsItem();
         if (acquiredReadLock != null) {
+            //Only upgrade if readlock is not yet shared
             //log.trace("Upgrading from read lock to write lock on '{}'", item);
-            throw new LockingException("Cannot acquire write lock if has read lock for " + item);
+            throw new LockingException("Cannot acquire write lock if has read lock on " + item);
         }
         if (lockedFsItem == null) {
             throw new LockingException("Cannot write lock an immutable item " + item);
@@ -160,7 +161,7 @@ public class SessionLockEntry {
      * @return true if read lock was acquired, false otherwise
      */
     public boolean releaseReadLock() {
-        log.trace("Releasing READ lock for {}", getFsItem());
+        log.trace(Thread.currentThread().hashCode() + ": Releasing READ lock on {}", getFsItem());
         try {
             if (acquiredReadLock != null) {
                 acquiredReadLock.unlock();
@@ -173,7 +174,7 @@ public class SessionLockEntry {
     }
 
     private void releaseWriteLock() {
-        log.trace("Releasing WRITE lock for {}", getFsItem());
+        log.trace(Thread.currentThread().hashCode() + ": Releasing WRITE lock on {}", getFsItem());
         if (isLockedByMe()) {
             getWriteLock().unlock();
         }
