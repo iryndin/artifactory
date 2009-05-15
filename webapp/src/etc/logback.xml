@@ -96,7 +96,6 @@
         <level value="DEBUG"/>
         <appender-ref ref="IMPORT.EXPORT"/>
     </logger>
-
     <!--
     <logger name="org.artifactory.webapp.servlet.RepoFilter">
         <level value="DEBUG"/>
@@ -105,6 +104,9 @@
         <level value="TRACE"/>
     </logger>
     <logger name="org.artifactory.repo.jcr.JcrRepoBase">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.webapp.servlet.ArtifactoryResponseBase">
         <level value="DEBUG"/>
     </logger>
     -->

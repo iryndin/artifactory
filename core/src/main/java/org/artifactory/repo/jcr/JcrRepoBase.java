@@ -578,6 +578,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
                 //Cleanup old snapshots etc.
                 localRepoInterceptor.afterResourceSave(res, this);
             }
+            log.debug("Done saving resource '{}' into repository '{}'.", res, this);
             return res;
         } catch (Exception e) {
             //Unwrap any IOException and throw it

@@ -37,6 +37,7 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
     private Exception exception;
 
     public void sendStream(InputStream is) throws IOException {
+        log.debug("Sending response stream.");
         OutputStream os = getOutputStream();
         if (status == Status.UNSET) {
             status = Status.SUCCESS;
@@ -47,6 +48,7 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
                 log.warn("Zero bytes sent to client.");
             }
             sendOk();
+            log.debug("Done sending response stream.");
         } catch (Exception e) {
             exception = e;
             sendInternalError(e, log);
