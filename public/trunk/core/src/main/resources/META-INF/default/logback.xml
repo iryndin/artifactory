@@ -104,7 +104,7 @@
         <level value="TRACE"/>
     </logger>
     <logger name="org.artifactory.repo.jcr.JcrRepoBase">
-        <level value="TRACE"/>
+        <level value="DEBUG"/>
     </logger>
     -->
     <!--
