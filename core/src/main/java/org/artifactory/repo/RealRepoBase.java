@@ -28,6 +28,7 @@ import org.artifactory.util.PathMatcher;
 import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -89,7 +90,7 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         } else if (NamingUtils.isMetadata(path)) {
             toCheck = NamingUtils.getMetadataParentPath(path);
         }
-        return PathMatcher.matches(toCheck, includes, excludes);
+        return !StringUtils.hasLength(toCheck) || PathMatcher.matches(toCheck, includes, excludes);
     }
 
     public boolean handles(String path) {
