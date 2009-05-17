@@ -191,8 +191,8 @@ public class VersionInfoServiceImpl implements VersionInfoService {
         }
         try {
             java.net.URL uri = new java.net.URL(headerVal);
-            //Extract only the host part
-            headerVal = uri.getHost();
+            //Only use the uri up to the path part
+            headerVal = uri.getProtocol() + "://" + uri.getAuthority();
         } catch (MalformedURLException e) {
             //Nothing
         }
