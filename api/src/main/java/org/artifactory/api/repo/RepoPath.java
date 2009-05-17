@@ -130,4 +130,15 @@ public final class RepoPath implements Info {
             return metdadataRepoPath;
         }
     }
+
+    /**
+     * @return Parent of this repo path. Null if has no parent
+     */
+    public RepoPath getParent() {
+        if (!PathUtils.hasText(path)) {
+            return null;
+        } else {
+            return new RepoPath(repoKey, PathUtils.getParent(path));
+        }
+    }
 }
