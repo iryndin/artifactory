@@ -560,12 +560,15 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
                 String metadataName = res.getInfo().getName();
                 metadataService.setXmlMetadata(metadataAware, metadataName, in);
             } else {
+                //Create the parent folder if not exists
+                JcrFolder jcrFolder = getLockedJcrFolder(repoPath.getParent(), true);
+                jcrFolder.mkdirs();
+
                 //Create the parent folder
                 JcrFile jcrFile = getLockedJcrFile(repoPath, true);
                 // set the file extension checksums (only needed if the file is currently being downloaded)
                 jcrFile.getInfo().setChecksums(((FileResource) res).getInfo().getChecksums());
-                JcrFolder jcrFolder = getLockedJcrFolder(jcrFile.getParentRepoPath(), true);
-                jcrFolder.mkdirs();
+
                 //Deploy
                 long lastModified = res.getInfo().getLastModified();
                 BufferedInputStream bis = new BufferedInputStream(in);
