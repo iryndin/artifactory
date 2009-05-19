@@ -320,7 +320,7 @@ public class MetadataServiceImpl implements MetadataService {
                     //Create empty data object
                     return definition.newInstance();
                 } else {
-                    // Does not exists
+                    // Does not exist
                     return null;
                 }
             } else {
