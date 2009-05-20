@@ -165,9 +165,11 @@ public class UpdateUtils {
             newRepoKey = repoKey;
         }
 
-        // If it is local repository add the -local
-        if (!ANY.equals(newRepoKey) && !newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
-            newRepoKey = newRepoKey + LOCAL_SUFFIX;
+        if (VersionsHolder.getOriginalVersion().before(ArtifactoryVersion.v130beta1)) {
+            // If it is local repository add the -local
+            if (!ANY.equals(newRepoKey) && !newRepoKey.endsWith(CACHE_SUFFIX) && !newRepoKey.endsWith(LOCAL_SUFFIX)) {
+                newRepoKey = newRepoKey + LOCAL_SUFFIX;
+            }
         }
 
         return newRepoKey;
