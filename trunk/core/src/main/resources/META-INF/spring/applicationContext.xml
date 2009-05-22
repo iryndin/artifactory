@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-2.5.xsd
+            http://www.springframework.org/schema/tool
+            http://www.springframework.org/schema/tool/spring-tool-2.5.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!-- Causes system propeties to be used -->
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" ref="resourceLocation"/>
+        <!-- Default is SYSTEM_PROPERTIES_MODE_FALLBACK -->
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <!-- Do not search (non-java) env vars -->
+        <property name="searchSystemEnvironment" value="false"/>
+        <!-- Don't try to resolve placeholders that are themseleves placeholders (scm.revision) -->
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <bean id="resourceLocation" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="META-INF/artifactory.properties"/>
+    </bean>
+
+    <!-- Enable configuration by annotations -->
+    <context:annotation-config/>
+    <context:component-scan base-package="org.artifactory"/>
+
+    <!-- enable the configuration of transactional behavior based on annotations -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+        <property name="transactionInterceptor" ref="txInterceptor"/>
+    </bean>
+
+    <bean id="txInterceptor"
+          class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributeSource">
+            <bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource">
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.artifactory.jcr.lock.LockingAdviceAdvisor"/>
+
+    <bean id="alwaysOnTxInterceptor"
+          class="org.springframework.transaction.interceptor.TransactionInterceptor"
+          lazy-init="true">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributeSource">
+            <bean class="org.springframework.transaction.interceptor.MatchAlwaysTransactionAttributeSource"/>
+        </property>
+    </bean>
+
+</beans>
