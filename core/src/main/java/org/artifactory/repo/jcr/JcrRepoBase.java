@@ -23,6 +23,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.common.StatusHolder;
+import org.artifactory.api.config.BaseSettings;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.fs.FileInfo;
@@ -38,6 +39,7 @@ import org.artifactory.api.repo.exception.ItemNotFoundException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
@@ -537,6 +539,14 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         return rootFolder;
     }
 
+    protected long getTimeToWait(BaseSettings settings) {
+        long timeToWait = ConstantsValue.failFastLockTimeoutSecs.getLong();
+        if (!settings.isFailFast()) {
+            timeToWait = ConstantsValue.lockTimeoutSecs.getLong();
+        }
+        return timeToWait;
+    }
+
     /**
      * Create the resource in the local repository
      *
@@ -560,17 +570,12 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
                 String metadataName = res.getInfo().getName();
                 metadataService.setXmlMetadata(metadataAware, metadataName, in);
             } else {
-                //Create the parent folder if it does not exist
-                RepoPath parentPath = repoPath.getParent();
-                if (!itemExists(parentPath.getPath())) {
-                    JcrFolder jcrFolder = getLockedJcrFolder(parentPath, true);
-                    jcrFolder.mkdirs();
-                }
                 //Create the parent folder
                 JcrFile jcrFile = getLockedJcrFile(repoPath, true);
                 // set the file extension checksums (only needed if the file is currently being downloaded)
                 jcrFile.getInfo().setChecksums(((FileResource) res).getInfo().getChecksums());
-
+                JcrFolder jcrFolder = getLockedJcrFolder(jcrFile.getParentRepoPath(), true);
+                jcrFolder.mkdirs();
                 //Deploy
                 long lastModified = res.getInfo().getLastModified();
                 BufferedInputStream bis = new BufferedInputStream(in);
@@ -583,7 +588,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
                 //Cleanup old snapshots etc.
                 localRepoInterceptor.afterResourceSave(res, this);
             }
-            log.debug("Done saving resource '{}' into repository '{}'.", res, this);
             return res;
         } catch (Exception e) {
             //Unwrap any IOException and throw it
