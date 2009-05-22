@@ -1,9 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Artifactory with Http Support Test Suite" thread-count="5" verbose="1" parallel="false">
-    <test name="ldapAuthentication">
-        <classes>
-            <class name="org.artifactory.test.ldap.LdapAuthenticationTest"/>
-            <class name="org.artifactory.test.ldap.LdapConnectionTesterTest"/>
-        </classes>
-    </test>
-</suite>
