@@ -5,6 +5,7 @@ import org.artifactory.descriptor.security.ldap.LdapSetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.AuthenticationException;
+import org.springframework.ldap.BadLdapGrammarException;
 import org.springframework.ldap.CommunicationException;
 import org.springframework.ldap.InvalidNameException;
 import org.springframework.ldap.NameNotFoundException;
@@ -22,12 +23,13 @@ public class LdapConnectionTester {
     private final static Logger log = LoggerFactory.getLogger(LdapConnectionTester.class);
 
     /**
-     * Tries to connect to an ldap server and returns the result in the status holder.
-     * The message in the status holder is meant to be displayed to the user.
-     * @param ldapSetting   The information for the ldap connection
-     * @param username      The username that will be used to test the connection
-     * @param password      The password that will be used to test the connection
-     * @return StatusHolder with the connection attempt results. 
+     * Tries to connect to an ldap server and returns the result in the status holder. The message in the status holder
+     * is meant to be displayed to the user.
+     *
+     * @param ldapSetting The information for the ldap connection
+     * @param username    The username that will be used to test the connection
+     * @param password    The password that will be used to test the connection
+     * @return StatusHolder with the connection attempt results.
      */
     public StatusHolder testLdapConnection(LdapSetting ldapSetting, String username,
             String password) {
@@ -62,6 +64,8 @@ public class LdapConnectionTester {
                     "Probably a wrong manager dn or manager password", e, log);
         } else if (e instanceof BadCredentialsException) {
             status.setError("Failed to authenticate user " + username, e, log);
+        } else if (e instanceof BadLdapGrammarException) {
+            status.setError("Failed to parse R\\DN", e, log);
         } else {
             String message = "Error connecting to the LDAP server";
             if (StringUtils.hasText(e.getMessage())) {
