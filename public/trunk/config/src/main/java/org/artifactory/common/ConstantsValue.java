@@ -26,7 +26,7 @@ import static java.lang.Long.parseLong;
  */
 public enum ConstantsValue {
     config("config.file", null),
-    logsViewRefreshRateSecs("ajaxRefreshMillis", "10"),
+    logsViewRefreshRateSecs("logsViewRefreshRateSecs", "10"),
     lockTimeoutSecs("lockTimeoutSecs", "120"),
     failFastLockTimeoutSecs("failFastLockTimeoutSecs", "5"),
     authenticationCacheIdleTimeSecs("authenticationCacheIdleTimeSecs", "300"),
