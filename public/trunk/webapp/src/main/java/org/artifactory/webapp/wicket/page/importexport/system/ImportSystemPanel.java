@@ -70,7 +70,7 @@ public class ImportSystemPanel extends TitledPanel {
     private boolean verbose;
 
     @WicketProperty
-    private boolean includeMetadata;
+    private boolean excludeMetadata;
 
     final StyledCheckbox copyCheckbox;
     final StyledCheckbox symLinkCheckbox;
@@ -111,9 +111,9 @@ public class ImportSystemPanel extends TitledPanel {
         importForm.add(verboseCheckbox);
         importForm.add(new HelpBubble("verboseHelp", "HINT: You can monitor the log in the 'System Logs' page."));
 
-        importForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        importForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export."));
+        importForm.add(new StyledCheckbox("excludeMetadata", new PropertyModel(this, "excludeMetadata")));
+        importForm.add(new HelpBubble("excludeMetadataHelp",
+                "Exclude Artifactory-specific metadata from the export."));
 
         copyCheckbox.setEnabled(false);
         copyCheckbox.setRequired(false);
@@ -194,7 +194,7 @@ public class ImportSystemPanel extends TitledPanel {
                     importSettings.setUseSymLinks(useSymLinks);
                     importSettings.setFailIfEmpty(true);
                     importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
+                    importSettings.setIncludeMetadata(!excludeMetadata);
                     context.importFrom(importSettings, status);
                     List<StatusEntry> warnings = status.getWarnings();
                     if (!warnings.isEmpty()) {
