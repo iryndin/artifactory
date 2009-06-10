@@ -59,7 +59,7 @@ public class ArtifactoryPropertiesTest {
         URL sysPropsUrl = getClass().getResource("/config/system/artifactory.system.1.properties");
         File file = new File(sysPropsUrl.toURI());
         ArtifactoryProperties.get().loadArtifactorySystemProperties(file, null);
-        Assert.assertEquals(ConstantsValue.ajaxRefreshMilis.getInt(), 1000);
+        Assert.assertEquals(ConstantsValue.logsViewRefreshRateSecs.getInt(), 1000);
         Assert.assertEquals(ConstantsValue.lockTimeoutSecs.getInt(),
                 parseInt(ConstantsValue.lockTimeoutSecs.getDefValue()));
         Assert.assertEquals(ConstantsValue.authenticationCacheIdleTimeSecs.getInt(), 50);
@@ -76,7 +76,7 @@ public class ArtifactoryPropertiesTest {
         System.setProperty(ConstantsValue.authenticationCacheIdleTimeSecs.getPropertyName(), "800");
 
         ArtifactoryProperties.get().loadArtifactorySystemProperties(file, null);
-        Assert.assertEquals(ConstantsValue.ajaxRefreshMilis.getInt(), 1000);
+        Assert.assertEquals(ConstantsValue.logsViewRefreshRateSecs.getInt(), 1000);
         Assert.assertEquals(ConstantsValue.lockTimeoutSecs.getInt(), 120);
         Assert.assertEquals(ConstantsValue.authenticationCacheIdleTimeSecs.getInt(), 800);
         Assert.assertEquals(ConstantsValue.jcrFixConsistency.getBoolean(), true);
