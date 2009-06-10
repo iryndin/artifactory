@@ -56,6 +56,7 @@ import org.artifactory.api.security.SecurityService;
 import org.artifactory.backup.BackupJob;
 import org.artifactory.cache.InternalCacheService;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.HttpRepoDescriptor;
@@ -231,6 +232,8 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
         localAndRemoteRepoDescriptors.addAll(remoteRepoDescriptorMap.values());
         VirtualRepoDescriptor vrd = new VirtualRepoDescriptor();
         vrd.setRepositories(localAndRemoteRepoDescriptors);
+        vrd.setArtifactoryRequestsCanRetrieveRemoteArtifacts(
+                ConstantsValue.artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts.getBoolean());
         vrd.setKey(VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY);
         // create and init the global virtual repo
         globalVirtualRepo =
