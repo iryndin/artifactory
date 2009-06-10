@@ -97,7 +97,7 @@ public class SystemLogsViewPanel extends Panel {
         addLastUpdate();
 
         // add the timer behavior to the page and make it update both components
-        add(new AbstractAjaxTimerBehavior(Duration.seconds(ConstantsValue.logsRefreshRateSecs.getInt())) {
+        add(new AbstractAjaxTimerBehavior(Duration.milliseconds(ConstantsValue.ajaxRefreshMilis.getLong())) {
             @Override
             protected void onTimer(AjaxRequestTarget target) {
                 updateComponents(target, (!systemLogFile.exists()));
@@ -121,6 +121,7 @@ public class SystemLogsViewPanel extends Panel {
          */
         logsDropDownChoice.add(new AjaxFormComponentUpdatingBehavior("onChange") {
 
+            @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 int choice = Integer.parseInt(logsDropDownChoice.getValue());
                 List choices = logsDropDownChoice.getChoices();
