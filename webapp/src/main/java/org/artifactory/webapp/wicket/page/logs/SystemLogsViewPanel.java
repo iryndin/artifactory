@@ -97,7 +97,7 @@ public class SystemLogsViewPanel extends Panel {
         addLastUpdate();
 
         // add the timer behavior to the page and make it update both components
-        add(new AbstractAjaxTimerBehavior(Duration.milliseconds(ConstantsValue.ajaxRefreshMilis.getLong())) {
+        add(new AbstractAjaxTimerBehavior(Duration.seconds(ConstantsValue.logsViewRefreshRateSecs.getInt())) {
             @Override
             protected void onTimer(AjaxRequestTarget target) {
                 updateComponents(target, (!systemLogFile.exists()));
