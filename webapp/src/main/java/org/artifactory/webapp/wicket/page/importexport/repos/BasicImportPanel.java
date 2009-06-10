@@ -64,7 +64,7 @@ public class BasicImportPanel extends TitledPanel {
     private boolean verbose;
 
     @WicketProperty
-    private boolean includeMetadata;
+    private boolean excludeMetadata;
 
     private Form importForm;
 
@@ -124,7 +124,7 @@ public class BasicImportPanel extends TitledPanel {
                     importSettings.setCopyToWorkingFolder(copyFiles);
                     importSettings.setUseSymLinks(useSymLinks);
                     importSettings.setVerbose(verbose);
-                    importSettings.setIncludeMetadata(includeMetadata);
+                    importSettings.setIncludeMetadata(!excludeMetadata);
                     if (ImportExportReposPage.ALL_REPOS.equals(targetRepoKey)) {
                         repositoryService.importAll(importSettings, status);
                     } else {

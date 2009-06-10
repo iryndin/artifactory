@@ -95,8 +95,8 @@ public class ImportRepoPanel extends BasicImportPanel {
         form.add(copyCheckbox);
         form.add(symLinkCheckbox);
 
-        form.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        form.add(new HelpBubble("includeMetadataHelp", "Include Artifactory-specific metadata as part of the export."));
+        form.add(new StyledCheckbox("excludeMetadata", new PropertyModel(this, "excludeMetadata")));
+        form.add(new HelpBubble("excludeMetadataHelp", "Exclude Artifactory-specific metadata from the export."));
     }
 
     private String getRepoSelectHelpText() {

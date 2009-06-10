@@ -67,7 +67,7 @@ public class ExportRepoPanel extends TitledPanel {
     private boolean m2Compatible;
 
     @WicketProperty
-    private boolean includeMetadata;
+    private boolean excludeMetadata;
 
     public ExportRepoPanel(String string) {
         super(string);
@@ -114,9 +114,9 @@ public class ExportRepoPanel extends TitledPanel {
         exportForm.add(new StyledCheckbox("m2Compatible", new PropertyModel(this, "m2Compatible")));
         exportForm.add(new HelpBubble("m2CompatibleHelp",
                 "Include Maven 2 repository metadata and checksum files as part of the export"));
-        exportForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        exportForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export.\n" +
+        exportForm.add(new StyledCheckbox("excludeMetadata", new PropertyModel(this, "excludeMetadata")));
+        exportForm.add(new HelpBubble("excludeMetadataHelp",
+                "Exclude Artifactory-specific metadata from the export.\n" +
                         "(Maven 2 metadata is unaffected by this setting)"));
 
         SimpleButton exportButton = new SimpleButton("export", exportForm, "Export") {
@@ -125,7 +125,7 @@ public class ExportRepoPanel extends TitledPanel {
                 try {
                     //If we chose "All" run manual backup to dest dir, else export a single repo
                     ExportSettings exportSettings = new ExportSettings(exportToPath);
-                    exportSettings.setIncludeMetadata(includeMetadata);
+                    exportSettings.setIncludeMetadata(!excludeMetadata);
                     exportSettings.setM2Compatible(m2Compatible);
                     MultiStatusHolder status = new MultiStatusHolder();
                     if (ImportExportReposPage.ALL_REPOS.equals(sourceRepoKey)) {
