@@ -59,7 +59,7 @@ public class ExportSystemPanel extends TitledPanel {
     private boolean m2Compatible;
 
     @WicketProperty
-    private boolean includeMetadata;
+    private boolean excludeMetadata;
 
     public ExportSystemPanel(String string) {
         super(string);
@@ -86,9 +86,9 @@ public class ExportSystemPanel extends TitledPanel {
         exportForm.add(new StyledCheckbox("m2Compatible", new PropertyModel(this, "m2Compatible")));
         exportForm.add(new HelpBubble("m2CompatibleHelp",
                 "Include Maven 2 repository metadata and checksum files as part of the export"));
-        exportForm.add(new StyledCheckbox("includeMetadata", new PropertyModel(this, "includeMetadata")));
-        exportForm.add(new HelpBubble("includeMetadataHelp",
-                "Include Artifactory-specific metadata as part of the export.\n" +
+        exportForm.add(new StyledCheckbox("excludeMetadata", new PropertyModel(this, "excludeMetadata")));
+        exportForm.add(new HelpBubble("excludeMetadataHelp",
+                "Exclude Artifactory-specific metadata from the export.\n" +
                         "(Maven 2 metadata is unaffected by this setting)"));
 
         //Create a zip archive (slow!)
@@ -106,7 +106,7 @@ public class ExportSystemPanel extends TitledPanel {
                     settings.setFailFast(false);
                     settings.setVerbose(false);
                     settings.setFailIfEmpty(true);
-                    settings.setIncludeMetadata(includeMetadata);
+                    settings.setIncludeMetadata(!excludeMetadata);
                     settings.setM2Compatible(m2Compatible);
                     context.exportTo(settings, status);
                     List<StatusEntry> warnings = status.getWarnings();
