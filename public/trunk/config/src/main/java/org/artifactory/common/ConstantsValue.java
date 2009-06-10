@@ -43,7 +43,9 @@ public enum ConstantsValue {
     versioningQueryIntervalSecs("versioningQueryIntervalSecs", "43200"),
     gcIntervalMins("gcIntervalMins", "60"),
     gcBatchDeleteMaxSize("gcBatchDeleteMaxSize", "30"),
-    logsRefreshRateSecs("logs.refreshrate.secs", "10");
+    logsRefreshRateSecs("logs.refreshrate.secs", "10"),
+    artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts(
+            "artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts", FALSE.toString());
 
     static final String SYS_PROP_PREFIX = "artifactory.";
 
