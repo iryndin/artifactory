@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://artifactory.jfrog.org/xsd/1.3.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.3.6 http://www.jfrog.org/xsd/artifactory-v1_3_6.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://artifactory.jfrog.org/xsd/1.3.6">
     <offlineMode>false</offlineMode>
     <fileUploadMaxSizeMb>100</fileUploadMaxSizeMb>
     <dateFormat>dd-MM-yy HH:mm:ss z</dateFormat>
@@ -93,6 +92,24 @@
             <checksumPolicyType>generate-if-absent</checksumPolicyType>
             <socketTimeoutMillis>15000</socketTimeoutMillis>
             <proxyRef>myprox</proxyRef>
+        </remoteRepository>
+        <remoteRepository>
+            <key>blabla</key>
+            <blackedOut>false</blackedOut>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>true</handleSnapshots>
+            <maxUniqueSnapshots>0</maxUniqueSnapshots>
+            <includesPattern>**/*</includesPattern>
+            <type>maven2</type>
+            <url>http://localhost/repo</url>
+            <offline>false</offline>
+            <hardFail>false</hardFail>
+            <storeArtifactsLocally>true</storeArtifactsLocally>
+            <retrievalCachePeriodSecs>43200</retrievalCachePeriodSecs>
+            <failedRetrievalCachePeriodSecs>30</failedRetrievalCachePeriodSecs>
+            <missedRetrievalCachePeriodSecs>43200</missedRetrievalCachePeriodSecs>
+            <checksumPolicyType>generate-if-absent</checksumPolicyType>
+            <socketTimeoutMillis>15000</socketTimeoutMillis>
         </remoteRepository>
     </remoteRepositories>
     <virtualRepositories>

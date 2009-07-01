@@ -22,8 +22,6 @@ import org.apache.wicket.protocol.http.servlet.AbortWithWebErrorCodeException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.webapp.servlet.RepoFilter;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
 import org.artifactory.webapp.wicket.page.base.BasePage;
@@ -36,7 +34,7 @@ public class SimpleRepoBrowserPage extends AuthenticatedPage {
     public static final String PATH = "_repoBrowser";
 
     @SpringBean
-    private RepositoryService repositoryService;
+    private RepositoryService repoService;
 
     public SimpleRepoBrowserPage() {
         //Retrieve the repository path from the request
@@ -51,20 +49,15 @@ public class SimpleRepoBrowserPage extends AuthenticatedPage {
         }
 
         String repoKey = repoPath.getRepoKey();
-        LocalRepoDescriptor repo =
-                repositoryService.localOrCachedRepoDescriptorByKey(repoKey);
-        if (repo != null) {
+
+        if (repoService.remoteRepoDescriptorByKey(repoKey) != null) {
+            add(new RemoteRepoBrowserPanel("browseRepoPanel", repoPath));
+        } else if (repoService.localOrCachedRepoDescriptorByKey(repoKey) != null) {
             add(new LocalRepoBrowserPanel("browseRepoPanel", repoPath));
+        } else if (repoService.virtualRepoDescriptorByKey(repoKey) != null) {
+            add(new VirtualRepoBrowserPanel("browseRepoPanel", repoPath));
         } else {
-            //Try to get a virtual repo
-            VirtualRepoDescriptor virtualRepo =
-                    repositoryService.virtualRepoDescriptorByKey(repoKey);
-            if (virtualRepo == null) {
-                //Return a 404
-                throw new AbortWithWebErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
-            } else {
-                add(new VirtualRepoBrowserPanel("browseRepoPanel", repoPath));
-            }
+            throw new AbortWithWebErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 

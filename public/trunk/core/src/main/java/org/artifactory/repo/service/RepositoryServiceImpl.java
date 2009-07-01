@@ -889,6 +889,14 @@ public class RepositoryServiceImpl implements InternalRepositoryService {
         return null;
     }
 
+    public RemoteRepoDescriptor remoteRepoDescriptorByKey(String repoKey) {
+        RemoteRepo remoteRepo = globalVirtualRepo.remoteRepositoryByKey(repoKey);
+        if (remoteRepo != null) {
+            return (RemoteRepoDescriptor) remoteRepo.getDescriptor();
+        }
+        return null;
+    }
+
     public Repo nonCacheRepositoryByKey(String key) {
         Repo repo = globalVirtualRepo.nonCacheRepositoryByKey(key);
         if (repo == null) {
