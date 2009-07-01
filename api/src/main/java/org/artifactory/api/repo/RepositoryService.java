@@ -26,6 +26,7 @@ import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
+import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
@@ -56,7 +57,7 @@ public interface RepositoryService extends ImportableExportable {
 
     @Lock(transactional = true)
     void deploy(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo, boolean forceDeployPom,
-                File uploadedFile) throws RepoAccessException;
+            File uploadedFile) throws RepoAccessException;
 
     void deployBundle(File bundle, RepoDescriptor targetRepo, StatusHolder status);
 
@@ -66,6 +67,8 @@ public interface RepositoryService extends ImportableExportable {
     List<VirtualRepoDescriptor> getVirtualRepoDescriptors();
 
     LocalRepoDescriptor localOrCachedRepoDescriptorByKey(String key);
+
+    RemoteRepoDescriptor remoteRepoDescriptorByKey(String repoKey);
 
     List<RepoDescriptor> getLocalAndRemoteRepoDescriptors();
 
