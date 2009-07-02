@@ -49,10 +49,14 @@ public class SimpleRepoBrowserPage extends AuthenticatedPage {
         }
 
         String repoKey = repoPath.getRepoKey();
-
         if (repoService.remoteRepoDescriptorByKey(repoKey) != null) {
-            add(new RemoteRepoBrowserPanel("browseRepoPanel", repoPath));
-        } else if (repoService.localOrCachedRepoDescriptorByKey(repoKey) != null) {
+            warn("Remote repositories are not directly browsable - browsing the remote repository cache.");
+            // switch the repo path and key to the cache repo
+            repoKey = repoKey + "-cache";
+            repoPath = new RepoPath(repoKey, repoPath.getPath());
+        }
+
+        if (repoService.localOrCachedRepoDescriptorByKey(repoKey) != null) {
             add(new LocalRepoBrowserPanel("browseRepoPanel", repoPath));
         } else if (repoService.virtualRepoDescriptorByKey(repoKey) != null) {
             add(new VirtualRepoBrowserPanel("browseRepoPanel", repoPath));
