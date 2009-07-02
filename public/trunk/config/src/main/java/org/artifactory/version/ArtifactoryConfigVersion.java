@@ -65,7 +65,8 @@ public enum ArtifactoryConfigVersion {
             ArtifactoryVersion.v130rc1),
     OneThreeFive("http://artifactory.jfrog.org/xsd/1.3.5",
             "http://www.jfrog.org/xsd/artifactory-v1_3_5.xsd",
-            ArtifactoryVersion.v205),
+            ArtifactoryVersion.v205,
+            new ProxyNTHostConverter()),
     OneThreeFiveOne("http://artifactory.jfrog.org/xsd/1.3.6",
             "http://www.jfrog.org/xsd/artifactory-v1_3_6.xsd",
             ArtifactoryVersion.getCurrent());
