@@ -488,10 +488,6 @@ esac
 # Add jetty properties to Java VM options.
 #####################################################
 JAVA_OPTIONS="$JAVA_OPTIONS -Djava.awt.headless=true"
-hasMaxPermSize=`echo "$JAVA_OPTIONS" | grep MaxPermSize`
-if [ -z "$hasMaxPermSize" ]; then
-  JAVA_OPTIONS="$JAVA_OPTIONS -XX:MaxPermSize=128m"
-fi
 
 #####################################################
 # This is how the Artifactory server will be started
