@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A data store implementation that stores the records in a database using JDBC.
@@ -251,11 +252,12 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     /**
      * All data identifiers that are currently in use are in this set until they are garbage collected.
      */
-    protected Map<String, Long> toRemove = null;
+    private final Map<String, Long> toRemove = new ConcurrentHashMap<String, Long>();
     /**
      * The last set of identifier that where planned for deletion. Garbage collection in 2 pass.
      */
-    protected Set<String> lastToRemove = null;
+    private Set<String> lastToRemove;
+
     private final Map<Integer, String> deleteQueries = new HashMap<Integer, String>();
     private long dataStoreSize;
 
@@ -373,7 +375,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     }
 
     public int nbElementsToClean() {
-        return toRemove != null ? toRemove.size() : 0;
+        return toRemove.size();
     }
 
     /**
@@ -385,6 +387,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
 
     public long cleanUnreferencedItems() throws DataStoreException {
         if (lastToRemove == null) {
+            //If its the very first pass, return
             lastToRemove = new HashSet<String>(toRemove.keySet());
             return 0L;
         }
@@ -398,6 +401,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         try {
             List<String> idToDelete = new ArrayList<String>();
             List<String> idParsed = new ArrayList<String>();
+            //Remove items that are found twice in a row
             for (Map.Entry<String, Long> identifier : toRemove.entrySet()) {
                 String idKey = identifier.getKey();
                 idParsed.add(idKey);
@@ -486,10 +490,8 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         }
     }
 
-    public Map<String, Long> getAllElementSize() throws DataStoreException {
+    protected Map<String, Long> getAllIdentifiersAndCalcSize() throws DataStoreException {
         Map<String, Long> result = new HashMap<String, Long>();
-        // No concurrency for the moment
-        //Map<String, Long> result = new ConcurrentHashMap<String, Long>();
         long totalSize = 0L;
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
@@ -547,7 +549,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
             }
             long length = rs.getLong(1);
-            long lastModified = rs.getLong(2);
+            //long lastModified = rs.getLong(2);
             usesIdentifier(identifier);
             return new ArtifactoryDbDataRecord(this, identifier, length);
         } catch (Exception e) {
@@ -691,11 +693,11 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public long scanDataStore() {
         long start = System.currentTimeMillis();
         log.debug("Starting scanning of all datastore entries");
-        if (toRemove != null) {
-            toRemove.clear();
-        }
+        toRemove.clear();
         try {
-            toRemove = getAllElementSize();
+            //Add all identifiers
+            Map<String, Long> identifiers = getAllIdentifiersAndCalcSize();
+            toRemove.putAll(identifiers);
         } catch (DataStoreException e) {
             throw new RuntimeException("Could not load all data store identifier: " + e.getMessage(), e);
         }
@@ -843,18 +845,14 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     }
 
     protected void usesIdentifier(DataIdentifier identifier) {
-        if (toRemove != null) {
-            toRemove.remove(identifier.toString());
-        }
+        toRemove.remove(identifier.toString());
     }
 
     /**
      * {@inheritDoc}
      */
     public void clearInUse() {
-        if (toRemove != null) {
-            toRemove.clear();
-        }
+        toRemove.clear();
     }
 
     protected synchronized MessageDigest getDigest() throws DataStoreException {

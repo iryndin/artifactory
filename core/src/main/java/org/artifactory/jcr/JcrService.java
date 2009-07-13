@@ -100,6 +100,7 @@ public interface JcrService extends ReloadableBean {
     @Lock(transactional = true, readOnly = true)
     List<DeployableUnit> getDeployableUnitsUnder(RepoPath repoPath) throws RepositoryException;
 
+    @Transactional
     void garbageCollect();
 
     /**
