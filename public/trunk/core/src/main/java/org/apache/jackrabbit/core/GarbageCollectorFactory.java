@@ -40,7 +40,7 @@ public class GarbageCollectorFactory {
      *
      * @throws javax.jcr.RepositoryException
      */
-    public static ArtifactoryGarbageCollector createDataStoreGarbageCollector(SessionImpl session)
+    public static ArtifactoryGarbageCollector createDataStoreGarbageCollector(Session session)
             throws RepositoryException, ItemStateException {
         List<PersistenceManager> pmList = new ArrayList<PersistenceManager>();
         RepositoryImpl rep = (RepositoryImpl) session.getRepository();
@@ -65,8 +65,7 @@ public class GarbageCollectorFactory {
             }
             ipmList[i] = (IterablePersistenceManager) pm;
         }
-        ArtifactoryGarbageCollector gc =
-                new ArtifactoryGarbageCollector(session, ipmList, sysSessions);
+        ArtifactoryGarbageCollector gc = new ArtifactoryGarbageCollector(session, ipmList, sysSessions);
         gc.addBinaryPropertyNames(new String[]{JcrConstants.JCR_DATA});
         return gc;
     }

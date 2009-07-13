@@ -22,7 +22,6 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.GarbageCollectorFactory;
-import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.xml.NodeTypeReader;
@@ -762,11 +761,10 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
     }
 
     public void garbageCollect() {
-        JcrSession usession = getUnmanagedSession();
+        JcrSession session = getManagedSession();
         ArtifactoryGarbageCollector gc = null;
         try {
-            SessionImpl internalSession = (SessionImpl) usession.getSession();
-            gc = GarbageCollectorFactory.createDataStoreGarbageCollector(internalSession);
+            gc = GarbageCollectorFactory.createDataStoreGarbageCollector(session);
             if (gc.getDataStore() == null) {
                 log.info("Datastore not yet initialize. Not running garbage collector...");
             }
@@ -785,8 +783,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
                 }
             }
             log.error("Jackrabbit's datastore garbage collector execution failed.", e);
-        } finally {
-            usession.logout();
         }
     }
 }
