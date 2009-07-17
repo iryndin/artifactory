@@ -347,6 +347,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             ArtifactoryDbDataRecord record = new ArtifactoryDbDataRecord(this, identifier, length);
             return record;
         } catch (Exception e) {
+            //Try to delete an entry that wasn't updated successfully
+            deleteTempEntry(conn, tempId);
+            deleteTempEntry(conn, id);
             throw convert("Can not insert new record", e);
         } finally {
             conn.closeSilently(rs);
@@ -357,6 +360,20 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 } catch (IOException e) {
                     throw convert("Can not close temporary file", e);
                 }
+            }
+        }
+    }
+
+    private void deleteTempEntry(ArtifactoryConnectionRecoveryManager conn, String id) {
+        log.debug("Trying to delete partially created datastore entry with id {}.", id);
+        if (id != null) {
+            try {
+                int count = conn.executeStmt(deleteSQL, new Object[]{id}).getUpdateCount();
+                if (count == 0) {
+                    log.debug("No partially created datastore entry {} was deleted.", id);
+                }
+            } catch (Exception e) {
+                log.error("Could not delete partially created datastore entry {}: {}.", id, e.getMessage());
             }
         }
     }
