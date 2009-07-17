@@ -83,7 +83,7 @@ public class ArtifactoryGarbageCollector {
     /**
      * Node paths with no binary data
      */
-    private final List<String> widows;
+    private final List<String> bereavedNodePaths;
 
     private boolean persistenceManagerScan;
 
@@ -111,7 +111,7 @@ public class ArtifactoryGarbageCollector {
         }
         this.startScanTimestamp = 0;
         this.stopScanTimestamp = 0;
-        this.widows = new ArrayList<String>();
+        this.bereavedNodePaths = new ArrayList<String>();
     }
 
     /**
@@ -169,7 +169,7 @@ public class ArtifactoryGarbageCollector {
             result += sessionWrapper.markActiveJcrDataNodes();
         }
         //Remove widow nodes
-        for (String widow : widows) {
+        for (String widow : bereavedNodePaths) {
             Item item;
             try {
                 item = txSession.getItem(widow);
@@ -186,7 +186,7 @@ public class ArtifactoryGarbageCollector {
                 item.remove();
             }
         }
-        if (widows.size() > 0) {
+        if (bereavedNodePaths.size() > 0) {
             txSession.save();
         }
         return result;
@@ -405,7 +405,7 @@ public class ArtifactoryGarbageCollector {
                             long length = p.getLength();
                             if (length < 0) {
                                 //The datastore record of the binary data has not been found - schedule node for cleanup
-                                widows.add(n.getPath());
+                                bereavedNodePaths.add(n.getPath());
                                 break;
                             } else {
                                 result += length;
