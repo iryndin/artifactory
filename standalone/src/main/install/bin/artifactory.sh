@@ -27,19 +27,19 @@ if [ -z "$ARTIFACTORY_HOME" ]; then
 fi
 
 # Verify minimal JVM props are set
-hasMinHeapSize=`echo "$JAVA_OPTIONS" | grep \\-Xms`
+hasMinHeapSize=`echo "$JAVA_OPTIONS" | grep "\\-Xms"`
 if [ -z "$hasMinHeapSize" ]; then
   JAVA_OPTIONS="$JAVA_OPTIONS -Xms256m"
 fi
-hasMaxHeapSize=`echo "$JAVA_OPTIONS" | grep \\-Xmx`
+hasMaxHeapSize=`echo "$JAVA_OPTIONS" | grep "\\-Xmx"`
 if [ -z "$hasMaxHeapSize" ]; then
-  JAVA_OPTIONS="$JAVA_OPTIONS -Xmx512g"
+  JAVA_OPTIONS="$JAVA_OPTIONS -Xmx512m"
 fi
-hasMinPermSize=`echo "$JAVA_OPTIONS" | grep \\-XX:PermSize`
+hasMinPermSize=`echo "$JAVA_OPTIONS" | grep "\\-XX:PermSize"`
 if [ -z "$hasMinPermSize" ]; then
   JAVA_OPTIONS="$JAVA_OPTIONS -XX:PermSize=128m"
 fi
-hasMaxPermSize=`echo "$JAVA_OPTIONS" | grep \\-XX:MaxPermSize`
+hasMaxPermSize=`echo "$JAVA_OPTIONS" | grep "\\-XX:MaxPermSize"`
 if [ -z "$hasMaxPermSize" ]; then
   JAVA_OPTIONS="$JAVA_OPTIONS -XX:MaxPermSize=128m"
 fi
