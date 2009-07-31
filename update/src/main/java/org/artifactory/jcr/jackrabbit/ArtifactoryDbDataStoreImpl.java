@@ -691,7 +691,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         if (log.isDebugEnabled()) {
             log.warn(cause, e);
         } else {
-            log.warn(cause + ":" + e.getMessage());
+            log.warn(cause + ": " + e.getMessage());
         }
         if (e instanceof DataStoreException) {
             return (DataStoreException) e;
