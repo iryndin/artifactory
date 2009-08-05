@@ -60,7 +60,7 @@ public class LdapSetting implements Descriptor {
     }
 
     public void setLdapUrl(String ldapUrl) {
-        this.ldapUrl = ldapUrl;
+        this.ldapUrl = transformUrlProtocol(ldapUrl);
     }
 
     public String getUserDnPattern() {
@@ -77,5 +77,31 @@ public class LdapSetting implements Descriptor {
 
     public void setSearch(SearchPattern search) {
         this.search = search;
+    }
+
+    /**
+     * Validates the LDAP URL by assuring that the protocol specification is in lower-case letters
+     * (http://issues.jfrog.org/jira/browse/RTFACT-2036)
+     *
+     * @param url URL to validate
+     * @return Validated URL
+     */
+    private String transformUrlProtocol(String url) {
+        if ((url == null) || (url.length() == 0) || (!url.contains(":"))) {
+            return url;
+        }
+        StringBuilder builder = new StringBuilder();
+
+        String[] splitUrl = url.split(":");
+        splitUrl[0] = splitUrl[0].toLowerCase();
+
+        for (int i = 0; i < splitUrl.length; i++) {
+            builder.append(splitUrl[i]);
+            if (i < (splitUrl.length - 1)) {
+                builder.append(":");
+            }
+        }
+
+        return builder.toString();
     }
 }
