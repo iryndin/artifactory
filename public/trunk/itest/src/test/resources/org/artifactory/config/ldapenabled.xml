@@ -28,14 +28,4 @@
             <handleSnapshots>true</handleSnapshots>
         </localRepository>
     </localRepositories>
-
-    <remoteRepositories>
-        <remoteRepository>
-            <key>localhost-repo</key>
-            <handleReleases>true</handleReleases>
-            <handleSnapshots>true</handleSnapshots>
-            <url>@mock_host@/momo</url>
-            <socketTimeoutMillis>20000</socketTimeoutMillis>
-        </remoteRepository>
-    </remoteRepositories>
 </config>
