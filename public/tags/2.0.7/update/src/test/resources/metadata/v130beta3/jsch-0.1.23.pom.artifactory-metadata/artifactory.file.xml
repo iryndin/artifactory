@@ -1,0 +1,12 @@
+<artifactory.file>
+  <repoKey>repo1-cache</repoKey>
+  <relPath>com/jcraft/jsch/0.1.23/jsch-0.1.23.pom</relPath>
+  <created>0</created>
+  <modifiedBy>anonymous</modifiedBy>
+  <lastUpdated>1228118022890</lastUpdated>
+  <lastModified>1131489126000</lastModified>
+  <size>485</size>
+  <mimeType>text/xml</mimeType>
+  <sha1>1d4266015cc4deba8bf4b56441ebc02cd170503d</sha1>
+  <md5>f1298dace833ceafd88f6cd6acc26c64</md5>
+</artifactory.file>
