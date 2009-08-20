@@ -168,13 +168,13 @@ public class ArtifactoryGarbageCollector {
             //Issue a read on the props that will touch them, removing them from the ds potential removal list
             result += sessionWrapper.markActiveJcrDataNodes();
         }
-        //Remove widow nodes
-        for (String widow : bereavedNodePaths) {
+        //Remove bereaved nodes
+        for (String bereaved : bereavedNodePaths) {
             Item item;
             try {
-                item = txSession.getItem(widow);
+                item = txSession.getItem(bereaved);
             } catch (RepositoryException e) {
-                log.error("Widow path item could not be retrieved.", e);
+                log.error("Bereaved path item could not be retrieved.", e);
                 continue;
             }
             log.warn("Removing binary node with no matching datastore data: {}.", item.getPath());
@@ -392,6 +392,7 @@ public class ArtifactoryGarbageCollector {
     private long binarySize(final Node n) throws RepositoryException, IllegalStateException, IOException {
         long result = 0;
         for (String propertyName : binaryPropertyNames) {
+            String nodePath = n.getPath();
             try {
                 if (n.hasProperty(propertyName)) {
                     Property p = n.getProperty(propertyName);
@@ -402,22 +403,25 @@ public class ArtifactoryGarbageCollector {
                                 result += length;
                             }
                         } else {
-                            long length = p.getLength();
-                            if (length < 0) {
+                            long length;
+                            try {
+                                length = p.getLength();
+                            } catch (DataStoreRecordNotFoundException e) {
                                 //The datastore record of the binary data has not been found - schedule node for cleanup
-                                bereavedNodePaths.add(n.getPath());
+                                bereavedNodePaths.add(nodePath);
+                                log.warn("Cannot determine the length of propery {}. Node {} will be discarded.",
+                                        propertyName, nodePath);
                                 break;
-                            } else {
-                                result += length;
                             }
+                            result += length;
                         }
                     } else {
                         log.error("Declared binary property name " + propertyName +
-                                " is not a binary property for node " + n.getPath());
+                                " is not a binary property for node " + nodePath);
                     }
                 }
             } catch (DataStoreRecordNotFoundException e) {
-                String msg = "Could not read binary property " + propertyName + " on '" + n.getPath() + "' due to:" +
+                String msg = "Could not read binary property " + propertyName + " on '" + nodePath + "' due to:" +
                         e.getMessage();
                 if (log.isDebugEnabled()) {
                     log.warn(msg, e);

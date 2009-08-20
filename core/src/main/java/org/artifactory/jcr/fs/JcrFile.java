@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
@@ -132,11 +133,12 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 fileInfo.setLastModified(lastModified);
             }
         }
-        FileAdditionalInfo additionalInfo = null;
+        FileAdditionalInfo additionalInfo;
         try {
             additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
         } catch (RepositoryRuntimeException e) {
-            Throwable notFound = ExceptionUtils.getCauseOfTypes(e, DataStoreRecordNotFoundException.class);
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(
+                    e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
             if (notFound != null) {
                 log.warn("Jcr file node " + getPath() + " does not have metadata binary content! Deleting entry.");
                 bruteForceDelete();
