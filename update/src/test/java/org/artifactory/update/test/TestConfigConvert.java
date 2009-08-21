@@ -23,7 +23,8 @@ public class TestConfigConvert {
     @Test
     public void testConvert125u1() throws Exception {
         InputStream is = getClass().getResourceAsStream("/v125u1/artifactory.config.xml");
-        File dirExport = new File(System.getProperty("java.io.tmpdir"), "testConvert125u1");
+        File dirExport =
+                new File(System.getProperty("java.io.tmpdir"), "testConvert125u1." + System.currentTimeMillis());
         FileUtils.deleteDirectory(dirExport);
         FileUtils.forceMkdir(dirExport);
         File confFile = new File(dirExport, ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
