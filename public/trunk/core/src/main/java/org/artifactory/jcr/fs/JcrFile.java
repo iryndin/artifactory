@@ -140,7 +140,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             Throwable notFound = ExceptionUtils.getCauseOfTypes(
                     e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
             if (notFound != null) {
-                log.warn("Jcr file node " + getPath() + " does not have metadata binary content! Deleting entry.");
+                log.warn("Jcr file node {} does not have metadata binary content! Deleting entry.", getPath());
                 bruteForceDelete();
                 return;
             }
