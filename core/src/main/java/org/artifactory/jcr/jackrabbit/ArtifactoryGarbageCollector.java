@@ -173,8 +173,13 @@ public class ArtifactoryGarbageCollector {
             Item item;
             try {
                 item = txSession.getItem(bereaved);
-            } catch (RepositoryException e) {
-                log.error("Bereaved path item could not be retrieved.", e);
+            } catch (Exception e) {
+                log.warn(
+                        "Bereaved path item {} could not be retrieved (container node was probably removed first): {}.",
+                        bereaved, e.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Bereaved path item {} retrieval error.", bereaved, e);
+                }
                 continue;
             }
             log.warn("Removing binary node with no matching datastore data: {}.", item.getPath());
@@ -404,9 +409,8 @@ public class ArtifactoryGarbageCollector {
                             }
                         } else {
                             long length;
-                            try {
-                                length = p.getLength();
-                            } catch (DataStoreRecordNotFoundException e) {
+                            length = p.getLength();
+                            if (length < 0) {
                                 //The datastore record of the binary data has not been found - schedule node for cleanup
                                 bereavedNodePaths.add(nodePath);
                                 log.warn("Cannot determine the length of propery {}. Node {} will be discarded.",
