@@ -51,7 +51,6 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.util.ExceptionUtils;
 import org.artifactory.util.PathUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -59,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
@@ -133,19 +131,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 fileInfo.setLastModified(lastModified);
             }
         }
-        FileAdditionalInfo additionalInfo;
-        try {
-            additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
-        } catch (RepositoryRuntimeException e) {
-            Throwable notFound = ExceptionUtils.getCauseOfTypes(
-                    e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
-            if (notFound != null) {
-                log.warn("Jcr file node {} does not have metadata binary content! Deleting entry.", getPath());
-                bruteForceDelete();
-                return;
-            }
-            throw e;
-        }
+        FileAdditionalInfo additionalInfo = getXmlMetdataObject(FileAdditionalInfo.class);
         if (additionalInfo != null) {
             fileInfo.setAdditionalInfo(additionalInfo);
         }
@@ -393,7 +379,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             InputStream is = attachedDataValue.getStream();
             return is;
         } catch (DataStoreRecordNotFoundException e) {
-            log.warn("Jcr file node " + getPath() + " does not have binary content! Deleting entry.");
+            log.warn("Jcr file node {} does not have binary content! Deleting entry.", getPath());
             bruteForceDelete();
             return null;
         } catch (RepositoryException e) {
@@ -848,7 +834,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             }
             return size;
         } catch (DataStoreRecordNotFoundException e) {
-            log.warn("Jcr file node " + getPath() + " does not have binary content! Deleting entry.");
+            log.warn("Jcr file node {} does not have binary content! Deleting entry.", getPath());
             bruteForceDelete();
             return 0L;
         } catch (RepositoryException e) {

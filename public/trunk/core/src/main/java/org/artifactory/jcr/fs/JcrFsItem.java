@@ -35,6 +35,7 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrSession;
+import org.artifactory.jcr.jackrabbit.DataStoreRecordNotFoundException;
 import org.artifactory.jcr.lock.LockingException;
 import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataAware;
@@ -45,11 +46,13 @@ import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.update.md.MetadataVersion;
+import org.artifactory.util.ExceptionUtils;
 import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -247,20 +250,27 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
                 if (artifactoryName.equals(getName())) {
                     // Everyhting is OK
                 } else {
-                    //Oups
-                    // TODO: Send an Asynch message to resave this
                     log.warn("Item " + this + " does not have a valid name " + artifactoryName);
                 }
             } else {
-                //Oups
-                // TODO: Send an Asynch message to resave this
                 log.warn("Item " + this + " does not have a name");
             }
             info.setCreated(getJcrCreated(node));
             info.setLastModified(getJcrLastModified(node));
-            setAdditionalInfoFields(node);
         } catch (RepositoryException e) {
-            throw new RepositoryRuntimeException("Saving node failed.", e);
+            throw new RepositoryRuntimeException("Saving node " + getPath() + " failed.", e);
+        }
+        try {
+            setAdditionalInfoFields(node);
+        } catch (Exception e) {
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(
+                    e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
+            if (notFound != null) {
+                log.warn("Jcr item node {} does not have additional info binary content! Deleting entry.", getPath());
+                bruteForceDelete();
+            } else {
+                throw new RepositoryRuntimeException("Saving node " + getPath() + " additional info failed.", e);
+            }
         }
     }
 
