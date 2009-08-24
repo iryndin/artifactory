@@ -377,7 +377,7 @@ public class ArtifactoryGarbageCollector {
                     "Total Scanning:          " + (stopScanTimestamp - startScanTimestamp) + "ms\n" +
                     cleanResult
             );
-            return result;
+            return elToClean;
         }
         return 0L;
     }
