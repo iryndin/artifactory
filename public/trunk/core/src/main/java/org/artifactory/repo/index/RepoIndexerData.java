@@ -49,11 +49,11 @@ import java.util.Date;
 public class RepoIndexerData {
     private static final Logger log = LoggerFactory.getLogger(RepoIndexerData.class);
 
-    final RealRepo indexedRepo;
-    boolean indexed = false;
-    LocalRepo localRepo;
-    ResourceStreamHandle indexHandle;
-    ResourceStreamHandle propertiesHandle;
+    private final RealRepo indexedRepo;
+    private boolean indexed = false;
+    private LocalRepo localRepo;
+    private ResourceStreamHandle indexHandle;
+    private ResourceStreamHandle propertiesHandle;
 
     RepoIndexerData(RealRepo indexedRepo) {
         if (indexedRepo == null) {
@@ -62,14 +62,26 @@ public class RepoIndexerData {
         this.indexedRepo = indexedRepo;
     }
 
+    public String getIndexedRepoKey() {
+        if (indexedRepo == null) {
+            return "unknown";
+        }
+        return indexedRepo.getKey();
+    }
+
     void findIndex() {
         //For remote repositories, try to download the remote cache, if failes index locally
-        if (!indexedRepo.isLocal()) {
+
+        if (indexedRepo.isLocal()) {
+            localRepo = (LocalRepo) indexedRepo;
+        } else {
             RemoteRepo remoteRepo = (RemoteRepo) indexedRepo;
             if (remoteRepo.isOffline()) {
                 log.debug("Not retrieving index for remote repository '{}'", indexedRepo.getKey());
                 return;
             }
+            //CAN BE NULL!
+            localRepo = remoteRepo.getLocalCacheRepo();
 
             //TODO: [by yl] Stagger remote index downloads
             DefaultIndexUpdater indexUpdater = new DefaultIndexUpdater();
@@ -80,7 +92,6 @@ public class RepoIndexerData {
             //Update the proxy info
             //indexUpdater.fetchIndexProperties(ic, tl, proxyInfo);
 
-            localRepo = remoteRepo.getLocalCacheRepo();
             String indexPath = ".index/" + MavenNaming.NEXUS_INDEX_ZIP;
             String propertiesPath = ".index/" + MavenNaming.NEXUS_INDEX_PROPERTIES;
             File tempIndex = null;
@@ -127,12 +138,18 @@ public class RepoIndexerData {
                     remotePropertiesHandle.close();
                 }
             }
-        } else {
-            localRepo = (LocalRepo) indexedRepo;
         }
     }
 
     void createIndex(Date fireTime) {
+        if (!indexedRepo.isLocal()) {
+            if (!((RemoteRepo) indexedRepo).isStoreArtifactsLocally()) {
+                log.debug("Skipping index creation for remote repo '{}': repo does not store artifacts locally",
+                        indexedRepo.getKey());
+                return;
+            }
+        }
+
         if (!indexed) {
             RepoIndexer repoIndexer = new RepoIndexer(localRepo);
             try {
@@ -152,6 +169,14 @@ public class RepoIndexerData {
     }
 
     boolean saveIndexFiles() {
+        if (!indexedRepo.isLocal()) {
+            if (!((RemoteRepo) indexedRepo).isStoreArtifactsLocally()) {
+                log.debug("Skipping index saving for remote repo '{}': repo does not store artifacts locally",
+                        indexedRepo.getKey());
+                return false;
+            }
+        }
+
         if (!indexed) {
             return false;
         }

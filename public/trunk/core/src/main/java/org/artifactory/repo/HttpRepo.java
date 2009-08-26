@@ -116,16 +116,18 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         }
         */
         //Need to do a conditional get by hand - testing a head result last modified date against the current file
-        JcrFile jcrFile = getLocalCacheRepo().getJcrFile(relPath);
-        if (jcrFile != null) {
-            //Send HEAD
-            RepoResource resource = retrieveInfo(relPath);
-            if (resource.isFound()) {
-                //Test its date
-                Date existingDate = new Date(jcrFile.getLastModified());
-                Date foundDate = new Date(resource.getLastModified());
-                if (existingDate.after(foundDate)) {
-                    return new NullResourceStreamHandle();
+        if (isStoreArtifactsLocally()) {
+            JcrFile jcrFile = getLocalCacheRepo().getJcrFile(relPath);
+            if (jcrFile != null) {
+                //Send HEAD
+                RepoResource resource = retrieveInfo(relPath);
+                if (resource.isFound()) {
+                    //Test its date
+                    Date existingDate = new Date(jcrFile.getLastModified());
+                    Date foundDate = new Date(resource.getLastModified());
+                    if (existingDate.after(foundDate)) {
+                        return new NullResourceStreamHandle();
+                    }
                 }
             }
         }

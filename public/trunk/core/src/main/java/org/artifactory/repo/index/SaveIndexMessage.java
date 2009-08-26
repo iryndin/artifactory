@@ -38,6 +38,7 @@ public class SaveIndexMessage extends FutureWorkMessage<Boolean> {
         }
     }
 
+    //TODO: [by nt] Do we still need this class? method can throw NPE
     public SaveIndexMessage(RepoIndexerData repoIndexerData) {
         super(WorkAction.SAVE_INDEX_FILE, repoIndexerData.getIndexFolderRepoPath(), new Action(repoIndexerData));
     }
