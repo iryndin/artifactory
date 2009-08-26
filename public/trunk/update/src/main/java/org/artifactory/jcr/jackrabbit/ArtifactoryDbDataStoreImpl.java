@@ -403,7 +403,10 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     }
 
     public long cleanUnreferencedItems() throws DataStoreException {
-        if (lastToRemove == null) {
+        if (true) {
+            // TODO: Hack enforcing single pass
+            lastToRemove = new HashSet<String>(toRemove.keySet());
+        } else if (lastToRemove == null) {
             //If its the very first pass, return
             lastToRemove = new HashSet<String>(toRemove.keySet());
             return 0L;

@@ -32,6 +32,7 @@ import org.artifactory.api.md.MetadataReader;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrSession;
@@ -375,16 +376,22 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File
     }
 
     public void bruteForceDelete() {
-        LockingHelper.removeLockEntry(getRepoPath());
-        setDeleted(true);
-        try {
-            Node node = getNode();
-            if (node != null) {
-                node.remove();
+        if (ConstantsValue.jcrFixConsistency.getBoolean()) {
+            LockingHelper.removeLockEntry(getRepoPath());
+            setDeleted(true);
+            try {
+                Node node = getNode();
+                if (node != null) {
+                    node.remove();
+                }
+            } catch (Exception e) {
+                log.warn("Could not brute force delete node: {}", e.getMessage());
+                log.debug("Could not brute force delete node", e);
             }
-        } catch (Exception e) {
-            log.warn("Could not brute force delete node: {}", e.getMessage());
-            log.debug("Could not brute force delete node", e);
+        } else {
+            log.warn("Node '{}' is in an inconsistent state.\n" +
+                    "Please restart Artifactory with artifactory.jcr.fixConsistency=true in artifactory.system.properties",
+                    getPath());
         }
     }
 
