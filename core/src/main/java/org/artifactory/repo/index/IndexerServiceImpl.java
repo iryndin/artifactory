@@ -195,15 +195,15 @@ public class IndexerServiceImpl implements IndexerService {
     }
 
     public void saveIndexFiles(RepoIndexerData repoIndexerData) {
-        log.debug("Saving index file for {}", repoIndexerData.indexedRepo.getKey());
+        log.debug("Saving index file for {}", repoIndexerData.getIndexedRepoKey());
         repoIndexerData.saveIndexFiles();
-        log.debug("Saved index file for {}", repoIndexerData.indexedRepo.getKey());
+        log.debug("Saved index file for {}", repoIndexerData.getIndexedRepoKey());
     }
 
     public void findOrCreateIndex(RepoIndexerData repoIndexerData, Date fireTime) {
-        log.debug("Find or create index files for {}", repoIndexerData.indexedRepo.getKey());
+        log.debug("Find or create index files for {}", repoIndexerData.getIndexedRepoKey());
         repoIndexerData.findIndex();
         repoIndexerData.createIndex(fireTime);
-        log.debug("Find or create index files for {}", repoIndexerData.indexedRepo.getKey());
+        log.debug("Find or create index files for {}", repoIndexerData.getIndexedRepoKey());
     }
 }
