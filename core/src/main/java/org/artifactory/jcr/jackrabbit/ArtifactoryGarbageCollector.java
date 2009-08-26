@@ -27,6 +27,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.artifactory.common.ConstantsValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,11 @@ public class ArtifactoryGarbageCollector {
         }
         this.startScanTimestamp = 0;
         this.stopScanTimestamp = 0;
-        this.bereavedNodePaths = new ArrayList<String>();
+        if (ConstantsValue.jcrFixConsistency.getBoolean()) {
+            this.bereavedNodePaths = new ArrayList<String>();
+        } else {
+            this.bereavedNodePaths = null;
+        }
     }
 
     /**
@@ -169,6 +174,13 @@ public class ArtifactoryGarbageCollector {
             result += sessionWrapper.markActiveJcrDataNodes();
         }
         //Remove bereaved nodes
+        if (bereavedNodePaths != null) {
+            cleanBereavedNodes();
+        }
+        return result;
+    }
+
+    private void cleanBereavedNodes() throws RepositoryException {
         for (String bereaved : bereavedNodePaths) {
             Item item;
             try {
@@ -194,7 +206,6 @@ public class ArtifactoryGarbageCollector {
         if (bereavedNodePaths.size() > 0) {
             txSession.save();
         }
-        return result;
     }
 
     private class SessionWrapper {
@@ -410,7 +421,7 @@ public class ArtifactoryGarbageCollector {
                         } else {
                             long length;
                             length = p.getLength();
-                            if (length < 0) {
+                            if (bereavedNodePaths != null && length < 0) {
                                 //The datastore record of the binary data has not been found - schedule node for cleanup
                                 bereavedNodePaths.add(nodePath);
                                 log.warn("Cannot determine the length of propery {}. Node {} will be discarded.",
