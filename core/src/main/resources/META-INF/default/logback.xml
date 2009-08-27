@@ -59,7 +59,7 @@
         <level value="ERROR"/>
     </logger>
     <logger name="org.artifactory.info.InfoWriter">
-        <level value="WARN"/>
+        <level value="INFO"/>
     </logger>
     <logger name="org.artifactory.security.AccessLogger" additivity="false">
         <level value="INFO"/>
