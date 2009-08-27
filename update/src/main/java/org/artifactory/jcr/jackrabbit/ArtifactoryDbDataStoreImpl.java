@@ -40,15 +40,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A data store implementation that stores the records in a database using JDBC.
@@ -201,12 +197,6 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             "DELETE FROM ${tablePrefix}${table} WHERE ID=?";
 
     /**
-     * This is the property 'deleteOlder' in the [databaseType].properties file, initialized with the default value.
-     */
-    protected String deleteOlderSQL =
-            "DELETE FROM ${tablePrefix}${table} WHERE ID in ";
-
-    /**
      * This is the property 'selectMeta' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectMetaSQL =
@@ -216,33 +206,13 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * This is the property 'selectAll' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectAllSQL =
-            "SELECT ID, LENGTH FROM ${tablePrefix}${table}";
+            "SELECT ID, LENGTH, LAST_MODIFIED FROM ${tablePrefix}${table}";
 
     /**
      * This is the property 'selectData' in the [databaseType].properties file, initialized with the default value.
      */
     protected String selectDataSQL =
             "SELECT ID, DATA FROM ${tablePrefix}${table} WHERE ID=?";
-
-    /**
-     * The stream storing mechanism used.
-     */
-    protected String storeStream = STORE_TEMP_FILE;
-
-    /**
-     * Write to a temporary file to get the length (slow, but always works). This is the default setting.
-     */
-    public static final String STORE_TEMP_FILE = "tempFile";
-
-    /**
-     * Call PreparedStatement.setBinaryStream(..., -1)
-     */
-    public static final String STORE_SIZE_MINUS_ONE = "-1";
-
-    /**
-     * Call PreparedStatement.setBinaryStream(..., Integer.MAX_VALUE)
-     */
-    public static final String STORE_SIZE_MAX = "max";
 
     /**
      * Copy the stream to a temp file before returning it. Enabled by default to support concurrent reads.
@@ -252,13 +222,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     /**
      * All data identifiers that are currently in use are in this set until they are garbage collected.
      */
-    private final Map<String, Long> toRemove = new ConcurrentHashMap<String, Long>();
-    /**
-     * The last set of identifier that where planned for deletion. Garbage collection in 2 pass.
-     */
-    private Set<String> lastToRemove;
+    private final ConcurrentMap<String, ArtifactoryDbDataRecord> allEntries
+            = new ConcurrentHashMap<String, ArtifactoryDbDataRecord>();
 
-    private final Map<Integer, String> deleteQueries = new HashMap<Integer, String>();
     private long dataStoreSize;
 
     /**
@@ -267,15 +233,81 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public DataRecord addRecord(InputStream stream) throws DataStoreException {
         ResultSet rs = null;
         TempFileInputStream fileInput = null;
-        ArtifactoryConnectionRecoveryManager conn = getConnection();
+        ArtifactoryConnectionRecoveryManager conn = null;
         String id = null, tempId = null;
+        ArtifactoryDbDataRecord dataRecord = null;
         try {
-            long now;
+            // First create the temp file with checksum digest
+            MessageDigest digest = getDigest();
+            DigestInputStream dIn = new DigestInputStream(stream, digest);
+            TrackingInputStream in = new TrackingInputStream(dIn);
+            ArtifactoryConnectionRecoveryManager.StreamWrapper wrapper;
+            File temp = moveToTempFile(in);
+            fileInput = new TempFileInputStream(temp);
+
+            // Then create the new DB record
+            long now = System.currentTimeMillis();
+            long length = in.getPosition();
+            DataIdentifier identifier = new DataIdentifier(digest.digest());
+            id = identifier.toString();
+            dataRecord = new ArtifactoryDbDataRecord(this, identifier, length, now);
+
+            // Find if an entry already exists with this checksum
+            // Important: Only use putIfAbsent and never re-put the entry in it for concurrency control
+            ArtifactoryDbDataRecord oldRecord = allEntries.putIfAbsent(id, dataRecord);
+            if (oldRecord != null) {
+                // Data record cannot be the new one created
+                dataRecord = null;
+
+                // First check for improbable checksum collision
+                if (oldRecord.getLength() != length) {
+                    String msg = DIGEST + " collision: temp=" + tempId + " id=" + id + " length=" + length +
+                            " oldLength=" + oldRecord.getLength();
+                    log.error(msg);
+                    throw new DataStoreException(msg);
+                }
+                if (!oldRecord.setInUse()) {
+                    // Entry already exists but cannot be used since it was mark for deletion
+                    if (!oldRecord.waitForDeletion()) {
+                        // Deletion did not work
+                        // TODO: Should I try to do it again here?
+                        throw new DataStoreException(
+                                "Cannot insert new record " + id + " since the old one cannot be deleted");
+                    }
+                }
+                // Entry is now deleted, new or in_db and cannot be garbage collected
+
+                // Replace the entry with the NEW version if deleted
+                if (oldRecord.setToNew()) {
+                    dataRecord = oldRecord;
+                } else {
+                    // Check if new from someone else
+                    checkIfParallelInsert(id, oldRecord);
+                    if (oldRecord.isInDb()) {
+                        // Everything is OK, the entry is in DB and usable
+                        // TODO: Should update timestamp in DB
+                        oldRecord.setLastModified(now);
+                        return oldRecord;
+                    }
+                    throw new DataStoreException(
+                            "Cannot insert new record " + id + " since the old one is in invalid state");
+                }
+            }
+
+            // The data record should be new and cannot be markForDeletion
+            if (!dataRecord.isNew() || dataRecord.markForDeletion()) {
+                throw new DataStoreException(
+                        "Cannot insert new record " + dataRecord + " since the old one is in invalid state");
+            }
+
+            // Now inserting dataRecord to the DB
+            // TODO: remove all the temp id issue
+            wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(fileInput, temp.length());
+            conn = getConnection();
             for (int i = 0; i < ArtifactoryConnectionRecoveryManager.TRIALS; i++) {
                 try {
                     now = System.currentTimeMillis();
-                    id = org.apache.jackrabbit.uuid.UUID.randomUUID().toString();
-                    tempId = TEMP_PREFIX + id;
+                    tempId = TEMP_PREFIX + org.apache.jackrabbit.uuid.UUID.randomUUID().toString();
                     PreparedStatement prep = conn.executeStmt(selectMetaSQL, new Object[]{tempId});
                     rs = prep.getResultSet();
                     if (rs.next()) {
@@ -291,34 +323,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                     conn.closeSilently(rs);
                 }
             }
-            if (id == null) {
-                String msg = "Can not create new record";
-                log.error(msg);
-                throw new DataStoreException(msg);
-            }
-            MessageDigest digest = getDigest();
-            DigestInputStream dIn = new DigestInputStream(stream, digest);
-            TrackingInputStream in = new TrackingInputStream(dIn);
-            ArtifactoryConnectionRecoveryManager.StreamWrapper wrapper;
-            if (STORE_SIZE_MINUS_ONE.equals(storeStream)) {
-                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(in, -1);
-            } else if (STORE_SIZE_MAX.equals(storeStream)) {
-                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(in, Integer.MAX_VALUE);
-            } else if (STORE_TEMP_FILE.equals(storeStream)) {
-                File temp = moveToTempFile(in);
-                fileInput = new TempFileInputStream(temp);
-                long length = temp.length();
-                wrapper = new ArtifactoryConnectionRecoveryManager.StreamWrapper(fileInput, length);
-            } else {
-                throw new DataStoreException("Unsupported stream store algorithm: " + storeStream);
-            }
+
             // UPDATE DATASTORE SET DATA=? WHERE ID=?
             conn.executeStmt(updateDataSQL, new Object[]{wrapper, tempId});
-            now = System.currentTimeMillis();
-            long length = in.getPosition();
-            DataIdentifier identifier = new DataIdentifier(digest.digest());
-            usesIdentifier(identifier);
-            id = identifier.toString();
             // UPDATE DATASTORE SET ID=?, LENGTH=?, LAST_MODIFIED=?
             // WHERE ID=?
             // AND NOT EXISTS(SELECT ID FROM DATASTORE WHERE ID=?)
@@ -327,6 +334,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                     tempId, id});
             int count = prep.getUpdateCount();
             if (count == 0) {
+                log.info("Created the entry " + tempId + " for id=" + id + " but already exists. Deleting temp entry.");
                 // update count is 0, meaning such a row already exists
                 // DELETE FROM DATASTORE WHERE ID=?
                 conn.executeStmt(deleteSQL, new Object[]{tempId});
@@ -344,22 +352,45 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                     }
                 }
             }
-            ArtifactoryDbDataRecord record = new ArtifactoryDbDataRecord(this, identifier, length);
-            return record;
+
+            // Data record succesfully inserted
+            if (!dataRecord.setInDb()) {
+                throw new DataStoreException(
+                        "Cannot insert new record " + dataRecord + " since the old one is in invalid state");
+            }
+            return dataRecord;
         } catch (Exception e) {
             //Try to delete an entry that wasn't updated successfully
-            deleteTempEntry(conn, tempId);
-            deleteTempEntry(conn, id);
+            if (conn != null) {
+                deleteTempEntry(conn, tempId);
+                deleteTempEntry(conn, id);
+            }
+            if (dataRecord != null) {
+                dataRecord.setDeleted();
+            }
             throw convert("Can not insert new record", e);
         } finally {
-            conn.closeSilently(rs);
-            putBack(conn);
+            if (conn != null) {
+                conn.closeSilently(rs);
+                putBack(conn);
+            }
             if (fileInput != null) {
                 try {
                     fileInput.close();
                 } catch (IOException e) {
                     throw convert("Can not close temporary file", e);
                 }
+            }
+        }
+    }
+
+    private void checkIfParallelInsert(String id, ArtifactoryDbDataRecord oldRecord) throws DataStoreException {
+        if (oldRecord.isNew()) {
+            // Someone else is inserting this DB entry
+            if (!oldRecord.waitForInsertion()) {
+                // Something went wrong during the other insertion
+                // TODO: Should I try to do it again here?
+                throw new DataStoreException("Cannot insert new record " + id + " due to previous insertion error");
             }
         }
     }
@@ -391,10 +422,6 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         return temp;
     }
 
-    public int nbElementsToClean() {
-        return toRemove.size();
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -402,81 +429,60 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         throw new UnsupportedOperationException("Delete by timestamp not supported");
     }
 
-    public long cleanUnreferencedItems() throws DataStoreException {
-        if (true) {
-            // TODO: Hack enforcing single pass
-            lastToRemove = new HashSet<String>(toRemove.keySet());
-        } else if (lastToRemove == null) {
-            //If its the very first pass, return
-            lastToRemove = new HashSet<String>(toRemove.keySet());
-            return 0L;
+    /**
+     * Delte all unused Db entry from datastore
+     *
+     * @return the amount of elements on pos 0, pos 1 = the amount of bytes removed from DB
+     * @throws DataStoreException
+     */
+    public long[] cleanUnreferencedItems() throws DataStoreException {
+        long[] result = new long[2];
+        List<ArtifactoryDbDataRecord> toDelete = new ArrayList<ArtifactoryDbDataRecord>();
+        for (ArtifactoryDbDataRecord dataRecord : allEntries.values()) {
+            if (dataRecord.markForDeletion()) {
+                toDelete.add(dataRecord);
+                if (toDelete.size() >= batchDeleteSize) {
+                    result[0] += toDelete.size();
+                    result[1] += deleteEntries(toDelete);
+                }
+            }
         }
-        if (nbElementsToClean() == 0) {
-            // Nothing to remove
-            lastToRemove = null;
-            return 0L;
-        }
+        result[0] += toDelete.size();
+        result[1] += deleteEntries(toDelete);
+        dataStoreSize -= result[1];
+
+        return result;
+    }
+
+    /**
+     * Delete all entries in the list from the DB
+     *
+     * @param toDelete
+     * @return the amount of bytes deleted
+     * @throws DataStoreException
+     */
+    private long deleteEntries(List<ArtifactoryDbDataRecord> toDelete) throws DataStoreException {
         long result = 0L;
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         try {
-            List<String> idToDelete = new ArrayList<String>();
-            List<String> idParsed = new ArrayList<String>();
-            //Remove items that are found twice in a row
-            for (Map.Entry<String, Long> identifier : toRemove.entrySet()) {
-                String idKey = identifier.getKey();
-                idParsed.add(idKey);
-                if (lastToRemove.contains(idKey)) {
-                    idToDelete.add(idKey);
-                    result += identifier.getValue();
-                    if (idToDelete.size() >= batchDeleteSize) {
-                        break;
-                    }
-                } else {
-                    log.debug("Identifier " + idKey + " was not planned for deletion in previous scan.");
-                }
-            }
-            int sizeToDelete = idToDelete.size();
-            if (sizeToDelete > 0) {
-                // DELETE FROM DATASTORE WHERE ID in ? (toremove)
-                String sql = getDeleteSql(sizeToDelete);
-                String[] ids = idToDelete.toArray(new String[sizeToDelete]);
-                PreparedStatement prep = conn.executeStmt(sql, ids);
+            // DELETE FROM DATASTORE WHERE ID=? (toremove)
+            for (ArtifactoryDbDataRecord record : toDelete) {
+                PreparedStatement prep = conn.executeStmt(deleteSQL, new Object[]{record.getIdentifier().toString()});
                 int res = prep.getUpdateCount();
-                if (res != sizeToDelete) {
-                    log.error("Deleting IDs " + Arrays.toString(ids) + " returned " + res + " updated.");
+                if (res != 1) {
+                    log.error("Deleting record " + record + " returned " + res + " updated.");
                 } else {
-                    log.debug("Deleted IDs " + Arrays.toString(ids) + " from data store.");
+                    log.debug("Deleted record " + record + " from data store.");
+                    result += record.getLength();
+                    record.setDeleted();
                 }
             }
-            for (String id : idParsed) {
-                toRemove.remove(id);
-            }
-            dataStoreSize -= result;
+            toDelete.clear();
         } catch (Exception e) {
             throw convert("Can not delete records", e);
         } finally {
             putBack(conn);
         }
-        // The recursive call should be out of the try/catch/finally or the DB connections are stacked :)
-        return result + cleanUnreferencedItems();
-    }
-
-    private String getDeleteSql(int length) {
-        String result = deleteQueries.get(length);
-        if (result != null) {
-            return result;
-        }
-        StringBuilder sqlBuilder = new StringBuilder(deleteOlderSQL);
-        sqlBuilder.append("(");
-        for (int j = 0; j < length; j++) {
-            if (j > 0) {
-                sqlBuilder.append(",");
-            }
-            sqlBuilder.append("?");
-        }
-        sqlBuilder.append(")");
-        result = sqlBuilder.toString();
-        deleteQueries.put(length, result);
         return result;
     }
 
@@ -510,8 +516,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         }
     }
 
-    protected Map<String, Long> getAllIdentifiersAndCalcSize() throws DataStoreException {
-        Map<String, Long> result = new HashMap<String, Long>();
+    private void loadAllDbRecords() throws DataStoreException {
         long totalSize = 0L;
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
@@ -522,13 +527,23 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             while (rs.next()) {
                 String id = rs.getString(1);
                 long length = rs.getLong(2);
+                long lastModified = rs.getLong(3);
                 if (!id.startsWith(TEMP_PREFIX)) {
-                    result.put(id, length);
+                    ArtifactoryDbDataRecord record = allEntries.get(id);
+                    if (record == null) {
+                        ArtifactoryDbDataRecord dbRecord =
+                                new ArtifactoryDbDataRecord(this, new DataIdentifier(id), length, lastModified);
+                        record = allEntries.putIfAbsent(id, dbRecord);
+                        if (record == null) {
+                            record = dbRecord;
+                        }
+                    }
+                    record.setLastModified(lastModified);
+                    record.initScanner();
                     totalSize += length;
                 }
             }
             dataStoreSize = totalSize;
-            return result;
         } catch (Exception e) {
             throw convert("Can not read records", e);
         } finally {
@@ -557,21 +572,39 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * {@inheritDoc}
      */
     public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
+        String id = identifier.toString();
+        ArtifactoryDbDataRecord record = allEntries.get(id);
+        if (record != null) {
+            if (record.setInUse() && record.isInDb()) {
+                // The record is OK return it
+                return record;
+            }
+        }
         ArtifactoryConnectionRecoveryManager conn = getConnection();
-        usesIdentifier(identifier);
         ResultSet rs = null;
         try {
-            String id = identifier.toString();
+            //Long result = allEntries.get(id);
             // SELECT LENGTH, LAST_MODIFIED FROM DATASTORE WHERE ID = ?
             PreparedStatement prep = conn.executeStmt(selectMetaSQL, new Object[]{id});
             rs = prep.getResultSet();
             if (!rs.next()) {
+                if (record != null) {
+                    record.setDeleted();
+                }
                 throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
             }
             long length = rs.getLong(1);
-            //long lastModified = rs.getLong(2);
-            usesIdentifier(identifier);
-            return new ArtifactoryDbDataRecord(this, identifier, length);
+            long lastModified = rs.getLong(2);
+            ArtifactoryDbDataRecord dbRecord = new ArtifactoryDbDataRecord(this, identifier, length, lastModified);
+            record = allEntries.putIfAbsent(id, dbRecord);
+            if (record == null) {
+                record = dbRecord;
+            } else {
+                record.setInUse();
+                record.setLastModified(lastModified);
+            }
+            record.setInDb();
+            return record;
         } catch (Exception e) {
             throw convert("Can not read identifier " + identifier, e);
         } finally {
@@ -650,21 +683,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         updateLastModifiedSQL = getProperty(prop, "updateLastModified", updateLastModifiedSQL);
         updateSQL = getProperty(prop, "update", updateSQL);
         deleteSQL = getProperty(prop, "delete", deleteSQL);
-        deleteOlderSQL = getProperty(prop, "deleteOlder", deleteOlderSQL);
         selectMetaSQL = getProperty(prop, "selectMeta", selectMetaSQL);
         selectAllSQL = getProperty(prop, "selectAll", selectAllSQL);
         selectDataSQL = getProperty(prop, "selectData", selectDataSQL);
-        storeStream = getProperty(prop, "storeStream", storeStream);
-        if (STORE_SIZE_MINUS_ONE.equals(storeStream)) {
-        } else if (STORE_TEMP_FILE.equals(storeStream)) {
-        } else if (STORE_SIZE_MAX.equals(storeStream)) {
-        } else {
-            String msg = "Unsupported Stream store mechanism: " + storeStream
-                    + " supported are: " + STORE_SIZE_MINUS_ONE + ", "
-                    + STORE_TEMP_FILE + ", " + STORE_SIZE_MAX;
-            log.debug(msg);
-            throw new DataStoreException(msg);
-        }
     }
 
     /**
@@ -713,22 +734,24 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public long scanDataStore() {
         long start = System.currentTimeMillis();
         log.debug("Starting scanning of all datastore entries");
-        toRemove.clear();
         try {
             //Add all identifiers
-            Map<String, Long> identifiers = getAllIdentifiersAndCalcSize();
-            toRemove.putAll(identifiers);
+            loadAllDbRecords();
         } catch (DataStoreException e) {
             throw new RuntimeException("Could not load all data store identifier: " + e.getMessage(), e);
         }
         long dataStoreQueryTime = System.currentTimeMillis() - start;
         log.debug("Scanning data store of {} elements and {} bytes in {}ms", new Object[]{
-                toRemove.size(), dataStoreSize, dataStoreQueryTime});
+                allEntries.size(), dataStoreSize, dataStoreQueryTime});
         return dataStoreQueryTime;
     }
 
     public long getDataStoreSize() {
         return dataStoreSize;
+    }
+
+    public int getDataStoreNbElements() {
+        return allEntries.size();
     }
 
     /**
@@ -864,15 +887,10 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         list.clear();
     }
 
-    protected void usesIdentifier(DataIdentifier identifier) {
-        toRemove.remove(identifier.toString());
-    }
-
     /**
      * {@inheritDoc}
      */
     public void clearInUse() {
-        toRemove.clear();
     }
 
     protected synchronized MessageDigest getDigest() throws DataStoreException {

@@ -31,6 +31,7 @@ import org.artifactory.common.ConstantsValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -149,7 +150,7 @@ public class ArtifactoryGarbageCollector {
             startScanTimestamp = now;
             dataStoreQueryTime = store.scanDataStore();
             initialSize = store.getDataStoreSize();
-            initialCount = store.nbElementsToClean();
+            initialCount = store.getDataStoreNbElements();
         }
         if (pmList == null || !persistenceManagerScan) {
             return scanningSessionList();
@@ -275,20 +276,14 @@ public class ArtifactoryGarbageCollector {
             totalNotTouched = 0L;
             StringBuilder debugBuilder = new StringBuilder();
             while (results.hasNext()) {
-                int before = store.nbElementsToClean();
                 Node node = results.nextNode();
                 debugBuilder.append("Node ").append(node.getUUID()).append(" '").append(node.getPath()).append("'");
                 for (String propertyName : binaryPropertyNames) {
                     Property p = node.getProperty(propertyName);
                     debugBuilder.append(" ").append(p.getName()).append("=").append(p.getLength());
                 }
-                boolean touched = (before - store.nbElementsToClean()) > 0;
-                debugBuilder.append(" touched ").append(touched).append("\n");
-                if (!touched) {
-                    totalNotTouched++;
-                }
+                debugBuilder.append("\n");
             }
-            debugBuilder.append("\n").append("Total not touched ").append(totalNotTouched);
             log.debug(debugBuilder.toString());
         }
     }
@@ -347,48 +342,34 @@ public class ArtifactoryGarbageCollector {
         stopScanTimestamp = System.currentTimeMillis();
     }
 
-    public long unusedCount() {
-        return store.nbElementsToClean();
-    }
-
-    public long getDataStoreSize() {
-        return store.getDataStoreSize();
-    }
-
     public long deleteUnused() throws RepositoryException {
         checkScanStarted();
         checkScanStopped();
-        int elToClean = store.nbElementsToClean();
-        if (elToClean > 0) {
-            long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+        long[] result = store.cleanUnreferencedItems();
+        if (result[0] > 0L) {
             //Do the actual clean
-            long result = store.cleanUnreferencedItems();
             long end = System.currentTimeMillis();
             String cleanResult;
-            if (result == 0L) {
-                // Actual deletion planned for next run
-                cleanResult =
-                        "Element count:           " + initialCount + "\n" +
-                                "Total size:              " + initialSize + " bytes\n" +
-                                "Marked for deletion:     " + elToClean;
-            } else {
-                // Did some cleanup
-                cleanResult =
-                        "Deletion execution:      " + (end - start) + "ms\n" +
-                                "Initial element count:   " + initialCount + "\n" +
-                                "Initial size:            " + initialSize + " bytes\n" +
-                                "Elements cleaned:        " + elToClean + "\n" +
-                                "Total size cleaned:      " + result + "\n" +
-                                "Current total size:      " + store.getDataStoreSize();
-            }
+
+            cleanResult =
+                    "Deletion execution:      " + (end - start) + "ms\n" +
+                            "Initial element count:   " + initialCount + "\n" +
+                            "Initial size:            " + initialSize + " bytes\n" +
+                            "Elements cleaned:        " + result[0] + "\n" +
+                            "Total size cleaned:      " + result[1] + "\n" +
+                            "Current total size:      " + store.getDataStoreSize();
+
             log.info("Artifactory Jackrabbit's datastore garbage collector report:\n" +
-                    "Total execution:         " + (end - startScanTimestamp) + "ms :\n" +
+                    "Total execution:         " + (end - startScanTimestamp) + "ms\n" +
                     "Data Store Query:        " + dataStoreQueryTime + "ms\n" +
                     "Binary Properties Query: " + totalBinaryPropertiesQueryTime + "ms\n" +
                     "Total Scanning:          " + (stopScanTimestamp - startScanTimestamp) + "ms\n" +
                     cleanResult
             );
-            return elToClean;
+            return result[0];
+        } else {
+            log.debug("Nothing cleaned by Artifactory Jackrabbit's datastore garbage collector");
         }
         return 0L;
     }
@@ -405,11 +386,21 @@ public class ArtifactoryGarbageCollector {
         }
     }
 
-    private long binarySize(final Node n) throws RepositoryException, IllegalStateException, IOException {
+    /**
+     * Read the length of all binary properties on the node.
+     * getLength on property never throws the DataStoreException but -1 instead.
+     *
+     * @param n
+     * @return
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    private long binarySize(final Node n) throws RepositoryException {
         long result = 0;
         for (String propertyName : binaryPropertyNames) {
-            String nodePath = n.getPath();
             try {
+                String nodePath = n.getPath();
                 if (n.hasProperty(propertyName)) {
                     Property p = n.getProperty(propertyName);
                     if (p.getType() == PropertyType.BINARY) {
@@ -421,12 +412,17 @@ public class ArtifactoryGarbageCollector {
                         } else {
                             long length;
                             length = p.getLength();
-                            if (bereavedNodePaths != null && length < 0) {
-                                //The datastore record of the binary data has not been found - schedule node for cleanup
-                                bereavedNodePaths.add(nodePath);
-                                log.warn("Cannot determine the length of propery {}. Node {} will be discarded.",
-                                        propertyName, nodePath);
-                                break;
+                            if (length < 0) {
+                                String msg = "Could not read binary property " + propertyName + " on '" + nodePath +
+                                        "' due to previous error!";
+                                log.warn(msg);
+                                if (bereavedNodePaths != null) {
+                                    //The datastore record of the binary data has not been found - schedule node for cleanup
+                                    bereavedNodePaths.add(nodePath);
+                                    log.warn("Cannot determine the length of property {}. Node {} will be discarded.",
+                                            propertyName, nodePath);
+                                    break;
+                                }
                             }
                             result += length;
                         }
@@ -435,14 +431,11 @@ public class ArtifactoryGarbageCollector {
                                 " is not a binary property for node " + nodePath);
                     }
                 }
-            } catch (DataStoreRecordNotFoundException e) {
-                String msg = "Could not read binary property " + propertyName + " on '" + nodePath + "' due to:" +
-                        e.getMessage();
-                if (log.isDebugEnabled()) {
-                    log.warn(msg, e);
-                } else {
-                    log.warn(msg);
-                }
+            } catch (InvalidItemStateException e) {
+                // The node was already deleted, ignore
+            } catch (RepositoryException e) {
+                log.warn("Repository access error during read of garbage collection", e);
+                throw e;
             }
         }
         return result;
