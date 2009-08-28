@@ -111,10 +111,7 @@ public class RepoFilter implements Filter {
                     getDownloadEngine().process(artifactoryRequest, artifactoryResponse);
                 } catch (FileExpectedException e) {
                     //Dispatch a new directory browsing request
-                    RepoPath repoPath = e.getRepoPath();
-                    response.sendRedirect(RequestUtils.getServletContextUrl(request) +
-                            "/" + repoPath.getRepoKey() + "/" + repoPath.getPath() +
-                            (repoPath.getPath().length() > 0 ? "/" : ""));
+                    response.sendRedirect(request.getRequestURL().append("/").toString());
                 }
             } else if ("put".equalsIgnoreCase(method)) {
                 //We expect a url with the repo prefix and a mandatory repo-key@repo
