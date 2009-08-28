@@ -51,6 +51,10 @@ public abstract class ArtifactoryTestBase {
     public static final String DEFAULT_CONFIG_NAME = "default-test";
     public static String ARTIFACTORY_TEST_HOME = "";
 
+    public String getHomePath() {
+        return ARTIFACTORY_TEST_HOME;
+    }
+
     @BeforeTest
     protected void setUp(ITestContext testNgContext) throws Exception {
         final String testName = testNgContext.getName();
@@ -73,6 +77,10 @@ public abstract class ArtifactoryTestBase {
         context = new ArtifactoryApplicationContext(SpringConfResourceLoader.getConfigurationPaths());
         ArtifactoryContextThreadBinder.bind(context);
         log.info("Test setup completed for tsts " + testName);
+    }
+
+    public MockServer getMockServer() {
+        return mockServer;
     }
 
     protected boolean shouldRunMockServer() {
@@ -125,31 +133,6 @@ public abstract class ArtifactoryTestBase {
         return DEFAULT_CONFIG_NAME;
     }
 
-    private void copyArtifactoryConfig(String configName) throws IOException {
-        //Copy the artifactory.config.xml to the home
-        String configPath = "/org/artifactory/config/" + configName + ".xml";
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        try {
-            InputStream is = getClass().getResourceAsStream(configPath);
-            if (is == null) {
-                throw new IllegalArgumentException("Could not find a configuration resource at: " + configPath);
-            }
-            String configText = IOUtils.toString(is);
-            String modifiedConfig =
-                    shouldRunMockServer() ? configText.replaceAll("@mock_host@", mockServer.getSelectedURL()) :
-                            configText;
-            InputStream modifiedStream = IOUtils.toInputStream(modifiedConfig);
-            bis = new BufferedInputStream(modifiedStream);
-            File targetConfigFile = new File(ArtifactoryHome.getEtcDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
-            bos = new BufferedOutputStream(new FileOutputStream(targetConfigFile));
-            IOUtils.copy(bis, bos);
-        } finally {
-            IOUtils.closeQuietly(bos);
-            IOUtils.closeQuietly(bis);
-        }
-    }
-
     protected void importToRepoFromExportPath(String exportPath, String targetRepo, boolean asynchronousImport)
             throws IOException, InterruptedException, URISyntaxException {
         InternalRepositoryService repoService = context.beanForType(InternalRepositoryService.class);
@@ -180,10 +163,6 @@ public abstract class ArtifactoryTestBase {
         }
     }
 
-    public String getHomePath() {
-        return ARTIFACTORY_TEST_HOME;
-    }
-
     protected ArtifactoryResponseStub download(RepoPath repoPath) throws IOException {
         DownloadService downloadService = context.beanForType(DownloadService.class);
         ArtifactoryRequestStub request = new ArtifactoryRequestStub(repoPath);
@@ -191,6 +170,7 @@ public abstract class ArtifactoryTestBase {
         downloadService.process(request, response);
         return response;
     }
+
 
     protected void upload(RepoPath repoPath, String classpathRes) throws IOException {
         InternalUploadService uploadService = context.beanForType(InternalUploadService.class);
@@ -206,5 +186,30 @@ public abstract class ArtifactoryTestBase {
     }
 
     protected void onBeforeHomeCreate() throws Exception {
+    }
+
+    private void copyArtifactoryConfig(String configName) throws IOException {
+        //Copy the artifactory.config.xml to the home
+        String configPath = "/org/artifactory/config/" + configName + ".xml";
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            InputStream is = getClass().getResourceAsStream(configPath);
+            if (is == null) {
+                throw new IllegalArgumentException("Could not find a configuration resource at: " + configPath);
+            }
+            String configText = IOUtils.toString(is);
+            String modifiedConfig =
+                    shouldRunMockServer() ? configText.replaceAll("@mock_host@", mockServer.getUrl()) :
+                            configText;
+            InputStream modifiedStream = IOUtils.toInputStream(modifiedConfig);
+            bis = new BufferedInputStream(modifiedStream);
+            File targetConfigFile = new File(ArtifactoryHome.getEtcDir(), ArtifactoryHome.ARTIFACTORY_CONFIG_FILE);
+            bos = new BufferedOutputStream(new FileOutputStream(targetConfigFile));
+            IOUtils.copy(bis, bos);
+        } finally {
+            IOUtils.closeQuietly(bos);
+            IOUtils.closeQuietly(bis);
+        }
     }
 }

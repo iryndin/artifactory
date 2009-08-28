@@ -19,6 +19,7 @@ package org.artifactory.repo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.descriptor.repo.ChecksumPolicyType;
 import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
@@ -58,9 +59,12 @@ public class JcrCacheRepo extends JcrRepoBase<LocalCacheRepoDescriptor> implemen
             //Check for expiry
             boolean expired = isExpired(repoResource);
             if (expired) {
-                log.debug("Returning expired resource {} ", path);
+                repoResource = super.getInfo(path);
+                log.debug("Returning expired resource {}.", path);
                 //Return not found
                 repoResource = new ExpiredRepoResource(repoResource);
+            } else {
+                log.debug("Returning cached resource {}.", path);
             }
         }
         return repoResource;
@@ -126,14 +130,26 @@ public class JcrCacheRepo extends JcrRepoBase<LocalCacheRepoDescriptor> implemen
             return false;
         } else if (MavenNaming.isUniqueSnapshot(path)) {
             return false;
-        } else {
-            if (MavenNaming.isMavenMetadata(path) && !MavenNaming.isSnapshotMavenMetadata(path)) {
-                return false;
-            }
+        } else if (MavenNaming.isMavenMetadata(path) && !MavenNaming.isSnapshotMavenMetadata(path)) {
+            return false;
         }
-        //It is a non-unique snapshot or snapshot metadata
-        long retrievalCahePeriodMillis = remoteRepo.getRetrievalCachePeriodSecs() * 1000L;
+        long retrievalCahePeriodMillis;
+        retrievalCahePeriodMillis = getRetrievalCahePeriodMillis(path);
         long cacheAge = repoResource.getCacheAge();
         return cacheAge > retrievalCahePeriodMillis || cacheAge == -1;
+    }
+
+    private long getRetrievalCahePeriodMillis(String path) {
+        long retrievalCahePeriodMillis;
+        if (MavenNaming.isIndex(path) &&
+                remoteRepo.getUrl().contains(ConstantsValue.mvnCentralHostPattern.getString())) {
+            //If it is a central maven index use the hardcoded cache value
+            long centralmaxQueryIntervalSecs = ConstantsValue.mvnCentralIndexerMaxQueryIntervalSecs.getLong();
+            retrievalCahePeriodMillis = centralmaxQueryIntervalSecs * 1000L;
+        } else {
+            //It is a non-unique snapshot or snapshot metadata
+            retrievalCahePeriodMillis = remoteRepo.getRetrievalCachePeriodSecs() * 1000L;
+        }
+        return retrievalCahePeriodMillis;
     }
 }
