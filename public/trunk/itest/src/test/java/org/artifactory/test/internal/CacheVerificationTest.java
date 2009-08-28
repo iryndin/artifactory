@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class CacheVerificationTest extends ArtifactoryTestBase {
 
-    private final static Logger log = LoggerFactory.getLogger(TestConditionalGet.class);
+    private final static Logger log = LoggerFactory.getLogger(CacheVerificationTest.class);
     private final static String TEST_NAME = "momo";
     private final static String MIME_TYPE = "application/octet-stream";
     private final static String ARTIFACT_PATH = "/mock/repo1/ant/ant/1.6.5/ant-1.6.5.jar";

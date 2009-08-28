@@ -132,7 +132,7 @@ public class ArtifactoryServer {
             }
             if (mockServer != null) {
                 String configText = IOUtils.toString(is);
-                String modifiedConfig = configText.replaceAll("@mock_host@", mockServer.getSelectedURL());
+                String modifiedConfig = configText.replaceAll("@mock_host@", mockServer.getUrl());
                 InputStream modifiedStream = IOUtils.toInputStream(modifiedConfig);
                 bis = new BufferedInputStream(modifiedStream);
             } else {

@@ -44,7 +44,9 @@ public enum ConstantsValue {
     gcIntervalMins("gcIntervalMins", "60"),
     gcBatchDeleteMaxSize("gcBatchDeleteMaxSize", "30"),
     artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts(
-            "artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts", FALSE.toString());
+            "artifactoryRequestsToGlobalCanRetrieveRemoteArtifacts", FALSE.toString()),
+    mvnCentralHostPattern("mvn.central.hostPattern", ".maven.org"),
+    mvnCentralIndexerMaxQueryIntervalSecs("mvn.central.indexerMaxQueryIntervalSecs", "86400");
 
     static final String SYS_PROP_PREFIX = "artifactory.";
 

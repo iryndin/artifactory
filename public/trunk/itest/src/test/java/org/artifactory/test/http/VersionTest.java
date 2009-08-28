@@ -8,7 +8,8 @@ import org.artifactory.test.mock.MockServer;
 import org.artifactory.test.mock.MockTest;
 import org.artifactory.test.mock.TestStats;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -32,7 +33,7 @@ public class VersionTest {
      */
     MockServer mockServer = null;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws Exception {
         /**
          * Start artifactory and mock server
@@ -45,9 +46,14 @@ public class VersionTest {
         importData();
     }
 
+    @AfterClass
+    public void tearDown() throws Exception {
+        artifactory.stop();
+    }
+
     /**
-     * Requests a non-existant artifact, waits 'till the missing-cache time runs out, Creates a
-     * mock-test for the artifact and retries the request
+     * Requests a non-existant artifact, waits 'till the missing-cache time runs out, Creates a mock-test for the
+     * artifact and retries the request
      *
      * @throws Exception
      */
@@ -80,8 +86,7 @@ public class VersionTest {
     }
 
     /**
-     * Tests the retrieval of meta data from various versions of an artifact From the imported
-     * repositories
+     * Tests the retrieval of meta data from various versions of an artifact From the imported repositories
      *
      * @throws Exception
      */

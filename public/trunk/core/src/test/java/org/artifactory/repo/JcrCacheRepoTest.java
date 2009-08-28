@@ -1,5 +1,6 @@
 package org.artifactory.repo;
 
+import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.ChecksumPolicyType;
 import org.artifactory.descriptor.repo.HttpRepoDescriptor;
@@ -35,17 +36,10 @@ public class JcrCacheRepoTest {
         snapMdRes.getInfo().setLastModified(0);
         FileResource nonsnapMdRes = new FileResource(new RepoPath("repox", "g1/g2/g3/a/v1/maven-metadata.metadata"));
         nonsnapMdRes.getInfo().setLastModified(0);
+        FileResource indexRes = new FileResource(new RepoPath("repox", MavenNaming.NEXUS_INDEX_ZIP));
+        indexRes.getInfo().setLastModified(0);
 
-        RemoteRepo remoteRepo = EasyMock.createMock(RemoteRepo.class);
-        EasyMock.expect(remoteRepo.getRepositoryService()).andReturn(null).anyTimes();
-        HttpRepoDescriptor httpRepoDescriptor = new HttpRepoDescriptor();
-        httpRepoDescriptor.setChecksumPolicyType(ChecksumPolicyType.FAIL);
-        EasyMock.expect(remoteRepo.getDescriptor()).andReturn(httpRepoDescriptor).anyTimes();
-        EasyMock.expect(remoteRepo.getDescription()).andReturn("desc").anyTimes();
-        EasyMock.expect(remoteRepo.getKey()).andReturn("repox").anyTimes();
-        EasyMock.expect(remoteRepo.getRetrievalCachePeriodSecs()).andReturn(0L).anyTimes();
-        EasyMock.replay(remoteRepo);
-
+        RemoteRepo remoteRepo = createRemoreRepoMock(0L);
         JcrCacheRepo cacheRepo = new JcrCacheRepo(remoteRepo);
 
         Assert.assertFalse(cacheRepo.isExpired(releaseRes));
@@ -54,6 +48,25 @@ public class JcrCacheRepoTest {
         Assert.assertFalse(cacheRepo.isExpired(nonSnapRes));
         Assert.assertFalse(cacheRepo.isExpired(relMdRes));
         Assert.assertTrue(cacheRepo.isExpired(snapMdRes));
-        Assert.assertFalse(cacheRepo.isExpired(nonsnapMdRes));
+        Assert.assertTrue(cacheRepo.isExpired(indexRes));
+
+        remoteRepo = createRemoreRepoMock(10L);
+        cacheRepo = new JcrCacheRepo(remoteRepo);
+
+        Assert.assertFalse(cacheRepo.isExpired(indexRes));
+    }
+
+    private RemoteRepo createRemoreRepoMock(long expiry) {
+        RemoteRepo remoteRepo = EasyMock.createMock(RemoteRepo.class);
+        EasyMock.expect(remoteRepo.getRepositoryService()).andReturn(null).anyTimes();
+        HttpRepoDescriptor httpRepoDescriptor = new HttpRepoDescriptor();
+        httpRepoDescriptor.setChecksumPolicyType(ChecksumPolicyType.FAIL);
+        EasyMock.expect(remoteRepo.getDescriptor()).andReturn(httpRepoDescriptor).anyTimes();
+        EasyMock.expect(remoteRepo.getDescription()).andReturn("desc").anyTimes();
+        EasyMock.expect(remoteRepo.getKey()).andReturn("repox").anyTimes();
+        EasyMock.expect(remoteRepo.getRetrievalCachePeriodSecs()).andReturn(expiry).anyTimes();
+        EasyMock.expect(remoteRepo.getUrl()).andReturn("http://jfrog").anyTimes();
+        EasyMock.replay(remoteRepo);
+        return remoteRepo;
     }
 }

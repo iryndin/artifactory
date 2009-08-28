@@ -184,7 +184,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
         RepoResource foundRes = null;
         RealRepo foundRepo = null;
         for (RealRepo repo : repositories) {
-            // Since we are in process standard, repositories that does not process releases should be skipped.
+            // Since we are in process standard, repositories that do not process releases should be skipped.
             // Now, checksums and nexus index are always considered standard,
             // even if executed against a snapshot repository.
             // So, we should not skip snapshots repositories for checksum and index.
@@ -237,8 +237,8 @@ public class DownloadServiceImpl implements InternalDownloadService {
                 if (repo.isLocal()) {
                     if (foundInLocalRepo) {
                         //Issue a warning for a resource found multiple times in local repos
-                        log.warn(repo + ": found multiple resource instances of '" + resourcePath +
-                                "' in local repositories.");
+                        log.warn("{} found multiple resource instances of '{}' in local repositories.", repo,
+                                resourcePath);
                     } else {
                         log.debug("{}: found local res: {}", repo, resourcePath);
                         foundInLocalRepo = true;

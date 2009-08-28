@@ -97,7 +97,7 @@ public class MavenNaming {
     }
 
     public static boolean isRelease(String path) {
-        return !isSnapshot(path) && !NamingUtils.isMetadata(path) && !isChecksum(path);
+        return !isSnapshot(path) && !NamingUtils.isMetadata(path) && !isChecksum(path) && !isIndex(path);
     }
 
     public static boolean isMetadataChecksum(String path) {

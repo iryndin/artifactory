@@ -22,6 +22,7 @@ import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.repo.RepoPath;
+import org.artifactory.common.ConstantsValue;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.io.NullResourceStreamHandle;
 import org.artifactory.io.TempFileStreamHandle;
@@ -80,8 +81,9 @@ public class RepoIndexerData {
                 log.debug("Not retrieving index for remote repository '{}'", indexedRepo.getKey());
                 return;
             }
-            //CAN BE NULL!
-            localRepo = remoteRepo.getLocalCacheRepo();
+            if (remoteRepo.isStoreArtifactsLocally()) {
+                localRepo = remoteRepo.getLocalCacheRepo();
+            }
 
             //TODO: [by yl] Stagger remote index downloads
             DefaultIndexUpdater indexUpdater = new DefaultIndexUpdater();
@@ -99,6 +101,10 @@ public class RepoIndexerData {
             ResourceStreamHandle remoteIndexHandle = null;
             ResourceStreamHandle remotePropertiesHandle = null;
             try {
+                //Never auto-fetch the index from central if it cannot be stored locally
+                if (!shouldFetchRemoteIndex(remoteRepo)) {
+                    return;
+                }
                 //If we receive a non-modified response (with a null handle) - don't re-download the index
                 remoteIndexHandle = remoteRepo.conditionalRetrieveResource(indexPath);
                 if (remoteIndexHandle instanceof NullResourceStreamHandle) {
@@ -208,5 +214,15 @@ public class RepoIndexerData {
     RepoPath getIndexFolderRepoPath() {
         return new RepoPath(
                 localRepo.getRootFolder().getRepoPath(), MavenNaming.NEXUS_INDEX_DIR);
+    }
+
+    private boolean shouldFetchRemoteIndex(RemoteRepo remoteRepo) {
+        if (!remoteRepo.isStoreArtifactsLocally() &&
+                remoteRepo.getUrl().contains(ConstantsValue.mvnCentralHostPattern.getString())) {
+            log.debug("Central index cannot be periodically fetched.Remote repository '{}' does not support " +
+                    "local index storage.", indexedRepo.getUrl());
+            return false;
+        }
+        return true;
     }
 }

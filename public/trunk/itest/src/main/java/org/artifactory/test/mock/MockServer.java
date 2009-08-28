@@ -39,7 +39,7 @@ public class MockServer {
     private static final String CONTENT_TYPE = "application/xml";
     private static final String ENCODING = "utf-8";
     private static final String STATS_PREFIX = "/stats/";
-    private String selectedURL = "";
+    private String url = "";
     private HttpClient httpClient = new HttpClient();
     private XStream xStream;
 
@@ -49,13 +49,13 @@ public class MockServer {
      * @param serverName
      */
     public MockServer(String serverName) {
-        this.selectedURL = PROTOCOL + serverName + PORT;
+        this.url = PROTOCOL + serverName + PORT;
     }
 
     /**
-     * For each server name try to find if a MockServer was started on port 8090 The first one found
-     * create an instance of MockServer with HttpClient initialized correctly If you don't find
-     * anything and the last name is "localhost" Call directly the main method on StartDummyRepo
+     * For each server name try to find if a MockServer was started on port 8090 The first one found create an instance
+     * of MockServer with HttpClient initialized correctly If you don't find anything and the last name is "localhost"
+     * Call directly the main method on StartDummyRepo
      *
      * @param serverNames
      * @return
@@ -97,7 +97,7 @@ public class MockServer {
      */
     public boolean isServerActive() throws IOException {
 
-        GetMethod getMethod = new GetMethod(selectedURL + EXISTENCE_PREFIX);
+        GetMethod getMethod = new GetMethod(url + EXISTENCE_PREFIX);
         int response;
         try {
             response = httpClient.executeMethod(getMethod);
@@ -226,14 +226,14 @@ public class MockServer {
     }
 
     private String getConfigURL(String url) {
-        return selectedURL + CONFIG_PREFIX + url;
+        return this.url + CONFIG_PREFIX + url;
     }
 
     private String getStatsURL(String url) {
-        return selectedURL + STATS_PREFIX + url;
+        return this.url + STATS_PREFIX + url;
     }
 
-    public String getSelectedURL() {
-        return selectedURL;
+    public String getUrl() {
+        return url;
     }
 }
