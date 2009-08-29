@@ -14,29 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.artifactory.jcr.lock;
+package org.artifactory.concurrent;
 
 /**
  * @author freds
- * @date Sep 5, 2008
+ * @date Aug 28, 2009
  */
-public class LockingException extends RuntimeException {
-    public LockingException() {
-    }
-
-    public LockingException(String message) {
-        super(message);
-    }
-
-    public LockingException(String message, String... args) {
-        super(String.format(message, new Object[]{args}));
-    }
-
-    public LockingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public LockingException(Throwable cause) {
-        super(cause);
-    }
+public interface BaseState {
+    boolean canTransitionTo(BaseState newState);
 }

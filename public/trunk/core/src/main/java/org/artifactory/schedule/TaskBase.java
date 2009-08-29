@@ -17,7 +17,8 @@
 package org.artifactory.schedule;
 
 import org.artifactory.common.ConstantsValue;
-import org.artifactory.jcr.lock.LockingException;
+import org.artifactory.concurrent.BaseState;
+import org.artifactory.concurrent.LockingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -37,6 +38,7 @@ public abstract class TaskBase implements Task {
     private static final Logger log = LoggerFactory.getLogger(TaskBase.class);
 
     private State state;
+    //TODO: [by fsi] should use StateLockManager
     private final ReentrantLock stateSync;
     private final Condition stateChanged;
     private final Condition completed;
@@ -425,7 +427,7 @@ public abstract class TaskBase implements Task {
         return ClassUtils.getShortName(getType()) + "#" + token;
     }
 
-    public enum State {
+    public enum State implements BaseState {
         VIRGIN,
         SCHEDULED,
         RUNNING,
@@ -435,7 +437,8 @@ public abstract class TaskBase implements Task {
         PAUSED, //Blocked by executions thread (and will not start if refired by scheduler)
         CANCELED;
 
-        public boolean canTransitionTo(State newState) {
+        @SuppressWarnings({"SuspiciousMethodCalls"})
+        public boolean canTransitionTo(BaseState newState) {
             Set<State> states = getPossibleTransitionStates(this);
             return states.contains(newState);
         }

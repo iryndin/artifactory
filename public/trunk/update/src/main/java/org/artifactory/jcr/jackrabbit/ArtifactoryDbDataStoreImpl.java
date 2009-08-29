@@ -252,6 +252,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             id = identifier.toString();
             dataRecord = new ArtifactoryDbDataRecord(this, identifier, length, now);
 
+            boolean isNew = true;
             // Find if an entry already exists with this checksum
             // Important: Only use putIfAbsent and never re-put the entry in it for concurrency control
             ArtifactoryDbDataRecord oldRecord = allEntries.putIfAbsent(id, dataRecord);
@@ -260,44 +261,20 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 dataRecord = null;
 
                 // First check for improbable checksum collision
-                if (oldRecord.getLength() != length) {
+                long oldLength = oldRecord.length;
+                if (oldLength != length) {
                     String msg = DIGEST + " collision: temp=" + tempId + " id=" + id + " length=" + length +
-                            " oldLength=" + oldRecord.getLength();
+                            " oldLength=" + oldLength;
                     log.error(msg);
                     throw new DataStoreException(msg);
                 }
-                if (!oldRecord.setInUse()) {
-                    // Entry already exists but cannot be used since it was mark for deletion
-                    if (!oldRecord.waitForDeletion()) {
-                        // Deletion did not work
-                        // TODO: Should I try to do it again here?
-                        throw new DataStoreException(
-                                "Cannot insert new record " + id + " since the old one cannot be deleted");
-                    }
-                }
-                // Entry is now deleted, new or in_db and cannot be garbage collected
-
-                // Replace the entry with the NEW version if deleted
-                if (oldRecord.setToNew()) {
-                    dataRecord = oldRecord;
+                isNew = oldRecord.needReinsert(now);
+                if (!isNew) {
+                    updateLastModifiedDate(oldRecord.getIdentifier().toString(), now);
+                    return oldRecord;
                 } else {
-                    // Check if new from someone else
-                    checkIfParallelInsert(id, oldRecord);
-                    if (oldRecord.isInDb()) {
-                        // Everything is OK, the entry is in DB and usable
-                        // TODO: Should update timestamp in DB
-                        oldRecord.setLastModified(now);
-                        return oldRecord;
-                    }
-                    throw new DataStoreException(
-                            "Cannot insert new record " + id + " since the old one is in invalid state");
+                    dataRecord = oldRecord;
                 }
-            }
-
-            // The data record should be new and cannot be markForDeletion
-            if (!dataRecord.isNew() || dataRecord.markForDeletion()) {
-                throw new DataStoreException(
-                        "Cannot insert new record " + dataRecord + " since the old one is in invalid state");
             }
 
             // Now inserting dataRecord to the DB
@@ -366,7 +343,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 deleteTempEntry(conn, id);
             }
             if (dataRecord != null) {
-                dataRecord.setDeleted();
+                dataRecord.setInError(e);
             }
             throw convert("Can not insert new record", e);
         } finally {
@@ -380,17 +357,6 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                 } catch (IOException e) {
                     throw convert("Can not close temporary file", e);
                 }
-            }
-        }
-    }
-
-    private void checkIfParallelInsert(String id, ArtifactoryDbDataRecord oldRecord) throws DataStoreException {
-        if (oldRecord.isNew()) {
-            // Someone else is inserting this DB entry
-            if (!oldRecord.waitForInsertion()) {
-                // Something went wrong during the other insertion
-                // TODO: Should I try to do it again here?
-                throw new DataStoreException("Cannot insert new record " + id + " due to previous insertion error");
             }
         }
     }
@@ -436,54 +402,50 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
      * @throws DataStoreException
      */
     public long[] cleanUnreferencedItems() throws DataStoreException {
-        long[] result = new long[2];
-        List<ArtifactoryDbDataRecord> toDelete = new ArrayList<ArtifactoryDbDataRecord>();
-        for (ArtifactoryDbDataRecord dataRecord : allEntries.values()) {
-            if (dataRecord.markForDeletion()) {
-                toDelete.add(dataRecord);
-                if (toDelete.size() >= batchDeleteSize) {
-                    result[0] += toDelete.size();
-                    result[1] += deleteEntries(toDelete);
+        long now = System.currentTimeMillis();
+        long[] result = new long[]{0L, 0L};
+        for (ArtifactoryDbDataRecord record : allEntries.values()) {
+            if (record.markForDeletion(now)) {
+                try {
+                    result[1] += deleteEntry(record);
+                    result[0]++;
+                } catch (DataStoreException e) {
+                    log.warn("Error during deletion: " + e.getMessage());
                 }
             }
         }
-        result[0] += toDelete.size();
-        result[1] += deleteEntries(toDelete);
         dataStoreSize -= result[1];
-
         return result;
     }
 
     /**
-     * Delete all entries in the list from the DB
+     * Delete the record from the DB
      *
-     * @param toDelete
+     * @param record to delete from DB
      * @return the amount of bytes deleted
      * @throws DataStoreException
      */
-    private long deleteEntries(List<ArtifactoryDbDataRecord> toDelete) throws DataStoreException {
-        long result = 0L;
+    private long deleteEntry(ArtifactoryDbDataRecord record) throws DataStoreException {
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         try {
+            long length = record.length;
             // DELETE FROM DATASTORE WHERE ID=? (toremove)
-            for (ArtifactoryDbDataRecord record : toDelete) {
-                PreparedStatement prep = conn.executeStmt(deleteSQL, new Object[]{record.getIdentifier().toString()});
-                int res = prep.getUpdateCount();
-                if (res != 1) {
-                    log.error("Deleting record " + record + " returned " + res + " updated.");
-                } else {
-                    log.debug("Deleted record " + record + " from data store.");
-                    result += record.getLength();
-                    record.setDeleted();
-                }
+            PreparedStatement prep = conn.executeStmt(deleteSQL, new Object[]{record.getIdentifier().toString()});
+            int res = prep.getUpdateCount();
+            if (res != 1) {
+                log.error("Deleting record " + record + " returned " + res + " updated.");
+            } else {
+                log.debug("Deleted record " + record + " from data store.");
+                record.setDeleted();
+                return length;
             }
-            toDelete.clear();
         } catch (Exception e) {
+            record.setInError(e);
             throw convert("Can not delete records", e);
         } finally {
             putBack(conn);
         }
-        return result;
+        return 0L;
     }
 
     /**
@@ -521,7 +483,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
         try {
-            // SELECT ID, LENGTH FROM DATASTORE
+            // SELECT ID, LENGTH, LAST_MODIFIED FROM DATASTORE
             PreparedStatement prep = conn.executeStmt(selectAllSQL, new Object[0]);
             rs = prep.getResultSet();
             while (rs.next()) {
@@ -539,7 +501,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
                         }
                     }
                     record.setLastModified(lastModified);
-                    record.initScanner();
+                    record.setInDb();
                     totalSize += length;
                 }
             }
@@ -574,11 +536,9 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
     public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
         String id = identifier.toString();
         ArtifactoryDbDataRecord record = allEntries.get(id);
-        if (record != null) {
-            if (record.setInUse() && record.isInDb()) {
-                // The record is OK return it
-                return record;
-            }
+        if (record != null && record.setInUse()) {
+            // The record is OK return it
+            return record;
         }
         ArtifactoryConnectionRecoveryManager conn = getConnection();
         ResultSet rs = null;
@@ -588,9 +548,6 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             PreparedStatement prep = conn.executeStmt(selectMetaSQL, new Object[]{id});
             rs = prep.getResultSet();
             if (!rs.next()) {
-                if (record != null) {
-                    record.setDeleted();
-                }
                 throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
             }
             long length = rs.getLong(1);
@@ -600,12 +557,14 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             if (record == null) {
                 record = dbRecord;
             } else {
-                record.setInUse();
                 record.setLastModified(lastModified);
             }
             record.setInDb();
             return record;
         } catch (Exception e) {
+            if (record != null) {
+                record.setInError(e);
+            }
             throw convert("Can not read identifier " + identifier, e);
         } finally {
             conn.closeSilently(rs);
@@ -735,8 +694,16 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
         long start = System.currentTimeMillis();
         log.debug("Starting scanning of all datastore entries");
         try {
-            //Add all identifiers
+            // Add all identifiers
             loadAllDbRecords();
+            // Remove all entries in delete or error state
+            Iterator<ArtifactoryDbDataRecord> recordIterator = allEntries.values().iterator();
+            while (recordIterator.hasNext()) {
+                ArtifactoryDbDataRecord record = recordIterator.next();
+                if (!record.initGCState()) {
+                    recordIterator.remove();
+                }
+            }
         } catch (DataStoreException e) {
             throw new RuntimeException("Could not load all data store identifier: " + e.getMessage(), e);
         }
@@ -752,6 +719,21 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
 
     public int getDataStoreNbElements() {
         return allEntries.size();
+    }
+
+    private void updateLastModifiedDate(String id, long now) throws DataStoreException {
+        Long n = new Long(now);
+        ArtifactoryConnectionRecoveryManager conn = getConnection();
+        try {
+            // UPDATE DATASTORE SET LAST_MODIFIED = ? WHERE ID = ? AND LAST_MODIFIED < ?
+            conn.executeStmt(updateLastModifiedSQL, new Object[]{
+                    n, id, n
+            });
+        } catch (Exception e) {
+            throw convert("Can not update lastModified", e);
+        } finally {
+            putBack(conn);
+        }
     }
 
     /**
