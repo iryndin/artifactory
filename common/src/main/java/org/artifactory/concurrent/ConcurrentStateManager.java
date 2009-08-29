@@ -27,8 +27,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author freds
+ * @author yoavl
  * @date Aug 28, 2009
  */
+//TODO: [by yl] Copy from TaskBase - merge
 public class ConcurrentStateManager {
     private static final Logger log = LoggerFactory.getLogger(ConcurrentStateManager.class);
 
