@@ -38,7 +38,7 @@ public abstract class TaskBase implements Task {
     private static final Logger log = LoggerFactory.getLogger(TaskBase.class);
 
     private State state;
-    //TODO: [by fsi] should use StateLockManager
+    //TODO: [by fsi] should use StateManager
     private final ReentrantLock stateSync;
     private final Condition stateChanged;
     private final Condition completed;

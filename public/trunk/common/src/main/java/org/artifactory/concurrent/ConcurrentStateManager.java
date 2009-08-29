@@ -29,20 +29,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author freds
  * @date Aug 28, 2009
  */
-public class StateLockManager {
-    private static final Logger log = LoggerFactory.getLogger(StateLockManager.class);
+public class ConcurrentStateManager {
+    private static final Logger log = LoggerFactory.getLogger(ConcurrentStateManager.class);
 
     private BaseState state;
     private final ReentrantLock stateSync;
     private final Condition stateChanged;
 
-    public StateLockManager(BaseState initState) {
+    public ConcurrentStateManager(BaseState initState) {
         this.state = initState;
         this.stateSync = new ReentrantLock();
         this.stateChanged = stateSync.newCondition();
     }
 
-    public <V> V doStateChange(Callable<V> toCall) {
+    public <V> V changeStateIn(Callable<V> toCall) {
         lockState();
         try {
             return toCall.call();
@@ -112,6 +112,10 @@ public class StateLockManager {
         stateChanged.signal();
     }
 
+    public BaseState getState() {
+        return state;
+    }
+
     private void lockState() {
         try {
             int holdCount = stateSync.getHoldCount();
@@ -123,11 +127,10 @@ public class StateLockManager {
                     stateSync.unlock();
                     holdCount--;
                 }
-                throw new LockingException("Locking already locked task state: " +
+                throw new LockingException("Locking already locked state: " +
                         this + " active lock(s) already active!");
             }
-            boolean sucess = stateSync.tryLock() ||
-                    stateSync.tryLock(getStateLockTimeOut(), TimeUnit.SECONDS);
+            boolean sucess = stateSync.tryLock() || stateSync.tryLock(getStateLockTimeOut(), TimeUnit.SECONDS);
             if (!sucess) {
                 throw new LockingException(
                         "Could not acquire state lock in " + getStateLockTimeOut());
@@ -148,9 +151,5 @@ public class StateLockManager {
 
     private static void catchInterrupt(BaseState state) {
         log.warn("Interrupted during state wait from '{}'.", state);
-    }
-
-    public BaseState getState() {
-        return state;
     }
 }
