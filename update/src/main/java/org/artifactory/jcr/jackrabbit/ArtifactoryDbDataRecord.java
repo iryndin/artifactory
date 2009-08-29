@@ -21,9 +21,7 @@ import org.apache.jackrabbit.core.data.DataIdentifier;
 import org.apache.jackrabbit.core.data.DataStoreException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.concurrent.BaseState;
-import org.artifactory.concurrent.StateLockManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.artifactory.concurrent.ConcurrentStateManager;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -37,7 +35,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date Mar 12, 2009
  */
 public class ArtifactoryDbDataRecord extends AbstractDataRecord {
-    private static final Logger log = LoggerFactory.getLogger(ArtifactoryDbDataRecord.class);
 
     enum DbRecordState implements BaseState {
         NEW,
@@ -75,7 +72,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
 
     // State Manager of this entry in the DB. It is set after the succesful corresponding DB query was done.
     // The 3 IN_DB states are used by the garbage collector to track each Db store entry
-    private final StateLockManager stateMgr;
+    private final ConcurrentStateManager stateMgr;
 
     // Last exception if something wrong happens with the DB for this record
     private Exception error;
@@ -100,7 +97,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
         this.store = store;
         this.length = length;
         this.lastModified = new AtomicLong(lastModified);
-        this.stateMgr = new StateLockManager(DbRecordState.NEW);
+        this.stateMgr = new ConcurrentStateManager(DbRecordState.NEW);
     }
 
     /**
@@ -141,7 +138,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * @return true if state is in db and used
      */
     public boolean setInDb() {
-        return stateMgr.doStateChange(new Callable<Boolean>() {
+        return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 if (dbState == DbRecordState.IN_ERROR) {
@@ -162,16 +159,15 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
     }
 
     /**
-     * This is called at the beginning of GC scan.<br/><ol>
-     * <li>If the entry is new (first time in GC), it will be changed.</li>
-     * <li>If the entry is in db used it will be marked as "found" and so eligible for deletion at the end of GC.</li>
-     * <li>If the entry is mark for deletion it's an error (last GC should have clean it or set to error). so set to error.</li>
-     * <li>If the entry is deleted or error it should be removed from the global map.</li></ol>
+     * This is called at the beginning of GC scan.<br/><ol> <li>If the entry is new (first time in GC), it will be
+     * changed.</li> <li>If the entry is in db used it will be marked as "found" and so eligible for deletion at the end
+     * of GC.</li> <li>If the entry is mark for deletion it's an error (last GC should have clean it or set to error).
+     * so set to error.</li> <li>If the entry is deleted or error it should be removed from the global map.</li></ol>
      *
      * @return true if the init went well, false if element in error or delete state and should be removed from the map
      */
     public boolean initGCState() {
-        return stateMgr.doStateChange(new Callable<Boolean>() {
+        return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
@@ -210,11 +206,12 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * @return true if is in in used state
      */
     public boolean setInUse() {
+        //noinspection SimplifiableIfStatement
         if (getDbState() == DbRecordState.IN_DB_USED) {
             // Shortcut since the method is called heavily
             return true;
         }
-        return stateMgr.doStateChange(new Callable<Boolean>() {
+        return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
@@ -243,8 +240,8 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
     }
 
     /**
-     * This method should be called brutally on all entries at the end of scan to ensure
-     * atomicity of the mark for deletion. All USED entries will not be marked for deletion.
+     * This method should be called brutally on all entries at the end of scan to ensure atomicity of the mark for
+     * deletion. All USED entries will not be marked for deletion.
      *
      * @param now
      * @return true if marked for deletion, false otherwise
@@ -255,7 +252,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
         //if ((now - lastModified.get()) < (ConstantsValue.gcIntervalMins.getLong() * 1000L)) {
         //    return false;
         //}
-        return stateMgr.doStateChange(new Callable<Boolean>() {
+        return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
@@ -287,7 +284,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * Called after a sucessful delete in DB. No question asked here, state brutaly changed.
      */
     public void setDeleted() {
-        stateMgr.doStateChange(new Callable<Boolean>() {
+        stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 stateMgr.guardedSetState(DbRecordState.DELETED);
                 return getDbState() == DbRecordState.DELETED;
@@ -299,11 +296,11 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * Called when a new entry is created and this entry match the checksum.
      *
      * @param now
-     * @return true if the entry is new so the DB insert should be done,
-     *         false if the entry is OK to used, throw exception if non of the above case are valid
+     * @return true if the entry is new so the DB insert should be done, false if the entry is OK to used, throw
+     *         exception if non of the above case are valid
      */
     public boolean needReinsert(final long now) {
-        return stateMgr.doStateChange(new Callable<Boolean>() {
+        return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
@@ -355,7 +352,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
     }
 
     public void setInError(final Exception e) {
-        stateMgr.doStateChange(new Callable<Object>() {
+        stateMgr.changeStateIn(new Callable<Object>() {
             public Object call() throws Exception {
                 error = e;
                 stateMgr.guardedSetState(DbRecordState.IN_ERROR);
