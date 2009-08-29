@@ -17,6 +17,7 @@
 package org.artifactory.jcr.lock;
 
 import org.artifactory.api.repo.RepoPath;
+import org.artifactory.concurrent.LockingException;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

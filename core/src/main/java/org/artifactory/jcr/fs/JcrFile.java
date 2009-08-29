@@ -36,13 +36,13 @@ import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.stat.StatsInfo;
 import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.concurrent.LockingException;
 import org.artifactory.io.checksum.Checksum;
 import org.artifactory.io.checksum.ChecksumInputStream;
 import org.artifactory.io.checksum.policy.ChecksumPolicy;
 import org.artifactory.io.checksum.policy.ChecksumPolicyException;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.jackrabbit.DataStoreRecordNotFoundException;
-import org.artifactory.jcr.lock.LockingException;
 import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataDefinition;
 import org.artifactory.maven.MavenUtils;
@@ -166,7 +166,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
      * @param lastModified the date of modification of this file
      * @param in           the input stream for this file content. Will be closed in this method.
      * @throws RepositoryRuntimeException if the parentNode cannot be read or the JCR node elements cannot be created
-     * @throws LockingException           if the JCrFile is immutable or not locked for this thread
+     * @throws org.artifactory.concurrent.LockingException
+     *                                    if the JCrFile is immutable or not locked for this thread
      */
     public void fillData(long lastModified, InputStream in) {
         if (!isMutable()) {
