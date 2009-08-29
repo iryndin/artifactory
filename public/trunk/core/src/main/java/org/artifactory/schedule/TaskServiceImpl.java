@@ -54,8 +54,7 @@ public class TaskServiceImpl implements TaskService {
         QuartzTask jcrGarbageCollectorTask =
                 new QuartzTask(JcrGarbageCollector.class,
                         TimeUnit.SECONDS.toMillis(ConstantsValue.gcIntervalMins.getInt() * 60),
-                        TimeUnit.SECONDS.toMillis(60));
-        //new QuartzTask(JcrGarbageCollector.class, TimeUnit.MINUTES.toMillis(3), TimeUnit.MINUTES.toMillis(1));
+                        TimeUnit.SECONDS.toMillis(1));
         jcrGarbageCollectorTask.setSingleton(true);
         startTask(jcrGarbageCollectorTask);
         //run the wagon leftovers cleanup every 15 minutes after 10 minutes
