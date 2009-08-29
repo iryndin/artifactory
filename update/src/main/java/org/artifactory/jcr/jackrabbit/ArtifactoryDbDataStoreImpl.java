@@ -754,6 +754,7 @@ public class ArtifactoryDbDataStoreImpl implements ArtifactoryDbDataStore {
             if (copyWhenReading) {
                 File temp = moveToTempFile(in);
                 in = new TempFileInputStream(temp);
+                // TODO: [by fsi] Make the ArtifactorydbDataRecord manage this file more efficiently
             }
             return in;
         } catch (Exception e) {
