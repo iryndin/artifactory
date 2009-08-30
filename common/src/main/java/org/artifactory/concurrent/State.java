@@ -20,6 +20,6 @@ package org.artifactory.concurrent;
  * @author freds
  * @date Aug 28, 2009
  */
-public interface BaseState {
-    boolean canTransitionTo(BaseState newState);
+public interface State {
+    boolean canTransitionTo(State newState);
 }

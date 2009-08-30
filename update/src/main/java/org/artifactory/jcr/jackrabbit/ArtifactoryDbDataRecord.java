@@ -20,8 +20,9 @@ import org.apache.jackrabbit.core.data.AbstractDataRecord;
 import org.apache.jackrabbit.core.data.DataIdentifier;
 import org.apache.jackrabbit.core.data.DataStoreException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.concurrent.BaseState;
 import org.artifactory.concurrent.ConcurrentStateManager;
+import org.artifactory.concurrent.State;
+import org.artifactory.concurrent.StateAware;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -34,15 +35,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author freds
  * @date Mar 12, 2009
  */
-public class ArtifactoryDbDataRecord extends AbstractDataRecord {
-
-    enum DbRecordState implements BaseState {
+public class ArtifactoryDbDataRecord extends AbstractDataRecord implements StateAware {
+    private enum DbRecordState implements State {
         NEW,
         // In DB with the 3 state of the GC scanner
         IN_DB_FOUND, IN_DB_USED, IN_DB_MARK_FOR_DELETION,
         DELETED, IN_ERROR;
 
-        public boolean canTransitionTo(BaseState newState) {
+        public boolean canTransitionTo(State newState) {
             if (newState == IN_ERROR) {
                 // Always can go to error
                 return true;
@@ -63,6 +63,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
             }
             throw new IllegalStateException("Could not be reached");
         }
+
     }
 
     private final ArtifactoryDbDataStoreImpl store;
@@ -91,13 +92,16 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord {
      * @param length
      */
     public ArtifactoryDbDataRecord(ArtifactoryDbDataStoreImpl store,
-            DataIdentifier identifier,
-            long length, long lastModified) {
+            DataIdentifier identifier, long length, long lastModified) {
         super(identifier);
         this.store = store;
         this.length = length;
         this.lastModified = new AtomicLong(lastModified);
-        this.stateMgr = new ConcurrentStateManager(DbRecordState.NEW);
+        this.stateMgr = new ConcurrentStateManager(this);
+    }
+
+    public State getInitialState() {
+        return DbRecordState.NEW;
     }
 
     /**

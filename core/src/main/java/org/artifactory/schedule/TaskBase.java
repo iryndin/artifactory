@@ -17,8 +17,8 @@
 package org.artifactory.schedule;
 
 import org.artifactory.common.ConstantsValue;
-import org.artifactory.concurrent.BaseState;
 import org.artifactory.concurrent.LockingException;
+import org.artifactory.concurrent.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -37,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class TaskBase implements Task {
     private static final Logger log = LoggerFactory.getLogger(TaskBase.class);
 
-    private State state;
+    private TaskState state;
     //TODO: [by fsi] should use StateManager
     private final ReentrantLock stateSync;
     private final Condition stateChanged;
@@ -58,7 +58,7 @@ public abstract class TaskBase implements Task {
 
     @SuppressWarnings({"unchecked"})
     protected TaskBase(Class<? extends TaskCallback> callbackType) {
-        state = State.VIRGIN;
+        state = TaskState.VIRGIN;
         stateSync = new ReentrantLock();
         stateChanged = stateSync.newCondition();
         completed = stateSync.newCondition();
@@ -68,10 +68,14 @@ public abstract class TaskBase implements Task {
         this.token = UUID.randomUUID().toString();
     }
 
+    public State getInitialState() {
+        return TaskState.VIRGIN;
+    }
+
     void schedule() {
         lockState();
         try {
-            guardedTransitionToState(State.SCHEDULED, false, new Callable<Object>() {
+            guardedTransitionToState(TaskState.SCHEDULED, false, new Callable<Object>() {
                 public Object call() throws Exception {
                     scheduleTask();
                     return null;
@@ -94,24 +98,24 @@ public abstract class TaskBase implements Task {
         lockState();
         try {
             log.trace("Entering stop with state {} on {}", state, this);
-            if (state == State.VIRGIN) {
+            if (state == TaskState.VIRGIN) {
                 throw new IllegalStateException("Cannot stop a virgin task.");
-            } else if (state == State.SCHEDULED) {
+            } else if (state == TaskState.SCHEDULED) {
                 //Not in execution loop
                 if (cancel) {
-                    guardedSetState(State.CANCELED);
+                    guardedSetState(TaskState.CANCELED);
                     cancelTask();
                 } else {
                     //For both stop and pause
                     resumeBarriersCount++;
                     log.trace("resumeBarriersCount++ to {} after pause/stop on {}", resumeBarriersCount, this);
-                    guardedSetState(State.STOPPED);
+                    guardedSetState(TaskState.STOPPED);
                 }
-            } else if (state == State.RUNNING) {
+            } else if (state == TaskState.RUNNING) {
                 if (pause) {
                     resumeBarriersCount++;
                     log.trace("resumeBarriersCount++ to {} after pause on {}", resumeBarriersCount, this);
-                    guardedTransitionToState(State.PAUSING, wait, null);
+                    guardedTransitionToState(TaskState.PAUSING, wait, null);
                 } else {
                     Callable<Object> callback = null;
                     if (cancel) {
@@ -127,9 +131,9 @@ public abstract class TaskBase implements Task {
                         resumeBarriersCount++;
                         log.trace("resumeBarriersCount++ to {} after stop on {}", resumeBarriersCount, this);
                     }
-                    guardedTransitionToState(State.STOPPING, wait, callback);
+                    guardedTransitionToState(TaskState.STOPPING, wait, callback);
                 }
-            } else if (state == State.STOPPED || state == State.PAUSED) {
+            } else if (state == TaskState.STOPPED || state == TaskState.PAUSED) {
                 //Stop/pause
                 resumeBarriersCount++;
                 log.trace("resumeBarriersCount++ to {} after re-stop/re-pause on {}", resumeBarriersCount, this);
@@ -142,7 +146,7 @@ public abstract class TaskBase implements Task {
     boolean resume() {
         lockState();
         try {
-            if (state == State.CANCELED) {
+            if (state == TaskState.CANCELED) {
                 throw new IllegalStateException("Cannot resume a canceled task.");
             }
             if (resumeBarriersCount > 0) {
@@ -157,13 +161,13 @@ public abstract class TaskBase implements Task {
                 log.debug("Cannot resume while there are still {} resume barriers.", resumeBarriersCount);
                 return false;
             }
-            if (state == State.PAUSED || state == State.PAUSING) {
-                guardedSetState(State.RUNNING);
-            } else if (state == State.STOPPED || state == State.STOPPING) {
+            if (state == TaskState.PAUSED || state == TaskState.PAUSING) {
+                guardedSetState(TaskState.RUNNING);
+            } else if (state == TaskState.STOPPED || state == TaskState.STOPPING) {
                 //Nothing to do for single execution - either resume from pause or reached stopped
                 //if resume by a different thread
                 if (!isSingleExecution()) {
-                    guardedSetState(State.SCHEDULED);
+                    guardedSetState(TaskState.SCHEDULED);
                 }
             }
             return true;
@@ -199,13 +203,13 @@ public abstract class TaskBase implements Task {
         lockState();
         //if running continue, if pausing transition to pause else exit
         try {
-            if (state == State.PAUSING) {
-                guardedSetState(State.PAUSED);
+            if (state == TaskState.PAUSING) {
+                guardedSetState(TaskState.PAUSED);
             }
-            while (state == State.PAUSED) {
+            while (state == TaskState.PAUSED) {
                 guardedWaitForNextStep();
             }
-            return state != State.RUNNING;
+            return state != TaskState.RUNNING;
         } finally {
             unlockState();
         }
@@ -249,7 +253,7 @@ public abstract class TaskBase implements Task {
             try {
                 //Wait forever (100 times more than timeout) until it finished the current execution
                 int tries = TRIES_UNTIL_COMPLETION;
-                while (!(completed = executed && (state == State.STOPPED || state == State.CANCELED))) {
+                while (!(completed = executed && (state == TaskState.STOPPED || state == TaskState.CANCELED))) {
                     boolean success = this.completed.await(ConstantsValue.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
                     if (success) {
                         completed = true;
@@ -275,8 +279,8 @@ public abstract class TaskBase implements Task {
         lockState();
         //Check if should run
         try {
-            if (state == State.SCHEDULED) {
-                guardedSetState(State.RUNNING);
+            if (state == TaskState.SCHEDULED) {
+                guardedSetState(TaskState.RUNNING);
                 shouldExecute = true;
             }
         } finally {
@@ -288,16 +292,16 @@ public abstract class TaskBase implements Task {
     void completed() {
         lockState();
         try {
-            if (state == State.STOPPED) {
+            if (state == TaskState.STOPPED) {
                 //Do nothing
-            } else if (state == State.PAUSED || state == State.STOPPING || state == State.PAUSING) {
-                guardedSetState(State.STOPPED);
-            } else if (state != State.CANCELED) {
+            } else if (state == TaskState.PAUSED || state == TaskState.STOPPING || state == TaskState.PAUSING) {
+                guardedSetState(TaskState.STOPPED);
+            } else if (state != TaskState.CANCELED) {
                 if (isSingleExecution()) {
-                    guardedSetState(State.STOPPED);
-                } else if (state != State.SCHEDULED) {
+                    guardedSetState(TaskState.STOPPED);
+                } else if (state != TaskState.SCHEDULED) {
                     //Could be on SCHEDULED if resumed after stopped
-                    guardedSetState(State.SCHEDULED);
+                    guardedSetState(TaskState.SCHEDULED);
                 }
             }
             completed.signal();
@@ -306,7 +310,7 @@ public abstract class TaskBase implements Task {
         }
     }
 
-    private <V> V guardedTransitionToState(State newState, boolean waitForNextStep, Callable<V> callable) {
+    private <V> V guardedTransitionToState(TaskState newState, boolean waitForNextStep, Callable<V> callable) {
         V result = null;
         if (state == newState) {
             return result;
@@ -326,14 +330,14 @@ public abstract class TaskBase implements Task {
         return result;
     }
 
-    private State guardedWaitForNextStep() {
+    private TaskState guardedWaitForNextStep() {
         long timeout = ConstantsValue.lockTimeoutSecs.getLong();
         return guardedWaitForNextStep(timeout);
     }
 
-    private State guardedWaitForNextStep(long timeout) {
-        State oldState = state;
-        State newState = oldState;
+    private TaskState guardedWaitForNextStep(long timeout) {
+        TaskState oldState = state;
+        TaskState newState = oldState;
         try {
             log.trace("Entering wait for next step from {} on: {}", oldState, this);
             while (state == oldState) {
@@ -352,16 +356,16 @@ public abstract class TaskBase implements Task {
         return newState;
     }
 
-    private void guardedSetState(State newState) {
+    private void guardedSetState(TaskState newState) {
         boolean validNewState = state.canTransitionTo(newState);
         if (!validNewState) {
             throw new IllegalArgumentException("Cannot transition from " + this.state + " to " + newState + ".");
         }
         log.trace("Changing state: {}-->{}", this.state, newState);
         state = newState;
-        if (state == State.RUNNING) {
+        if (state == TaskState.RUNNING) {
             executed = true;
-        } else if (state == State.SCHEDULED) {
+        } else if (state == TaskState.SCHEDULED) {
             executed = false;
         }
         stateChanged.signal();
@@ -378,7 +382,7 @@ public abstract class TaskBase implements Task {
                     stateSync.unlock();
                     holdCount--;
                 }
-                throw new LockingException("Locking already locked task state: " +
+                throw new LockingException("Locking an already locked task state: " +
                         this + " active lock(s) already active!");
             }
             boolean sucess = stateSync.tryLock() ||
@@ -401,7 +405,7 @@ public abstract class TaskBase implements Task {
         stateSync.unlock();
     }
 
-    private static void catchInterrupt(State state) {
+    private static void catchInterrupt(TaskState state) {
         log.warn("Interrupted during state wait from '{}'.", state);
     }
 
@@ -427,7 +431,7 @@ public abstract class TaskBase implements Task {
         return ClassUtils.getShortName(getType()) + "#" + token;
     }
 
-    public enum State implements BaseState {
+    public enum TaskState implements State {
         VIRGIN,
         SCHEDULED,
         RUNNING,
@@ -438,52 +442,52 @@ public abstract class TaskBase implements Task {
         CANCELED;
 
         @SuppressWarnings({"SuspiciousMethodCalls"})
-        public boolean canTransitionTo(BaseState newState) {
-            Set<State> states = getPossibleTransitionStates(this);
+        public boolean canTransitionTo(State newState) {
+            Set<TaskState> states = getPossibleTransitionStates(this);
             return states.contains(newState);
         }
 
         @SuppressWarnings({"OverlyComplexMethod"})
-        private static Set<State> getPossibleTransitionStates(State oldState) {
-            HashSet<State> states = new HashSet<State>();
+        private static Set<TaskState> getPossibleTransitionStates(TaskState oldState) {
+            HashSet<TaskState> states = new HashSet<TaskState>();
             switch (oldState) {
                 case VIRGIN:
-                    states.add(State.SCHEDULED);
-                    states.add(State.CANCELED);
+                    states.add(TaskState.SCHEDULED);
+                    states.add(TaskState.CANCELED);
                     return states;
                 case SCHEDULED:
-                    states.add(State.RUNNING);
-                    states.add(State.PAUSING);
-                    states.add(State.STOPPING);
-                    states.add(State.STOPPED);
-                    states.add(State.CANCELED);
+                    states.add(TaskState.RUNNING);
+                    states.add(TaskState.PAUSING);
+                    states.add(TaskState.STOPPING);
+                    states.add(TaskState.STOPPED);
+                    states.add(TaskState.CANCELED);
                     return states;
                 case RUNNING:
-                    states.add(State.PAUSING);
-                    states.add(State.STOPPING);
-                    states.add(State.STOPPED);
-                    states.add(State.CANCELED);
-                    states.add(State.SCHEDULED);
+                    states.add(TaskState.PAUSING);
+                    states.add(TaskState.STOPPING);
+                    states.add(TaskState.STOPPED);
+                    states.add(TaskState.CANCELED);
+                    states.add(TaskState.SCHEDULED);
                     return states;
                 case PAUSING:
-                    states.add(State.PAUSED);
-                    states.add(State.RUNNING);
-                    states.add(State.STOPPING);
-                    states.add(State.STOPPED);
-                    states.add(State.CANCELED);
+                    states.add(TaskState.PAUSED);
+                    states.add(TaskState.RUNNING);
+                    states.add(TaskState.STOPPING);
+                    states.add(TaskState.STOPPED);
+                    states.add(TaskState.CANCELED);
                     return states;
                 case PAUSED:
-                    states.add(State.RUNNING);
-                    states.add(State.STOPPING);
-                    states.add(State.CANCELED);
+                    states.add(TaskState.RUNNING);
+                    states.add(TaskState.STOPPING);
+                    states.add(TaskState.CANCELED);
                     return states;
                 case STOPPING:
-                    states.add(State.CANCELED);
+                    states.add(TaskState.CANCELED);
                 case STOPPED:
-                    states.add(State.STOPPED);
-                    states.add(State.RUNNING);
-                    states.add(State.SCHEDULED);
-                    states.add(State.CANCELED);
+                    states.add(TaskState.STOPPED);
+                    states.add(TaskState.RUNNING);
+                    states.add(TaskState.SCHEDULED);
+                    states.add(TaskState.CANCELED);
                     return states;
                 case CANCELED:
                     //Unscheduled

@@ -34,12 +34,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ConcurrentStateManager {
     private static final Logger log = LoggerFactory.getLogger(ConcurrentStateManager.class);
 
-    private BaseState state;
+    private State state;
+    private final StateAware stateAware;
     private final ReentrantLock stateSync;
     private final Condition stateChanged;
 
-    public ConcurrentStateManager(BaseState initState) {
-        this.state = initState;
+    public ConcurrentStateManager(StateAware stateAware) {
+        this.stateAware = stateAware;
+        this.state = stateAware.getInitialState();
         this.stateSync = new ReentrantLock();
         this.stateChanged = stateSync.newCondition();
     }
@@ -58,7 +60,7 @@ public class ConcurrentStateManager {
         }
     }
 
-    public <V> V guardedTransitionToState(BaseState newState, boolean waitForNextStep, Callable<V> callable) {
+    public <V> V guardedTransitionToState(State newState, boolean waitForNextStep, Callable<V> callable) {
         V result = null;
         if (state == newState) {
             return result;
@@ -78,16 +80,16 @@ public class ConcurrentStateManager {
         return result;
     }
 
-    public BaseState guardedWaitForNextStep() {
+    public State guardedWaitForNextStep() {
         long timeout = ConstantsValue.lockTimeoutSecs.getLong();
         return guardedWaitForNextStep(timeout);
     }
 
-    public BaseState guardedWaitForNextStep(long timeout) {
-        BaseState oldState = state;
-        BaseState newState = oldState;
+    public State guardedWaitForNextStep(long timeout) {
+        State oldState = state;
+        State newState = oldState;
         try {
-            log.trace("Entering wait for next step from {} on: {}", oldState, this);
+            log.trace("Entering wait for next step from {} on: {}", oldState, stateAware);
             while (state == oldState) {
                 boolean success = stateChanged.await(timeout, TimeUnit.SECONDS);
                 if (!success) {
@@ -96,7 +98,8 @@ public class ConcurrentStateManager {
                                     "'.");
                 }
                 newState = state;
-                log.trace("Exiting wait for next step from {} to {} on {}", new Object[]{oldState, newState, this});
+                log.trace("Exiting wait for next step from {} to {} on {}",
+                        new Object[]{oldState, newState, stateAware});
             }
         } catch (InterruptedException e) {
             catchInterrupt(oldState);
@@ -104,7 +107,7 @@ public class ConcurrentStateManager {
         return newState;
     }
 
-    public void guardedSetState(BaseState newState) {
+    public void guardedSetState(State newState) {
         boolean validNewState = state.canTransitionTo(newState);
         if (!validNewState) {
             throw new IllegalArgumentException("Cannot transition from " + this.state + " to " + newState + ".");
@@ -114,7 +117,7 @@ public class ConcurrentStateManager {
         stateChanged.signal();
     }
 
-    public BaseState getState() {
+    public State getState() {
         return state;
     }
 
@@ -122,15 +125,15 @@ public class ConcurrentStateManager {
         try {
             int holdCount = stateSync.getHoldCount();
             log.trace("Thread {} trying lock (activeLocks={}) on {}",
-                    new Object[]{Thread.currentThread(), holdCount, this});
+                    new Object[]{Thread.currentThread(), holdCount, stateAware});
             if (holdCount > 0) {
                 //Clean all and throw
                 while (holdCount > 0) {
                     stateSync.unlock();
                     holdCount--;
                 }
-                throw new LockingException("Locking already locked state: " +
-                        this + " active lock(s) already active!");
+                throw new LockingException("Locking an already locked state: " +
+                        stateAware + " active lock(s) already active!");
             }
             boolean sucess = stateSync.tryLock() || stateSync.tryLock(getStateLockTimeOut(), TimeUnit.SECONDS);
             if (!sucess) {
@@ -138,7 +141,7 @@ public class ConcurrentStateManager {
                         "Could not acquire state lock in " + getStateLockTimeOut());
             }
         } catch (InterruptedException e) {
-            log.warn("Interrpted while trying to lock {}.", this);
+            log.warn("Interrpted while trying to lock {}.", stateAware);
         }
     }
 
@@ -147,11 +150,11 @@ public class ConcurrentStateManager {
     }
 
     private void unlockState() {
-        log.trace("Unlocking {}", this);
+        log.trace("Unlocking {}", stateAware);
         stateSync.unlock();
     }
 
-    private static void catchInterrupt(BaseState state) {
+    private static void catchInterrupt(State state) {
         log.warn("Interrupted during state wait from '{}'.", state);
     }
 }
