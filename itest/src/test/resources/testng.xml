@@ -35,4 +35,14 @@
             <class name="org.artifactory.test.internal.ConcurrentSnapshotsTest"/>
         </classes>
     </test>
+    <test name="indexer">
+        <classes>
+            <class name="org.artifactory.repo.index.IndexerTest"/>
+        </classes>
+    </test>
+    <test name="indexer-remote">
+        <classes>
+            <class name="org.artifactory.repo.index.RemoteIndexTest"/>
+        </classes>
+    </test>
 </suite>
