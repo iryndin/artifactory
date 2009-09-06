@@ -101,7 +101,6 @@ public class RepoIndexerData {
             ResourceStreamHandle remoteIndexHandle = null;
             ResourceStreamHandle remotePropertiesHandle = null;
             try {
-                //Never auto-fetch the index from central if it cannot be stored locally
                 if (!shouldFetchRemoteIndex(remoteRepo)) {
                     return;
                 }
@@ -109,14 +108,17 @@ public class RepoIndexerData {
                 remoteIndexHandle = remoteRepo.conditionalRetrieveResource(indexPath);
                 if (remoteIndexHandle instanceof NullResourceStreamHandle) {
                     log.debug("No need to fetch unmodified index for remote repository '{}'.", indexedRepo.getKey());
+                    indexed = true;
                     return;
                 }
-                remotePropertiesHandle = remoteRepo.retrieveResource(propertiesPath);
                 //Save into temp files
                 tempIndex = File.createTempFile(MavenNaming.NEXUS_INDEX_ZIP, null);
-                tempProperties = File.createTempFile(MavenNaming.NEXUS_INDEX_PROPERTIES, null);
                 IOUtils.copy(remoteIndexHandle.getInputStream(), new FileOutputStream(tempIndex));
+
+                remotePropertiesHandle = remoteRepo.retrieveResource(propertiesPath);
+                tempProperties = File.createTempFile(MavenNaming.NEXUS_INDEX_PROPERTIES, null);
                 IOUtils.copy(remotePropertiesHandle.getInputStream(), new FileOutputStream(tempProperties));
+
                 //Return the handle to the zip file (will be removed when the handle is closed)
                 indexHandle = new TempFileStreamHandle(tempIndex);
                 propertiesHandle = new TempFileStreamHandle(tempProperties);
@@ -217,6 +219,7 @@ public class RepoIndexerData {
     }
 
     private boolean shouldFetchRemoteIndex(RemoteRepo remoteRepo) {
+        //Never auto-fetch the index from central if it cannot be stored locally
         if (!remoteRepo.isStoreArtifactsLocally() &&
                 remoteRepo.getUrl().contains(ConstantsValue.mvnCentralHostPattern.getString())) {
             log.debug("Central index cannot be periodically fetched.Remote repository '{}' does not support " +
