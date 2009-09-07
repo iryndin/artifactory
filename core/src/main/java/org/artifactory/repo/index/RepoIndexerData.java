@@ -51,10 +51,15 @@ public class RepoIndexerData {
     private static final Logger log = LoggerFactory.getLogger(RepoIndexerData.class);
 
     private final RealRepo indexedRepo;
-    private boolean indexed = false;
+    private IndexStatus indexStatus = IndexStatus.NOT_CREATED;
     private LocalRepo localRepo;
     private ResourceStreamHandle indexHandle;
     private ResourceStreamHandle propertiesHandle;
+
+
+    private enum IndexStatus {
+        NOT_CREATED, NEEDS_SAVING, SKIP
+    }
 
     RepoIndexerData(RealRepo indexedRepo) {
         if (indexedRepo == null) {
@@ -108,7 +113,7 @@ public class RepoIndexerData {
                 remoteIndexHandle = remoteRepo.conditionalRetrieveResource(indexPath);
                 if (remoteIndexHandle instanceof NullResourceStreamHandle) {
                     log.debug("No need to fetch unmodified index for remote repository '{}'.", indexedRepo.getKey());
-                    indexed = true;
+                    indexStatus = IndexStatus.SKIP;
                     return;
                 }
                 //Save into temp files
@@ -122,7 +127,7 @@ public class RepoIndexerData {
                 //Return the handle to the zip file (will be removed when the handle is closed)
                 indexHandle = new TempFileStreamHandle(tempIndex);
                 propertiesHandle = new TempFileStreamHandle(tempProperties);
-                indexed = true;
+                indexStatus = IndexStatus.NEEDS_SAVING;
             } catch (IOException e) {
                 if (indexHandle != null) {
                     indexHandle.close();
@@ -158,12 +163,12 @@ public class RepoIndexerData {
             }
         }
 
-        if (!indexed) {
+        if (indexStatus == IndexStatus.NOT_CREATED) {
             RepoIndexer repoIndexer = new RepoIndexer(localRepo);
             try {
                 indexHandle = repoIndexer.index(fireTime);
                 propertiesHandle = repoIndexer.getProperties();
-                indexed = true;
+                indexStatus = IndexStatus.NEEDS_SAVING;
             } catch (Exception e) {
                 if (indexHandle != null) {
                     indexHandle.close();
@@ -185,9 +190,10 @@ public class RepoIndexerData {
             }
         }
 
-        if (!indexed) {
+        if (indexStatus != IndexStatus.NEEDS_SAVING) {
             return false;
         }
+
         //Create the new jcr files for index and properties
         try {
             //Create the index dir
