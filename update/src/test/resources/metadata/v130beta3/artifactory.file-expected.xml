@@ -1,0 +1,18 @@
+<artifactory-file>
+    <created>0</created>
+    <lastModified>1132809621000</lastModified>
+    <size>9928</size>
+    <name>commons-lang-2.1.pom</name>
+    <repoPath>
+        <repoKey>repo1-cache</repoKey>
+        <path>commons-lang/commons-lang/2.1/commons-lang-2.1.pom</path>
+    </repoPath>
+    <extension>
+        <lastUpdated>1228118176359</lastUpdated>
+        <modifiedBy>anonymous</modifiedBy>
+        <createdBy>anonymous</createdBy>
+        <sha1>a34d992202615804c534953aba402de55d8ee47c</sha1>
+        <md5>8e41bacdd69de9373c20326d231c8a5d</md5>
+    </extension>
+    <mimeType>application/x-maven-pom+xml</mimeType>
+</artifactory-file>
