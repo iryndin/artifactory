@@ -57,6 +57,7 @@ import org.artifactory.common.wicket.model.sitemap.SiteMap;
 import org.artifactory.common.wicket.model.sitemap.SiteMapBuilder;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.spring.SpringConfigResourceLoader;
+import org.artifactory.version.CompoundVersionDetails;
 import org.artifactory.webapp.spring.ArtifactorySpringComponentInjector;
 import org.artifactory.webapp.wicket.application.sitemap.ArtifactorySiteMapBuilder;
 import org.artifactory.webapp.wicket.page.base.BasePage;
@@ -124,7 +125,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
 
         buildSiteMap();
         mountPages();
-        mountResources();
+        mountResources(artifactoryHome.getRunningVersionDetails());
         deleteUploadsFolder();
 
         notifyBootstrapListeners();
@@ -330,9 +331,11 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
 
     /**
      * Mount all resources to version-sensitive path, Keep in cache for 10 years.
+     *
+     * @param details
      */
-    private void mountResources() {
-        sharedResourcesPath = centralConfig.getVersionInfo().getVersion() + "/resources/";
+    private void mountResources(CompoundVersionDetails details) {
+        sharedResourcesPath = details.getVersion() + "/resources/";
         mount(new VersionedSharedResourceUrlCodingStrategy(sharedResourcesPath, Duration.days(365)));
     }
 
@@ -347,5 +350,4 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
     private static void inject(Object injectable) {
         InjectorHolder.getInjector().inject(injectable);
     }
-
 }

@@ -48,14 +48,19 @@ import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.lock.FsItemLockEntry;
-import org.artifactory.jcr.lock.ImmutableLockEntry;
+import org.artifactory.jcr.lock.LockEntryId;
 import org.artifactory.jcr.lock.LockingHelper;
+import org.artifactory.jcr.lock.aop.LockingAdvice;
 import org.artifactory.jcr.md.MetadataService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.context.RequestContext;
 import org.artifactory.repo.interceptor.RepoInterceptors;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.resource.*;
+import org.artifactory.resource.ArtifactResource;
+import org.artifactory.resource.FileResource;
+import org.artifactory.resource.MetadataResource;
+import org.artifactory.resource.RepoResource;
+import org.artifactory.resource.UnfoundRepoResource;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
@@ -66,7 +71,11 @@ import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 
 import javax.jcr.Node;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +180,7 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
      * {@inheritDoc}
      */
     public JcrFsItem getJcrFsItem(RepoPath repoPath) {
-        return internalGetFsItem(new JcrFsItemLocator(repoPath, true));
+        return internalGetFsItem(new JcrFsItemLocator(repoPath, true, false));
     }
 
     /**
@@ -213,27 +222,13 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     public JcrFsItem getLockedJcrFsItem(RepoPath repoPath) {
-        JcrFsItem fsItem = internalGetFsItem(new JcrFsItemLocator(repoPath, false));
-        if (fsItem != null) {
-            return internalGetLockedJcrFsItem(fsItem, false, false, getCreator(fsItem));
-        }
-        return null;
-    }
-
-    public JcrFsItem tryGetLockedJcrFsItem(RepoPath repoPath) {
-        JcrFsItem fsItem = internalGetFsItem(new JcrFsItemLocator(repoPath, false));
-        if (fsItem != null) {
-            return internalGetLockedJcrFsItem(fsItem, false, true, getCreator(fsItem));
-        }
-        return null;
+        JcrFsItemLocator locator = new JcrFsItemLocator(repoPath, false, false);
+        return internalGetLockedJcrFsItem(locator);
     }
 
     public JcrFsItem getLockedJcrFsItem(Node node) {
-        JcrFsItem fsItem = internalGetFsItem(new JcrFsItemLocator(node, false));
-        if (fsItem != null) {
-            return internalGetLockedJcrFsItem(fsItem, false, false, getCreator(fsItem));
-        }
-        return null;
+        JcrFsItemLocator locator = new JcrFsItemLocator(node, false);
+        return internalGetLockedJcrFsItem(locator);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -251,7 +246,9 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     public JcrFile getLockedJcrFile(RepoPath repoPath, boolean createIfMissing) throws FileExpectedException {
-        return internalGetLockedJcrFsItem(repoPath, createIfMissing, jcrFileCreator);
+        JcrFsItemLocator locator = new JcrFsItemLocator(repoPath, false, createIfMissing);
+        locator.setCreator(jcrFileCreator);
+        return (JcrFile) internalGetLockedJcrFsItem(locator);
     }
 
     public JcrFolder getLockedJcrFolder(String relPath, boolean createIfMissing) throws FolderExpectedException {
@@ -260,7 +257,9 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     public JcrFolder getLockedJcrFolder(RepoPath repoPath, boolean createIfMissing) throws FolderExpectedException {
-        return internalGetLockedJcrFsItem(repoPath, createIfMissing, jcrFolderCreator);
+        JcrFsItemLocator locator = new JcrFsItemLocator(repoPath, false, createIfMissing);
+        locator.setCreator(jcrFolderCreator);
+        return (JcrFolder) internalGetLockedJcrFsItem(locator);
     }
 
     public RepoResource getInfo(RequestContext context) throws FileExpectedException {
@@ -271,7 +270,7 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             return new UnfoundRepoResource(repoPath, "File not found.");
         }
         RepoResource localRes;
-        //When requesting a property/metadata return a special resouce class that contains the parent node
+        //When requesting a property/metadata return a special resource class that contains the parent node
         //path and the metadata name.
         if (NamingUtils.isMetadata(path)) {
             String metadataName = NamingUtils.getMetadataName(path);
@@ -311,12 +310,12 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         }
         ResourceStreamHandle handle;
         if (res.isMetadata()) {
-            String medtadataName = res.getInfo().getName();
-            String xmlMetdata = item.getXmlMetdata(medtadataName);
-            if (xmlMetdata == null) {
+            String metadataName = res.getInfo().getName();
+            String xmlMetadata = item.getXmlMetdata(metadataName);
+            if (xmlMetadata == null) {
                 throw new IOException("Could not get resource stream. Stream not found: " + res + ".");
             } else {
-                handle = new StringResourceStreamHandle(xmlMetdata);
+                handle = new StringResourceStreamHandle(xmlMetadata);
             }
         } else if (item.isFile()) {
             JcrFile jcrFile = (JcrFile) item;
@@ -326,7 +325,9 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             }
             //Update the stats
             getRepositoryService().updateStats(res.getResponseRepoPath());
-            handle = new SimpleResourceStreamHandle(is);
+            long size = jcrFile.getSize();
+            handle = new SimpleResourceStreamHandle(is, size);
+            log.trace("Created stream handle for '{}' with length {}.", res, size);
         } else {
             throw new IOException("Could not get resource stream from a folder " + res + ".");
         }
@@ -350,8 +351,10 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     public void undeploy(RepoPath repoPath) {
-        JcrFsItem item = getPathItem(repoPath);
-        if (item.isDeleted()) {
+        JcrFsItem item = getLockedJcrFsItem(repoPath);
+        if (item == null || item.isDeleted()) {
+            // Unlock early if already deleted
+            LockingHelper.removeLockEntry(repoPath);
             return;
         }
         String path = repoPath.getPath();
@@ -363,11 +366,10 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
                 // Delete the all repo
                 delete();
             } else {
-                JcrFsItem fsItem = getLockedJcrFsItem(repoPath);
-                if (fsItem != null && !fsItem.isDeleted()) {
-                    fsItem.delete();
+                if (item != null && !item.isDeleted()) {
+                    item.delete();
                     //Move the deleted item to the trash
-                    jcrService.trash(Collections.singletonList(fsItem));
+                    jcrService.trash(Collections.singletonList(item));
                 }
             }
         }
@@ -396,12 +398,12 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
      * @param properties A set of keyval metadata to attach to the (file) resource as part of this storage process
      */
     public RepoResource saveResource(RepoResource res, final InputStream in, Properties properties) throws IOException {
-        log.debug("Saving resource '{}' into repository '{}'.", res, this);
         RepoPath repoPath = new RepoPath(getKey(), res.getRepoPath().getPath());
         try {
             if (res.isMetadata()) {
                 //If we are dealing with metadata set it on the containing fsitem
                 RepoPath metadataContainerRepoPath = RepoPath.getMetadataContainerRepoPath(repoPath);
+                LockingHelper.releaseReadLock(metadataContainerRepoPath);
                 JcrFsItem metadataAware = getLockedJcrFsItem(metadataContainerRepoPath);
                 if (metadataAware == null) {
                     //If we cannot find the container, and the metadata is of maven, assume it's a folder and create it
@@ -428,6 +430,7 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
                     jcrFolder.mkdirs();
                 }
 
+                LockingHelper.releaseReadLock(repoPath);
                 JcrFile jcrFile = getLockedJcrFile(repoPath, true);
                 // set the file extension checksums (only needed if the file is currently being downloaded)
                 jcrFile.getInfo().setChecksums(((FileResource) res).getInfo().getChecksums());
@@ -446,6 +449,10 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
                 if (properties != null) {
                     MetadataService metadataService = getMetadataService();
                     metadataService.setXmlMetadata(jcrFile, properties);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Saved resource '{}' with length {} into repository '{}'.",
+                            new Object[]{res, jcrFile.getSize(), this});
                 }
                 onCreate(jcrFile);
                 final UploadEntry uploadEntry =
@@ -492,12 +499,16 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             protect &= !MavenNaming.isSnapshot(path) || !MavenNaming.isNonUniqueSnapshot(path);
             //Allow overriding of index files
             protect &= !MavenNaming.isIndex(path);
-            //Any metadata should be overridable
+            //Any metadata should be overrid able
             boolean metadata = NamingUtils.isMetadata(path);
             protect &= !metadata;
             //For non metadata, never protect folders
             if (!metadata) {
-                JcrFsItem fsItem = getLockedJcrFsItem(path);
+                // Should not acquire a write lock here!
+                RepoPath repoPath = new RepoPath(getKey(), path);
+                JcrFsItem fsItem = getJcrFsItem(repoPath);
+                //Release read lock early
+                LockingHelper.releaseReadLock(repoPath);
                 protect &= fsItem != null && fsItem.isFile();
             }
         }
@@ -551,6 +562,11 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         return delegator.getDescriptor();
     }
 
+    @Override
+    public String toString() {
+        return getKey();
+    }
+
     protected final void assertRepoPath(RepoPath repoPath) {
         if (!getKey().equals(repoPath.getRepoKey())) {
             throw new IllegalArgumentException(
@@ -577,9 +593,25 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             fsItem = locator.getFsItem();
             if (fsItem != null) {
                 fsItemCache.put(repoPath, fsItem);
+                if (log.isTraceEnabled()) {
+                    log.trace("Got '{}' with size {} using locator. lm={}.",
+                            new Object[]{repoPath, fsItem.length(), LockingAdvice.getLockManager().hashCode()});
+                }
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace("Got '{}' with size {} from cache. lm={}.",
+                        new Object[]{repoPath, fsItem.length(), LockingAdvice.getLockManager().hashCode()});
             }
         }
-        locator.lock(fsItem);
+        JcrFsItem newFsItem = locator.lock(fsItem);
+        if (newFsItem != fsItem) {
+            if (log.isTraceEnabled()) {
+                log.trace("Got '{}' from cache but changed after lock. lm={}.",
+                        new Object[]{repoPath, LockingAdvice.getLockManager().hashCode()});
+            }
+            return newFsItem;
+        }
         return fsItem;
     }
 
@@ -625,76 +657,94 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         return null;
     }
 
-    @SuppressWarnings({"unchecked"})
-    private <T extends JcrFsItem<? extends ItemInfo>> T internalGetLockedJcrFsItem(
-            RepoPath repoPath,
-            boolean createIfMissing,
-            FsItemCreator<T> creator) throws FileExpectedException {
-        // First check if we have already the write lock
-        T item = (T) LockingHelper.getIfLockedByMe(repoPath);
-        if (item != null) {
-            creator.checkItemType(item);
-            return item;
-        }
-        // get or create the JcrFile
-        item = (T) internalGetFsItem(new JcrFsItemLocator(repoPath, false));
-        if (item != null) {
-            creator.checkItemType(item);
-        }
-        boolean created = false;
-        if (item == null) {
-            if (createIfMissing) {
-                // Create the empty JcrFile from repoPath
-                item = creator.newFsItem(repoPath, delegator);
-                created = true;
-            } else {
-                return null;
+    private JcrFsItem internalGetLockedJcrFsItem(JcrFsItemLocator locator) {
+        RepoPath repoPath = locator.getRepoPath();
+        try {
+            // Create a lock entry for the repo path
+            LockEntryId lockEntryId = new LockEntryId(getLock(repoPath), repoPath);
+            // acquire the write lock
+            FsItemLockEntry sessionLockEntry = LockingHelper.writeLock(lockEntryId);
+            if (sessionLockEntry.getLockedFsItem() != null) {
+                return sessionLockEntry.getLockedFsItem();
             }
+            JcrFsItem fsItem = internalGetFsItem(locator);
+            FsItemCreator creator;
+            if (fsItem != null) {
+                creator = locator.getCreator();
+                RuntimeException exception = creator.checkItemType(fsItem);
+                if (exception != null) {
+                    LockingHelper.removeLockEntry(repoPath);
+                    throw exception;
+                }
+                return internalGetLockedJcrFsItem(fsItem, false, creator, sessionLockEntry);
+            } else if (locator.createIfEmpty) {
+                creator = locator.creator;
+                if (creator == null) {
+                    throw new IllegalStateException("Cannot create node " + repoPath + " if no creator provided");
+                }
+                // Create the new fs item
+                JcrFsItem newFsItem = creator.newFsItem(locator.getRepoPath(), this.delegator);
+                return internalGetLockedJcrFsItem(newFsItem, true, creator, sessionLockEntry);
+            }
+            LockingHelper.removeLockEntry(repoPath);
+            return null;
+        } catch (RuntimeException e) {
+            LockingHelper.removeLockEntry(repoPath);
+            throw e;
         }
-        return internalGetLockedJcrFsItem(item, created, false, creator);
     }
 
     @SuppressWarnings({"unchecked"})
     private <T extends JcrFsItem<? extends ItemInfo>> T internalGetLockedJcrFsItem(
             T item,
             boolean created, //A newly created item in the current tx
-            boolean tryLockUpgrade, //Whether to try upgrading to write lock or throw an exception immediately
-            FsItemCreator<T> creator) {
+            FsItemCreator<T> creator,
+            FsItemLockEntry sessionLockEntry) {
+        // We need to have the write lock here
+        if (sessionLockEntry == null || !sessionLockEntry.isLockedByMe()) {
+            throw new IllegalStateException(
+                    "Cannot set mutable entry on non writeable lock item " + sessionLockEntry.getRepoPath());
+        }
         // First check if we have already the write lock
-        RepoPath repoPath = item.getRepoPath();
-        T result = (T) LockingHelper.getIfLockedByMe(repoPath);
-        if (result != null) {
-            return result;
-        }
-        if (created && !item.isMutable()) {
-            throw new IllegalStateException("FsItem " + item + " cannot be created and immutable!");
-        }
-        if (!created && item.isMutable()) {
+        RepoPath repoPath = sessionLockEntry.getRepoPath();
+        T result = (T) sessionLockEntry.getLockedFsItem();
+        // If result is not null the locked item passed as param should be the same as result
+        if (result == null && !created && item.isMutable()) {
+            // If not locked by me and not created, should be immutable
             throw new IllegalStateException("FsItem " + item + " cannot be mutable if already exists in JCR");
         }
-        T original;
-        if (created) {
-            // If new item no immutable original
-            original = null;
+        if (created && !item.isMutable()) {
+            // If created the item should be the new one
+            throw new IllegalStateException("FsItem " + item + " cannot be created and immutable!");
+        }
+        T original = (T) fsItemCache.get(repoPath);
+        if (result != null) {
+            item = result;
+        } else if (created) {
+            if (original != null) {
+                // Someone create the element before me => fallback to copy
+                item = creator.newFsItem(original, delegator);
+            } else {
+                // If new item no immutable original
+                original = null;
+            }
         } else {
             // Do a copy constructor to start modifying it
-            original = item;
+            if (original == null) {
+                original = item;
+            }
             item = creator.newFsItem(original, delegator);
         }
-        // Create a lock entry with new item and original
-        FsItemLockEntry lockEntry = new ImmutableLockEntry(getLock(repoPath), original, item);
-        // acquire the write lock
-        LockingHelper.writeLock(lockEntry, tryLockUpgrade);
+        sessionLockEntry.setWriteFsItem(original, item);
         return item;
     }
 
     private JcrFsItem getPathItem(RepoPath repoPath) {
-        // TODO: Why there is a need for lock here?
         //If we are dealing with metadata will return the md container item
-        JcrFsItem item = getLockedJcrFsItem(repoPath);
+        JcrFsItem item = getJcrFsItem(repoPath);
         if (item != null && (item.isDeleted() || !item.exists())) {
-            item.setDeleted(true);
             log.warn("File '{}' was deleted during request!", repoPath);
+            return null;
         }
         return item;
     }
@@ -703,18 +753,22 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         private final RepoPath repoPath;
         private final Node node;
         private final boolean acquireReadLock;
+        private final boolean createIfEmpty;
+        private FsItemCreator creator = null;
 
-        JcrFsItemLocator(RepoPath repoPath, boolean acquireReadLock) {
+        JcrFsItemLocator(RepoPath repoPath, boolean acquireReadLock, boolean createIfEmpty) {
             //If we are dealing with metadata return the containing fsitem
             this.repoPath = RepoPath.getMetadataContainerRepoPath(repoPath);
             this.node = null;
             this.acquireReadLock = acquireReadLock;
+            this.createIfEmpty = createIfEmpty;
         }
 
         JcrFsItemLocator(Node node, boolean acquireReadLock) {
             this.repoPath = JcrPath.get().getRepoPath(JcrHelper.getAbsolutePath(node));
             this.node = node;
             this.acquireReadLock = acquireReadLock;
+            this.createIfEmpty = false;
         }
 
         public RepoPath getRepoPath() {
@@ -731,19 +785,58 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             throw new IllegalArgumentException("Need either repoPath or node");
         }
 
-        public void lock(JcrFsItem fsItem) {
+        public FsItemCreator getCreator() {
+            if (creator != null) {
+                return creator;
+            }
+            String typeName;
+            if (node != null) {
+                typeName = JcrHelper.getPrimaryTypeName(node);
+            } else if (repoPath != null) {
+                typeName = jcrService.getNodeTypeName(repoPath);
+            } else {
+                throw new IllegalArgumentException("Need either repoPath or node");
+            }
+            if (JcrFile.NT_ARTIFACTORY_FILE.equals(typeName)) {
+                creator = jcrFileCreator;
+            } else if (JcrFolder.NT_ARTIFACTORY_FOLDER.equals(typeName)) {
+                creator = jcrFolderCreator;
+            } else {
+                throw new IllegalStateException(
+                        "Node " + repoPath + " has a type name " + typeName + " which is neither a file nor a folder?");
+            }
+            return creator;
+        }
+
+        public void setCreator(FsItemCreator creator) {
+            this.creator = creator;
+        }
+
+        public JcrFsItem lock(JcrFsItem fsItem) {
             if (acquireReadLock && fsItem != null) {
                 if (fsItem.isMutable()) {
                     throw new IllegalStateException("Cannot acquire read lock on mutable object " + fsItem);
                 }
-                FsItemLockEntry lockEntry = new ImmutableLockEntry(getLock(fsItem.getRepoPath()), fsItem, null);
-                LockingHelper.readLock(lockEntry);
+                if (!repoPath.equals(fsItem.getRepoPath())) {
+                    throw new IllegalStateException(
+                            "The repoPath '" + repoPath + "' is invalid for the object " + fsItem);
+                }
+                LockEntryId lockEntry = new LockEntryId(getLock(repoPath), repoPath);
+                FsItemLockEntry sessionLockEntry = LockingHelper.readLock(lockEntry);
+                // After the lock we know the entry cannot change so we recheck that fsItem is good
+                JcrFsItem newFsItem = fsItemCache.get(repoPath);
+                if (newFsItem != null && newFsItem != fsItem) {
+                    // Change the fsItem and redo the read lock to update the session locks
+                    fsItem = newFsItem;
+                }
+                sessionLockEntry.setReadFsItem(fsItem);
             }
+            return fsItem;
         }
     }
 
     private static interface FsItemCreator<T extends JcrFsItem<? extends ItemInfo>> {
-        public boolean checkItemType(JcrFsItem item);
+        public RuntimeException checkItemType(JcrFsItem item);
 
         public T newFsItem(RepoPath repoPath, StoringRepo repo);
 
@@ -753,11 +846,11 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     private static class JcrFileCreator implements FsItemCreator<JcrFile> {
-        public boolean checkItemType(JcrFsItem item) {
+        public RuntimeException checkItemType(JcrFsItem item) {
             if (item.isDirectory()) {
-                throw new FileExpectedException(item.getRepoPath());
+                return new FileExpectedException(item.getRepoPath());
             }
-            return true;
+            return null;
         }
 
         public JcrFile newFsItem(RepoPath repoPath, StoringRepo repo) {
@@ -774,11 +867,11 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     }
 
     private static class JcrFolderCreator implements FsItemCreator<JcrFolder> {
-        public boolean checkItemType(JcrFsItem item) {
+        public RuntimeException checkItemType(JcrFsItem item) {
             if (!item.isDirectory()) {
-                throw new FolderExpectedException(item.getRepoPath());
+                return new FolderExpectedException(item.getRepoPath());
             }
-            return true;
+            return null;
         }
 
         public JcrFolder newFsItem(RepoPath repoPath, StoringRepo repo) {

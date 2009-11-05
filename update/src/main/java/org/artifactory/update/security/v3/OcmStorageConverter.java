@@ -53,6 +53,7 @@ import java.util.List;
  * @author Noam Tenne
  */
 public class OcmStorageConverter implements ConfigurationConverter<Session> {
+
     private final static Logger log = LoggerFactory.getLogger(OcmStorageConverter.class);
 
     protected static final String NODE_CONFIGURATION = "configuration";
@@ -60,7 +61,6 @@ public class OcmStorageConverter implements ConfigurationConverter<Session> {
     private static final String ACLS_KEY = "acls";
     private static final String USERS_KEY = "users";
     private static final String GROUPS_KEY = "groups";
-
 
     public void convert(Session session) {
         List<UserInfo> users = getUsers(session);

@@ -110,7 +110,7 @@ public final class RepoPath implements Info {
         return getId();
     }
 
-    public static RepoPath repoPathForRepo(String repoKey) {
+    public static RepoPath secureRepoPathForRepo(String repoKey) {
         return new RepoPath(repoKey, PermissionTargetInfo.ANY_PATH);
     }
 

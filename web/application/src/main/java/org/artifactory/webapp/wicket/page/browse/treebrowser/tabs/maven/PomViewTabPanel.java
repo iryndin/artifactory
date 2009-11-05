@@ -24,7 +24,7 @@ import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.common.wicket.component.TextContentPanel;
 import org.artifactory.common.wicket.component.border.fieldset.FieldSetBorder;
-import org.artifactory.webapp.actionable.model.FileActionableItem;
+import org.artifactory.webapp.actionable.FileActionable;
 
 /**
  * This tab will be displayed when a pom file is selected from the browse tree.
@@ -36,9 +36,9 @@ public class PomViewTabPanel extends Panel {
     @SpringBean
     private RepositoryService repoService;
 
-    private FileActionableItem repoItem;
+    private FileActionable repoItem;
 
-    public PomViewTabPanel(String id, FileActionableItem repoItem) {
+    public PomViewTabPanel(String id, FileActionable repoItem) {
         super(id);
         this.repoItem = repoItem;
 

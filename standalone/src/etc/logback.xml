@@ -29,7 +29,7 @@
         </layout>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <FileNamePattern>${artifactory.home}/logs/artifactory.%i.log.zip</FileNamePattern>
-            <maxIndex>20</maxIndex>
+            <maxIndex>13</maxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>5MB</MaxFileSize>
@@ -160,6 +160,22 @@
     <!--
     <logger name="org.artifactory.jcr.lock.InternalLockManager">
         <level value="TRACE"/>
+    </logger>
+    -->
+    <!--
+    <logger name="org.artifactory.request.RequestResponseHelper">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.repo.jcr.StoringRepoMixin">
+        <level value="TRACE"/>
+    </logger>
+    <logger name="org.artifactory.jcr.lock.InternalLockManager">
+        <level value="TRACE"/>
+    </logger>
+    -->
+    <!--
+    <logger name="org.artifactory.jcr.jackrabbit.ArtifactoryGarbageCollector">
+        <level value="DEBUG"/>
     </logger>
     -->
 </configuration>

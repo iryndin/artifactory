@@ -27,13 +27,23 @@ import java.io.InputStream;
  */
 public class SimpleResourceStreamHandle implements ResourceStreamHandle {
     private final InputStream is;
+    private final long size;
 
     public SimpleResourceStreamHandle(InputStream is) {
+        this(is, -1);
+    }
+
+    public SimpleResourceStreamHandle(InputStream is, long size) {
         this.is = is;
+        this.size = size;
     }
 
     public InputStream getInputStream() {
         return is;
+    }
+
+    public long getSize() {
+        return size;
     }
 
     public void close() {

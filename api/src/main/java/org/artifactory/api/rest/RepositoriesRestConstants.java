@@ -24,5 +24,6 @@ package org.artifactory.api.rest;
  */
 public interface RepositoriesRestConstants {
     String REPOSITORIES_PATH_ROOT = "repositories";
-    String REPOSITORIES_PATH_REMOTE = "remote";
+    String REPOSITORIES_PATH_CONFIGURATION = "configuration";
+    String REPOSITORIES_PARAM_REPO_TYPE = "repoType";
 }

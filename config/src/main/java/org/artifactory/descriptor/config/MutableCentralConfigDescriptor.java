@@ -23,7 +23,11 @@ import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.mail.MailServerDescriptor;
 import org.artifactory.descriptor.property.PropertySet;
-import org.artifactory.descriptor.repo.*;
+import org.artifactory.descriptor.repo.LocalRepoDescriptor;
+import org.artifactory.descriptor.repo.ProxyDescriptor;
+import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
+import org.artifactory.descriptor.repo.RepoDescriptor;
+import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.security.SecurityDescriptor;
 
 import java.util.List;
@@ -128,6 +132,22 @@ public interface MutableCentralConfigDescriptor extends CentralConfigDescriptor 
      * @return The removed proxy descriptor or null if not found.
      */
     ProxyDescriptor removeProxy(String proxyKey);
+
+    /**
+     * Changes the default proxy. Will also set the default proxies in already existing repositories if flag is set to
+     * true
+     *
+     * @param proxy                      The proxy descriptor to add
+     * @param replaceDefaultProxyInRepos Flag whether to replace the existing default proxy in exising repositories.
+     */
+    void proxyChanged(ProxyDescriptor proxy, boolean replaceDefaultProxyInRepos);
+
+    /**
+     * Checks if there is a proxy which is defined as the default proxy.
+     *
+     * @return The default proxy descriptor if exists
+     */
+    ProxyDescriptor defaultProxyDefined();
 
     /**
      * @param backupKey The backup key to check.

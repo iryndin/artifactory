@@ -54,7 +54,7 @@ public class DescriptionExtractorTest {
 
         Assert.assertNotNull(description, "Description should not be null");
         Assert.assertTrue(description.startsWith(
-                "The maximun size in megabytes for uploaded artifact files."));
+                "The maximum size in megabytes for uploaded artifact files."));
     }
 
     public void simplePropertyDescriptionWithinCData() {

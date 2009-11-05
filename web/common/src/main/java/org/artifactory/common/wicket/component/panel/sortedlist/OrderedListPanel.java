@@ -18,6 +18,7 @@
 package org.artifactory.common.wicket.component.panel.sortedlist;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -42,6 +43,7 @@ import org.artifactory.common.wicket.component.panel.titled.TitledPanel;
 import org.artifactory.common.wicket.component.table.columns.panel.links.LinksColumnPanel;
 import org.artifactory.common.wicket.component.template.HtmlTemplate;
 import org.artifactory.common.wicket.contributor.ResourcePackage;
+import org.artifactory.common.wicket.model.DelegetedModel;
 import org.artifactory.common.wicket.resources.basewidget.BaseWidget;
 import org.artifactory.log.LoggerFactory;
 import org.slf4j.Logger;
@@ -93,6 +95,9 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
             }
         });
 
+        //Add import link
+        add(getImportLink("importItemLink"));
+
         // add items container
         WebMarkupContainer container = new WebMarkupContainer("items");
         container.setOutputMarkupId(true);
@@ -101,7 +106,7 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         add(container);
 
         // add ListView
-        ListView listView = new ListView("item", new DelegeteModel()) {
+        ListView listView = new ListView("item", new DelegetedModel(this)) {
             @Override
             protected void populateItem(ListItem item) {
                 OrderedListPanel.this.populateItem(item);
@@ -124,6 +129,12 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         template.setParameter("upLinkId", new PropertyModel(upLink, "markupId"));
         template.setParameter("downLinkId", new PropertyModel(downLink, "markupId"));
         add(template);
+    }
+
+    protected Component getImportLink(String id) {
+        WebMarkupContainer child = new WebMarkupContainer(id);
+        child.setVisible(false);
+        return child;
     }
 
     @SuppressWarnings({"RefusedBequest"})
@@ -171,13 +182,6 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         @Override
         public Object getObject() {
             return "dnd-" + getMarkupId();
-        }
-    }
-
-    private class DelegeteModel extends AbstractReadOnlyModel {
-        @Override
-        public Object getObject() {
-            return getModelObject();
         }
     }
 

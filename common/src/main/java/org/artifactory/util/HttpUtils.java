@@ -24,6 +24,7 @@ import org.artifactory.common.ConstantValues;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 /**
@@ -32,6 +33,28 @@ import java.util.StringTokenizer;
 public abstract class HttpUtils {
 
     private static String userAgent;
+
+    //Indicates whether Artifactory is working with servlet API v2.4
+    private static final boolean SERVLET_24;
+
+    /**
+     * Determine if we are running with servlet API v2.4 or v2.5
+     */
+    static {
+        //Check the availability of javax.servlet.ServletContext.getContextPath()
+        Method contextPathGetter = null;
+        try {
+            contextPathGetter = ServletContext.class.getMethod("getContextPath", new Class[0]);
+        }
+        catch (NoSuchMethodException e) {
+        } finally {
+            /**
+             * Indicate whether we are running v2.4 or v2.5 by checking if javax.servlet.ServletContext.getContextPath()
+             * is available (introduced in v2.5)
+             */
+            SERVLET_24 = (contextPathGetter == null);
+        }
+    }
 
     public static String getArtifactoryUserAgent() {
         if (userAgent == null) {
@@ -60,7 +83,7 @@ public abstract class HttpUtils {
         return remoteAddress;
     }
 
-    public static String getServletContextUrl(HttpServletRequest httpRequest) {
+    public synchronized static String getServletContextUrl(HttpServletRequest httpRequest) {
         String url;
 
         CentralConfigService centralConfigService = ContextHelper.get().getCentralConfig();
@@ -72,9 +95,7 @@ public abstract class HttpUtils {
             int port = httpRequest.getServerPort();
             String scheme = httpRequest.getScheme();
             String portString = isDefaultPort(scheme, port) ? "" : ":" + port;
-            url = scheme + "://" +
-                    httpRequest.getServerName() + portString +
-                    httpRequest.getContextPath();
+            url = scheme + "://" + httpRequest.getServerName() + portString + httpRequest.getContextPath();
         }
 
         return url;
@@ -91,7 +112,13 @@ public abstract class HttpUtils {
         }
     }
 
-    public static String getContextId(ServletContext servletContext) {
+    public synchronized static String getContextId(ServletContext servletContext) {
+        //If running servlet API 2.4, just return the servlet context name
+        if (SERVLET_24) {
+            return servletContext.getServletContextName();
+        }
+
+        //If running v2.5, return proper context path
         String contextUniqueName = PathUtils.trimLeadingSlashes(servletContext.getContextPath());
         contextUniqueName = StringUtils.capitalize(contextUniqueName);
         return contextUniqueName;

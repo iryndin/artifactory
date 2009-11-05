@@ -62,6 +62,7 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
         form.add(groupIdField);
         StyledCheckbox groupCheckbox =
                 new StyledCheckbox("groupExactMatch", new PropertyModel(searchControls, "groupExactMatch"));
+        groupCheckbox.setPersistent(true);
         addCheckboxLabel(groupCheckbox);
         form.add(groupCheckbox);
         form.add(new HelpBubble("groupIdHelp", "The artifact's group id."));
@@ -72,6 +73,7 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
         StyledCheckbox artifactCheckbox =
                 new StyledCheckbox("artifactExactMatch", new PropertyModel(searchControls, "artifactExactMatch"));
         addCheckboxLabel(artifactCheckbox);
+        artifactCheckbox.setPersistent(true);
         form.add(artifactCheckbox);
         form.add(new HelpBubble("artifactIdHelp", "The artifact's id."));
 
@@ -81,6 +83,7 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
         StyledCheckbox versionCheckbox =
                 new StyledCheckbox("versionExactMatch", new PropertyModel(searchControls, "versionExactMatch"));
         addCheckboxLabel(versionCheckbox);
+        versionCheckbox.setPersistent(true);
         form.add(versionCheckbox);
         form.add(new HelpBubble("versionHelp", "The artifact's version."));
 
@@ -88,6 +91,7 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
         classifierField.setOutputMarkupId(true);
         form.add(classifierField);
         StyledCheckbox classifierCheckbox = new StyledCheckbox("classifierExactMatch", new Model(Boolean.TRUE));
+        classifierCheckbox.setPersistent(true);
         classifierCheckbox.setEnabled(false);
         addCheckboxLabel(classifierCheckbox);
         form.add(classifierCheckbox);

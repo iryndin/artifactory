@@ -17,7 +17,7 @@
 
 package org.artifactory.api.mime;
 
-import org.testng.Assert;
+import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -31,8 +31,8 @@ public class MimeTableTest {
     @Test
     public void xmlAppTest() {
         ContentType ct = NamingUtils.getContentType(new File("/tmp/anXmlFile.xml"));
-        Assert.assertNotNull(ct);
-        Assert.assertTrue(ct.isXml());
-        Assert.assertEquals(ct.getMimeType(), "application/xml");
+        assertNotNull(ct);
+        assertTrue(ct.isXml());
+        assertEquals(ct.getMimeType(), "application/xml");
     }
 }

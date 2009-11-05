@@ -45,4 +45,6 @@ public interface CentralConfigService extends DescriptorAware<CentralConfigDescr
     String getConfigXml();
 
     void setConfigXml(String xmlConfig);
+
+    boolean defaultProxyDefined();
 }

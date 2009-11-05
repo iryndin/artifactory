@@ -82,6 +82,17 @@ public class AceInfoRow implements Serializable {
     public void setDeploy(boolean deploy) {
         aceInfo.setDeploy(deploy);
         if (deploy) {
+            setAnnotate(true);
+        }
+    }
+
+    public boolean isAnnotate() {
+        return aceInfo.canAnnotate();
+    }
+
+    public void setAnnotate(boolean annotate) {
+        aceInfo.setAnnotate(annotate);
+        if (annotate) {
             setRead(true);
         }
     }

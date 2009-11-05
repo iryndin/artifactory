@@ -17,13 +17,14 @@
 
 package org.artifactory.webapp.wicket.page.config.advanced;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.api.storage.GarbageCollectorInfo;
 import org.artifactory.api.storage.StorageService;
 import org.artifactory.common.wicket.ajax.ConfirmationAjaxCallDecorator;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
@@ -45,24 +46,18 @@ public class MaintenancePage extends AuthenticatedPage {
 
     @SpringBean
     private StorageService storageService;
+    private TitledBorder border = new TitledBorder("storage");
 
     public MaintenancePage() {
         addStorageMaintenance();
+        addGarbageCollectorMaintenance();
     }
 
     /**
      * Add the storage maintenance control to the page
      */
     private void addStorageMaintenance() {
-        TitledBorder border = new TitledBorder("storage") {
-            @Override
-            protected Component newToolbar(String id) {
-                return new HelpBubble(id, MaintenancePage.this.getString("compressHelp"));
-            }
-        };
         add(border);
-        border.setVisible(storageService.isDerbyUsed());
-
         // add the compress link
         TitledAjaxLink compressLink = new TitledAjaxLink("compress", "Compress the Internal Database") {
             public void onClick(AjaxRequestTarget target) {
@@ -87,7 +82,33 @@ public class MaintenancePage extends AuthenticatedPage {
                                 "until compression completes).");
             }
         };
+        boolean isDerbyUsed = storageService.isDerbyUsed();
+        compressLink.setVisible(isDerbyUsed);
         border.add(compressLink);
+        HelpBubble compressHelpBubble = new HelpBubble("compressHelp", new ResourceModel("compressHelp"));
+        compressHelpBubble.setVisible(isDerbyUsed);
+        border.add(compressHelpBubble);
+    }
+
+    private void addGarbageCollectorMaintenance() {
+        add(border);
+        TitledAjaxLink compressLink = new TitledAjaxLink("collect", "Run Garbage Collector Now") {
+            public void onClick(AjaxRequestTarget target) {
+                MultiStatusHolder statusHolder = new MultiStatusHolder();
+                GarbageCollectorInfo result = storageService.manualGarbageCollect(statusHolder);
+                if (statusHolder.isError()) {
+                    error("Could not run the garbage collector: " + statusHolder.getLastError().getMessage() + ".");
+                } else {
+                    String elementsCleaned = result.nbElementsClean == 0 ? "no" : result.nbElementsClean + "";
+                    info("Garbage collector completed successfully - " + elementsCleaned +
+                            " elements were cleaned up.");
+                }
+            }
+        };
+        border.add(compressLink);
+        HelpBubble gcHelpBubble = new HelpBubble("gcHelp", new ResourceModel("garbageHelp"));
+        border.add(gcHelpBubble);
+
     }
 
     @Override

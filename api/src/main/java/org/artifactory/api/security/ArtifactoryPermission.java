@@ -21,7 +21,7 @@ package org.artifactory.api.security;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public enum ArtifactoryPermission {
-    ADMIN(4), DELETE(3), DEPLOY(1), READ(0);
+    ADMIN(4), DELETE(3), ANNOTATE(2), DEPLOY(1), READ(0);
 
     private final int mask;
 

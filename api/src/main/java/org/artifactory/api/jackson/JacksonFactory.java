@@ -20,9 +20,11 @@ package org.artifactory.api.jackson;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 
@@ -40,7 +42,7 @@ public abstract class JacksonFactory {
      * @return Json Generator
      * @throws IOException
      */
-    public static JsonGenerator create(OutputStream outputStream) throws IOException {
+    public static JsonGenerator createJsonGenerator(OutputStream outputStream) throws IOException {
         JsonFactory jsonFactory = getFactory();
         JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(outputStream, JsonEncoding.UTF8);
         updateGenerator(jsonFactory, jsonGenerator);
@@ -54,20 +56,56 @@ public abstract class JacksonFactory {
      * @return Json Generator
      * @throws IOException
      */
-    public static JsonGenerator create(Writer writer) throws IOException {
+    public static JsonGenerator createJsonGenerator(Writer writer) throws IOException {
         JsonFactory jsonFactory = getFactory();
         JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(writer);
         updateGenerator(jsonFactory, jsonGenerator);
         return jsonGenerator;
     }
 
+    /**
+     * Creates a JsonParser using the given input stream as a reader
+     *
+     * @param inputStream Stream to read from
+     * @return Json Parser
+     * @throws IOException
+     */
+    public static JsonParser createJsonParser(InputStream inputStream) throws IOException {
+        return getFactory().createJsonParser(inputStream);
+    }
+
+    /**
+     * Creates a JsonParser using the given byte[] as a reader
+     *
+     * @param input Input to read from
+     * @return Json Parser
+     * @throws IOException
+     */
+    public static JsonParser createJsonParser(byte[] input) throws IOException {
+        return getFactory().createJsonParser(input);
+    }
+
+    /**
+     * Create the JSON factory
+     *
+     * @return JSON factory
+     */
     private static JsonFactory getFactory() {
         JsonFactory jsonFactory = new JsonFactory();
         //Do not auto-close target output when writing completes
-        jsonFactory.disableGeneratorFeature(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+
+        //Do not auto-close source output when reading completes
+        jsonFactory.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
         return jsonFactory;
     }
 
+    /**
+     * Update the generator with a default codec and pretty printer
+     *
+     * @param jsonFactory   Factory to set as codec
+     * @param jsonGenerator Generator to configure
+     */
     private static void updateGenerator(JsonFactory jsonFactory, JsonGenerator jsonGenerator) {
         jsonGenerator.setCodec(new ObjectMapper(jsonFactory));
         jsonGenerator.useDefaultPrettyPrinter();

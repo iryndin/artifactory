@@ -93,6 +93,12 @@ public class MavenMetadataCalculationInterceptor implements RepoInterceptor {
         }
     }
 
+    public void onMove(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+    }
+
+    public void onCopy(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+    }
+
     /**
      * Checks that the given storing repo is a non-cache local repo, since it is the only kind that metadata calculation
      * can be performed on.

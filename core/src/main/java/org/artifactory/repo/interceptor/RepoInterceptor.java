@@ -29,4 +29,8 @@ public interface RepoInterceptor extends Interceptor {
     void onCreate(JcrFsItem fsItem, StatusHolder statusHolder);
 
     void onDelete(JcrFsItem fsItem, StatusHolder statusHolder);
+
+    void onMove(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder);
+
+    void onCopy(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder);
 }

@@ -52,7 +52,7 @@ import org.artifactory.search.archive.ArchiveIndexer;
 import org.artifactory.search.archive.ArchiveSearcher;
 import org.artifactory.search.gavc.GavcSearcher;
 import org.artifactory.search.metadata.MetadataSearcher;
-import org.artifactory.search.metadata.pom.PomSearcher;
+import org.artifactory.search.metadata.pom.XmlFileSearcher;
 import org.artifactory.search.property.PropertySearcher;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
@@ -147,12 +147,12 @@ public class SearchServiceImpl implements InternalSearchService {
         return results;
     }
 
-    public SearchResults<PomSearchResult> searchPomContent(MetadataSearchControls controls) {
+    public SearchResults<PomSearchResult> searchXmlContent(MetadataSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
             return new SearchResults<PomSearchResult>(new ArrayList<PomSearchResult>());
         }
 
-        PomSearcher searcher = new PomSearcher();
+        XmlFileSearcher searcher = new XmlFileSearcher();
         SearchResults<PomSearchResult> results = searcher.search(controls);
 
         return results;
@@ -211,7 +211,7 @@ public class SearchServiceImpl implements InternalSearchService {
     }
 
     public QueryResult searchPomInPath(RepoPath repoPath) throws RepositoryException {
-        PomSearcher searcher = new PomSearcher();
+        XmlFileSearcher searcher = new XmlFileSearcher();
         QueryResult result = searcher.searchForDeployableUnits(new PomSearchControls(repoPath));
         return result;
     }
@@ -292,21 +292,19 @@ public class SearchServiceImpl implements InternalSearchService {
     /**
      * Marks the archive specified in the given repo path for indexing
      *
-     * @param archiveRepoPath Repo path of the archive to mark
+     * @param newJcrFile
      * @return boolean - Was archive marked
      */
     @SuppressWarnings({"SimplifiableIfStatement"})
-    public boolean markArchiveForIndexing(RepoPath archiveRepoPath, boolean force) {
-        StoringRepo repo = repoService.storingRepositoryByKey(archiveRepoPath.getRepoKey());
-        JcrFile jcrFile = repo.getJcrFile(archiveRepoPath);
-        Node archiveNode = jcrFile.getNode();
-        String name = jcrFile.getName();
+    public boolean markArchiveForIndexing(JcrFile newJcrFile, boolean force) {
+        Node archiveNode = newJcrFile.getNode();
+        String name = newJcrFile.getName();
         ContentType contentType = NamingUtils.getContentType(name);
         if (contentType.isJarVariant()) {
             try {
                 return ArchiveIndexer.markArchiveForIndexing(archiveNode, force);
             } catch (RepositoryException e) {
-                log.warn("Could not mark the archive '" + archiveRepoPath + "' for indexing.", e);
+                log.warn("Could not mark the archive '" + newJcrFile + "' for indexing.", e);
             }
         }
         return false;

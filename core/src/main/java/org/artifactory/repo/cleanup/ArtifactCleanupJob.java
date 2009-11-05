@@ -25,7 +25,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * A quarz command job that periodicly cleans remote-repository caches from unused artifacts
+ * A quartz command job that periodically cleans remote-repository caches from unused artifacts
  *
  * @author Noam Tenne
  */

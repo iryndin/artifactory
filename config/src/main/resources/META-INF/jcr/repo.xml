@@ -35,12 +35,16 @@
     <!-- http://wiki.apache.org/jackrabbit/DataStore -->
     <DataStore class="org.artifactory.jcr.jackrabbit.ArtifactoryDbDataStoreImpl">
         <param name="url" value="jdbc:derby:${rep.home}/store;create=true"/>
-        <!--<param name="tablePrefix" value="ds_"/>-->
         <param name="databaseType" value="derby"/>
         <param name="driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
         <param name="minRecordLength" value="512"/>
         <param name="maxConnections" value="15"/>
-        <param name="copyWhenReading" value="true"/>
+        <!-- Whether to use a cache blobs temporarily on the file system for faster reads -->
+        <param name="cacheBlobs" value="true"/>
+        <!-- The maximum size of the blobs cache in gigabytes (g), megabytes (m) or kilobytes (k) -->
+        <param name="blobsCacheMaxSize" value="1g"/>
+        <!-- The blobs cache directory location -->
+        <param name="blobsCacheDir" value="${rep.home}/cache"/>
     </DataStore>
 
     <!--<DataStore class="org.apache.jackrabbit.core.data.FileDataStore">
@@ -144,8 +148,8 @@
               doesn't finish within this timeout defined in milliseconds. This parameter has
               no effect if extractorPoolSize is zero.
             - extractorBackLogSize: the size of the extractor pool back log. If all threads in
-              the pool are busy, incomming work is put into a wait queue. If the wait queue
-              reaches the back log size incomming extractor work will not be queued anymore
+              the pool are busy, incoming work is put into a wait queue. If the wait queue
+              reaches the back log size incoming extractor work will not be queued anymore
               but will be executed with the current thread.
             - synonymProviderClass: the name of a class that implements
               org.apache.jackrabbit.core.query.lucene.SynonymProvider. The
@@ -185,8 +189,10 @@
             <param name="extractorBackLogSize" value="500"/>
             <!-- Indexing configuration -->
             <param name="indexingConfiguration" value="${rep.home}/index/index_config.xml"/>
-            <!-- Cusotm text extractor -->
+            <!-- Custom text extractor -->
             <param name="textFilterClasses" value="org.artifactory.jcr.extractor.ArtifctoryTextExtractor"/>
+            <!-- Workspace inconsistency handler -->
+            <param name="onWorkspaceInconsistency" value="lenient"/>
         </SearchIndex>
 
         <!-- http://issues.apache.org/jira/browse/JCR-314 -->
@@ -207,12 +213,12 @@
         </FileSystem>
 
         <!--
-            Configures the perisistence manager to be used for persisting version state.
+            Configures the persistence manager to be used for persisting version state.
             Please note that the current versioning implementation is based on
             a 'normal' persistence manager, but this could change in future
             implementations.
         -->
-        <!--We do not use versionning-->
+        <!--We do not use versioning-->
         <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
             <param name="persistent" value="false"/>
         </PersistenceManager>

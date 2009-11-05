@@ -64,6 +64,4 @@ public interface StoringRepo<T extends RepoDescriptor> extends Repo<T>, JcrFsIte
     void onCreate(JcrFsItem fsItem);
 
     void onDelete(JcrFsItem fsItem);
-
-    JcrFsItem tryGetLockedJcrFsItem(RepoPath repoPath);
 }

@@ -104,6 +104,10 @@ public class JcrConfResourceLoader implements ResourceStreamHandle {
         return is;
     }
 
+    public long getSize() {
+        return -1;
+    }
+
     protected InputStream getFallbackInputStream() {
         String resName = "/META-INF/jcr/" + resourceName;
         InputStream result = getClass().getResourceAsStream(resName);

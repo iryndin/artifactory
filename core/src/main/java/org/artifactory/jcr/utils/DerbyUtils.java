@@ -74,11 +74,11 @@ public abstract class DerbyUtils {
         }
     }
 
-    public static boolean isDerbyDatastore() {
+    public static boolean isDerbyUsed() {
         JcrSession usession = getUnmanagedSession();
         try {
             RepositoryImpl repository = (RepositoryImpl) usession.getRepository();
-            return isDerbyDatastore(repository);
+            return isDerbyDatastoreOrPms(repository);
         } catch (Exception e) {
             log.error("Could not determine if the datastore is of type Derby DB", e, log);
             return false;
@@ -94,7 +94,7 @@ public abstract class DerbyUtils {
     private static void compressDataStore(RepositoryImpl repositoryImpl, StatusHolder holder) throws Exception {
         log.info("Compressing datasource...");
         GenericDbDataStore dataStore = JcrUtils.getDataStore(repositoryImpl);
-        if (dataStore == null || !isDerbyDatastore(dataStore.getDatabaseType())) {
+        if (dataStore == null || !isDerbyDb(dataStore.getDatabaseType())) {
             holder.setWarning("Cannot compress datastore: not using Derby DB.", log);
             return;
         }
@@ -117,15 +117,15 @@ public abstract class DerbyUtils {
      */
     private static void compressWorkspace(RepositoryImpl repositoryImpl, StatusHolder holder) throws Exception {
         log.info("Compressing workspace...");
-        Map wsInfos = getWsInfos(repositoryImpl);
         RepositoryConfig repoConfig = repositoryImpl.getConfig();
         FileSystem fileSystem = repoConfig.getFileSystem();
         if (!(fileSystem instanceof DatabaseFileSystem)) {
-            holder.setWarning("Repository itslef not using a database file system!", log);
+            holder.setWarning("Repository itself not using a database file system!", log);
         }
         DatabaseFileSystem dbfs = (DatabaseFileSystem) fileSystem;
         String fsSchemaPrefix = dbfs.getSchemaObjectPrefix();
         fsSchemaPrefix = fsSchemaPrefix.toUpperCase();
+        Map wsInfos = getWsInfos(repositoryImpl);
         for (Object workspaceInfoName : wsInfos.keySet()) {
             Object workspaceInfo = wsInfos.get(workspaceInfoName);
             PersistenceManagerConfig persistenceConfig = getPersistenceManagerConf(workspaceInfo);
@@ -133,7 +133,7 @@ public abstract class DerbyUtils {
             pmSchemaPrefix = pmSchemaPrefix.toUpperCase();
             Connection connection = getWsConnection(workspaceInfo);
             DatabaseMetaData dbMetaData = connection.getMetaData();
-            if (!isDerbyDatastore(dbMetaData.getDatabaseProductName())) {
+            if (!isDerbyDb(dbMetaData.getDatabaseProductName())) {
                 holder.setWarning("Cannot compress workspace " + workspaceInfoName + ": not using Derby DB.", log);
                 continue;
             }
@@ -185,12 +185,27 @@ public abstract class DerbyUtils {
      *
      * @return true if Derby datastore
      */
-    private static boolean isDerbyDatastore(RepositoryImpl repositoryImpl) {
+    private static boolean isDerbyDatastoreOrPms(RepositoryImpl repositoryImpl) throws Exception {
+        //First check the datastore
         GenericDbDataStore dbDataStore = JcrUtils.getDataStore(repositoryImpl);
-        return dbDataStore != null && isDerbyDatastore(dbDataStore.getDatabaseType());
+        boolean derby = dbDataStore != null && isDerbyDb(dbDataStore.getDatabaseType());
+        if (derby) {
+            return true;
+        }
+        //Check the pms
+        Map wsInfos = getWsInfos(repositoryImpl);
+        for (Object workspaceInfoName : wsInfos.keySet()) {
+            Object workspaceInfo = wsInfos.get(workspaceInfoName);
+            Connection connection = getWsConnection(workspaceInfo);
+            DatabaseMetaData dbMetaData = connection.getMetaData();
+            if (isDerbyDb(dbMetaData.getDatabaseProductName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static boolean isDerbyDatastore(String productIdentifier) {
+    private static boolean isDerbyDb(String productIdentifier) {
         return productIdentifier != null && productIdentifier.toLowerCase().contains("derby");
     }
 

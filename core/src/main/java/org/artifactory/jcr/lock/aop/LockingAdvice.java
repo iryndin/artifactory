@@ -74,7 +74,7 @@ public class LockingAdvice implements MethodInterceptor {
                 return invocation.proceed();
             }
         } finally {
-            //When the first lm returns, clean up resources and remove th lm from the current thread
+            //When the first lm returns, clean up resources and remove the lm from the current thread
             if (previousLockManager == null) {
                 try {
                     currentLockManager.releaseResources();

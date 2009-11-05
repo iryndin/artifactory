@@ -68,7 +68,7 @@ public interface SearchService {
     SearchResults<GavcSearchResult> searchGavc(GavcSearchControls controls);
 
     @Lock(transactional = true, readOnly = true)
-    SearchResults<PomSearchResult> searchPomContent(MetadataSearchControls controls);
+    SearchResults<PomSearchResult> searchXmlContent(MetadataSearchControls controls);
 
     @Lock(transactional = true, readOnly = true)
     SearchResults<PropertySearchResult> searchProperty(PropertySearchControls controls);

@@ -42,6 +42,7 @@ import org.artifactory.jcr.JcrService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.index.InternalIndexerService;
 import org.artifactory.repo.service.InternalRepositoryService;
+import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
@@ -208,6 +209,16 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         reloadConfiguration(newDescriptor);
     }
 
+    public boolean defaultProxyDefined() {
+        List<ProxyDescriptor> proxyDescriptors = descriptor.getProxies();
+        for (ProxyDescriptor proxyDescriptor : proxyDescriptors) {
+            if (proxyDescriptor.isDefaultProxy()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public MutableCentralConfigDescriptor getMutableDescriptor() {
         return (MutableCentralConfigDescriptor) SerializationUtils.clone(descriptor);
     }
@@ -273,6 +284,9 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
             setDescriptor(newDescriptor);
             ctx.reload(oldDescriptor);
             log.info("Configuration reloaded.");
+            AccessLogger.configurationChanged();
+            log.debug("Old configuration:\n{}", JaxbHelper.toXml(oldDescriptor));
+            log.debug("New configuration:\n{}", JaxbHelper.toXml(newDescriptor));
         } catch (Exception e) {
             String msg = "Failed to reload configuration: " + e.getMessage();
             log.error(msg, e);

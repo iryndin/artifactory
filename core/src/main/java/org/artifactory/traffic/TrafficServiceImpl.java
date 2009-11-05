@@ -69,6 +69,8 @@ public class TrafficServiceImpl implements InternalTrafficService {
 
     public static final String LOG_FOLDER = "traffic";
 
+    private final String entryPathBase = getLogFolderPath() + "/" + Long.toString(System.currentTimeMillis());
+
     String NODE_ARTIFACTORY_LOG_ENTRY = JcrService.ARTIFACTORY_PREFIX + "logEntry";
 
     static final String PROP_ARTIFACTORY_LAST_COLLECTED = JcrService.ARTIFACTORY_PREFIX + "lastCollected";
@@ -200,7 +202,7 @@ public class TrafficServiceImpl implements InternalTrafficService {
                     session.logout();
                 }
             }
-            log.info("Processed {} pending traffic entries out of {} in {}ms.", new Object[]{readyCount,
+            log.debug("Processed {} pending traffic entries out of {} in {}ms.", new Object[]{readyCount,
                     queued, System.currentTimeMillis() - start});
         } else {
             log.debug("No eligible pending traffic entries to process ({} in queue).", queued);
@@ -422,7 +424,7 @@ public class TrafficServiceImpl implements InternalTrafficService {
             //Might be negative
             nanos = -nanos;
         }
-        final String entryPath = new StringBuilder(getLogFolderPath()).append("/").append(nanos).toString();
+        final String entryPath = new StringBuilder(entryPathBase).append(nanos).toString();
         //Remove the leading '/'
         return entryPath.substring(1);
     }

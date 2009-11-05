@@ -34,6 +34,7 @@ import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.jcr.fs.JcrFolder;
+import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.context.NullRequestContext;
 import org.artifactory.repo.context.RequestContext;
@@ -50,7 +51,11 @@ import org.slf4j.Logger;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl
@@ -237,6 +242,7 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
                 //Create the parent folder eagerly so that we don't have to do it as part of the retrieval
                 String parentPath = PathUtils.getParent(path);
                 RepoPath parentRepoPath = new RepoPath(localCacheRepo.getKey(), parentPath);
+                LockingHelper.releaseReadLock(parentRepoPath);
                 JcrFolder parentFolder = localCacheRepo.getLockedJcrFolder(parentRepoPath, true);
                 parentFolder.mkdirs();
             } else {
@@ -250,7 +256,11 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
             }
         } catch (Exception e) {
             String reason = this + ": Error in getting information for '" + path + "' (" + e.getMessage() + ").";
-            log.warn(reason);
+            if (log.isDebugEnabled()) {
+                log.warn(reason, e);
+            } else {
+                log.warn(reason);
+            }
             remoteResource = new UnfoundRepoResource(repoPath, reason);
             if (!foundExpiredInCache) {
                 //Update the non-found cache for a failure

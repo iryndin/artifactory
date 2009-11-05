@@ -31,6 +31,7 @@ public class HttpArtifactoryResponse extends ArtifactoryResponseBase {
     private static final Logger log = LoggerFactory.getLogger(HttpArtifactoryResponse.class);
 
     private final HttpServletResponse response;
+    private int contentLength = -1;
 
     public HttpArtifactoryResponse(HttpServletResponse response) {
         this.response = response;
@@ -44,7 +45,7 @@ public class HttpArtifactoryResponse extends ArtifactoryResponseBase {
         if (etag != null) {
             response.setHeader("ETag", etag);
         } else {
-            log.debug("Could not regsister a null etag with the response.");
+            log.debug("Could not register a null etag with the response.");
         }
     }
 
@@ -83,7 +84,17 @@ public class HttpArtifactoryResponse extends ArtifactoryResponseBase {
         }
     }
 
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    public boolean isContentLengthSet() {
+        return contentLength != -1;
+    }
+
     public void setContentLength(int length) {
+        //Cache the content length locally
+        this.contentLength = length;
         response.setContentLength(length);
     }
 

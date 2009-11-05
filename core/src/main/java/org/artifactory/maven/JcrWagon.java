@@ -83,7 +83,7 @@ public class JcrWagon extends AbstractWagon {
                 handle = repo.getResourceStreamHandle(res);
                 long lastModified = res.getLastModified();
                 if (lastModified > timestamp) {
-                    wagonRes.setContentLength(res.getSize());
+                    wagonRes.setContentLength(handle.getSize());
                     wagonRes.setLastModified(lastModified);
                     fireGetStarted(wagonRes, dest);
                     //Do the actual resource transfer into the temp file

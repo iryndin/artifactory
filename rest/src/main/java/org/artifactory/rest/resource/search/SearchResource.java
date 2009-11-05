@@ -132,7 +132,7 @@ public class SearchResource {
         }
 
         ServletOutputStream stream = response.getOutputStream();
-        JsonGenerator jsonGenerator = JacksonFactory.create(stream);
+        JsonGenerator jsonGenerator = JacksonFactory.createJsonGenerator(stream);
         jsonGenerator.writeObject(modifiedArtifacts);
 
         return "";

@@ -21,6 +21,7 @@ import org.artifactory.api.repo.Async;
 import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.search.SearchService;
+import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.spring.ReloadableBean;
 
 import javax.jcr.RepositoryException;
@@ -44,7 +45,7 @@ public interface InternalSearchService extends SearchService, ReloadableBean {
     @Async(transactional = true, delayUntilAfterCommit = true)
     void asyncIndex(RepoPath archiveRepoPath);
 
-    boolean markArchiveForIndexing(RepoPath archiveRepoPath, boolean force);
+    boolean markArchiveForIndexing(JcrFile newJcrFile, boolean force);
 
     /**
      * Searches for POM's within a certain path

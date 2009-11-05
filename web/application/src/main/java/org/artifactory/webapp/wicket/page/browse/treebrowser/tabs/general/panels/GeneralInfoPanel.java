@@ -113,6 +113,7 @@ public class GeneralInfoPanel extends Panel {
         LabeledValue artifactIdLabel = new LabeledValue("artifactId", "ArtifactId: ");
         infoBorder.add(artifactIdLabel);
 
+
         LabeledValue versionLabel = new LabeledValue("version", "Version: ");
         infoBorder.add(versionLabel);
 
@@ -137,6 +138,7 @@ public class GeneralInfoPanel extends Panel {
             String remoteRepoUrl = remoteRepo.getUrl();
             if ((remoteRepoUrl != null) && (!StringUtils.endsWith(remoteRepoUrl, "/"))) {
                 remoteRepoUrl += "/";
+                remoteRepoUrl += repoItem.getRepoPath().getPath();
             }
             ExternalLink externalLink = new ExternalLink("url", remoteRepoUrl, remoteRepoUrl);
             urlContainer.replaceWith(externalLink);
@@ -145,7 +147,7 @@ public class GeneralInfoPanel extends Panel {
         final boolean isOffline = remoteRepo == null || remoteRepo.isOffline();
         final boolean globalOffline = centralConfigService.getDescriptor().isOfflineMode();
         final boolean isCacheRepo = itemIsRepo && isCache;
-        String status = (isOffline || globalOffline) ? "Offline." : "Online.";
+        String status = (isOffline || globalOffline) ? "Offline" : "Online";
         LabeledValue offlineLabel = new LabeledValue("status", "Online Status: ", status) {
             @Override
             public boolean isVisible() {
@@ -189,7 +191,8 @@ public class GeneralInfoPanel extends Panel {
 
         infoBorder.add(watchAddon.getWatchingSinceLabel("watchingSince", selectedPath));
         infoBorder.add(watchAddon.getDirectlyWatchedPathPanel("watchedPath", selectedPath));
-
+        LabeledValue repoPath = new LabeledValue("repoPath", "Repository path: ", repoItem.getRepoPath() + "");
+        infoBorder.add(repoPath);
         // disable/enable and set info according to the node type
         if (itemInfo.isFolder()) {
             ageLabel.setVisible(false);

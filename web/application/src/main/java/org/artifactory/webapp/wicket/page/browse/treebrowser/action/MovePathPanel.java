@@ -40,7 +40,6 @@ import org.artifactory.webapp.wicket.page.logs.SystemLogsPage;
 
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,7 +47,7 @@ import java.util.List;
  *
  * @author Yossi Shaul
  */
-public class MovePathPanel extends MoveBasePanel {
+public class MovePathPanel extends MoveAndCopyBasePanel {
 
     @SpringBean
     private AuthorizationService authorizationService;
@@ -136,18 +135,5 @@ public class MovePathPanel extends MoveBasePanel {
     @Override
     protected List<LocalRepoDescriptor> getDeployableLocalReposKeys() {
         return getDeployableLocalReposKeysExcludingSource(pathToMove.getRepoKey());
-    }
-
-    private List<LocalRepoDescriptor> getDeployableLocalReposKeysExcludingSource(String sourceRepoKey) {
-        // only display repositories the user has deploy permission on
-        List<LocalRepoDescriptor> localRepos = repoService.getDeployableRepoDescriptors();
-        // remove source repository from the targets list
-        Iterator<LocalRepoDescriptor> iter = localRepos.iterator();
-        while (iter.hasNext()) {
-            if (iter.next().getKey().equals(sourceRepoKey)) {
-                iter.remove();
-            }
-        }
-        return localRepos;
     }
 }

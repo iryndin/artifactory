@@ -36,7 +36,7 @@ public class JavaScriptUtils {
     public static String jsParam(Object parameter) {
         Writer writer = new StringWriter();
         try {
-            JsonGenerator generator = JacksonFactory.create(writer);
+            JsonGenerator generator = JacksonFactory.createJsonGenerator(writer);
             generator.writeObject(parameter);
             return writer.toString();
         } catch (IOException e) {

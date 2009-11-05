@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.model.Model;
+import org.artifactory.common.wicket.ajax.AllowNewWindowDecorator;
 import org.artifactory.common.wicket.ajax.ConfirmationAjaxCallDecorator;
 import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.links.TitledAjaxLink;
@@ -68,7 +69,7 @@ public class ActionLink extends TitledAjaxLink {
     @Override
     protected IAjaxCallDecorator getAjaxCallDecorator() {
         String message = action.getConfirmationMessage(actionableItem);
-        return new ConfirmationAjaxCallDecorator(message);
+        return new AllowNewWindowDecorator(new ConfirmationAjaxCallDecorator(message));
     }
 
     protected ItemEvent newEvent(AjaxRequestTarget target) {

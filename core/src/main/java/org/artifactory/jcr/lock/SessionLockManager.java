@@ -23,7 +23,7 @@ import org.artifactory.tx.SessionResource;
 
 /**
  * A lock manager that delegates to the internal lock manager, updating it with session events: Save write locks state
- * to jcr when the session is saved, and Update the repository fsItems cache with the commited state of write locks
+ * to jcr when the session is saved, and Update the repository fsItems cache with the committed state of write locks
  * <p/>
  * The manager is created once per session and attached to it for its lifetime. Cleanup of state on passivation back to
  * pool is therefore crucial.

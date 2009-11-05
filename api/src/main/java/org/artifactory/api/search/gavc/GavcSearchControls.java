@@ -28,11 +28,11 @@ import org.artifactory.api.search.SearchControlsBase;
 public class GavcSearchControls extends SearchControlsBase {
 
     private String groupId;
-    private boolean groupExactMatch;
+    private boolean groupExactMatch = true;
     private String artifactId;
-    private boolean artifactExactMatch;
+    private boolean artifactExactMatch = true;
     private String version;
-    private boolean versionExactMatch;
+    private boolean versionExactMatch = true;
     private String classifier;
 
     /**

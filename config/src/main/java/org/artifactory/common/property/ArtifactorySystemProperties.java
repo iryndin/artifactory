@@ -39,8 +39,8 @@ public class ArtifactorySystemProperties {
             new InheritableThreadLocal<ArtifactorySystemProperties>();
 
     /**
-     * The combine properties of System, artifactory.system.properties file and artifactory.properties file. All System
-     * properties starting with 'artifactory.' will be included.
+     * The combine properties of System, artifactory.system.properties file and artifactory.properties file. All System properties starting with
+     * 'artifactory.' will be included.
      */
     private Properties artifactoryProperties = new Properties();
     /**
@@ -60,11 +60,10 @@ public class ArtifactorySystemProperties {
                             new SamePropertyMapper("artifactory.authentication.cache.idleTimeSecs")).
                     put("artifactory.maven.suppressPomConsistencyChecks", new NullPropertyMapper()).
                     put("artifactory.metadataCacheIdleTimeSecs", new NullPropertyMapper()).
-                    put("artifactory.gcIntervalMins", new SamePropertyMapper("artifactory.gc.intervalMins")).
-                    put("artifactory.gcBatchDeleteMaxSize", new SamePropertyMapper("artifactory.gc.batchDeleteMaxSize"))
-                    .
-                            put("artifactory.logs.refreshrate.secs",
-                                    new SamePropertyMapper("artifactory.logs.viewRefreshRateSecs")).
+                    put("artifactory.gcIntervalMins", new MinutesToSecondsPropertyMapper("artifactory.gc.intervalSecs")).
+                    put("artifactory.gc.intervalMins", new MinutesToSecondsPropertyMapper("artifactory.gc.intervalSecs")).
+                    put("artifactory.gcBatchDeleteMaxSize", new SamePropertyMapper("artifactory.gc.batchDeleteMaxSize")).
+                    put("artifactory.logs.refreshrate.secs", new SamePropertyMapper("artifactory.logs.viewRefreshRateSecs")).
                     put("artifactory.jcr.configPath", new SamePropertyMapper("artifactory.jcr.configDir")).
                     put("artifactory.spring.configPath", new SamePropertyMapper("artifactory.jcr.configDir")).
                     build();

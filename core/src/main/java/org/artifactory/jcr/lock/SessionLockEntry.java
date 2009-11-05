@@ -35,20 +35,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 class SessionLockEntry implements FsItemLockEntry {
     private static final Logger log = LoggerFactory.getLogger(SessionLockEntry.class);
 
-    private final ReentrantReadWriteLock lock;
+    private final LockEntryId id;
     private JcrFsItem lockedFsItem;
     private JcrFsItem immutableFsItem;
     //The (per-session) acquired lock state
     private ReentrantReadWriteLock.ReadLock acquiredReadLock;
 
-    SessionLockEntry(FsItemLockEntry lockEntry) {
-        this.lock = lockEntry.getLock();
-        this.lockedFsItem = lockEntry.getLockedFsItem();
-        this.immutableFsItem = lockEntry.getImmutableFsItem();
+    SessionLockEntry(LockEntryId lockEntryId) {
+        this.id = lockEntryId;
     }
 
     public ReentrantReadWriteLock getLock() {
-        return lock;
+        return id.getLock();
     }
 
     public JcrFsItem getLockedFsItem() {
@@ -60,76 +58,38 @@ class SessionLockEntry implements FsItemLockEntry {
     }
 
     public RepoPath getRepoPath() {
-        return getFsItem().getRepoPath();
-    }
-
-    public JcrFsItem getFsItem() {
-        if (lockedFsItem != null) {
-            return lockedFsItem;
-        }
-        if (immutableFsItem == null) {
-            throw new IllegalStateException("Session lock entry has no fsitem");
-        }
-        return immutableFsItem;
+        return id.getRepoPath();
     }
 
     void acquireReadLock() {
-        log.trace("Acquiring READ lock on {}", getFsItem());
+        log.trace("Acquiring READ lock on {}", getRepoPath());
         if (acquiredReadLock != null) {
             // already done
             return;
         }
-        if (lockedFsItem != null) {
-            throw new LockingException("Cannot acquire read lock on a mutable fsitem " + lockedFsItem);
-        }
         if (isLockedByMe()) {
             throw new IllegalStateException(
-                    "Cannot acquire read lock when write lock is acquired and mutable fsitem was null " +
-                            immutableFsItem);
+                    "Cannot acquire read lock when write lock is acquired and mutable item was null " +
+                            id);
         }
         ReentrantReadWriteLock.ReadLock lock = getReadLock();
         acquire("Read", lock);
         acquiredReadLock = lock;
     }
 
-    void acquireWriteLock(boolean upgradeLockIfNecessary) {
-        log.trace("Acquiring WRITE lock on {}", getFsItem());
+    void acquireWriteLock() {
+        log.trace("Acquiring WRITE lock on {}", id);
         if (isLockedByMe()) {
             // already done
             return;
         }
-        JcrFsItem item = getFsItem();
-        if (item == null) {
-            throw new IllegalStateException("Session lock entry has no fsitem");
-        }
         if (acquiredReadLock != null) {
-            if (upgradeLockIfNecessary) {
-                //Will only upgrade if readlocks are not yet shared
-                log.trace("Trying read lock to write lock upgarde on '{}'", item);
-                //int myReadLocksCount = getLock().getReadHoldCount();
-                //Release all our read locks first
-                //We may still fail if another thread acquires a new read lock before we try getting a write lock
-                //Assuming no-one ever releases read locks owned by other threads!!! (e.g. agressive unlocking of all locks)
-                //for (int i = 0; i < myReadLocksCount; i++) {
-                //    getReadLock().unlock();
-                //}
-                acquiredReadLock = null;
-                boolean upgraded = getLock().writeLock().tryLock();
-                if (!upgraded) {
-                    throw new LockingException("Cannot upgrade read to write lock on '" + item +
-                            "' - new locks may have been acquired while trying.");
-                }
-            } else {
-                throw new LockingException("Cannot acquire write lock if has read lock on " + item);
-            }
-        }
-        if (lockedFsItem == null) {
-            throw new LockingException("Cannot write lock an immutable item " + item);
+            throw new LockingException("Cannot acquire write lock if has read lock on " + id);
         }
         acquire("Write", getWriteLock());
     }
 
-    boolean isLockedByMe() {
+    public boolean isLockedByMe() {
         return getLock().isWriteLockedByCurrentThread();
     }
 
@@ -154,8 +114,8 @@ class SessionLockEntry implements FsItemLockEntry {
     }
 
     void save() {
-        if (!isLockedByMe() || lockedFsItem == null) {
-            throw new LockingException("Cannot save item " + getFsItem() + " which not locked by me!");
+        if (!isLockedByMe()) {
+            throw new LockingException("Cannot save item " + id + " which not locked by me!");
         }
         // Save the modified fsItem will return a JCR based immutable fsItem.
         // The return item from save is the immutable.
@@ -177,30 +137,59 @@ class SessionLockEntry implements FsItemLockEntry {
         }
     }
 
-    void setFsItem(FsItemLockEntry entry) {
-        // Lock object should always be equal
-        if (lock != entry.getLock()) {
+    public void setWriteFsItem(JcrFsItem fsItem, JcrFsItem mutableFsItem) {
+        // fsItem can be null on create
+        if (fsItem != null && !getRepoPath().equals(fsItem.getRepoPath())) {
             throw new IllegalStateException(
-                    "Updating a session lock " + getFsItem() + " with a lock object different!");
+                    "Updating a session lock " + id + " with a different item " + fsItem);
         }
-        if (entry.getImmutableFsItem() != null) {
-            // Just update the imuutable fsitem (No risk ?)
-            immutableFsItem = entry.getImmutableFsItem();
+        // mutable cannot be null
+        if (mutableFsItem == null || !getRepoPath().equals(mutableFsItem.getRepoPath())) {
+            throw new IllegalStateException(
+                    "Updating a session lock " + id + " with a different item " + mutableFsItem);
         }
-        if (lockedFsItem != null) {
-            // If there is one more locked fsitem, something went wrong in lock session management
-            if (entry.getLockedFsItem() != lockedFsItem) {
-                throw new IllegalStateException("Updating a session lock object with a different mutable fsitem!\n" +
-                        "In session=" + immutableFsItem + " received=" + entry.getLockedFsItem());
-            }
-        } else {
-            // If no mutable before just take it.
-            lockedFsItem = entry.getLockedFsItem();
+        if ((fsItem != null && fsItem.isMutable()) || !mutableFsItem.isMutable()) {
+            throw new IllegalStateException(
+                    "Updating a write session lock " + id + " with a immutable item " + fsItem +
+                            " or mutable item " + mutableFsItem + " which are in invalid state");
         }
+        if (!isLockedByMe()) {
+            throw new IllegalStateException(
+                    "Updating a write session lock " + id + " which does not have a write lock");
+        }
+        if (acquiredReadLock != null) {
+            throw new IllegalStateException(
+                    "Updating a write session lock " + id + " which has a read lock");
+        }
+
+        this.immutableFsItem = fsItem;
+        this.lockedFsItem = mutableFsItem;
+    }
+
+    public void setReadFsItem(JcrFsItem fsItem) {
+        if (fsItem == null || !getRepoPath().equals(fsItem.getRepoPath())) {
+            throw new IllegalStateException(
+                    "Updating a session lock " + id + " with a different item " + fsItem);
+        }
+        if (fsItem.isMutable()) {
+            throw new IllegalStateException(
+                    "Updating a read only session lock " + id + " with a mutable item " + fsItem);
+        }
+        if (isLockedByMe() || lockedFsItem != null) {
+            throw new IllegalStateException(
+                    "Updating a read only session lock " + id + " which has already a write lock");
+        }
+        if (acquiredReadLock == null) {
+            throw new IllegalStateException(
+                    "Updating a read only session lock " + id + " which does not have a read lock");
+        }
+
+        this.immutableFsItem = fsItem;
+        this.lockedFsItem = null;
     }
 
     boolean isUnsaved() {
-        return !lockedFsItem.isDeleted() && (immutableFsItem == null || !immutableFsItem.isIdentical(lockedFsItem));
+        return lockedFsItem != null && !lockedFsItem.isDeleted() && (immutableFsItem == null || !immutableFsItem.isIdentical(lockedFsItem));
     }
 
     /**
@@ -209,7 +198,7 @@ class SessionLockEntry implements FsItemLockEntry {
      * @return true if read lock was acquired, false otherwise
      */
     boolean releaseReadLock() {
-        log.trace("Releasing READ lock on {}", getFsItem());
+        log.trace("Releasing READ lock on {}", id);
         try {
             if (acquiredReadLock != null) {
                 acquiredReadLock.unlock();
@@ -233,18 +222,18 @@ class SessionLockEntry implements FsItemLockEntry {
         try {
             boolean success = lock.tryLock(ConstantValues.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
             if (!success) {
-                throw new LockingException(lockName + " lock on " + getFsItem() + " not acquired in " +
+                throw new LockingException(lockName + " lock on " + id + " not acquired in " +
                         ConstantValues.lockTimeoutSecs.getLong() + " seconds");
             }
         } catch (InterruptedException e) {
-            throw new LockingException(lockName + " lock on " + getFsItem() + " not acquired!", e);
+            throw new LockingException(lockName + " lock on " + id + " not acquired!", e);
         }
     }
 
     private void releaseWriteLock() {
-        log.trace("Releasing WRITE lock on {}", getFsItem());
+        log.trace("Releasing WRITE lock on {}", id);
         if (isLockedByMe()) {
-            if (immutableFsItem != null) {
+            if (immutableFsItem != null && lockedFsItem != null) {
                 if (!immutableFsItem.isIdentical(lockedFsItem)) {
                     //Local modification will be discarded
                     log.error("Immutable item {} has local modifications that will be ignored.", lockedFsItem);

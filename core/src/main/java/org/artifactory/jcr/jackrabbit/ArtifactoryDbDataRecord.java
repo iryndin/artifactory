@@ -20,14 +20,25 @@ import org.apache.jackrabbit.core.data.AbstractDataRecord;
 import org.apache.jackrabbit.core.data.DataIdentifier;
 import org.apache.jackrabbit.core.data.DataStoreException;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
+import org.artifactory.common.ConstantValues;
 import org.artifactory.concurrent.ConcurrentStateManager;
+import org.artifactory.concurrent.LockingException;
 import org.artifactory.concurrent.State;
 import org.artifactory.concurrent.StateAware;
+import org.artifactory.log.LoggerFactory;
+import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Data record that is stored in a database
@@ -36,42 +47,17 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date Mar 12, 2009
  */
 public class ArtifactoryDbDataRecord extends AbstractDataRecord implements StateAware {
-    private enum DbRecordState implements State {
-        NEW,
-        // In DB with the 3 state of the GC scanner
-        IN_DB_FOUND, IN_DB_USED, IN_DB_MARK_FOR_DELETION,
-        DELETED, IN_ERROR;
+    private static final Logger log = LoggerFactory.getLogger(ArtifactoryDbDataRecord.class);
 
-        public boolean canTransitionTo(State newState) {
-            if (newState == IN_ERROR) {
-                // Always can go to error
-                return true;
-            }
-            switch (this) {
-                case NEW:
-                    return (newState == IN_DB_FOUND) || (newState == IN_DB_USED) || (newState == DELETED);
-                case IN_DB_FOUND:
-                    return (newState == DELETED) || (newState == IN_DB_USED) || (newState == IN_DB_MARK_FOR_DELETION);
-                case IN_DB_USED:
-                    return (newState == IN_DB_FOUND);
-                case IN_DB_MARK_FOR_DELETION:
-                    return (newState == DELETED);
-                case DELETED:
-                    return (newState == NEW);
-                case IN_ERROR:
-                    return (newState == NEW) || (newState == IN_DB_USED);
-            }
-            throw new IllegalStateException("Could not be reached");
-        }
+    private final ArtifactoryBaseDataStore store;
 
-    }
+    // Length coming from DB (or file system ?)
+    /* package */ long length;
 
-    private final ArtifactoryDbDataStoreImpl store;
-
-    /* package */ final long length;
+    // Last modified time coming from DB
     private final AtomicLong lastModified;
 
-    // State Manager of this entry in the DB. It is set after the succesful corresponding DB query was done.
+    // State Manager of this entry in the DB. It is set after the successful corresponding DB query was done.
     // The 3 IN_DB states are used by the garbage collector to track each Db store entry
     private final ConcurrentStateManager stateMgr;
 
@@ -84,6 +70,15 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
     // Flag set to true on first mark to be removed from map. all deleted or in error entries should be removed on scan.
     private boolean readyToBeRemoved = false;
 
+    // The nanosecond time of the last time the stream of this record was served
+    private final AtomicLong lastAccessTime = new AtomicLong(Long.MIN_VALUE);
+
+    // Number of open stream reader
+    private final AtomicInteger nbReader = new AtomicInteger(0);
+
+    // For managing concurrent DB loading from file
+    private final ReentrantLock fileActionSync = new ReentrantLock();
+
     /**
      * Creates a data record for the store based on the given identifier and length.
      *
@@ -91,7 +86,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
      * @param identifier
      * @param length
      */
-    public ArtifactoryDbDataRecord(ArtifactoryDbDataStoreImpl store,
+    public ArtifactoryDbDataRecord(ArtifactoryBaseDataStore store,
             DataIdentifier identifier, long length, long lastModified) {
         super(identifier);
         this.store = store;
@@ -129,7 +124,89 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
         if (!setInUse()) {
             throw new DataStoreRecordNotFoundException("Record " + this + " is in invalid state");
         }
-        return store.getInputStream(getIdentifier());
+        DataRecordFileStream fileStream = null;
+        try {
+            this.nbReader.incrementAndGet();
+            File file = store.getOrCreateFile(getIdentifier(), length);
+            try {
+                fileStream = new DataRecordFileStream(file);
+                return fileStream;
+            } catch (IOException e) {
+                throw new DataStoreException("Error opening input stream of " + file.getAbsolutePath(), e);
+            }
+        } finally {
+            if (fileStream == null) {
+                // The stream was not sent, decrement the readers
+                nbReader.decrementAndGet();
+            }
+        }
+    }
+
+    public <V> V guardedActionOnFile(Callable<V> callable) throws DataStoreException {
+        boolean success = false;
+        try {
+            try {
+                success = fileActionSync.tryLock() || fileActionSync.tryLock(getLoadSyncTimeOut(), TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                // Set the interrupted flag back
+                Thread.currentThread().interrupt();
+                throw new LockingException("Interrupted while trying to lock " + this, e);
+            }
+            if (!success) {
+                throw new LockingException(
+                        "Could not acquire state lock in " + getLoadSyncTimeOut());
+            }
+            return callable.call();
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            if (e instanceof DataStoreException) {
+                throw (DataStoreException) e;
+            }
+            throw new DataStoreException("Error during action on file " + getIdentifier(), e);
+        } finally {
+            if (success) {
+                fileActionSync.unlock();
+            }
+        }
+    }
+
+    private long getLoadSyncTimeOut() {
+        return ConstantValues.lockTimeoutSecs.getLong();
+    }
+
+    public class DataRecordFileStream extends FileInputStream {
+        private boolean closed = false;
+
+        public DataRecordFileStream(File file) throws FileNotFoundException {
+            super(file);
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                if (!closed) {
+                    closed = true;
+                    nbReader.decrementAndGet();
+                    markAccessed();
+                }
+            }
+        }
+    }
+
+    public void markAccessed() {
+        lastAccessTime.set(System.nanoTime());
+    }
+
+    public long getLastAccessTime() {
+        return lastAccessTime.get();
+    }
+
+    public int getNbReader() {
+        return nbReader.intValue();
     }
 
     private DbRecordState getDbState() {
@@ -137,7 +214,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
     }
 
     /**
-     * Method called after the entry was succesfully saved in DB, or loaded from DB.
+     * Method called after the entry was successfully saved in DB, or loaded from DB.
      *
      * @return true if state is in db and used
      */
@@ -153,11 +230,8 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                     return true;
                 }
                 stateMgr.guardedSetState(DbRecordState.IN_DB_USED);
-                boolean res = getDbState() == DbRecordState.IN_DB_USED;
-                if (res) {
-                    readyToBeRemoved = false;
-                }
-                return res;
+                readyToBeRemoved = false;
+                return true;
             }
         });
     }
@@ -185,15 +259,19 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                         return true;
                     case IN_DB_MARK_FOR_DELETION:
                         throw new IllegalStateException(
-                                "Object " + getIdentifier() + " should have been deleted during last GC!");
+                                "Object " + ArtifactoryDbDataRecord.this.toString() +
+                                        " should have been deleted during last GC!");
                     case IN_DB_USED:
                         stateMgr.guardedSetState(DbRecordState.IN_DB_FOUND);
                         readyToBeRemoved = false;
                         return true;
                     case IN_DB_FOUND:
-                        // It's an error in the GC, should not reach here
-                        throw new IllegalStateException(
-                                "Object " + getIdentifier() + " should not be in found state during init scan!");
+                        // Second time there (should have the readyToBeRemoved flag set to true)
+                        if (!readyToBeRemoved) {
+                            log.error("Object " + ArtifactoryDbDataRecord.this.toString() +
+                                    " should not be in found state during init scan without ready to be removed flag!");
+                        }
+                        return true;
                     case NEW:
                         // Nothing to do, leave it try to insert itself
                         readyToBeRemoved = readyToMarkForDeletion = false;
@@ -220,8 +298,9 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
                     case IN_ERROR:
-                        throw new RepositoryRuntimeException("Cannot use data store entry " +
-                                " due to previous error: " + error.getMessage());
+                        RepositoryRuntimeException ex = new RepositoryRuntimeException("Cannot use data store entry " +
+                                " due to previous error: " + error.getMessage(), error);
+                        throw ex;
                     case DELETED:
                     case IN_DB_MARK_FOR_DELETION:
                         // Entry cannot be used. Hopefully system manage the exception correctly
@@ -232,11 +311,8 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                     case IN_DB_FOUND:
                     case NEW:
                         stateMgr.guardedSetState(DbRecordState.IN_DB_USED);
-                        boolean res = getDbState() == DbRecordState.IN_DB_USED;
-                        if (res) {
-                            readyToBeRemoved = readyToMarkForDeletion = false;
-                        }
-                        return res;
+                        readyToBeRemoved = readyToMarkForDeletion = false;
+                        return true;
                 }
                 throw new IllegalStateException("Could not be reached");
             }
@@ -285,13 +361,37 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
     }
 
     /**
-     * Called after a sucessful delete in DB. No question asked here, state brutaly changed.
+     * Called after a successful delete in DB. No question asked here, state brutally changed.
      */
     public void setDeleted() {
         stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 stateMgr.guardedSetState(DbRecordState.DELETED);
-                return getDbState() == DbRecordState.DELETED;
+                boolean res = getDbState() == DbRecordState.DELETED;
+                if (res) {
+                    // Really delete the file now
+                    res = deleteDbFile();
+                }
+                return res;
+            }
+        });
+    }
+
+    private boolean deleteDbFile() throws DataStoreException {
+        return guardedActionOnFile(new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                if (getNbReader() > 0) {
+                    log.error("Cannot delete file that is currently open " + getIdentifier());
+                    return false;
+                }
+                File dbFile = store.getFile(getIdentifier());
+                if (dbFile.exists()) {
+                    if (!dbFile.delete()) {
+                        log.error("Could not delete file " + dbFile.getAbsolutePath());
+                        return false;
+                    }
+                }
+                return true;
             }
         });
     }
@@ -303,16 +403,18 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
      * @return true if the entry is new so the DB insert should be done, false if the entry is OK to used, throw
      *         exception if non of the above case are valid
      */
-    public boolean needReinsert(final long now) {
+    public boolean needsReinsert(final long now, final File tempFile) {
         return stateMgr.changeStateIn(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 DbRecordState dbState = getDbState();
                 switch (dbState) {
                     case IN_ERROR:
                         // TODO: Find what to do here. For the moment throw the old exception
-                        throw new RepositoryRuntimeException(
+                        RepositoryRuntimeException ex = new RepositoryRuntimeException(
                                 "Cannot insert new record " + ArtifactoryDbDataRecord.this +
                                         " since the old one is in invalid state", error);
+                        ex.initCause(error);
+                        throw ex;
                     case DELETED:
                         // Reset it to NEW for reuse
                         stateMgr.guardedSetState(DbRecordState.NEW);
@@ -323,36 +425,120 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                         stateMgr.guardedWaitForNextStep(2);
                         if (getDbState() == DbRecordState.DELETED) {
                             stateMgr.guardedSetState(DbRecordState.NEW);
+                            readyToBeRemoved = readyToMarkForDeletion = false;
                         }
                         break;
                     case NEW:
                         // Wait normal timeout for actual insert in DB to happen
                         stateMgr.guardedWaitForNextStep();
-                        break;
+                        // Go to in_db_found test (Scanner may have been activated!), so no break
+                        // No break here
                     case IN_DB_FOUND:
-                        stateMgr.guardedSetState(DbRecordState.IN_DB_USED);
+                        // Move to in db used if scanner set the flag
+                        while (getDbState() == DbRecordState.IN_DB_FOUND) {
+                            stateMgr.guardedSetState(DbRecordState.IN_DB_USED);
+                        }
                         break;
                     case IN_DB_USED:
                         // Ready to be used
                         break;
                 }
                 dbState = getDbState();
+
                 if (dbState == DbRecordState.NEW) {
                     setLastModified(now);
                     readyToBeRemoved = readyToMarkForDeletion = false;
                     return true;
                 }
                 if (dbState == DbRecordState.IN_DB_USED) {
+                    // Check the length are equal
+                    if (length != tempFile.length()) {
+                        String msg = "File collision for id=" + getIdentifier() + " length=" + tempFile.length() +
+                                " oldLength=" + length;
+                        log.error(msg);
+                        throw new DataStoreException(msg);
+                    }
+                    File file = store.getFile(getIdentifier());
+                    if (file == null || !file.exists()) {
+                        // If no file use tempFile has the new file
+                        setFile(tempFile);
+                    }
                     setLastModified(now);
                     readyToBeRemoved = readyToMarkForDeletion = false;
                     return false;
                 }
                 if (dbState == DbRecordState.IN_ERROR) {
-                    throw new RepositoryRuntimeException(
+                    RepositoryRuntimeException ex = new RepositoryRuntimeException(
                             "Cannot insert new record " + ArtifactoryDbDataRecord.this +
                                     " since the old one is in invalid state", error);
+                    throw ex;
                 }
                 throw new RepositoryRuntimeException("Cannot reuse data entry " + ArtifactoryDbDataRecord.this);
+            }
+        });
+    }
+
+    public boolean deleteFile(final long scanStartTime) {
+        try {
+            return guardedActionOnFile(new Callable<Boolean>() {
+                public Boolean call() throws Exception {
+                    if (getNbReader() > 0) {
+                        log.debug("Cannot delete file. Currently opened");
+                        return false;
+                    }
+                    long lastAccess = lastAccessTime.get();
+                    if (lastAccess != Long.MIN_VALUE && lastAccess > scanStartTime) {
+                        log.debug("Cannot delete file. Last access time changed during scanning");
+                        return false;
+                    }
+                    if (!lastAccessTime.compareAndSet(lastAccess, Long.MIN_VALUE)) {
+                        log.debug("Cannot delete file. Last access time changed during delete");
+                        return false;
+                    }
+                    File cachedFile = store.getFile(getIdentifier());
+                    if (cachedFile.exists()) {
+                        return cachedFile.delete();
+                    }
+                    return true;
+                }
+            });
+        } catch (DataStoreException e) {
+            log.error("Error deleting file " + getIdentifier() + " during GC");
+            return false;
+        }
+    }
+
+    void setFile(final File tempFile) throws DataStoreException {
+        markAccessed();
+        guardedActionOnFile(new Callable<Object>() {
+            public Boolean call() throws Exception {
+                File file = store.getFile(getIdentifier());
+                if (file.exists()) {
+                    //The target storage file (cache or real storage) already exists - should never happen
+                    if (file.length() != tempFile.length()) {
+                        throw new DataStoreException("File collision for id=" + getIdentifier() +
+                                " length=" + tempFile.length() +
+                                " oldLength=" + file.length());
+                    } else {
+                        log.warn(
+                                "Unexpected condition when switching temp file- target datastore file {} already exists!");
+                    }
+                } else {
+                    File parentFile = file.getParentFile();
+                    if (!parentFile.exists()) {
+                        if (!parentFile.mkdirs()) {
+                            throw new DataStoreException(
+                                    "Could not create folder " + parentFile.getAbsolutePath() + " for file store");
+                        }
+                    }
+                    if (!tempFile.renameTo(file)) {
+                        throw new DataStoreException("File move for id " + getIdentifier() +
+                                " from " + tempFile.getAbsolutePath() +
+                                " to " + file.getAbsolutePath() + " failed!");
+                    }
+                }
+                length = file.length();
+                return null;
             }
         });
     }
@@ -362,6 +548,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
             public Object call() throws Exception {
                 error = e;
                 stateMgr.guardedSetState(DbRecordState.IN_ERROR);
+                // TODO: Remove the file
                 return null;
             }
         });

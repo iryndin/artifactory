@@ -44,6 +44,10 @@ public class ClasspathResourceLoader implements ResourceStreamHandle {
         return is;
     }
 
+    public long getSize() {
+        return -1;
+    }
+
     public void close() {
         try {
             if (is != null) {

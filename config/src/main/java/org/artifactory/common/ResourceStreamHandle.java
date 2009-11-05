@@ -25,5 +25,10 @@ import java.io.InputStream;
 public interface ResourceStreamHandle {
     InputStream getInputStream();
 
+    /**
+     * @return The size of the stream or -1 if unknown
+     */
+    long getSize();
+
     void close();
 }

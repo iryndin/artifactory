@@ -37,12 +37,12 @@ public class LockingHelper {
         return result;
     }
 
-    public static void readLock(FsItemLockEntry lockEntry) {
-        getLockManager().readLock(lockEntry);
+    public static FsItemLockEntry readLock(LockEntryId lockEntry) {
+        return getLockManager().readLock(lockEntry);
     }
 
-    public static void writeLock(FsItemLockEntry lockEntry, boolean upgradeLockIfNecessary) {
-        getLockManager().writeLock(lockEntry, upgradeLockIfNecessary);
+    public static FsItemLockEntry writeLock(LockEntryId lockEntryId) {
+        return getLockManager().writeLock(lockEntryId);
     }
 
     public static JcrFsItem getIfLockedByMe(RepoPath repoPath) {

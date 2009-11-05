@@ -28,6 +28,7 @@ import static org.artifactory.common.wicket.component.CreateUpdateAction.CREATE;
 import static org.artifactory.common.wicket.component.CreateUpdateAction.UPDATE;
 import org.artifactory.common.wicket.component.modal.panel.BaseModalPanel;
 import org.artifactory.common.wicket.component.panel.list.ModalListPanel;
+import org.artifactory.common.wicket.component.table.columns.BooleanColumn;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
@@ -93,7 +94,9 @@ public class ProxiesListPanel extends ModalListPanel<ProxyDescriptor> {
     protected void addColumns(List<IColumn> columns) {
         columns.add(new PropertyColumn(new Model("Proxy Key"), "key", "key"));
         columns.add(new PropertyColumn(new Model("Host"), "host", "host"));
+        columns.add(new BooleanColumn(new Model("Default"), "default", "defaultProxy"));
         columns.add(new PropertyColumn(new Model("Port"), "port", "port"));
+
     }
 
     MutableCentralConfigDescriptor getEditingDescriptor() {

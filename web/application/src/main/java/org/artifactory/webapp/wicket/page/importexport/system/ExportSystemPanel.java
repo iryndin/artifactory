@@ -151,7 +151,7 @@ public class ExportSystemPanel extends TitledPanel {
                     List<StatusEntry> warnings = status.getWarnings();
                     if (!warnings.isEmpty()) {
                         CharSequence systemLogsPage = WicketUtils.mountPathForPage(SystemLogsPage.class);
-                        warn(warnings.size() + " Warnings have been produces during the export. Please review the " +
+                        warn(warnings.size() + " warning(s) reported during the export. Please review the " +
                                 "<a href=\"" + systemLogsPage + "\">log</a> for further information.");
                     }
                     if (status.isError()) {

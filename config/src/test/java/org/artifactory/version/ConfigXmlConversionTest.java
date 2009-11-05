@@ -248,6 +248,16 @@ public class ConfigXmlConversionTest {
     }
 
     @Test
+    public void convert141DefaultProxy() throws Exception {
+        CentralConfigDescriptor cc =
+                transform("/config/test/config.1.4.1_default-proxy.xml", ArtifactoryConfigVersion.v140);
+
+        List<ProxyDescriptor> proxies = cc.getProxies();
+        ProxyDescriptor proxy = proxies.get(0);
+        assertTrue(proxy.isDefaultProxy(), "Proxy not default");
+    }
+
+    @Test
     public void convertWithNoSchemaLocation() throws Exception {
         CentralConfigDescriptor cc =
                 transform("/config/test/config.1.3.2_no-location.xml", ArtifactoryConfigVersion.v132);

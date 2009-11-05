@@ -17,9 +17,9 @@
   -->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://artifactory.jfrog.org/xsd/1.4.0"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.0
-        http://www.jfrog.org/xsd/artifactory-v1_4_0.xsd">
+        xmlns="http://artifactory.jfrog.org/xsd/1.4.1"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.1
+        http://www.jfrog.org/xsd/artifactory-v1_4_1.xsd">
     <!--
     enable/disable anonymous downloads
     -->
@@ -59,10 +59,15 @@
                 <repositoryRef>java.net.m2</repositoryRef>
                 <repositoryRef>java.net.m1</repositoryRef>
                 <repositoryRef>repo1</repositoryRef>
+                <repositoryRef>jfrog-libs</repositoryRef>
+                <repositoryRef>jfrog-plugins</repositoryRef>
                 <repositoryRef>spring-bundles-milestone</repositoryRef>
-                <repositoryRef>spring-bundles-snapshot</repositoryRef>
-                <repositoryRef>spring-bundles-release</repositoryRef>
+                <repositoryRef>spring-bundles-snapshots</repositoryRef>
+                <repositoryRef>spring-bundles</repositoryRef>
                 <repositoryRef>spring-bundles-external</repositoryRef>
+                <repositoryRef>google-code</repositoryRef>
+                <repositoryRef>terracotta</repositoryRef>
+                <repositoryRef>scala-tools</repositoryRef>
                 <repositoryRef>atlassian</repositoryRef>
             </excludedRepositories>
         </backup>
@@ -141,6 +146,7 @@
     <remoteRepositories>
         <remoteRepository>
             <key>repo1</key>
+            <description>Central Maven 2 repository</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <url>http://repo1.maven.org/maven2</url>
@@ -159,12 +165,27 @@
             <type>maven1</type>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
-            <excludesPattern>org/**,com/**,net/**</excludesPattern>
             <url>http://download.java.net/maven/1</url>
         </remoteRepository>
         <remoteRepository>
+            <key>jfrog-libs</key>
+            <description>JFrog libraries releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <excludesPattern>org/apache/maven/**</excludesPattern>
+            <url>http://repo.jfrog.org/artifactory/libs-releases-local</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>jfrog-plugins</key>
+            <description>JFrog plugins releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <includesPattern>org/jfrog/**</includesPattern>
+            <url>http://repo.jfrog.org/artifactory/plugins-releases-local</url>
+        </remoteRepository>
+        <remoteRepository>
             <key>jboss</key>
-            <description>jboss</description>
+            <description>JBoss Maven2 releases</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <includesPattern>org/jboss/**,org/hibernate/**,org/richfaces/**,org/drools/**</includesPattern>
@@ -172,6 +193,7 @@
         </remoteRepository>
         <remoteRepository>
             <key>codehaus</key>
+            <description>Codehaus Maven2 releases</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <includesPattern>org/**,com/**,net/**</includesPattern>
@@ -180,23 +202,23 @@
         </remoteRepository>
         <remoteRepository>
             <key>spring-bundles-milestone</key>
-            <description>Springsource bundles in milestone version</description>
+            <description>SpringSource bundles in milestone version</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <includesPattern>org/springframework/**</includesPattern>
             <url>http://repository.springsource.com/maven/bundles/milestone</url>
         </remoteRepository>
         <remoteRepository>
-            <key>spring-bundles-snapshot</key>
-            <description>Springsource bundles in snapshot stage</description>
+            <key>spring-bundles-snapshots</key>
+            <description>SpringSource bundles in snapshot stage</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
             <includesPattern>org/springframework/**</includesPattern>
             <url>http://repository.springsource.com/maven/bundles/snapshot</url>
         </remoteRepository>
         <remoteRepository>
-            <key>spring-bundles-release</key>
-            <description>Springsource bundles released</description>
+            <key>spring-bundles</key>
+            <description>SpringSource bundles releases</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <includesPattern>org/springframework/**</includesPattern>
@@ -204,11 +226,43 @@
         </remoteRepository>
         <remoteRepository>
             <key>spring-bundles-external</key>
-            <description>External artifacts needed by springsource bundles</description>
+            <description>External artifacts needed by SpringSource bundles</description>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
             <includesPattern>**/com.springsource*/**</includesPattern>
             <url>http://repository.springsource.com/maven/bundles/external</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>open-qa</key>
+            <description>OpenQA (Selenium) releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <includesPattern>org/openqa/**,org/seleniumhq/**</includesPattern>
+            <url>http://nexus.openqa.org/content/repositories/releases</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>terracotta</key>
+            <description>Terracotta releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <includesPattern>org/terracotta/**,net/sf/ehcache/**</includesPattern>
+            <url>http://repo.terracotta.org/maven2</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>google-code</key>
+            <description>Google's open source releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <includesPattern>com/google/**</includesPattern>
+            <url>http://google-maven-repository.googlecode.com/svn/repository</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>scala-tools</key>
+            <description>Scala-Tools.org releases</description>
+            <handleReleases>true</handleReleases>
+            <handleSnapshots>false</handleSnapshots>
+            <includesPattern>org/scala*/**</includesPattern>
+            <url>http://scala-tools.org/repo</url>
         </remoteRepository>
         <remoteRepository>
             <key>atlassian</key>
@@ -217,6 +271,7 @@
             <includesPattern>atlassian*/**,seraph/**,com/atlassian/**,com/adaptavist/**</includesPattern>
             <url>http://maven.atlassian.com/repository/public</url>
         </remoteRepository>
+
 
         <!--
         <remoteRepository>
@@ -303,10 +358,15 @@
                 <repositoryRef>java.net.m2</repositoryRef>
                 <repositoryRef>java.net.m1</repositoryRef>
                 <repositoryRef>repo1</repositoryRef>
+                <repositoryRef>jfrog-libs</repositoryRef>
+                <repositoryRef>jfrog-plugins</repositoryRef>
                 <repositoryRef>spring-bundles-milestone</repositoryRef>
-                <repositoryRef>spring-bundles-snapshot</repositoryRef>
-                <repositoryRef>spring-bundles-release</repositoryRef>
+                <repositoryRef>spring-bundles-snapshots</repositoryRef>
+                <repositoryRef>spring-bundles</repositoryRef>
                 <repositoryRef>spring-bundles-external</repositoryRef>
+                <repositoryRef>google-code</repositoryRef>
+                <repositoryRef>terracotta</repositoryRef>
+                <repositoryRef>scala-tools</repositoryRef>
                 <repositoryRef>atlassian</repositoryRef>
             </repositories>
         </virtualRepository>

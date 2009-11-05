@@ -154,7 +154,7 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
 
     /**
      * @return True if the current user is a system admin (not just the current permission target admin). Non system
-     *         admins can only change the receipients table.
+     *         admins can only change the recipients table.
      */
     public boolean isSystemAdmin() {
         return authService.isAdmin();
@@ -343,6 +343,16 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
                 }
             }
         });
+        columns.add(new RoleCheckboxColumn("Annotate", "annotate") {
+            @Override
+            protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
+                super.onUpdate(row, value, target);
+                if (sanityCheckAdmin()) {
+                    row.setAnnotate(value);
+                    onCheckboxUpdate(target);
+                }
+            }
+        });
         columns.add(new RoleCheckboxColumn("Read", "read") {
             @Override
             protected void onUpdate(AceInfoRow row, boolean value, AjaxRequestTarget target) {
@@ -356,7 +366,7 @@ public class PermissionTargetCreateUpdatePanel extends CreateUpdatePanel<Permiss
 
         PermissionTargetAceInfoRowDataProvider dataProvider = isGroup ? groupsDataProvider : usersDataProvider;
 
-        SortableTable table = new SortableTable("recipients", columns, dataProvider, 5);
+        SortableTable table = new SortableTable("recipients", columns, dataProvider, 15);
         //Recipients header
         Label recipientsHeader = new Label("recipientsHeader");
         recipientsHeader.setModel(

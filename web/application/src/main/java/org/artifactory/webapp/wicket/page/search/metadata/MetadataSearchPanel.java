@@ -17,6 +17,7 @@
 
 package org.artifactory.webapp.wicket.page.search.metadata;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Page;
@@ -25,6 +26,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -35,8 +37,10 @@ import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.metadata.MetadataSearchControls;
 import org.artifactory.api.search.metadata.MetadataSearchResult;
 import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
+import org.artifactory.common.wicket.component.combobox.ComboBox;
 import org.artifactory.common.wicket.component.help.HelpBubble;
 import org.artifactory.common.wicket.util.ComponentUtils;
+import org.artifactory.common.wicket.util.CookieUtils;
 import org.artifactory.webapp.wicket.actionable.column.ActionsColumn;
 import org.artifactory.webapp.wicket.page.search.BaseSearchPage;
 import org.artifactory.webapp.wicket.page.search.BaseSearchPanel;
@@ -44,6 +48,8 @@ import org.artifactory.webapp.wicket.page.search.actionable.ActionableArtifactSe
 import org.artifactory.webapp.wicket.page.search.actionable.ActionableMetadataSearchResult;
 import org.artifactory.webapp.wicket.page.search.actionable.ActionableSearchResult;
 
+import javax.servlet.http.Cookie;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +60,9 @@ import java.util.List;
 public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSearchPanel<T> {
 
     private MetadataSearchControls searchControls;
-    private StyledCheckbox pomSearchCheckBox;
+    private StyledCheckbox metaDataSearchCheckBox;
+    private List<String> xmlTypes;
+    private List<String> metaDataNames;
 
     public MetadataSearchPanel(final Page parent, String id) {
         super(parent, id);
@@ -63,29 +71,37 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
     @Override
     protected void addSearchComponents(Form form) {
         searchControls = new MetadataSearchControls();
-        final TextField metadataNameField = new TextField("metadataNameField",
-                new PropertyModel(searchControls, "metadataName"));
-        metadataNameField.setPersistent(true);
-        metadataNameField.setRequired(true);
-        metadataNameField.setOutputMarkupId(true);
-        form.add(metadataNameField);
-        pomSearchCheckBox = new StyledCheckbox("pomSearch", new Model());
-        pomSearchCheckBox.setLabel(new Model("POM Search"));
-        pomSearchCheckBox.setPersistent(true);
-        form.add(pomSearchCheckBox);
-        pomSearchCheckBox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
+        xmlTypes = Lists.newArrayList("*.pom", "*ivy*.xml");
+        searchControls.setMetadataName(xmlTypes.get(0));
+
+        //todo remove when component bug fixed RTFACT-2257
+        final WebMarkupContainer comboContainer = new WebMarkupContainer("comboContainer");
+        comboContainer.setOutputMarkupId(true);
+        form.add(comboContainer);
+        final ComboBox typesChoices =
+                new ComboBox("metadataName", new PropertyModel(searchControls, "metadataName"),
+                        new PropertyModel(this, "metaDataNames"));
+        typesChoices.setPersistent(true);
+        typesChoices.setRequired(true);
+        typesChoices.setOutputMarkupId(true);
+        comboContainer.add(typesChoices);
+        metaDataSearchCheckBox = new StyledCheckbox("metaDataSearch", new Model());
+        metaDataSearchCheckBox.setLabel(new Model("Metadata Search"));
+        metaDataSearchCheckBox.setPersistent(true);
+        form.add(metaDataSearchCheckBox);
+        metaDataSearchCheckBox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                boolean isPomSearch = pomSearchCheckBox.isChecked();
-                String content = "";
-                if (isPomSearch) {
-                    content = "*.pom";
+                if (metaDataSearchCheckBox.isChecked()) {
+                    metaDataNames = Lists.newArrayList();
+                } else {
+                    metaDataNames = xmlTypes;
                 }
-                metadataNameField.setModelObject(content);
-                metadataNameField.setEnabled(!isPomSearch);
-                target.addComponent(metadataNameField);
+                target.addComponent(comboContainer);
             }
         });
+
+        adjustForMetadataLastSearch();
         form.add(new HelpBubble("metadataName.help", new ResourceModel("metadataName.help")));
 
         TextArea xPathTextArea = new TextArea("xPathTextArea", new PropertyModel(searchControls, "path"));
@@ -105,6 +121,18 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
         exactMatchCheckbox.setLabel(new Model("Exact Match"));
         exactMatchCheckbox.setPersistent(true);
         form.add(exactMatchCheckbox);
+    }
+
+    private void adjustForMetadataLastSearch() {
+        metaDataNames = xmlTypes;
+        String id = metaDataSearchCheckBox.getId();
+        Cookie cookie = CookieUtils.getCookieBycomponentId(id);
+        if (cookie != null) {
+            String value = cookie.getValue();
+            if ("true".equals(value)) {
+                metaDataNames = Lists.newArrayList();
+            }
+        }
     }
 
     @Override
@@ -135,7 +163,7 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
     @Override
     protected SearchResults<T> searchArtifacts() {
         //noinspection unchecked
-        return search(pomSearchCheckBox.isChecked(), searchControls);
+        return search(metaDataSearchCheckBox.isChecked(), searchControls);
     }
 
     @Override
@@ -143,7 +171,16 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
         MetadataSearchControls controlsCopy = new MetadataSearchControls(searchControls);
         controlsCopy.setLimitSearchResults(false);
         //noinspection unchecked
-        return search(pomSearchCheckBox.isChecked(), controlsCopy);
+        return search(metaDataSearchCheckBox.isChecked(), controlsCopy);
+    }
+
+    @Override
+    protected void onSearch() {
+        super.onSearch();
+        if (metaDataSearchCheckBox.isChecked()) {
+            metaDataNames = new ArrayList<String>();
+            metaDataNames.add(searchControls.getMetadataName());
+        }
     }
 
     @Override
@@ -159,10 +196,10 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
 
     @Override
     protected ActionableSearchResult<T> getActionableResult(T searchResult) {
-        if (pomSearchCheckBox.isChecked()) {
-            return new ActionableArtifactSearchResult<T>(searchResult);
+        if (metaDataSearchCheckBox.isChecked()) {
+            return new ActionableMetadataSearchResult<T>(searchResult);
         }
-        return new ActionableMetadataSearchResult<T>(searchResult);
+        return new ActionableArtifactSearchResult<T>(searchResult);
     }
 
     @Override
@@ -173,14 +210,14 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
     /**
      * Performs the search
      *
-     * @param isPomSearch True if should search for poms. False if should search for metadata
-     * @param controls    Search controls
+     * @param metaDataSearch True if should search for metadata. False if should search for xml type
+     * @param controls       Search controls
      * @return List of search results
      */
-    private SearchResults search(boolean isPomSearch, MetadataSearchControls controls) {
-        if (isPomSearch) {
-            return searchService.searchPomContent(controls);
+    private SearchResults search(boolean metaDataSearch, MetadataSearchControls controls) {
+        if (metaDataSearch) {
+            return searchService.searchMetadata(controls);
         }
-        return searchService.searchMetadata(controls);
+        return searchService.searchXmlContent(controls);
     }
 }

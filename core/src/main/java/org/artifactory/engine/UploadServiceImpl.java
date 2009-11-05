@@ -102,7 +102,7 @@ public class UploadServiceImpl implements InternalUploadService {
             //Test if we need to require http authorization
             int returnCode = statusHolder.getStatusCode();
             if (returnCode == HttpStatus.SC_FORBIDDEN && authService.isAnonymous()) {
-                //Transform a frobidden to unauthorized if received for an anonymous user
+                //Transform a forbidden to unauthorized if received for an anonymous user
                 String msg = statusHolder.getStatusMsg();
                 String realmName = authenticationEntryPoint.getRealmName();
                 response.sendAuthorizationRequired(msg, realmName);

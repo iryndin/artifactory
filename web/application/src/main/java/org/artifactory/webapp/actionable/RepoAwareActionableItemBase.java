@@ -130,26 +130,19 @@ public abstract class RepoAwareActionableItemBase extends ActionableItemBase
             tabs.add(new PermissionsTab(item));
         }
 
-        /**
-         * Temporarily hide properties tab from caches. This is done because currently, an enabled anonymous user has
-         * deploy permissions on any remote repo cache, and having deploy permissions on a repo, means that you can add
-         * properties to it. We do not want to enable this feature to anonymous users at this time.
-         */
-        if (!getRepo().isCache()) {
-            //Add properties panel
-            PropertiesAddon propertiesAddon = getAddonsProvider().addonByType(PropertiesAddon.class);
+        //Add properties panel
+        PropertiesAddon propertiesAddon = getAddonsProvider().addonByType(PropertiesAddon.class);
 
-            ItemInfo info;
-            if (item instanceof FolderActionableItem) {
-                // take the last element if folder compacted compacted
-                info = ((FolderActionableItem) item).getFolderInfo();
-            } else {
-                info = item.getItemInfo();
-            }
-
-            ITab propertiesPanel = propertiesAddon.getPropertiesTabPanel(info);
-            tabs.add(propertiesPanel);
+        ItemInfo info;
+        if (item instanceof FolderActionableItem) {
+            // take the last element if folder compacted compacted
+            info = ((FolderActionableItem) item).getFolderInfo();
+        } else {
+            info = item.getItemInfo();
         }
+
+        ITab propertiesPanel = propertiesAddon.getPropertiesTabPanel(info);
+        tabs.add(propertiesPanel);
 
         ItemInfo itemInfo = item.getItemInfo();
         final RepoPath canonicalRepoPath;

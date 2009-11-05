@@ -31,7 +31,12 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.actionable.ActionableItem;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
-import org.artifactory.webapp.actionable.action.*;
+import org.artifactory.webapp.actionable.action.CopyAction;
+import org.artifactory.webapp.actionable.action.DeleteAction;
+import org.artifactory.webapp.actionable.action.DeleteVersionsAction;
+import org.artifactory.webapp.actionable.action.ItemAction;
+import org.artifactory.webapp.actionable.action.MoveAction;
+import org.artifactory.webapp.actionable.action.ZapAction;
 import org.artifactory.webapp.wicket.util.ItemCssClass;
 
 import java.util.ArrayList;
@@ -50,6 +55,7 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
     private String displayName;
     private ItemAction deleteAction;
     private MoveAction moveAction;
+    private CopyAction copyAction;
     private ItemAction zapAction;
     private DeleteVersionsAction delVersions;
     private List<ActionableItem> children;
@@ -111,14 +117,16 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
 
     private void addActions() {
         Set<ItemAction> actions = getActions();
+        moveAction = new MoveAction();
+        actions.add(moveAction);
+        copyAction = new CopyAction();
+        actions.add(copyAction);
         deleteAction = new DeleteAction();
         actions.add(deleteAction);
         zapAction = new ZapAction();
         actions.add(zapAction);
         delVersions = new DeleteVersionsAction();
         actions.add(delVersions);
-        moveAction = new MoveAction();
-        actions.add(moveAction);
 
         AddonsManager addonsManager = getAddonsProvider();
         WatchAddon watchAddon = addonsManager.addonByType(WatchAddon.class);
@@ -218,6 +226,11 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
         if (!canDelete || NamingUtils.isSystem(repoPath.getPath()) ||
                 !authService.hasPermission(ArtifactoryPermission.DEPLOY)) {
             moveAction.setEnabled(false);
+        }
+
+        if (!canDelete || NamingUtils.isSystem(repoPath.getPath()) ||
+                !authService.hasPermission(ArtifactoryPermission.DEPLOY)) {
+            copyAction.setEnabled(false);
         }
 
         boolean canRead = authService.canRead(repoPath);

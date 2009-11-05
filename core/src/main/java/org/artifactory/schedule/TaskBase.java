@@ -87,13 +87,13 @@ public abstract class TaskBase implements Task {
     }
 
     /**
-     * Stops but does not unschedule the task (can transition back to runnning state)
+     * Stops but does not unschedule the task (can transition back to running state)
      *
      * @param wait
      */
     void stop(boolean wait, boolean pause, boolean cancel) {
         if (pause & cancel) {
-            throw new IllegalArgumentException("Please decide wheather you wish to pause or to cancel!");
+            throw new IllegalArgumentException("Please decide whether you wish to pause or to cancel!");
         }
         lockState();
         try {

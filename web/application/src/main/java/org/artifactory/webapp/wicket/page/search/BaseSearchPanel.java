@@ -113,6 +113,8 @@ public abstract class BaseSearchPanel<T extends SearchResult> extends Panel impl
                 if (isLimitSearchResults() && (fullResultCount > maxResults)) {
                     msg.append(getRowCount()).append(" out of ").append(fullResultCount).append(" matches found for '").
                             append(searchExpression).append("'");
+                } else if (searchExpression == null) {
+                    msg.append(getRowCount()).append(" matches found ");
                 } else {
                     msg.append(getRowCount()).append(" matches found for '").append(searchExpression).append("'");
                 }
@@ -148,6 +150,7 @@ public abstract class BaseSearchPanel<T extends SearchResult> extends Panel impl
         TitledAjaxSubmitLink searchButton = new TitledAjaxSubmitLink("submit", "Search", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
+                onSearch();
                 fetchResults(parent);
                 table.setCurrentPage(0);    // scroll back to the first page
                 target.addComponent(table);
@@ -163,6 +166,9 @@ public abstract class BaseSearchPanel<T extends SearchResult> extends Panel impl
         addSearchButton(form, searchButton);
 
         form.add(new DefaultButtonBehavior(searchButton));
+    }
+
+    protected void onSearch() {
     }
 
     protected void addSearchButton(Form form, TitledAjaxSubmitLink searchButton) {

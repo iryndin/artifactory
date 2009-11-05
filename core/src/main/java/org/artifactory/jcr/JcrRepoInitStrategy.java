@@ -35,6 +35,7 @@ import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.jcr.jackrabbit.query.LenientOnWorkspaceInconsistency;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.util.LoggingUtils;
 import org.artifactory.version.CompoundVersionDetails;
@@ -89,6 +90,9 @@ public class JcrRepoInitStrategy {
                     log.warn("Fix consistency requested on a persistence manager that does not support this feature.");
                 }
             }
+            //register our own workspace inconsistency handler
+            LenientOnWorkspaceInconsistency.init();
+            //Create the repository
             repository = RepositoryImpl.create(repoConfig);
         } catch (Exception e) {
             throw new RuntimeException("Failed to config jcr repo.", e);

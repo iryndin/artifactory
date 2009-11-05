@@ -137,9 +137,9 @@ public abstract class BasicImportPanel extends TitledPanel {
                     String logs = "Please review the <a href=\"" + systemLogsPage +
                             "\">log</a> for further information.";
                     if (!errors.isEmpty()) {
-                        error(errors.size() + " Errors were produced during the import. " + logs);
+                        error(errors.size() + " error(s) reported during the import. " + logs);
                     } else if (!warnings.isEmpty()) {
-                        warn(warnings.size() + " Warnings were produced during the import. " + logs);
+                        warn(warnings.size() + " warning(s) reported during the import. " + logs);
                     } else {
                         info("Successfully imported '" + importFromPath + "' into '" + targetRepoKey + "'.");
                     }
@@ -150,6 +150,7 @@ public abstract class BasicImportPanel extends TitledPanel {
                     if (!importSettings.isIndexMarkedArchives()) {
                         searchService.indexMarkedArchives();
                     }
+                    cleanupResources();
                 }
                 AjaxUtils.refreshFeedback(target);
                 target.addComponent(form);
@@ -172,4 +173,6 @@ public abstract class BasicImportPanel extends TitledPanel {
     }
 
     protected abstract void onBeforeImport();
+
+    protected abstract void cleanupResources();
 }

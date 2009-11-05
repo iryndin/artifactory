@@ -63,6 +63,13 @@
             <outputDirectory>etc</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/../config/src/main/resources/META-INF/jcr</directory>
+            <outputDirectory>etc/repo/derby</outputDirectory>
+            <includes>
+                <include>repo.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/src/main/install/lib</directory>
             <outputDirectory>lib</outputDirectory>
         </fileSet>

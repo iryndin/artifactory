@@ -30,6 +30,10 @@ public class NullResourceStreamHandle implements ResourceStreamHandle {
         return null;
     }
 
+    public long getSize() {
+        return -1;
+    }
+
     public void close() {
     }
 }

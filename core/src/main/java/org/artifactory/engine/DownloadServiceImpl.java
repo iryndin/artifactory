@@ -32,7 +32,7 @@ import org.artifactory.repo.Repo;
 import org.artifactory.repo.context.DownloadRequestContext;
 import org.artifactory.repo.context.RequestContext;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.request.RemoteRequestExecption;
+import org.artifactory.request.RemoteRequestException;
 import org.artifactory.request.RequestResponseHelper;
 import org.artifactory.resource.RepoResource;
 import org.artifactory.resource.UnfoundRepoResource;
@@ -170,7 +170,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
             } else if (request.isNewerThanResource(resource.getLastModified())) {
                 requestResponseHelper.sendNotModifiedResponse(response, resource);
             } else {
-                // get the actual repository the resource is in
+                //Get the actual repository the resource is in
                 String repoKey = resource.getResponseRepoPath().getRepoKey();
                 Repo repository = repositoryService.repositoryByKey(repoKey);
                 if (request.isChecksum()) {
@@ -180,13 +180,14 @@ public class DownloadServiceImpl implements InternalDownloadService {
                     ResourceStreamHandle handle;
                     try {
                         handle = repositoryService.getResourceStreamHandle(repository, resource);
+                        //Streaming the file is done outside a tx, so there is a chance that the content will change!
                         requestResponseHelper.sendBodyResponse(response, resource, handle);
                     } catch (RepoAccessException rae) {
                         String msg = "Rejected artifact download request: " + rae.getMessage();
                         response.sendError(HttpStatus.SC_FORBIDDEN, msg, log);
                     } catch (ChecksumPolicyException cpe) {
                         response.sendError(HttpStatus.SC_CONFLICT, cpe.getMessage(), log);
-                    } catch (RemoteRequestExecption rre) {
+                    } catch (RemoteRequestException rre) {
                         response.sendError(rre.getRemoteReturnCode(), rre.getMessage(), log);
                     }
                 }

@@ -22,6 +22,5 @@ import org.artifactory.api.repo.Lock;
 import java.io.IOException;
 
 public interface UploadService {
-    @Lock(transactional = true)
     void process(ArtifactoryRequest request, ArtifactoryResponse response) throws IOException;
 }

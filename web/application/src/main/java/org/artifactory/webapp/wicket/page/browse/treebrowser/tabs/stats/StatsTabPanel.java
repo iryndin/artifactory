@@ -40,7 +40,7 @@ public class StatsTabPanel extends Panel {
         add(downloadedLabel);
         LabeledValue lastDownloaded = new LabeledValue("lastDownloaded", "Last Downloaded: ");
         add(lastDownloaded);
-        LabeledValue lastDownloadedBy = new LabeledValue("lastDownloadedBy", "Last Downloaded By: ");
+        LabeledValue lastDownloadedBy = new LabeledValue("lastDownloadedBy", "Last Downloaded by: ");
         add(lastDownloadedBy);
         StatsInfo statsInfo = item.getXmlMetadata(StatsInfo.class);
         downloadedLabel.setValue(Long.toString(statsInfo.getDownloadCount()));

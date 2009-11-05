@@ -57,15 +57,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -161,11 +153,15 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
         try {
             updateInfoFromNode(node);
         } catch (Exception e) {
-            Throwable notFound = ExceptionUtils.getCauseOfTypes(
-                    e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(e,
+                    DataStoreRecordNotFoundException.class, PathNotFoundException.class, FileNotFoundException.class);
             if (notFound != null) {
-                log.warn("Jcr item node {} does not have additional info binary content! Deleting entry.", getPath());
-                cleanupOrphanes();
+                log.warn("Jcr item node '{}' does not have additional info binary content ({})!", getPath(),
+                        e.getMessage());
+                if (ConstantValues.jcrAutoRemoveMissingBinaries.getBoolean()) {
+                    log.warn("Auto-deleting item {}.", getPath());
+                    bruteForceDelete(true);
+                }
             } else {
                 throw new RepositoryRuntimeException("Saving node " + getPath() + " info failed.", e);
             }
@@ -322,35 +318,49 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
     public boolean delete() {
         checkMutable("delete");
         setDeleted(true);
-        boolean result = getJcrService().delete(this);
-        return result;
+        return getJcrRepoService().delete(this);
     }
 
     /**
-     * Deletes the item with bruteforce, only if the jcrFixConsistency flag is true
+     * Deletes the item with brute force, only if the jcrFixConsistency flag is true
      */
-    public void cleanupOrphanes() {
+    public void cleanupOrphans() {
         if (ConstantValues.jcrFixConsistency.getBoolean()) {
             bruteForceDelete();
         } else {
-            log.warn("Node '{}' is in an inconsistent state.\n" +
-                    "Please restart Artifactory with artifactory.jcr.fixConsistency=true in artifactory.system.properties",
+            log.warn("Node '{}' is in an inconsistent state.\nPlease restart Artifactory with " +
+                    ConstantValues.jcrFixConsistency.getPropertyName() + "=true in artifactory.system.properties",
                     getPath());
         }
     }
 
     public void bruteForceDelete() {
-        LockingHelper.removeLockEntry(getRepoPath());
-        setDeleted(true);
-        updateCache();
+        bruteForceDelete(false);
+    }
+
+    public void bruteForceDelete(boolean nonTxNodeRemoval) {
+        JcrSession session = null;
         try {
-            Node node = getNode();
+            if (nonTxNodeRemoval) {
+                session = InternalContextHelper.get().getJcrService().getUnmanagedSession();
+            } else {
+                session = getSession();
+            }
+            Node node = getNode(session);
             if (node != null) {
                 node.remove();
+                session.save();
             }
         } catch (Exception e) {
             log.warn("Could not brute force delete node: {}", e.getMessage());
             log.debug("Could not brute force delete node", e);
+        } finally {
+            if (nonTxNodeRemoval && session != null) {
+                session.logout();
+            }
+            setDeleted(true);
+            updateCache();
+            LockingHelper.removeLockEntry(getRepoPath());
         }
     }
 
@@ -628,7 +638,7 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
     }
 
     protected JcrSession getSession() {
-        return getJcrService().getManagedSession();
+        return getJcrRepoService().getManagedSession();
     }
 
     protected MetadataService getMdService() {
@@ -638,7 +648,7 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
         return mdService;
     }
 
-    protected JcrRepoService getJcrService() {
+    protected JcrRepoService getJcrRepoService() {
         if (jcrService == null) {
             jcrService = InternalContextHelper.get().getJcrRepoService();
         }
@@ -657,19 +667,29 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
     }
 
     protected void createMetadataContainer() {
-        getJcrService().getOrCreateUnstructuredNode(getNode(), JcrService.NODE_ARTIFACTORY_METADATA);
+        getJcrRepoService().getOrCreateUnstructuredNode(getNode(), JcrService.NODE_ARTIFACTORY_METADATA);
     }
 
     public Node getMetadataContainer() {
         try {
-            return getNode().getNode(JcrService.NODE_ARTIFACTORY_METADATA);
+            Node node = getNode();
+            return node.getNode(JcrService.NODE_ARTIFACTORY_METADATA);
         } catch (RepositoryException e) {
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(e,
+                    DataStoreRecordNotFoundException.class, PathNotFoundException.class, FileNotFoundException.class);
+            if (notFound != null) {
+                log.warn("Jcr item node {} does not exist and is not a valid metadata container!", getPath());
+                if (ConstantValues.jcrAutoRemoveMissingBinaries.getBoolean()) {
+                    log.warn("Auto-deleting item {}.", getPath());
+                    bruteForceDelete(true);
+                }
+            }
             throw new RepositoryRuntimeException("Failed to get metadata container.", e);
         }
     }
 
     /**
-     * Export all metadata as the real xml content (jcr:data, including commennts etc.) into a
+     * Export all metadata as the real xml content (jcr:data, including comments etc.) into a
      * {item-name}.artifactory-metadata folder, where each metadata is named {metadata-name}.xml
      */
     protected void exportMetadata(File targetPath, StatusHolder status, boolean incremental) {

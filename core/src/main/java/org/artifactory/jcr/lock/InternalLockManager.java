@@ -80,16 +80,18 @@ public class InternalLockManager {
         log.debug(message, t);
     }
 
-    void readLock(FsItemLockEntry lockEntry) {
-        // TODO: Check that the lock entry has only immutable and no locked fsItem
-        SessionLockEntry sessionLockEntry = getOrCreateSessionLockEntry(lockEntry);
+    FsItemLockEntry readLock(LockEntryId lockEntryId) {
+        log.trace("Acquiring read lock on {} in lm={}", lockEntryId, this.hashCode());
+        SessionLockEntry sessionLockEntry = getOrCreateSessionLockEntry(lockEntryId);
         sessionLockEntry.acquireReadLock();
+        return sessionLockEntry;
     }
 
-    void writeLock(FsItemLockEntry lockEntry, boolean upgradeLockIfNecessary) {
-        // TODO: Check that the lock entry has a locked fsItem
-        SessionLockEntry sessionLockEntry = getOrCreateSessionLockEntry(lockEntry);
-        sessionLockEntry.acquireWriteLock(upgradeLockIfNecessary);
+    FsItemLockEntry writeLock(LockEntryId lockEntryId) {
+        log.trace("Acquiring write lock on {} in lm={}", lockEntryId, this.hashCode());
+        SessionLockEntry sessionLockEntry = getOrCreateSessionLockEntry(lockEntryId);
+        sessionLockEntry.acquireWriteLock();
+        return sessionLockEntry;
     }
 
     /**
@@ -108,6 +110,7 @@ public class InternalLockManager {
         if (!hasLocks()) {
             return;
         }
+        log.debug("lm={} updating cache.");
         Collection<SessionLockEntry> lockEntries = getLocks().values();
         for (SessionLockEntry lockEntry : lockEntries) {
             lockEntry.updateCache();
@@ -119,6 +122,7 @@ public class InternalLockManager {
             log.warn("Removing lock entry " + repoPath + " but no locks present!");
             return false;
         }
+        log.trace("Removing lock entry {} for lm={}", repoPath, this.hashCode());
         SessionLockEntry lockEntry = getLocks().remove(repoPath);
         if (lockEntry == null) {
             log.debug("Removing lock entry " + repoPath + " but not locked by me!");
@@ -146,13 +150,7 @@ public class InternalLockManager {
     JcrFsItem getIfLockedByMe(RepoPath repoPath) {
         SessionLockEntry lockEntry = getSessionLockEntry(repoPath);
         if (lockEntry != null && lockEntry.isLockedByMe()) {
-            JcrFsItem fsItem = lockEntry.getLockedFsItem();
-            if (fsItem == null) {
-                throw new IllegalStateException(
-                        "Session conatins a lock entry which is write locked but has no mutable fsitem! For " +
-                                repoPath);
-            }
-            return fsItem;
+            return lockEntry.getLockedFsItem();
         }
         return null;
     }
@@ -161,16 +159,15 @@ public class InternalLockManager {
         return locks;
     }
 
-    private SessionLockEntry getOrCreateSessionLockEntry(FsItemLockEntry lockEntry) {
-        RepoPath repoPath = lockEntry.getRepoPath();
+    private SessionLockEntry getOrCreateSessionLockEntry(LockEntryId lockEntryId) {
+        RepoPath repoPath = lockEntryId.getRepoPath();
         SessionLockEntry sessionLockEntry = getSessionLockEntry(repoPath);
         if (sessionLockEntry == null) {
-            sessionLockEntry = new SessionLockEntry(lockEntry);
-            log.trace("Creating new SLE for {}", lockEntry.getRepoPath());
+            sessionLockEntry = new SessionLockEntry(lockEntryId);
+            log.trace("Creating new SLE for {} in lm={}", repoPath, this.hashCode());
             getLocks().put(repoPath, sessionLockEntry);
         } else {
-            log.trace("Reusing existing SLE for {}", lockEntry.getRepoPath());
-            sessionLockEntry.setFsItem(lockEntry);
+            log.trace("Reusing existing SLE for {} in lm={}", repoPath, this.hashCode());
         }
         return sessionLockEntry;
     }
@@ -183,7 +180,10 @@ public class InternalLockManager {
     }
 
     private void releaseAllLocks() {
+        log.trace("Release all locks of lm={}", this.hashCode());
         try {
+
+
             if (!hasLocks()) {
                 return;
             }

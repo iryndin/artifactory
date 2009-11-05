@@ -54,11 +54,11 @@ public class ArtifactoryVersionReader {
 
         ArtifactoryVersion matchedVersion = null;
 
-        // If current version or development version ${project.version}
+        // If current version or development version=${project.version.prop} or revision=${buildNumber}
         if (ArtifactoryVersion.getCurrent().getValue().equals(versionString) ||
-                "${project.version}".equals(versionString) ||
+                versionString.startsWith("${") ||
                 versionString.endsWith("-SNAPSHOT") ||
-                "${buildNumber}".equals(revisionString)) {
+                revisionString.startsWith("${")) {
             // Just return the current version
             matchedVersion = ArtifactoryVersion.getCurrent();
         }

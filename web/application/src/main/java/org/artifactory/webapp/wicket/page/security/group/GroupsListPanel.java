@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -29,9 +30,11 @@ import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.CreateUpdateAction;
+import org.artifactory.common.wicket.component.modal.links.ModalShowLink;
 import org.artifactory.common.wicket.component.modal.panel.BaseModalPanel;
 import org.artifactory.common.wicket.component.panel.list.ModalListPanel;
 import org.artifactory.common.wicket.component.table.columns.BooleanColumn;
+import org.artifactory.webapp.wicket.page.security.group.permission.GroupPermissionsPanel;
 
 import java.util.List;
 
@@ -103,4 +106,21 @@ public class GroupsListPanel extends ModalListPanel<GroupInfo> {
         userGroupService.deleteGroup(group.getGroupName());
     }
 
+    protected BaseModalPanel newViewUserPermissionsPanel(GroupInfo groupInfo) {
+        return new GroupPermissionsPanel(groupInfo);
+    }
+
+    @Override
+    protected void addLinks(List<AbstractLink> links, final GroupInfo groupInfo, String linkId) {
+        super.addLinks(links, groupInfo, linkId);
+        ModalShowLink viewPermissionsLink = new ModalShowLink(linkId, "Permissions") {
+            @Override
+            protected BaseModalPanel getModelPanel() {
+                return newViewUserPermissionsPanel(groupInfo);
+            }
+        };
+        viewPermissionsLink.add(new CssClass("icon-link"));
+        viewPermissionsLink.add(new CssClass("ViewUserPermissionsAction"));
+        links.add(viewPermissionsLink);
+    }
 }

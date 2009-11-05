@@ -48,7 +48,13 @@ public abstract class ArtifactoryResponseBase implements ArtifactoryResponse {
             if (bytesCopied == 0) {
                 log.warn("Zero bytes sent to client.");
             } else {
-                log.debug("{} bytes sent to client.", bytesCopied);
+                int expectedLength = getContentLength();
+                if (expectedLength > 0 && bytesCopied != expectedLength) {
+                    log.warn("Actual bytes sent to client ({}) are different than expected ({}).", bytesCopied,
+                            expectedLength);
+                } else {
+                    log.debug("{} bytes sent to client.", bytesCopied);
+                }
             }
             sendOk();
         } catch (Exception e) {

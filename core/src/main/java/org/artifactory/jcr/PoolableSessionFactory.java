@@ -59,7 +59,7 @@ public class PoolableSessionFactory extends BasePoolableObjectFactory {
     public void destroyObject(Object obj) throws Exception {
         JcrSession session = (JcrSession) obj;
         validateSessionCleaness(session);
-        //Extremely important to call this so that all sesion-scoped node locks are cleaned!
+        //Extremely important to call this so that all session-scoped node locks are cleaned!
         session.getSession().logout();
     }
 

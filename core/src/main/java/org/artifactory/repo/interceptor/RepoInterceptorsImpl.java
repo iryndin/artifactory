@@ -46,4 +46,16 @@ public class RepoInterceptorsImpl extends Interceptors<RepoInterceptor> implemen
             repoInterceptor.onDelete(fsItem, statusHolder);
         }
     }
+
+    public void onMove(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+        for (RepoInterceptor repoInterceptor : this) {
+            repoInterceptor.onMove(sourceItem, targetItem, statusHolder);
+        }
+    }
+
+    public void onCopy(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+        for (RepoInterceptor repoInterceptor : this) {
+            repoInterceptor.onCopy(sourceItem, targetItem, statusHolder);
+        }
+    }
 }

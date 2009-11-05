@@ -99,6 +99,18 @@ public class AceInfo implements Info {
         }
     }
 
+    public boolean canAnnotate() {
+        return (getMask() & ArtifactoryPermission.ANNOTATE.getMask()) > 0;
+    }
+
+    public void setAnnotate(boolean annotate) {
+        if (annotate) {
+            setMask(getMask() | ArtifactoryPermission.ANNOTATE.getMask());
+        } else {
+            setMask(getMask() & ~ArtifactoryPermission.ANNOTATE.getMask());
+        }
+    }
+
     public boolean canRead() {
         return (getMask() & ArtifactoryPermission.READ.getMask()) > 0;
     }

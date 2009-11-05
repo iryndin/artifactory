@@ -19,6 +19,8 @@ package org.artifactory.jcr;
 
 import org.apache.commons.pool.ObjectPool;
 import org.apache.jackrabbit.api.XASession;
+import org.apache.jackrabbit.core.SessionListener;
+import org.apache.jackrabbit.core.XASessionImpl;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.jcr.lock.InternalLockManager;
 import org.artifactory.jcr.lock.SessionLockManager;
@@ -266,7 +268,7 @@ public class JcrSession implements XASession {
     }
 
     public void logout() {
-        //Return ourseleves to the pool
+        //Return ourselves to the pool
         try {
             refresh(false);
             pool.invalidateObject(this);
@@ -298,6 +300,10 @@ public class JcrSession implements XASession {
 
     public XAResource getXAResource() {
         return session.getXAResource();
+    }
+
+    public void addListener(SessionListener listener) {
+        ((XASessionImpl) session).addListener(listener);
     }
 
     @Override

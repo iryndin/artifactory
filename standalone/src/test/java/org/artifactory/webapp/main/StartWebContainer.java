@@ -43,6 +43,7 @@ public class StartWebContainer {
         // set home dir - dev mode only!
         System.setProperty(ArtifactoryHome.SYS_PROP, new File(prefix + "/open/standalone/src").getAbsolutePath());
         System.setProperty(ConstantValues.dev.getPropertyName(), "true");
+
         //Manually set the selector (needed explicitly here before any logger kicks in)
         System.setProperty("logback.ContextSelector", "org.artifactory.log.logback.LogbackContextSelector");
         // create the logger only after artifactory.home is set

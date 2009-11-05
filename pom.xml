@@ -24,7 +24,7 @@
     <groupId>org.artifactory</groupId>
     <artifactId>artifactory-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.0</version>
+    <version>2.1.2</version>
     <name>Artifactory Parent</name>
     <url>http://artifactory.jfrog.org/</url>
 
@@ -48,8 +48,7 @@
     </licenses>
 
     <properties>
-        <artifactory.version>2.1.0</artifactory.version>
-        <addons.version>1.0.0</addons.version>
+        <artifactory.version>2.1.2</artifactory.version>
         <sourceforgeId>175347</sourceforgeId>
         <sourceforgeName>artifactory</sourceforgeName>
         <spring.version>2.5.6</spring.version>
@@ -340,7 +339,7 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-jaxrs</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.1</version>
             </dependency>
 
             <dependency>
@@ -381,7 +380,7 @@
             <dependency>
                 <groupId>com.google.collections</groupId>
                 <artifactId>google-collections</artifactId>
-                <version>1.0-rc2</version>
+                <version>1.0-rc3</version>
             </dependency>
 
             <!-- TODO: Remove Apache collections 4 and use google collections instead -->
@@ -887,8 +886,37 @@
             <dependency>
                 <groupId>org.apache.ivy</groupId>
                 <artifactId>ivy</artifactId>
-                <version>2.1.0-rc2</version>
-                <scope>test</scope>
+                <version>2.1.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ant</groupId>
+                        <artifactId>ant</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-nodeps</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-trax</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-httpclient</groupId>
+                        <artifactId>commons-httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>oro</groupId>
+                        <artifactId>oro</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-vfs</groupId>
+                        <artifactId>commons-vfs</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.jcraft</groupId>
+                        <artifactId>jsch</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

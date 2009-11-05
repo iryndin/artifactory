@@ -35,7 +35,7 @@ public class ArtifactoryPool {
     protected final int maxSize;
     protected final List<ArtifactoryConnectionRecoveryManager> all =
             new CopyOnWriteArrayList<ArtifactoryConnectionRecoveryManager>();
-    protected final ArtifactoryDbDataStoreImpl factory;
+    protected final ArtifactoryBaseDataStore factory;
     protected final BlockingQueue<ArtifactoryConnectionRecoveryManager> pool =
             new LinkedBlockingQueue<ArtifactoryConnectionRecoveryManager>();
     private final long timeout = ConstantValues.lockTimeoutSecs.getLong() / 10L;
@@ -46,7 +46,7 @@ public class ArtifactoryPool {
      * @param factory the db data store
      * @param maxSize the maximum number of objects in the pool.
      */
-    protected ArtifactoryPool(ArtifactoryDbDataStoreImpl factory, int maxSize) {
+    protected ArtifactoryPool(ArtifactoryBaseDataStore factory, int maxSize) {
         this.factory = factory;
         this.maxSize = Math.max(1, maxSize);
     }

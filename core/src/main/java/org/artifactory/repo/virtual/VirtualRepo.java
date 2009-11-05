@@ -421,10 +421,6 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
         storageMixin.onDelete(fsItem);
     }
 
-    public JcrFsItem tryGetLockedJcrFsItem(RepoPath repoPath) {
-        return storageMixin.tryGetLockedJcrFsItem(repoPath);
-    }
-
     public void onCreate(JcrFsItem fsItem) {
         storageMixin.onCreate(fsItem);
     }

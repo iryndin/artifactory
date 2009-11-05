@@ -43,6 +43,7 @@ import org.artifactory.common.wicket.component.links.BaseTitledLink;
 import org.artifactory.common.wicket.component.links.TitledAjaxLink;
 import org.artifactory.common.wicket.component.modal.panel.BaseModalPanel;
 import org.artifactory.common.wicket.contributor.ResourcePackage;
+import org.artifactory.common.wicket.model.DelegetedModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -164,19 +165,6 @@ public class FileBrowserPanel extends BaseModalPanel {
         pathHelper.setRoot(root);
         filesList.setModelObject(pathHelper.getFiles("/", getMask()));
         breadcrumbs.setModelObject(new File(getCurrentFolder()));
-    }
-
-    private class DelegetedModelModel implements IModel {
-        public Object getObject() {
-            return getModelObject();
-        }
-
-        public void setObject(Object object) {
-            setModelObject(object);
-        }
-
-        public void detach() {
-        }
     }
 
     private static class OkButton extends BaseTitledLink {
@@ -335,7 +323,7 @@ public class FileBrowserPanel extends BaseModalPanel {
 
     private class BrowserAutoCompleteTextField extends PathAutoCompleteTextField {
         private BrowserAutoCompleteTextField(String id) {
-            super(id, new DelegetedModelModel(), FileBrowserPanel.this.pathHelper);
+            super(id, new DelegetedModel(FileBrowserPanel.this), FileBrowserPanel.this.pathHelper);
 
             add(new AjaxFormComponentUpdatingBehavior("onselection") {
                 @Override

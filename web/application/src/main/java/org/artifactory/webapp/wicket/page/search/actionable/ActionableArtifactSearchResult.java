@@ -17,6 +17,7 @@
 
 package org.artifactory.webapp.wicket.page.search.actionable;
 
+import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.search.SearchResult;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.actionable.action.DownloadAction;
@@ -60,8 +61,8 @@ public class ActionableArtifactSearchResult<T extends SearchResult> extends Acti
      */
     @Override
     public void filterActions(AuthorizationService authService) {
-        //If the result is not a pom file
-        if (!isPomFile()) {
+        //If the result is not a pom file or xml file
+        if (!isPomFile() && !isXmlFile()) {
             //Disable the view action
             viewAction.setEnabled(false);
         }
@@ -74,5 +75,14 @@ public class ActionableArtifactSearchResult<T extends SearchResult> extends Acti
      */
     private boolean isPomFile() {
         return searchResult.getItemInfo().getName().endsWith(".pom");
+    }
+
+    /**
+     * Check if the current search result is an xml file
+     *
+     * @return boolean - Is result an xml file
+     */
+    private boolean isXmlFile() {
+        return NamingUtils.getContentType(searchResult.getItemInfo().getName()).isXml();
     }
 }

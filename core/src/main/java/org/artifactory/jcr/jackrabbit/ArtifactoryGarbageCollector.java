@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.artifactory.jcr.jackrabbit;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.PropertyImpl;
 import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.data.DataStore;
+import org.apache.jackrabbit.core.data.ScanEventListener;
+import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.apache.jackrabbit.core.persistence.IterablePersistenceManager;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
@@ -28,29 +30,19 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.artifactory.common.ConstantValues;
-import org.artifactory.jcr.gc.GarbageCollectorInfo;
+import org.artifactory.api.storage.GarbageCollectorInfo;
+import org.artifactory.jcr.JcrSession;
 import org.artifactory.jcr.gc.JcrGarbageCollector;
 import org.artifactory.log.LoggerFactory;
 import org.slf4j.Logger;
 
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
+import javax.jcr.*;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.ObservationManager;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -68,64 +60,94 @@ import java.util.Set;
  * gc.stopScan();
  * gc.deleteUnused();
  * </pre>
+ *
+ * @author Yoav Landman
  */
 public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
+    @SuppressWarnings({"UnusedDeclaration"})
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryGarbageCollector.class);
 
-    private final Collection<String> binaryPropertyNames = new HashSet<String>();
+    private ScanEventListener callback;
 
-    private final ArtifactoryDbDataStoreImpl store;
+    private int sleepBetweenNodes;
+
+    private int testDelay;
+
+    private final DataStore store;
+
+    private final List<Listener> listeners = new ArrayList<Listener>();
 
     private final IterablePersistenceManager[] pmList;
 
-    private final Session txSession;
-    private final SessionWrapper[] sessionList;
+    private final Session[] sessionList;
 
-    /**
-     * Node paths with no binary data, used only when fix consistency is active
-     */
-    private final List<String> bereavedNodePaths;
+    //private final SessionListener sessionListener;
+
+    //private final AtomicBoolean closed = new AtomicBoolean(false);
 
     private boolean persistenceManagerScan;
 
     private GarbageCollectorInfo info;
 
+    // TODO It should be possible to stop and restart a garbage collection scan.
+
     /**
      * Create a new garbage collector. This method is usually not called by the application, it is called by
      * SessionImpl.createDataStoreGarbageCollector().
      *
+     * @param session     the session that created this object
      * @param list        the persistence managers
-     * @param sessionList system sessions - one per workspace
+     * @param sessionList the sessions to access the workspaces
      */
-    public ArtifactoryGarbageCollector(Session session, IterablePersistenceManager[] list, Session[] sessionList) {
-        this.txSession = session;
+    public ArtifactoryGarbageCollector(JcrSession session, IterablePersistenceManager[] list, Session[] sessionList) {
         RepositoryImpl rep = (RepositoryImpl) session.getRepository();
-        store = (ArtifactoryDbDataStoreImpl) rep.getDataStore();
+        store = rep.getDataStore();
         this.pmList = list;
         this.persistenceManagerScan = list != null;
-        this.sessionList = new SessionWrapper[sessionList.length];
-        for (int i = 0; i < sessionList.length; i++) {
-            this.sessionList[i] = new SessionWrapper(sessionList[i]);
-        }
+        this.sessionList = sessionList;
+        //TODO: [by yl] Clean up and update the info
         this.info = new GarbageCollectorInfo();
-        info.nbBereavedNodes = 0;
-        info.startScanTimestamp = 0;
-        info.stopScanTimestamp = 0;
-        if (ConstantValues.jcrFixConsistency.getBoolean()) {
-            this.bereavedNodePaths = new ArrayList<String>();
-        } else {
-            this.bereavedNodePaths = null;
-        }
+
+        //No need to cleanup since sessions are coming from the pool
+        /*// Auto-close if the main session logs out
+        this.sessionListener = new SessionListener() {
+            public void loggedOut(SessionImpl session) {
+            }
+
+            public void loggingOut(SessionImpl session) {
+                close();
+            }
+        };
+        session.addListener(sessionListener);*/
     }
 
     /**
-     * Add all the property names that can have a BINARY type. ATTENTION: When using this if a property with binary type
-     * is not listed, the garbage collector will delete the data.
+     * Set the delay between scanning items. The main scan loop sleeps this many milliseconds after scanning a node. The
+     * default is 0, meaning the scan should run at full speed.
      *
-     * @param propNames array of property names
+     * @param sleepBetweenNodes the number of milliseconds to sleep
      */
-    public void addBinaryPropertyNames(String[] propNames) {
-        Collections.addAll(binaryPropertyNames, propNames);
+    public void setSleepBetweenNodes(int millis) {
+        this.sleepBetweenNodes = millis;
+    }
+
+    /**
+     * When testing the garbage collection, a delay is used instead of simulating concurrent access.
+     *
+     * @param testDelay the delay in milliseconds
+     */
+    public void setTestDelay(int testDelay) {
+        this.testDelay = testDelay;
+    }
+
+    /**
+     * Set the event listener. If set, the event listener will be called for each item that is scanned. This mechanism
+     * can be used to display the progress.
+     *
+     * @param callback if set, this is called while scanning
+     */
+    public void setScanEventListener(ScanEventListener callback) {
+        this.callback = callback;
     }
 
     /**
@@ -134,7 +156,6 @@ public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
      * will be used; if not, the garbage collector will scan the repository using the JCR API starting from the root
      * node.
      *
-     * @return the total size of referenced binary properties
      * @throws javax.jcr.RepositoryException
      * @throws IllegalStateException
      * @throws java.io.IOException
@@ -144,146 +165,44 @@ public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
     public boolean scan() throws RepositoryException,
             IllegalStateException, IOException, ItemStateException {
         long now = System.currentTimeMillis();
-        // TODO: [by fsi] this test should always be true since the flow should be:
-        // 1. create a new GC object
-        // 2. mark/scan/delete
-        // 3. drop the GC object
+
         if (info.startScanTimestamp == 0) {
             info.startScanTimestamp = now;
-            info.dataStoreQueryTime = store.scanDataStore();
-            info.initialSize = store.getDataStoreSize();
-            info.initialCount = store.getDataStoreNbElements();
+            log.debug("Running garbage collector with startScanTimestamp={}.", now);
+            //Tell the datastore to update the lastModified for any record read (or write) that occurred after the scan
+            store.updateModifiedDateOnAccess(info.startScanTimestamp);
         }
-        if (pmList == null || !persistenceManagerScan) {
-            scanningSessionList();
-        } else {
-            scanPersistenceManagers();
+        try {
+            if (pmList == null || !persistenceManagerScan) {
+                long res = 0;
+                for (Session aSessionList : sessionList) {
+                    res += scanNodes(aSessionList);
+                }
+                info.totalSizeFromBinaryProperties = res;
+            } else {
+                scanPersistenceManagers();
+            }
+        } catch (Exception e) {
+            log.warn("Error during garbage collection scanning: {}.", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Error during garbage collection scanning.", e);
+            }
+            //No unused items cleanup will take place
+            return false;
         }
         return info.totalSizeFromBinaryProperties > 0L;
     }
 
-    private void scanningSessionList() throws RepositoryException, IOException {
-        info.totalBinaryPropertiesQueryTime = 0L;
-        long totalBinaryPropertiesCount = 0L;
-        for (SessionWrapper sessionWrapper : sessionList) {
-            totalBinaryPropertiesCount += sessionWrapper.findBinaryProperties();
-            info.totalBinaryPropertiesQueryTime += sessionWrapper.binaryPropertiesQueryTime;
-        }
-        log.debug("Binary properties query execution time took {} ms and found {} nodes",
-                new Object[]{info.totalBinaryPropertiesQueryTime, totalBinaryPropertiesCount});
-        info.totalSizeFromBinaryProperties = 0L;
-        for (SessionWrapper sessionWrapper : sessionList) {
-            info.totalSizeFromBinaryProperties += sessionWrapper.markActiveJcrDataNodes();
-        }
-        //Remove bereaved nodes
-        if (bereavedNodePaths != null) {
-            cleanBereavedNodes();
-        }
-    }
+    private long scanNodes(Session session)
+            throws RepositoryException, IllegalStateException, IOException {
 
-    private void cleanBereavedNodes() throws RepositoryException {
-        for (String bereaved : bereavedNodePaths) {
-            Item item;
-            try {
-                item = txSession.getItem(bereaved);
-            } catch (Exception e) {
-                log.warn(
-                        "Bereaved path item {} could not be retrieved (container node was probably removed first): {}.",
-                        bereaved, e.getMessage());
-                if (log.isDebugEnabled()) {
-                    log.debug("Bereaved path item {} retrieval error.", bereaved, e);
-                }
-                continue;
-            }
-            log.warn("Removing binary node with no matching datastore data: {}.", item.getPath());
-            if (JcrConstants.JCR_CONTENT.equals(item.getName())) {
-                //If we are a jcr:content (of a file node container), remove the container node
-                Node parent = item.getParent();
-                parent.remove();
-            } else {
-                item.remove();
-            }
-        }
-        if (bereavedNodePaths.size() > 0) {
-            txSession.save();
-        }
-    }
+        // add a listener to get 'new' nodes
+        // actually, new nodes are not the problem, but moved nodes
+        listeners.add(new Listener(session));
 
-    private class SessionWrapper {
-        private final Session session;
-        private long binaryPropertiesQueryTime;
-        private NodeIterator results;
-
-        SessionWrapper(Session session) {
-            this.session = session;
-        }
-
-        long findBinaryProperties() throws RepositoryException, IllegalStateException, IOException {
-            long start = System.currentTimeMillis();
-            Workspace workspace = session.getWorkspace();
-            QueryManager queryManager = workspace.getQueryManager();
-            String queryString = getSqlQuery();
-            Query queryBinaryProperties = queryManager.createQuery(queryString, Query.SQL);
-            QueryResult queryResult = queryBinaryProperties.execute();
-            results = queryResult.getNodes();
-            binaryPropertiesQueryTime = System.currentTimeMillis() - start;
-            long size = results.getSize();
-            log.debug("GC query execution time for {} took {} ms and found {} items",
-                    new Object[]{queryString, binaryPropertiesQueryTime, size});
-            return size;
-        }
-
-        String getXPathQuery() {
-            StringBuilder xpathBuilder = new StringBuilder("/jcr:root//*[");
-            boolean first = true;
-            for (String propertyName : binaryPropertyNames) {
-                if (!first) {
-                    xpathBuilder.append(" or ");
-                }
-                xpathBuilder.append("@").append(propertyName);
-                first = false;
-            }
-            xpathBuilder.append("]");
-            String xpathQuery = xpathBuilder.toString();
-            return xpathQuery;
-        }
-
-        private String getSqlQuery() {
-            StringBuilder sqlBuilder = new StringBuilder("select * from nt:base where ");
-            boolean first = true;
-            for (String propertyName : binaryPropertyNames) {
-                if (!first) {
-                    sqlBuilder.append(" or ");
-                }
-                sqlBuilder.append(propertyName).append(" IS NOT NULL");
-                first = false;
-            }
-            String xpathQuery = sqlBuilder.toString();
-            return xpathQuery;
-        }
-
-        long markActiveJcrDataNodes() throws RepositoryException, IOException {
-            long result = 0L;
-            while (results.hasNext()) {
-                final Node node = results.nextNode();
-                result += binarySize(node);
-            }
-            return result;
-        }
-
-        void debugResults() throws RepositoryException {
-            StringBuilder debugBuilder = new StringBuilder();
-            while (results.hasNext()) {
-                Node node = results.nextNode();
-                debugBuilder.append("Node ").append(node.getUUID()).append(" '").append(node.getPath()).append("'");
-                for (String propertyName : binaryPropertyNames) {
-                    Property p = node.getProperty(propertyName);
-                    debugBuilder.append(" ").append(p.getName()).append("=").append(p.getLength());
-                }
-                debugBuilder.append("\n");
-            }
-            log.debug(debugBuilder.toString());
-        }
+        // adding a link to a BLOB updates the modified date
+        // reading usually doesn't, but when scanning, it does
+        return recurse(session.getRootNode(), sleepBetweenNodes);
     }
 
     /**
@@ -311,6 +230,9 @@ public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
             Iterator it = pm.getAllNodeIds(null, 0);
             while (it.hasNext()) {
                 NodeId id = (NodeId) it.next();
+                if (callback != null) {
+                    callback.beforeScanning(null);
+                }
                 try {
                     NodeState state = pm.load(id);
                     Set propertyNames = state.getPropertyNames();
@@ -329,33 +251,41 @@ public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
                     // the node may have been deleted or moved in the meantime
                     // ignore it
                 }
+                if (callback != null) {
+                    callback.afterScanning(null);
+                }
             }
         }
         info.totalSizeFromBinaryProperties = result;
     }
 
+    /**
+     * The repository was scanned. This method will stop the observation listener.
+     */
     public void stopScan() throws RepositoryException {
         checkScanStarted();
-        // TODO: In parallel GC wait for all queries
-        info.stopScanTimestamp = System.currentTimeMillis();
+        for (Listener listener : listeners) {
+            try {
+                listener.stop();
+            } catch (Exception e) {
+                throw new RepositoryException(e);
+            }
+        }
+        listeners.clear();
     }
 
+    /**
+     * Delete all unused items in the data store.
+     *
+     * @return the number of deleted items
+     */
     public int deleteUnused() throws RepositoryException {
         checkScanStarted();
         checkScanStopped();
-        long start = System.currentTimeMillis();
-
-        //Do the actual clean
-        long[] result = store.cleanUnreferencedItems();
-        info.nbElementsClean = (int) result[0];
-        info.totalSizeCleaned = result[1];
-        if (result[0] > 0L) {
-            info.printCollectionInfo(start, store.getDataStoreSize());
-            return info.nbElementsClean;
-        } else {
-            log.debug("Nothing cleaned by Artifactory Jackrabbit's datastore garbage collector");
-        }
-        return 0;
+        //Will call the datastore that holds a weak refs map of used records, holding both ext file records that will be
+        //deleted if gc'ed and small blob records that are always in use.
+        log.debug("Deleting items older than {}...", new Date(info.startScanTimestamp));
+        return store.deleteAllOlderThan(info.startScanTimestamp);
     }
 
     private void checkScanStarted() throws RepositoryException {
@@ -365,89 +295,188 @@ public class ArtifactoryGarbageCollector implements JcrGarbageCollector {
     }
 
     private void checkScanStopped() throws RepositoryException {
-        if (info.stopScanTimestamp == 0) {
+        if (listeners.size() > 0) {
             throw new RepositoryException("stopScan must be called first");
         }
     }
 
     /**
-     * Read the length of all binary properties on the node. getLength on property never throws the DataStoreException
-     * but -1 instead.
+     * Get the data store if one is used.
      *
-     * @param n
-     * @return
-     * @throws RepositoryException
-     * @throws IllegalStateException
-     * @throws IOException
+     * @return the data store, or null
      */
-    private long binarySize(final Node n) throws RepositoryException {
-        long result = 0;
-        for (String propertyName : binaryPropertyNames) {
-            try {
-                String nodePath = n.getPath();
-                if (n.hasProperty(propertyName)) {
-                    Property p = n.getProperty(propertyName);
-                    if (p.getType() == PropertyType.BINARY) {
-                        if (p.getDefinition().isMultiple()) {
-                            long[] lengths = p.getLengths();
-                            for (long length : lengths) {
-                                result += length;
-                            }
-                        } else {
-                            long length;
-                            length = p.getLength();
-                            if (length < 0) {
-                                info.nbBereavedNodes++;
-                                String msg = "Could not read binary property " + propertyName + " on '" + nodePath +
-                                        "' due to previous error!";
-                                log.warn(msg);
-                                if (bereavedNodePaths != null) {
-                                    //The datastore record of the binary data has not been found - schedule node for cleanup
-                                    bereavedNodePaths.add(nodePath);
-                                    log.warn("Cannot determine the length of property {}. Node {} will be discarded.",
-                                            propertyName, nodePath);
-                                    break;
-                                }
-                            } else {
-                                result += length;
-                            }
-                        }
-                    } else {
-                        log.error("Declared binary property name " + propertyName +
-                                " is not a binary property for node " + nodePath);
-                    }
-                }
-            } catch (InvalidItemStateException e) {
-                // The node was already deleted, ignore
-            } catch (RepositoryException e) {
-                log.warn("Repository access error during read of garbage collection", e);
-                throw e;
-            }
-        }
-        return result;
-    }
-
-    public ArtifactoryDbDataStoreImpl getDataStore() {
+    public DataStore getDataStore() {
         return store;
     }
 
     public GarbageCollectorInfo getInfo() {
-        return info;
+        return new GarbageCollectorInfo();
     }
 
-    public long getInitialSize() {
-        return info.initialSize;
+    private long recurse(final Node n, int sleep) throws RepositoryException,
+            IllegalStateException, IOException {
+        long result = 0L;
+        if (callback != null) {
+            callback.beforeScanning(n);
+        }
+        log.debug("Scanning '{}'...", n.getPath());
+        for (PropertyIterator it = n.getProperties(); it.hasNext();) {
+            Property p = it.nextProperty();
+            if (p.getType() == PropertyType.BINARY) {
+                if (n.hasProperty("jcr:uuid")) {
+                    rememberNode(n.getProperty("jcr:uuid").getString());
+                } else {
+                    rememberNode(n.getPath());
+                }
+                if (p.getDefinition().isMultiple()) {
+                    long[] lengths = p.getLengths();
+                    for (long len : lengths) {
+                        if (len > 0) {
+                            logUsedProperty(p, len);
+                            result += len;
+                        }
+                    }
+                } else {
+                    long len = p.getLength();
+                    if (len > 0) {
+                        logUsedProperty(p, len);
+                        result += len;
+                    }
+                }
+            }
+        }
+        if (callback != null) {
+            callback.afterScanning(n);
+        }
+        //Sleep before recursing to children (instead of between each node)
+        sleep(sleep);
+        for (NodeIterator it = n.getNodes(); it.hasNext();) {
+            result += recurse(it.nextNode(), sleep);
+        }
+        return result;
     }
 
-    public long getStartScanTimestamp() {
-        return info.startScanTimestamp;
+    private void sleep(int sleep) {
+        if (sleep > 0) {
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
     }
 
-    public long getStopScanTimestamp() {
-        return info.stopScanTimestamp;
+    private void logUsedProperty(Property p, long len) {
+        log.debug("Touched used property '{}' with size: {}.", ((PropertyImpl) p).safeGetJCRPath(), len);
     }
 
-    public long getTotalSizeFromBinaryProperties() {
-        return info.totalSizeFromBinaryProperties;
+    private void rememberNode(String path) {
+        // Do nothing at the moment
+        // TODO It may be possible to delete some items early
+        /*
+         * To delete files early in the garbage collection scan, we could do
+         * this:
+         *
+         * A) If garbage collection was run before, see if there a file with the
+         * list of UUIDs ('uuids.txt').
+         *
+         * B) If yes, and if the checksum is ok, read all those nodes first (if
+         * not so many). This updates the modified date of all old files that
+         * are still in use. Afterwards, delete all files with an older modified
+         * date than the last scan! Newer files, and files that are read have a
+         * newer modification date.
+         *
+         * C) Delete the 'uuids.txt' file (in any case).
+         *
+         * D) Iterate (recurse) through all nodes and properties like now. If a
+         * node has a binary property, store the UUID of the node in the file
+         * ('uuids.txt'). Also store the time when the scan started.
+         *
+         * E) Checksum and close the file.
+         *
+         * F) Like now, delete files with an older modification date than this
+         * scan.
+         *
+         * We can't use node path for this, UUIDs are required as nodes could be
+         * moved around.
+         *
+         * This mechanism requires that all data stores update the last modified
+         * date when calling addRecord and that record already exists.
+         *
+         */
     }
+
+    /**
+     * Cleanup resources used internally by this instance.
+     */
+    /*public void close() {
+        if (!closed.getAndSet(true)) {
+            for (int i = 0; i < sessionList.length; i++) {
+                sessionList[i].logout();
+            }
+        }
+    }*/
+
+    /**
+     * Auto-close in case the application didn't call it explicitly.
+     */
+    /*protected void finalize() throws Throwable {
+        close();
+        super.finalize();
+    }*/
+
+    /**
+     * Event listener to detect moved nodes. A SynchronousEventListener is used to make sure this method is called
+     * before the main iteration ends.
+     */
+    class Listener implements SynchronousEventListener {
+
+        private final Session session;
+
+        private final ObservationManager manager;
+
+        private Exception lastException;
+
+        Listener(Session session) throws RepositoryException {
+            this.session = session;
+            Workspace ws = session.getWorkspace();
+            manager = ws.getObservationManager();
+            manager.addEventListener(this, Event.NODE_ADDED, "/", true, null, null, false);
+        }
+
+        void stop() throws Exception {
+            if (lastException != null) {
+                throw lastException;
+            }
+            manager.removeEventListener(this);
+        }
+
+        public void onEvent(EventIterator events) {
+            if (testDelay > 0) {
+                try {
+                    Thread.sleep(testDelay);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            while (events.hasNext()) {
+                Event event = events.nextEvent();
+                try {
+                    String path = event.getPath();
+                    try {
+                        Item item = session.getItem(path);
+                        if (item.isNode()) {
+                            Node n = (Node) item;
+                            recurse(n, testDelay);
+                        }
+                    } catch (PathNotFoundException e) {
+                        // ignore
+                    }
+                } catch (Exception e) {
+                    lastException = e;
+                }
+            }
+        }
+    }
+
 }

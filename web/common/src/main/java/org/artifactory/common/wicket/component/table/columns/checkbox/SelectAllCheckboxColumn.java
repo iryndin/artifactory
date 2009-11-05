@@ -52,9 +52,11 @@ public class SelectAllCheckboxColumn<T> extends AjaxCheckboxColumn<T> {
         selectAllCheckbox.add(new SimpleAttributeModifier("title", "Select All"));
         selectAllCheckbox.setOutputMarkupId(true);
         selectAllCheckbox.add(new AjaxFormComponentUpdatingBehavior("onclick") {
+            @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 SortableTable table = (SortableTable) selectAllCheckbox.findParent(DataTable.class);
                 selectAll(table, target);
+                onSelectAllUpdate(target);
             }
         });
         panel.add(selectAllCheckbox);
@@ -88,6 +90,14 @@ public class SelectAllCheckboxColumn<T> extends AjaxCheckboxColumn<T> {
             T rowObject = iterator.next();
             onUpdate(rowObject, isSelectAll(), target);
         }
+    }
+
+    /**
+     * Called after the select all checkbox was updated
+     *
+     * @param target Request target
+     */
+    protected void onSelectAllUpdate(AjaxRequestTarget target) {
     }
 
     public IModel getSelectAllModel() {

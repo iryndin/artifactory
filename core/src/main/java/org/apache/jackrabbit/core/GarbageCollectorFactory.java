@@ -19,7 +19,6 @@ package org.apache.jackrabbit.core;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.data.DataStore;
-import org.apache.jackrabbit.core.data.GarbageCollector;
 import org.apache.jackrabbit.core.data.db.DbDataStore;
 import org.apache.jackrabbit.core.persistence.IterablePersistenceManager;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
@@ -28,9 +27,9 @@ import org.apache.jackrabbit.core.version.VersionManagerImpl;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.jcr.JcrSession;
 import org.artifactory.jcr.gc.JcrGarbageCollector;
-import org.artifactory.jcr.jackrabbit.ArtifactoryDbDataStoreImpl;
+import org.artifactory.jcr.jackrabbit.ArtifactoryBaseDataStore;
+import org.artifactory.jcr.jackrabbit.ArtifactoryDbGarbageCollector;
 import org.artifactory.jcr.jackrabbit.ArtifactoryGarbageCollector;
-import org.artifactory.jcr.jackrabbit.JackrabbitGarbageCollector;
 import org.artifactory.log.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -41,6 +40,7 @@ import java.util.List;
 
 /**
  * @author freds
+ * @author yoavl
  * @date Mar 12, 2009
  */
 public class GarbageCollectorFactory {
@@ -87,16 +87,14 @@ public class GarbageCollectorFactory {
             ipmList[i] = (IterablePersistenceManager) pm;
         }
         JcrGarbageCollector gc = null;
-        if (store instanceof ArtifactoryDbDataStoreImpl) {
-            gc = new ArtifactoryGarbageCollector(session, ipmList, sysSessions);
-            ((ArtifactoryGarbageCollector) gc).addBinaryPropertyNames(new String[]{JcrConstants.JCR_DATA});
+        if (store instanceof ArtifactoryBaseDataStore) {
+            gc = new ArtifactoryDbGarbageCollector(session, ipmList, sysSessions);
+            ((ArtifactoryDbGarbageCollector) gc).addBinaryPropertyNames(new String[]{JcrConstants.JCR_DATA});
         } else if (!(store instanceof DbDataStore)) {
-            // DbDataStore of Jackrabbit is messing the DB concurrency
-            SessionImpl internalSession = (SessionImpl) session.getSession();
-            gc = new JackrabbitGarbageCollector(new GarbageCollector(internalSession, ipmList, sysSessions));
-            ((JackrabbitGarbageCollector) gc).setSleepBetweenNodes(ConstantValues.gcSleepBetweenNodesMillis.getInt());
+            gc = new ArtifactoryGarbageCollector(session, ipmList, sysSessions);
+            ((ArtifactoryGarbageCollector) gc).setSleepBetweenNodes(ConstantValues.gcSleepBetweenNodesMillis.getInt());
         } else {
-            log.info("Store " + store.getClass().getName() + " does not support Garbage collection");
+            log.info("Store " + store.getClass().getName() + " does not support garbage collection");
         }
         return gc;
     }

@@ -48,7 +48,7 @@ import org.artifactory.io.NullResourceStreamHandle;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.context.NullRequestContext;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.request.RemoteRequestExecption;
+import org.artifactory.request.RemoteRequestException;
 import org.artifactory.resource.FileResource;
 import org.artifactory.resource.MetadataResource;
 import org.artifactory.resource.RepoResource;
@@ -150,14 +150,14 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         //Not found
         int statusCode = method.getStatusCode();
         if (statusCode == HttpStatus.SC_NOT_FOUND) {
-            throw new RemoteRequestExecption("Unable to find " + fullUrl, statusCode);
+            throw new RemoteRequestException("Unable to find " + fullUrl, statusCode);
         }
         if (statusCode != HttpStatus.SC_OK) {
             String msg = "Error fetching " + fullUrl;
             if (log.isDebugEnabled()) {
                 log.debug(this + ": " + msg + " status " + statusCode);
             }
-            throw new RemoteRequestExecption(msg, statusCode);
+            throw new RemoteRequestException(msg, statusCode);
         }
         //Found
         if (log.isInfoEnabled()) {
@@ -168,6 +168,10 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         ResourceStreamHandle handle = new ResourceStreamHandle() {
             public InputStream getInputStream() {
                 return is;
+            }
+
+            public long getSize() {
+                return -1;
             }
 
             public void close() {
@@ -267,7 +271,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         HttpClientUtils.configureProxy(client, proxy);
         //Set authentication
         String username = getUsername();
-        if (username != null) {
+        if (StringUtils.isNotBlank(username)) {
             clientParams.setAuthenticationPreemptive(true);
             Credentials creds = new UsernamePasswordCredentials(username, getPassword());
             AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT, AuthScope.ANY_REALM);

@@ -29,7 +29,19 @@ public abstract class AccessLogger {
     private static final Logger log = LoggerFactory.getLogger(AccessLogger.class);
 
     public enum Action {
-        DOWNLOAD, DEPLOY, DELETE, SEARCH, LOGIN
+        ANNOTATE, DOWNLOAD, DEPLOY, DELETE, SEARCH, LOGIN, CONFIGURATION_CHANGE
+    }
+
+    public static void anotated(RepoPath repoPath) {
+        annotated(repoPath, false, AuthenticationHelper.getAuthentication());
+    }
+
+    public static void annotateDenied(RepoPath repoPath) {
+        annotated(repoPath, true, AuthenticationHelper.getAuthentication());
+    }
+
+    public static void annotated(RepoPath repoPath, boolean denied, Authentication authentication) {
+        logAction(repoPath, Action.ANNOTATE, denied, authentication);
     }
 
     public static void downloaded(RepoPath repoPath) {
@@ -78,6 +90,10 @@ public abstract class AccessLogger {
 
     public static void loginDenied(Authentication authentication) {
         logAction(null, Action.LOGIN, true, authentication);
+    }
+
+    public static void configurationChanged() {
+        logAction(null, Action.CONFIGURATION_CHANGE, false, AuthenticationHelper.getAuthentication());
     }
 
     public static void logAction(

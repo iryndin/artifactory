@@ -18,6 +18,7 @@
 package org.artifactory.api.repo;
 
 import org.artifactory.api.common.MoveMultiStatusHolder;
+import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
@@ -40,6 +41,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -95,6 +97,8 @@ public interface RepositoryService extends ImportableExportable {
      * @param repoKey The key for a cache can either be the remote repository one or the cache one(ends with "-cache")
      */
     LocalRepoDescriptor localOrCachedRepoDescriptorByKey(String repoKey);
+
+    LocalRepoDescriptor localRepoDescriptorByKey(String key);
 
     RemoteRepoDescriptor remoteRepoDescriptorByKey(String repoKey);
 
@@ -218,12 +222,43 @@ public interface RepositoryService extends ImportableExportable {
      * Maven metadata will be recalculated for both the source and target folders after all items has been moved. If a
      * path already belongs to the target repository it will be skipped.
      *
-     * @param pathsToMove Paths to move, each pointing to file of folder.
-     * @param dryRun      If true the method will just report the expected result but will not move any file
+     * @param pathsToMove   Paths to move, each pointing to file or folder.
+     * @param targetRepoKey Key of the target local non-cached repository to move the path to.
+     * @param dryRun        If true the method will just report the expected result but will not move any file
      * @return MoveMultiStatusHolder holding the errors and warnings
      */
     @Lock(transactional = true)
     MoveMultiStatusHolder move(Set<RepoPath> pathsToMove, String targetRepoKey, boolean dryRun);
+
+    /**
+     * Copies repository path (pointing to a folder) to another local repository. The copy will only move paths the user
+     * has permissions to move and paths that are accepted by the target repository. Maven metadata will be recalculated
+     * for both the source and target folders.
+     *
+     * @param fromRepoPath       Repository path to copy. This path must represent a folder in a local repository.
+     * @param targetLocalRepoKey Key of the target local non-cached repository to copy the path to.
+     * @param dryRun             If true the method will just report the expected result but will not copy any file
+     * @return MoveMultiStatusHolder holding the errors and warnings
+     */
+    @Lock(transactional = true)
+    MoveMultiStatusHolder copy(RepoPath fromRepoPath, String targetLocalRepoKey, boolean dryRun);
+
+    /**
+     * Copies a set of paths to another local repository.
+     * <p/>
+     * This method will only copy paths the user has permissions to move and paths that are accepted by the target
+     * repository.
+     * <p/>
+     * Maven metadata will be recalculated for both the source and target folders after all items has been copied. If a
+     * path already belongs to the target repository it will be skipped.
+     *
+     * @param pathsToCopy        Paths to copy, each pointing to file or folder.
+     * @param targetLocalRepoKey Key of the target local non-cached repository to move the path to.
+     * @param dryRun             If true the method will just report the expected result but will not copy any file
+     * @return MoveMultiStatusHolder holding the errors and warnings
+     */
+    @Lock(transactional = true)
+    MoveMultiStatusHolder copy(Set<RepoPath> pathsToCopy, String targetLocalRepoKey, boolean dryRun);
 
     @Lock(transactional = true)
     void zap(RepoPath repoPath);
@@ -244,9 +279,20 @@ public interface RepositoryService extends ImportableExportable {
     @Lock(transactional = true)
     boolean hasChildren(RepoPath repoPath);
 
-
     @Lock(transactional = false)
     void exportRepo(String repoKey, ExportSettings settings);
+
+    /**
+     * Export the selected search result into a target directory
+     *
+     * @param searchResults The search results to export
+     * @param baseDir       The base directory where files should be exported to
+     * @param archive
+     * @return The status of the procedure
+     */
+    @Lock(transactional = true)
+    MultiStatusHolder exportSearchResults(List<FileInfo> searchResults, File baseDir, boolean includeMetadata,
+            boolean m2Compatible, boolean archive);
 
     /**
      * Returns all the deployable units under a certain path.
@@ -327,4 +373,13 @@ public interface RepositoryService extends ImportableExportable {
      * @return True if repo path exists, false if not
      */
     boolean virtualItemExists(RepoPath repoPath);
+
+    /**
+     * Returns the shared remote repository list from the given Artifactory instance URL
+     *
+     * @param remoteUrl  URL of remote Artifactory instance
+     * @param headersMap Header-map to add to the request
+     * @return List of shared remote repositories
+     */
+    List<RemoteRepoDescriptor> getSharedRemoteRepoConfigs(String remoteUrl, Map<String, String> headersMap);
 }

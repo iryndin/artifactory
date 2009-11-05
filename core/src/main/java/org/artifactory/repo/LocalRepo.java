@@ -18,7 +18,7 @@
 package org.artifactory.repo;
 
 import org.artifactory.api.config.ImportableExportable;
-import org.artifactory.api.fs.FileInfo;
+import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
 import org.artifactory.repo.jcr.StoringRepo;
@@ -27,7 +27,7 @@ public interface LocalRepo<T extends LocalRepoDescriptor> extends RealRepo<T>, S
 
     SnapshotVersionBehavior getSnapshotVersionBehavior();
 
-    String getTextFileContent(FileInfo itemInfo);
+    String getTextFileContent(RepoPath repoPath);
 
     boolean isAnonAccessEnabled();
 }

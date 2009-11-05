@@ -37,15 +37,13 @@ public class MetadataViewAction extends ViewAction {
     private String getContent(RepoAwareActionableItem source) {
         isSourceCorrect(source);
         MetadataSearchResult searchResult = getSearchResult(source);
-        String content = getRepoService().getXmlMetadata(source.getRepoPath(), searchResult.getMetadataName());
-        return content;
+        return getRepoService().getXmlMetadata(source.getRepoPath(), searchResult.getMetadataName());
     }
 
     private String getTitle(RepoAwareActionableItem source) {
         isSourceCorrect(source);
         MetadataSearchResult searchResult = getSearchResult(source);
-        String title = searchResult.getName();
-        return title;
+        return searchResult.getName();
     }
 
     /**
@@ -67,8 +65,7 @@ public class MetadataViewAction extends ViewAction {
      * @return MetadataSearchResult - Result object
      */
     private MetadataSearchResult getSearchResult(RepoAwareActionableItem source) {
-        MetadataSearchResult searchResult = ((ActionableMetadataSearchResult) source).getSearchResult();
-        return searchResult;
+        return ((ActionableMetadataSearchResult) source).getSearchResult();
     }
 
     @Override

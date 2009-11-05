@@ -42,6 +42,7 @@ public enum ContentType {
     javaArchiveDiff(new MimeEntry("application/x-java-archive-diff", "jardiff")),
     javaJnlp(new MimeEntry("application/x-java-jnlp-file", "jnlp")),
     cheksum(new MimeEntry("application/x-checksum", "sha1", "asc", "md5"), textPlain);
+    //ivyXml(new MimeEntry("application/x-ivy+xml", "ivy.xml"));
 
     private final MimeEntry mimeEntry;
     private final ContentType alternate;

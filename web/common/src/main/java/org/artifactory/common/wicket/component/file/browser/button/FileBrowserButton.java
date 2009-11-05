@@ -28,6 +28,7 @@ import org.artifactory.common.wicket.component.file.browser.panel.FileBrowserPan
 import org.artifactory.common.wicket.component.file.path.PathHelper;
 import org.artifactory.common.wicket.component.file.path.PathMask;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
+import org.artifactory.common.wicket.model.DelegetedModel;
 
 import java.io.File;
 
@@ -109,22 +110,9 @@ public class FileBrowserButton extends Panel {
         }
     }
 
-    private class DelegetedModelModel implements IModel {
-        public Object getObject() {
-            return getModelObject();
-        }
-
-        public void setObject(Object object) {
-            setModelObject(object);
-        }
-
-        public void detach() {
-        }
-    }
-
     private class MyFileBrowserPanel extends FileBrowserPanel {
         private MyFileBrowserPanel() {
-            super(new DelegetedModelModel(), pathHelper);
+            super(new DelegetedModel(FileBrowserButton.this), pathHelper);
             setChRoot(chRoot);
         }
 

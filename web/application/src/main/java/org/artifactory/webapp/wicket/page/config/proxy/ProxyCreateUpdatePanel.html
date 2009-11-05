@@ -2,19 +2,23 @@
     <form wicket:id="form">
         <div wicket:id="border" class="proxy">
 
-            <div class="field required">
+            <div class="field required float-left">
                 <div class="label-sep">
                     <label>Proxy Key</label>
-                    <span wicket:id="key.help"/>
+                    <span wicket:id="key.help"></span>
                 </div>
                 <div class="value">
                     <input wicket:id="key" type="text" class="text"/>
                 </div>
             </div>
 
+            <div class="field value float-right">
+                <input wicket:id="sysCheckbox" type="checkbox" class="text"/>
+                <span wicket:id="defaultProxy.help"></span>
+            </div>
             <div class="field required field-sep float-left">
                 <label>Host</label>
-                <span wicket:id="host.help"/>
+                <span wicket:id="host.help"></span>
 
                 <div class="value">
                     <input wicket:id="host" type="text" class="text"/>
@@ -23,7 +27,7 @@
 
             <div class="field field-sep float-right">
                 <label>Port</label>
-                <span wicket:id="port.help"/>
+                <span wicket:id="port.help"></span>
 
                 <div class="value">
                     <input wicket:id="port" type="text" class="text"/>
@@ -32,7 +36,7 @@
 
             <div class="field field-sep float-left">
                 <label>Username</label>
-                <span wicket:id="username.help"/>
+                <span wicket:id="username.help"></span>
 
                 <div class="value">
                     <input wicket:id="username" type="text" class="text"/>
@@ -41,7 +45,7 @@
 
             <div class="field field-sep float-right">
                 <label>Password</label>
-                <span wicket:id="password.help"/>
+                <span wicket:id="password.help"></span>
 
                 <div class="value">
                     <input wicket:id="password" type="password" class="text"/>
@@ -50,7 +54,7 @@
 
             <div class="field field-sep float-left">
                 <label>NT Host</label>
-                <span wicket:id="ntHost.help"/>
+                <span wicket:id="ntHost.help"></span>
 
                 <div class="value">
                     <input wicket:id="ntHost" type="text" class="text"/>
@@ -59,17 +63,16 @@
 
             <div class="field field-sep float-right">
                 <label>NT Domain</label>
-                <span wicket:id="domain.help"/>
+                <span wicket:id="domain.help"></span>
 
                 <div class="value">
                     <input wicket:id="domain" type="text" class="text"/>
                 </div>
             </div>
-
         </div>
         <div class="buttons">
-            <button type="submit" wicket:id="submit"/>
-            <button type="button" wicket:id="cancel"/>
+            <button type="submit" wicket:id="submit"></button>
+            <button type="button" wicket:id="cancel"></button>
         </div>
     </form>
 </wicket:extend>

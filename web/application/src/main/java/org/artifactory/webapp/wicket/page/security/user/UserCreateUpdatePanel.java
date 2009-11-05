@@ -262,7 +262,13 @@ public class UserCreateUpdatePanel extends CreateUpdatePanel<UserModel> {
                 if (!created) {
                     error("User '" + username + "' already exists.");
                 } else {
-                    getPage().info("User '" + username + "' successfully created.");
+                    String successMessage = "User '" + username + "' successfully created.";
+                    boolean userHasPermissions = authorizationService.userHasPermissions(username);
+                    if (!userHasPermissions) {
+                        successMessage += "\nUser has no assigned permissions yet. You can directly assign " +
+                                "permissions to the user or add him to an exiting group that has assigned permissions.";
+                    }
+                    getPage().info(successMessage);
                 }
                 return created;
             }

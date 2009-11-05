@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.NumberValidator;
 import org.artifactory.addon.wicket.PropertiesAddon;
 import org.artifactory.common.wicket.behavior.collapsible.CollapsibleBehavior;
@@ -80,6 +81,10 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
 
         List<ProxyDescriptor> proxies = mutableCentralConfig.getProxies();
         DropDownChoice proxiesDropDown = new DropDownChoice("proxy", proxies, new ChoiceRenderer("key", "key"));
+        ProxyDescriptor defaultProxyDescriptor = mutableCentralConfig.getDefaultProxy();
+        if (defaultProxyDescriptor != null && CreateUpdateAction.CREATE.equals(action)) {
+            proxiesDropDown.setModel(new Model(defaultProxyDescriptor));
+        }
         proxiesDropDown.setNullValid(true);
         localRepoFields.add(proxiesDropDown);
         localRepoFields.add(new SchemaHelpBubble("proxy.help"));

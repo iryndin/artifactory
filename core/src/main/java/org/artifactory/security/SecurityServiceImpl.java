@@ -87,7 +87,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     @Autowired
-    private AclManager aclManager;
+    private InternalAclManager internalAclManager;
 
     @Autowired
     private UserGroupManager userGroupManager;
@@ -124,7 +124,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
     @SuppressWarnings({"unchecked"})
     public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{JcrService.class, UserGroupManager.class, AclManager.class};
+        return new Class[]{JcrService.class, UserGroupManager.class, InternalAclManager.class};
     }
 
     public void init() {
@@ -223,7 +223,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     public AclInfo createAcl(AclInfo aclInfo) {
         assertAdmin();
         cleanupAclInfo(aclInfo);
-        AclInfo createdAcl = aclManager.createAcl(aclInfo).getDescriptor();
+        AclInfo createdAcl = internalAclManager.createAcl(aclInfo).getDescriptor();
         interceptors.onPermissionsAdd();
         return createdAcl;
     }
@@ -237,12 +237,12 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
         // Removing empty Ace
         cleanupAclInfo(acl);
-        aclManager.updateAcl(new Acl(acl));
+        internalAclManager.updateAcl(new Acl(acl));
         interceptors.onPermissionsUpdate();
     }
 
     public void deleteAcl(PermissionTargetInfo target) {
-        aclManager.deleteAcl(new PermissionTarget(target));
+        internalAclManager.deleteAcl(new PermissionTarget(target));
         interceptors.onPermissionsDelete();
     }
 
@@ -252,10 +252,21 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     private List<PermissionTargetInfo> getPermissionTargetsByPermission(Permission permission) {
-        List<PermissionTarget> allTargets = aclManager.getAllPermissionTargets();
+        List<PermissionTarget> allTargets = internalAclManager.getAllPermissionTargets();
         List<PermissionTargetInfo> result = new ArrayList<PermissionTargetInfo>();
         for (PermissionTarget permissionTarget : allTargets) {
             if (hasPermissionOnPermissionTarget(permissionTarget, permission)) {
+                result.add(permissionTarget.getDescriptor());
+            }
+        }
+        return result;
+    }
+
+    private List<PermissionTargetInfo> getPermissionTargetsByPermission(Permission permission, SimpleUser user) {
+        List<PermissionTarget> allTargets = internalAclManager.getAllPermissionTargets();
+        List<PermissionTargetInfo> result = new ArrayList<PermissionTargetInfo>();
+        for (PermissionTarget permissionTarget : allTargets) {
+            if (hasPermissionOnPermissionTarget(permissionTarget, permission, user)) {
                 result.add(permissionTarget.getDescriptor());
             }
         }
@@ -292,7 +303,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     public AclInfo getAcl(PermissionTargetInfo permissionTarget) {
-        Acl acl = aclManager.findAclById(new PermissionTarget(permissionTarget));
+        Acl acl = internalAclManager.findAclById(new PermissionTarget(permissionTarget));
         if (acl != null) {
             return acl.getDescriptor();
         }
@@ -310,7 +321,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     public List<AclInfo> getAllAcls() {
-        Collection<Acl> acls = aclManager.getAllAcls();
+        Collection<Acl> acls = internalAclManager.getAllAcls();
         List<AclInfo> descriptors = new ArrayList<AclInfo>(acls.size());
         for (Acl acl : acls) {
             descriptors.add(acl.getDescriptor());
@@ -360,7 +371,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     public void deleteUser(String username) {
-        aclManager.removeAllUserAces(username);
+        internalAclManager.removeAllUserAces(username);
         userGroupManager.removeUser(username);
         interceptors.onUserDelete(username);
     }
@@ -686,6 +697,8 @@ public class SecurityServiceImpl implements InternalSecurityService {
             return BasePermission.DELETE;
         } else if (permission == ArtifactoryPermission.DEPLOY) {
             return BasePermission.WRITE;
+        } else if (permission == ArtifactoryPermission.ANNOTATE) {
+            return BasePermission.CREATE;
         } else if (permission == ArtifactoryPermission.READ) {
             return BasePermission.READ;
         } else {
@@ -703,6 +716,10 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
     public boolean canImplicitlyReadParentPath(RepoPath repoPath) {
         return hasPermission(repoPath, ArtifactoryPermission.READ, true);
+    }
+
+    public boolean canAnnotate(RepoPath repoPath) {
+        return hasPermission(repoPath, ArtifactoryPermission.ANNOTATE, false);
     }
 
     public boolean canDeploy(RepoPath repoPath) {
@@ -723,18 +740,23 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     public boolean canRead(UserInfo user, PermissionTargetInfo target) {
-        Permission adminPermission = permissionFor(ArtifactoryPermission.READ);
-        return hasPermissionOnPermissionTarget(new PermissionTarget(target), adminPermission, new SimpleUser(user));
+        Permission readPermission = permissionFor(ArtifactoryPermission.READ);
+        return hasPermissionOnPermissionTarget(new PermissionTarget(target), readPermission, new SimpleUser(user));
+    }
+
+    public boolean canAnnotate(UserInfo user, PermissionTargetInfo target) {
+        Permission annotatePermission = permissionFor(ArtifactoryPermission.ANNOTATE);
+        return hasPermissionOnPermissionTarget(new PermissionTarget(target), annotatePermission, new SimpleUser(user));
     }
 
     public boolean canDeploy(UserInfo user, PermissionTargetInfo target) {
-        Permission adminPermission = permissionFor(ArtifactoryPermission.DEPLOY);
-        return hasPermissionOnPermissionTarget(new PermissionTarget(target), adminPermission, new SimpleUser(user));
+        Permission deployPermission = permissionFor(ArtifactoryPermission.DEPLOY);
+        return hasPermissionOnPermissionTarget(new PermissionTarget(target), deployPermission, new SimpleUser(user));
     }
 
     public boolean canDelete(UserInfo user, PermissionTargetInfo target) {
-        Permission adminPermission = permissionFor(ArtifactoryPermission.DELETE);
-        return hasPermissionOnPermissionTarget(new PermissionTarget(target), adminPermission, new SimpleUser(user));
+        Permission deletePermission = permissionFor(ArtifactoryPermission.DELETE);
+        return hasPermissionOnPermissionTarget(new PermissionTarget(target), deletePermission, new SimpleUser(user));
     }
 
     public boolean canAdmin(UserInfo user, PermissionTargetInfo target) {
@@ -744,6 +766,11 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
     public boolean canRead(UserInfo user, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermission.READ);
+        return hasPermission(new SimpleUser(user), path, permission);
+    }
+
+    public boolean canAnnotate(UserInfo user, RepoPath path) {
+        Permission permission = permissionFor(ArtifactoryPermission.ANNOTATE);
         return hasPermission(new SimpleUser(user), path, permission);
     }
 
@@ -767,6 +794,11 @@ public class SecurityServiceImpl implements InternalSecurityService {
         return hasPermission(group, path, permission);
     }
 
+    public boolean canAnnotate(GroupInfo group, RepoPath path) {
+        Permission permission = permissionFor(ArtifactoryPermission.ANNOTATE);
+        return hasPermission(group, path, permission);
+    }
+
     public boolean canDelete(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermission.DELETE);
         return hasPermission(group, path, permission);
@@ -780,6 +812,16 @@ public class SecurityServiceImpl implements InternalSecurityService {
     public boolean canAdmin(GroupInfo group, RepoPath path) {
         Permission permission = permissionFor(ArtifactoryPermission.ADMIN);
         return hasPermission(group, path, permission);
+    }
+
+    public boolean userHasPermissions(String username) {
+        SimpleUser user = new SimpleUser(findUser(username));
+        for (ArtifactoryPermission permission : ArtifactoryPermission.values()) {
+            if (hasPermission(permission, user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasPermission(RepoPath repoPath, ArtifactoryPermission permission, boolean checkPartialPath) {
@@ -826,13 +868,23 @@ public class SecurityServiceImpl implements InternalSecurityService {
         return isGranted(repoPath, permission, sid);
     }
 
+    private boolean hasPermission(ArtifactoryPermission artifactoryPermission, SimpleUser user) {
+        return !getPermissionTargets(artifactoryPermission, user).isEmpty();
+    }
+
+    private List<PermissionTargetInfo> getPermissionTargets(ArtifactoryPermission artifactoryPermission,
+            SimpleUser user) {
+        Permission permission = permissionFor(artifactoryPermission);
+        return getPermissionTargetsByPermission(permission, user);
+    }
+
     private boolean isGranted(RepoPath repoPath, Permission permission, ArtifactorySid[] sids) {
         return isGranted(repoPath, permission, sids, false);
     }
 
     private boolean isGranted(
             RepoPath repoPath, Permission permission, ArtifactorySid[] sids, boolean checkPartialPath) {
-        List<Acl> acls = aclManager.getAllAcls(sids);
+        List<Acl> acls = internalAclManager.getAllAcls(sids);
         for (Acl acl : acls) {
             String repoKey = repoPath.getRepoKey();
             String path = repoPath.getPath();
@@ -909,7 +961,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
         }
 
         Sid[] sids = getUserEffectiveSids(user);
-        Acl acl = aclManager.findAclById(target);
+        Acl acl = internalAclManager.findAclById(target);
         return acl.isGranted(new Permission[]{permission}, sids, false);
     }
 
@@ -989,11 +1041,10 @@ public class SecurityServiceImpl implements InternalSecurityService {
         UserInfo anonUser = builder.build();
         boolean createdAnonymousUser = createUser(anonUser);
 
-        GroupInfo readersGroup = new GroupInfo("readers", "A group for read-only users", true);
-        boolean createdReadersGroup = createGroup(readersGroup);
-
-        if (createdAnonymousUser && createdReadersGroup) {
-            aclManager.createDefaultSecurityEntities(new SimpleUser(anonUser), new Group(readersGroup));
+        if (createdAnonymousUser) {
+            GroupInfo readersGroup = new GroupInfo("readers", "A group for read-only users", true);
+            createGroup(readersGroup);
+            internalAclManager.createDefaultSecurityEntities(new SimpleUser(anonUser), new Group(readersGroup));
         }
     }
 
@@ -1044,7 +1095,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
         List<AclInfo> acls = securityInfo.getAcls();
         if (acls != null) {
             for (AclInfo acl : acls) {
-                aclManager.createAcl(new Acl(acl));
+                internalAclManager.createAcl(new Acl(acl));
             }
         }
         if (!hasAnonymous) {
@@ -1055,7 +1106,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     private void removeAllSecurityData() {
         //Respect order for clean removal
         //Clean up all acls
-        aclManager.deleteAllAcls();
+        internalAclManager.deleteAllAcls();
         //Remove all existing groups
         List<GroupInfo> oldGroups = getAllGroups();
         for (GroupInfo oldGroup : oldGroups) {

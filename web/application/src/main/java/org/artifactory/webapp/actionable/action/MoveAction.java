@@ -64,5 +64,4 @@ public class MoveAction extends RepoAwareItemAction {
         modalWindow.setContent(modalPanel);
         modalWindow.show(event.getTarget());
     }
-
 }

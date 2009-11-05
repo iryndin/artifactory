@@ -21,7 +21,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.jackrabbit.JcrConstants.*;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.GarbageCollectorFactory;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -43,6 +42,7 @@ import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.repo.ArtifactCount;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
+import org.artifactory.api.storage.GarbageCollectorInfo;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.config.xml.ArtifactoryXmlFactory;
@@ -54,7 +54,6 @@ import org.artifactory.io.checksum.ChecksumInputStream;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFolder;
 import org.artifactory.jcr.fs.JcrFsItem;
-import org.artifactory.jcr.gc.GarbageCollectorInfo;
 import org.artifactory.jcr.gc.JcrGarbageCollector;
 import org.artifactory.jcr.lock.aop.LockingAdvice;
 import org.artifactory.jcr.md.MetadataService;
@@ -88,6 +87,7 @@ import javax.annotation.PostConstruct;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
@@ -106,6 +106,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.apache.jackrabbit.JcrConstants.*;
 
 /**
  * Spring based session factory for tx jcr sessions
@@ -301,13 +303,14 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         String name = file.getName();
         RepoPath repoPath = new RepoPath(parentFolder.getRepoPath(), name);
         log.debug("Importing '{}'.", repoPath);
+        //Takes a read lock
         assertValidDeployment(parentFolder, name);
         JcrFile jcrFile = null;
         try {
             jcrFile = parentFolder.getRepo().getLockedJcrFile(repoPath, true);
             jcrFile.importFrom(file, settings);
             //Mark for indexing (if needed)
-            searchService.markArchiveForIndexing(repoPath, false);
+            searchService.markArchiveForIndexing(jcrFile, false);
             repoPath = jcrFile.getRepoPath();
             log.debug("Imported '{}'.", repoPath);
             AccessLogger.deployed(repoPath);
@@ -384,6 +387,21 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         if (exits) {
             Node node = (Node) session.getItem(absPath);
             return getFsItem(node, repo);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getNodeTypeName(RepoPath repoPath) {
+        JcrSession session = getManagedSession();
+        String absPath = JcrPath.get().getAbsolutePath(repoPath);
+        boolean exits = itemNodeExists(absPath);
+        if (exits) {
+            Node node = (Node) session.getItem(absPath);
+            return JcrHelper.getPrimaryTypeName(node);
         } else {
             return null;
         }
@@ -669,16 +687,21 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         }
         if (tmpDirPath != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Cleanning up temp files in '" + tmpDirPath + "'.");
+                log.debug("Cleaning up temp files in '" + tmpDirPath + "'.");
             }
             File tmpDir = new File(tmpDirPath);
-            Collection<File> tmpfiles =
-                    FileUtils.listFiles(tmpDir, new WildcardFileFilter("bin*.tmp"), null);
-            for (File tmpfile : tmpfiles) {
-                tmpfile.delete();
+            try {
+                Collection<File> tmpfiles =
+                        FileUtils.listFiles(tmpDir, new WildcardFileFilter("bin*.tmp"), null);
+                for (File tmpfile : tmpfiles) {
+                    tmpfile.delete();
+                }
+            } catch (Exception e) {
+                log.error("Could not clean up old temp files. This may indicate a badly configured temp dir ('{}').",
+                        tmpDirPath, e);
             }
         } else {
-            log.warn("Not cleanning up any temp files: failed to determine temp dir.");
+            log.warn("Not cleaning up any temp files: failed to determine temp dir.");
         }
     }
 
@@ -819,30 +842,37 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     public GarbageCollectorInfo garbageCollect() {
         GarbageCollectorInfo result = null;
-        JcrSession session = getManagedSession();
+        JcrSession session = getUnmanagedSession();
         JcrGarbageCollector gc = null;
         try {
             gc = GarbageCollectorFactory.createDataStoreGarbageCollector(session);
             if (gc != null) {
-                log.debug("Runnning " + gc.getClass().getName() + " datastore garbage collector...");
+                log.debug("Running " + gc.getClass().getName() + " datastore garbage collector...");
                 if (gc.scan()) {
                     gc.stopScan();
                     int count = gc.deleteUnused();
-                    log.info("Datastore garbage collector deleted " + count + " unreferenced item(s).");
+                    if (count > 0) {
+                        log.info("Datastore garbage collector deleted " + count + " unreferenced item(s).");
+                    } else {
+                        log.debug("Datastore garbage collector deleted " + count + " unreferenced item(s).");
+                    }
+                } else {
+                    log.debug("Datastore garbage collector execution completed.");
                 }
                 result = gc.getInfo();
                 gc = null;
             }
         } catch (Exception e) {
-            log.error("Jackrabbit's datastore garbage collector execution failed.", e);
+            log.error("Datastore garbage collector execution failed.", e);
         } finally {
             if (gc != null) {
                 try {
                     gc.stopScan();
                 } catch (RepositoryException re) {
-                    log.debug("GC scanning could not be stopped.", re);
+                    log.debug("Datastore garbage collector scanning could not be stopped.", re);
                 }
             }
+            session.logout();
         }
         return result;
     }
@@ -853,7 +883,9 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
 
     public static InputStream getRawXmlStream(Node metadataNode) throws RepositoryException {
         Node xmlNode = metadataNode.getNode(JCR_CONTENT);
-        Value attachedDataValue = xmlNode.getProperty(JCR_DATA).getValue();
+        Property property = xmlNode.getProperty(JCR_DATA);
+        log.trace("Read xml data '{}' with length: {}.", xmlNode.getPath(), property.getLength());
+        Value attachedDataValue = property.getValue();
         InputStream is = attachedDataValue.getStream();
         return is;
     }

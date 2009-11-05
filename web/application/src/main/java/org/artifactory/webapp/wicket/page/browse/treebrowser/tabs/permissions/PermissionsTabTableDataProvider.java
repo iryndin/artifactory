@@ -77,6 +77,7 @@ class PermissionsTabTableDataProvider extends BaseSortableAceInfoRowDataProvider
     private AceInfo createAceInfoForUser(UserInfo userInfo) {
         AceInfo aceInfo = new AceInfo(userInfo.getUsername(), false, 0);
         aceInfo.setRead(authService.canRead(userInfo, repoPath));
+        aceInfo.setAnnotate(authService.canAnnotate(userInfo, repoPath));
         aceInfo.setDeploy(authService.canDeploy(userInfo, repoPath));
         aceInfo.setDelete(authService.canDelete(userInfo, repoPath));
         aceInfo.setAdmin(authService.canAdmin(userInfo, repoPath));
@@ -86,6 +87,7 @@ class PermissionsTabTableDataProvider extends BaseSortableAceInfoRowDataProvider
     private AceInfo createAceInfoForGroup(GroupInfo groupInfo) {
         AceInfo aceInfo = new AceInfo(groupInfo.getGroupName(), true, 0);
         aceInfo.setRead(authService.canRead(groupInfo, repoPath));
+        aceInfo.setAnnotate(authService.canAnnotate(groupInfo, repoPath));
         aceInfo.setDeploy(authService.canDeploy(groupInfo, repoPath));
         aceInfo.setDelete(authService.canDelete(groupInfo, repoPath));
         aceInfo.setAdmin(authService.canAdmin(groupInfo, repoPath));

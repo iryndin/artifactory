@@ -31,8 +31,7 @@ import javax.ws.rs.ext.Provider;
  * @author Yoav Landman
  */
 @Provider
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Consumes({MediaType.APPLICATION_JSON, "application/vnd.org.jfrog.artifactory+json"})
+@Produces({MediaType.APPLICATION_JSON, "application/vnd.org.jfrog.artifactory+json"})
 public class JsonProvider extends JacksonJsonProvider {
-
 }

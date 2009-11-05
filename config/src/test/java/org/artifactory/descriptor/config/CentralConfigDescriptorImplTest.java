@@ -179,6 +179,18 @@ public class CentralConfigDescriptorImplTest {
         assertNull(remoteRepo.getProxy(), "Proxy should have been removed from the remote repo");
     }
 
+    public void addDefaultProxyToRemoteRepositories() {
+        ProxyDescriptor proxy = new ProxyDescriptor();
+        proxy.setKey("defaultProxy");
+        cc.addProxy(proxy);
+        cc.addDefaultProxyToRemoteRepositories(proxy);
+
+        HttpRepoDescriptor remoteRepo = (HttpRepoDescriptor) cc.getRemoteRepositoriesMap().get("remote1");
+
+        assertNotNull(remoteRepo.getProxy(), "Remote repo should have a proxy");
+        assertEquals(remoteRepo.getProxy().getKey(), "defaultProxy", "Proxy name does not match");
+    }
+
     public void backupExistence() {
         assertEquals(cc.getBackups().size(), 2, "Backups count mismatch");
         assertTrue(cc.isBackupExists("backup1"));

@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Cerate an input stream from a string.
+ * Create an input stream from a string.
  *
  * @author Yossi Shaul
  */

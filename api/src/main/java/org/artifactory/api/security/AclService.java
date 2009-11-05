@@ -51,6 +51,11 @@ public interface AclService {
     boolean canRead(UserInfo user, PermissionTargetInfo target);
 
     /**
+     * @return True is the user or a group the user belongs to has annotate permissions on the target
+     */
+    boolean canAnnotate(UserInfo user, PermissionTargetInfo target);
+
+    /**
      * @return True is the user or a group the user belongs to has deploy permissions on the target
      */
     boolean canDeploy(UserInfo user, PermissionTargetInfo target);

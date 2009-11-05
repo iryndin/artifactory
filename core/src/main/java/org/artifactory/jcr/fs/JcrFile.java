@@ -17,13 +17,17 @@
 
 package org.artifactory.jcr.fs;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import static org.apache.jackrabbit.JcrConstants.*;
 import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.config.ExportCallback;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
-import org.artifactory.api.fs.*;
+import org.artifactory.api.fs.ChecksumInfo;
+import org.artifactory.api.fs.FileAdditionalInfo;
+import org.artifactory.api.fs.FileInfo;
+import org.artifactory.api.fs.FileInfoImpl;
+import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.mime.ChecksumType;
 import org.artifactory.api.mime.ContentType;
@@ -32,6 +36,7 @@ import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.stat.StatsInfo;
+import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.io.checksum.Checksum;
 import org.artifactory.io.checksum.ChecksumInputStream;
@@ -43,6 +48,7 @@ import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.jcr.md.MetadataDefinition;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.maven.MavenModelUtils;
+import org.artifactory.repo.LocalCacheRepo;
 import org.artifactory.repo.RealRepoBase;
 import org.artifactory.repo.jcr.JcrHelper;
 import org.artifactory.repo.jcr.StoringRepo;
@@ -57,6 +63,8 @@ import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import java.io.*;
 import java.util.Set;
+
+import static org.apache.jackrabbit.JcrConstants.*;
 
 /**
  * @author yoavl
@@ -293,11 +301,14 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             InputStream is = attachedDataValue.getStream();
             return is;
         } catch (RepositoryException e) {
-            Throwable notFound = ExceptionUtils.getCauseOfTypes(
-                    e, DataStoreRecordNotFoundException.class, PathNotFoundException.class);
+            Throwable notFound = ExceptionUtils.getCauseOfTypes(e,
+                    DataStoreRecordNotFoundException.class, PathNotFoundException.class, FileNotFoundException.class);
             if (notFound != null) {
-                log.warn("Jcr file node {} does not have binary content! Deleting entry.", getPath());
-                cleanupOrphanes();
+                log.warn("Jcr file node {} does not have binary content!", getPath());
+                if (ConstantValues.jcrAutoRemoveMissingBinaries.getBoolean()) {
+                    log.warn("Auto-deleting item {}.", getPath());
+                    bruteForceDelete(true);
+                }
                 return null;
             } else {
                 throw new RepositoryRuntimeException(
@@ -351,6 +362,11 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 ExportCallback callback = settings.getCallback();
                 callback.callback(getRepoPath());
             }
+
+            if (!targetFile.getParentFile().exists()) {
+                FileUtils.forceMkdir(targetFile.getParentFile());
+            }
+
             exportFileContent(targetFile, settings);
 
             if (settings.isIncludeMetadata()) {
@@ -481,7 +497,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     private void setResourceNode(InputStream in) throws RepositoryException, IOException {
         Node node = getNode();
-        Node resourceNode = getJcrService().getOrCreateNode(node, JCR_CONTENT, NT_RESOURCE);
+        Node resourceNode = getJcrRepoService().getOrCreateNode(node, JCR_CONTENT, NT_RESOURCE);
         String name = getName();
         FileInfo info = getInfo();
         ContentType ct = NamingUtils.getContentType(name);
@@ -521,8 +537,14 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             boolean suppressPomConsistencyChecks = false;
             StoringRepo storingRepo = getRepo();
             if (storingRepo instanceof RealRepoBase) {
-                // if its a real repo (must be for poms) use the descruptor value
-                RealRepoDescriptor descriptor = ((RealRepoBase) storingRepo).getDescriptor();
+                RealRepoDescriptor descriptor;
+                if (storingRepo.isCache()) {
+                    //If its a cache repo, need to get the local CacheRepoDescriptor to check the pom consistency check suppression.
+                    descriptor = ((LocalCacheRepo) storingRepo).getDescriptor().getRemoteRepo();
+                } else {
+                    // if its a real repo (must be for poms) use the descriptor value`
+                    descriptor = ((RealRepoBase) storingRepo).getDescriptor();
+                }
                 suppressPomConsistencyChecks = descriptor.isSuppressPomConsistencyChecks();
             }
             try {
@@ -532,8 +554,8 @@ public class JcrFile extends JcrFsItem<FileInfo> {
             }
             in.reset();
         }
-        Node xmlNode = getJcrService().getOrCreateUnstructuredNode(node, JcrService.NODE_ARTIFACTORY_XML);
-        getJcrService().importXml(xmlNode, in);
+        Node xmlNode = getJcrRepoService().getOrCreateUnstructuredNode(node, JcrService.NODE_ARTIFACTORY_XML);
+        getJcrRepoService().importXml(xmlNode, in);
         //Reset the stream
         in.reset();
         return in;

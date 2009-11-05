@@ -39,4 +39,9 @@ public interface StorageService {
      * @return The size, in bytes, of the index files
      */
     long getLuceneIndexSize();
+
+    /**
+     * Induce the garbage collector manually.
+     */
+    GarbageCollectorInfo manualGarbageCollect(MultiStatusHolder statusHolder);
 }

@@ -46,6 +46,10 @@ public class TempFileStreamHandle implements ResourceStreamHandle {
         return is;
     }
 
+    public long getSize() {
+        return -1;
+    }
+
     public void close() {
         IOUtils.closeQuietly(is);
         boolean deleted = tmpFile.delete();

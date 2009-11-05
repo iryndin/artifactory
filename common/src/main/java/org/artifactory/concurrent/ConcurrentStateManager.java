@@ -135,13 +135,15 @@ public class ConcurrentStateManager {
                 throw new LockingException("Locking an already locked state: " +
                         stateAware + " active lock(s) already active!");
             }
-            boolean sucess = stateSync.tryLock() || stateSync.tryLock(getStateLockTimeOut(), TimeUnit.SECONDS);
-            if (!sucess) {
+            boolean success = stateSync.tryLock() || stateSync.tryLock(getStateLockTimeOut(), TimeUnit.SECONDS);
+            if (!success) {
                 throw new LockingException(
                         "Could not acquire state lock in " + getStateLockTimeOut());
             }
         } catch (InterruptedException e) {
-            log.warn("Interrpted while trying to lock {}.", stateAware);
+            // Set the interrupted flag back
+            Thread.currentThread().interrupt();
+            throw new LockingException("Interrupted while trying to lock " + stateAware, e);
         }
     }
 

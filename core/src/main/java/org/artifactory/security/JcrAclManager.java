@@ -1,4 +1,9 @@
 /*
+ * Copyright 2009 JFrog Ltd. All rights reserved.
+ * JFROG PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+/*
  * This file is part of Artifactory.
  *
  * Artifactory is free software: you can redistribute it and/or modify
@@ -53,7 +58,7 @@ import java.util.Map;
  * Created by IntelliJ IDEA. User: yoavl
  */
 @Repository
-public class JcrAclManager implements AclManager {
+public class JcrAclManager implements InternalAclManager {
     private static final Logger log = LoggerFactory.getLogger(JcrAclManager.class);
 
     static final String ACLS_KEY = "acls";
@@ -72,7 +77,7 @@ public class JcrAclManager implements AclManager {
 
     @PostConstruct
     public void register() {
-        InternalContextHelper.get().addReloadableBean(AclManager.class);
+        InternalContextHelper.get().addReloadableBean(InternalAclManager.class);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -88,7 +93,7 @@ public class JcrAclManager implements AclManager {
         Node confNode = jcr.getOrCreateUnstructuredNode(JcrPath.get().getConfigJcrRootPath());
         jcr.getOrCreateUnstructuredNode(confNode, ACLS_KEY);
         // Load the cache
-        loadAllAcls();
+        reloadAcls();
     }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
@@ -226,8 +231,21 @@ public class JcrAclManager implements AclManager {
         return aclsForSids;
     }
 
+    /**
+     * Reload all configured ACLs within a new transction
+     */
+    public void reloadAcls() {
+        InternalAclManager internalAclManager = InternalContextHelper.get().beanForType(InternalAclManager.class);
+        internalAclManager.reloadAndReturnAcls();
+    }
+
+    /**
+     * Reload and return all configured ACLs
+     *
+     * @return List of reloaded ACLs
+     */
     @SuppressWarnings({"unchecked"})
-    private Collection<Acl> loadAllAcls() {
+    public Collection<Acl> reloadAndReturnAcls() {
         ObjectContentManager ocm = jcr.getOcm();
         QueryManager queryManager = ocm.getQueryManager();
         Filter filter = queryManager.createFilter(Acl.class);
@@ -255,7 +273,7 @@ public class JcrAclManager implements AclManager {
 
     public void deleteAllAcls() {
         ObjectContentManager ocm = jcr.getOcm();
-        Collection<Acl> aclFromDbs = loadAllAcls();
+        Collection<Acl> aclFromDbs = reloadAndReturnAcls();
         for (Acl aclFromDb : aclFromDbs) {
             ocm.remove(aclFromDb);
         }
@@ -272,7 +290,7 @@ public class JcrAclManager implements AclManager {
     private Collection<Acl> getAllAclsFromCache() {
         if (acls.isEmpty()) {
             // TODO: If no ACLs in DB reloading all the time !
-            return loadAllAcls();
+            return reloadAndReturnAcls();
         }
         return acls.values();
     }

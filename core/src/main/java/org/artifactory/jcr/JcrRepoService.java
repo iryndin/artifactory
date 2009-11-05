@@ -102,4 +102,6 @@ public interface JcrRepoService {
     List<String> getChildrenNames(String absPath);
 
     void trash(List<JcrFsItem> items);
+
+    String getNodeTypeName(RepoPath repoPath);
 }

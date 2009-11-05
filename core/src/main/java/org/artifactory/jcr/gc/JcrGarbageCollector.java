@@ -19,6 +19,7 @@ package org.artifactory.jcr.gc;
 
 import org.apache.jackrabbit.core.data.DataStore;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.artifactory.api.storage.GarbageCollectorInfo;
 
 import javax.jcr.RepositoryException;
 import java.io.IOException;

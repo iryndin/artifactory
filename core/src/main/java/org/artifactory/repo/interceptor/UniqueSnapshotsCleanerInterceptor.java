@@ -69,7 +69,7 @@ public class UniqueSnapshotsCleanerInterceptor implements RepoInterceptor {
         //return the content-length).
         RepoResource res = new FileResource((FileInfo) fsItem.getInfo());
         String path = res.getRepoPath().getPath();
-        JcrFile file = repo.getLockedJcrFile(path, true);
+        JcrFile file = (JcrFile) fsItem;
         if (!MavenNaming.isUniqueSnapshot(path) || MavenNaming.isPom(path)) {
             return;
         }
@@ -115,6 +115,12 @@ public class UniqueSnapshotsCleanerInterceptor implements RepoInterceptor {
 
     public void onDelete(JcrFsItem fsItem, StatusHolder statusHolder) {
         //Nothing
+    }
+
+    public void onMove(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+    }
+
+    public void onCopy(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
     }
 
     private static class ItemDesc implements Comparable<ItemDesc>, Serializable {

@@ -58,7 +58,9 @@ public class ArtifactoryHome {
     private File jcrRootDir;
     private File logDir;
     private File backupDir;
-    private File tmpDir;
+    private File rootTmpDir;
+    private File workTmpDir;
+    private File repoTmpDir;
     private File tmpUploadsDir;
 
     public ArtifactoryHome() {
@@ -125,8 +127,16 @@ public class ArtifactoryHome {
         return backupDir;
     }
 
-    public File getTmpDir() {
-        return tmpDir;
+    public File getRootTmpDir() {
+        return rootTmpDir;
+    }
+
+    public File getRepoTmpDir() {
+        return repoTmpDir;
+    }
+
+    public File getWorkTmpDir() {
+        return workTmpDir;
     }
 
     public File getTmpUploadsDir() {
@@ -152,8 +162,10 @@ public class ArtifactoryHome {
             logDir = getOrCreateSubDir("logs");
             backupDir = getOrCreateSubDir("backup");
             File jettyWorkDir = getOrCreateSubDir("work");
-            tmpDir = getOrCreateSubDir(dataDir, "tmp");
-            tmpUploadsDir = getOrCreateSubDir(tmpDir, "artifactory-uploads");
+            rootTmpDir = getOrCreateSubDir(dataDir, "tmp");
+            workTmpDir = getOrCreateSubDir(rootTmpDir, "work");
+            repoTmpDir = getOrCreateSubDir(rootTmpDir, "repositories");
+            tmpUploadsDir = getOrCreateSubDir(rootTmpDir, "artifactory-uploads");
 
             //Manage the artifactory.system.properties file under etc dir
             initAndLoadSystemPropertyFile();
@@ -164,7 +176,7 @@ public class ArtifactoryHome {
             checkWritableDirectory(logDir);
             checkWritableDirectory(backupDir);
             checkWritableDirectory(jettyWorkDir);
-            checkWritableDirectory(tmpDir);
+            checkWritableDirectory(workTmpDir);
             checkWritableDirectory(tmpUploadsDir);
         } catch (Exception e) {
             throw new IllegalArgumentException(
@@ -259,8 +271,6 @@ public class ArtifactoryHome {
                 throw new RuntimeException("Could not read data from '" + newBootstrapConfig.getAbsolutePath() +
                         "' file due to: " + e.getMessage(), e);
             }
-            // The new file is the one I want at the end, so the old is new and the new is old :)
-            org.artifactory.util.FileUtils.switchFiles(oldLocalConfig, newBootstrapConfig);
         } else {
             String resPath = "/META-INF/default/" + ARTIFACTORY_CONFIG_FILE;
             InputStream is = ArtifactoryHome.class.getResourceAsStream(resPath);

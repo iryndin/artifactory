@@ -143,4 +143,6 @@ public interface TaskService extends ReloadableBean {
      * @return Executor service instance
      */
     ExecutorService getExecutorService();
+
+    TaskBase getSingletonTaskTaskOfType(Class<? extends TaskCallback> callbackType);
 }

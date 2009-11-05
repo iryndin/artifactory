@@ -23,7 +23,7 @@ import org.artifactory.api.repo.RepoPath;
 import java.io.Serializable;
 
 /**
- * A class used for encapsulating the result of a resource request against a repo.
+ * A resolution result, encapsulating the outcome of a resource request against a repo.
  *
  * @author yoavl
  */

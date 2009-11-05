@@ -108,7 +108,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     }
 
     public List<JcrFsItem> getItems() {
-        return getJcrService().getChildren(this, false);
+        return getJcrRepoService().getChildren(this, false);
     }
 
     /**
@@ -224,7 +224,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         }
 
         // zap children
-        List<JcrFsItem> children = getJcrService().getChildren(this, true);
+        List<JcrFsItem> children = getJcrRepoService().getChildren(this, true);
         for (JcrFsItem child : children) {
             result += child.zap(expiredLastUpdated);
         }
@@ -240,8 +240,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     public boolean mkdirs() {
 
         //Init repo interceptors
-        RepoInterceptors repoInterceptors = getRepoInterceptors();
-        MultiStatusHolder multiStatusHolder = new MultiStatusHolder();
+        RepoInterceptors repoInterceptors = InternalContextHelper.get().beanForType(RepoInterceptors.class);
 
         //Split the path and create each subdir in turn
         String path = getRelativePath();
@@ -260,7 +259,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                     LockingHelper.removeLockEntry(subFolder.getRepoPath());
                 } else {
                     //If the folder was created successfully, invoke onCreate
-                    repoInterceptors.onCreate(subFolder, multiStatusHolder);
+                    repoInterceptors.onCreate(subFolder, new MultiStatusHolder());
                 }
             } else {
                 created = false;
@@ -355,7 +354,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                 //Do not export checksums
                 if (JcrFile.isStorable(itemName)) {
                     JcrFile jcrFile = ((JcrFile) item);
-                    getJcrService().exportFile(jcrFile, settings);
+                    getJcrRepoService().exportFile(jcrFile, settings);
                 }
             }
         }
@@ -584,9 +583,9 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                     status.setDebug(msg + "...", log);
                     try {
                         if (!MavenNaming.isMavenMetadataFileName(fileName)) {
-                            JcrFile jcrFile = getJcrService().importFile(this, dirEntry, settings);
+                            JcrFile jcrFile = getJcrRepoService().importFile(this, dirEntry, settings);
                             if (jcrFile != null) {
-                                // Created succesfully, release lock
+                                // Created successfully, release lock
                                 LockingHelper.removeLockEntry(jcrFile.getRepoPath());
                             }
                         } else if (getRepo().isCache() && !hasXmlMetadata(MavenNaming.MAVEN_METADATA_NAME)) {
@@ -620,7 +619,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     }
 
     public boolean deleteChildren() {
-        List<JcrFsItem> children = getJcrService().getChildren(this, true);
+        List<JcrFsItem> children = getJcrRepoService().getChildren(this, true);
         for (JcrFsItem child : children) {
             child.delete();
         }
@@ -643,14 +642,5 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
             throw new IllegalStateException("Metadata " + definition + " for object " + md +
                     " is not supported has transient!");
         }
-    }
-
-    /**
-     * Returns an instance of the repo interceptors
-     *
-     * @return RepoInterceptors
-     */
-    private RepoInterceptors getRepoInterceptors() {
-        return InternalContextHelper.get().beanForType(RepoInterceptors.class);
     }
 }

@@ -18,6 +18,7 @@
 package org.artifactory.repo.interceptor;
 
 import org.artifactory.api.common.StatusHolder;
+import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.search.InternalSearchService;
 import org.artifactory.spring.InternalArtifactoryContext;
@@ -40,7 +41,7 @@ public class ArchiveIndexingInterceptor implements RepoInterceptor {
         if (fsItem.isFile()) {
             InternalArtifactoryContext context = InternalContextHelper.get();
             InternalSearchService searchService = context.beanForType(InternalSearchService.class);
-            searchService.markArchiveForIndexing(fsItem.getRepoPath(), true);
+            searchService.markArchiveForIndexing((JcrFile) fsItem, true);
         }
     }
 
@@ -51,5 +52,11 @@ public class ArchiveIndexingInterceptor implements RepoInterceptor {
      * @param statusHolder StatusHolder
      */
     public void onDelete(JcrFsItem fsItem, StatusHolder statusHolder) {
+    }
+
+    public void onMove(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
+    }
+
+    public void onCopy(JcrFsItem sourceItem, JcrFsItem targetItem, StatusHolder statusHolder) {
     }
 }

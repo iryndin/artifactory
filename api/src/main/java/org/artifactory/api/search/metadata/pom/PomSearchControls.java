@@ -29,13 +29,9 @@ public class PomSearchControls<T> extends MetadataSearchControls<T> {
 
     private RepoPath repoPath;
 
-    public PomSearchControls(PomSearchControls<T> pomSearchControls) {
-        super(pomSearchControls);
-        this.repoPath = pomSearchControls.repoPath;
-    }
-
     public PomSearchControls(RepoPath repoPath) {
         this.repoPath = repoPath;
+        setMetadataName("*.pom");
     }
 
     public RepoPath getRepoPath() {

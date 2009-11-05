@@ -1,5 +1,6 @@
 package org.artifactory.engine;
 
+import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.Request;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryResponse;
@@ -24,6 +25,7 @@ public interface InternalUploadService extends UploadService {
      * @param path     Path of upload
      * @throws IOException
      */
+    @Lock(transactional = true)
     @Request(aggregateEventsByTimeWindow = true)
     void doProcess(ArtifactoryRequest request, ArtifactoryResponse response, StoringRepo repo, String path)
             throws IOException;

@@ -28,11 +28,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public interface FsItemLockEntry {
     RepoPath getRepoPath();
 
-    JcrFsItem getFsItem();
-
     JcrFsItem getLockedFsItem();
 
     JcrFsItem getImmutableFsItem();
 
     ReentrantReadWriteLock getLock();
+
+    void setWriteFsItem(JcrFsItem fsItem, JcrFsItem mutableFsItem);
+
+    void setReadFsItem(JcrFsItem fsItem);
+
+    boolean isLockedByMe();
 }

@@ -23,8 +23,8 @@ import org.artifactory.api.repo.ArtifactCount;
 import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
+import org.artifactory.api.storage.GarbageCollectorInfo;
 import org.artifactory.jcr.fs.JcrFile;
-import org.artifactory.jcr.gc.GarbageCollectorInfo;
 import org.artifactory.repo.jcr.StoringRepo;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.tx.SessionResource;
@@ -150,7 +150,6 @@ public interface JcrService extends ReloadableBean {
      *
      * @return Garbage collector info with collected garbage summary
      */
-    @Transactional
     GarbageCollectorInfo garbageCollect();
 
     /**

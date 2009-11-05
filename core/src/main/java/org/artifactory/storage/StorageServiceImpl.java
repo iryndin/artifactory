@@ -21,14 +21,18 @@ import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.context.ContextHelper;
+import org.artifactory.api.storage.GarbageCollectorInfo;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.JcrSession;
 import org.artifactory.jcr.jackrabbit.GenericDbDataStore;
+import org.artifactory.jcr.schedule.JcrGarbageCollectorJob;
 import org.artifactory.jcr.utils.DerbyUtils;
 import org.artifactory.jcr.utils.JcrUtils;
 import org.artifactory.log.LoggerFactory;
+import org.artifactory.repo.index.IndexerJob;
+import org.artifactory.schedule.TaskService;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.storage.mbean.Storage;
@@ -50,6 +54,9 @@ public class StorageServiceImpl implements InternalStorageService {
 
     @Autowired
     private JcrService jcrService;
+
+    @Autowired
+    private TaskService taskService;
 
     private boolean derbyUsed;
 
@@ -100,6 +107,22 @@ public class StorageServiceImpl implements InternalStorageService {
         return FileUtils.sizeOfDirectory(indexDir);
     }
 
+    public GarbageCollectorInfo manualGarbageCollect(MultiStatusHolder statusHolder) {
+        taskService.stopTasks(IndexerJob.class, true);
+        taskService.stopTasks(JcrGarbageCollectorJob.class, true);
+        try {
+            //GC in-use-records weak references used by the file datastore
+            System.gc();
+            return jcrService.garbageCollect();
+        } catch (Exception e) {
+            statusHolder.setError(e.getMessage(), log);
+        } finally {
+            taskService.resumeTasks(JcrGarbageCollectorJob.class);
+            taskService.resumeTasks(IndexerJob.class);
+        }
+        return new GarbageCollectorInfo();  // null object
+    }
+
     public boolean isDerbyUsed() {
         return derbyUsed;
     }
@@ -110,12 +133,12 @@ public class StorageServiceImpl implements InternalStorageService {
     }
 
     public void init() {
-        derbyUsed = DerbyUtils.isDerbyDatastore();
+        derbyUsed = DerbyUtils.isDerbyUsed();
         InternalContextHelper.get().registerArtifactoryMBean(new Storage(this), StorageMBean.class, null);
     }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
-        derbyUsed = DerbyUtils.isDerbyDatastore();
+        derbyUsed = DerbyUtils.isDerbyUsed();
     }
 
     @SuppressWarnings({"unchecked"})

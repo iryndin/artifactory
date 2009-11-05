@@ -59,34 +59,34 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
         String classifier = validateAndEscape(controls.getClassifier(), "%", true, false);
 
         //Build search path from inputted group
-        StringBuilder stringBuilder = new StringBuilder();
-        if (!controls.isGroupExactMatch()) {
-            stringBuilder.append("/");
+        StringBuilder pathBuilder = new StringBuilder();
+        if (!controls.isGroupExactMatch() || groupInput.length() == 0) {
+            pathBuilder.append("/");
         }
         if (groupInput.length() > 0) {
             String[] groups = groupInput.split("/");
             for (String group : groups) {
                 String groupId = escape(group, controls.isGroupExactMatch(), true);
-                stringBuilder.append(groupId).append("/");
+                pathBuilder.append(groupId).append("/");
             }
             if (!controls.isGroupExactMatch()) {
-                stringBuilder.append("/");
+                pathBuilder.append("/");
             }
         }
 
-        stringBuilder.append(artifactId).append("/");
+        pathBuilder.append(artifactId).append("/");
 
         /**
          * If a version is given, it needs special handeling. A node path cannot begin with a number (can be escaped
          * With the class - ISO9075. This method is not used, because after encoding the digits, we cannot use wildcards
          * On it. Meanwhile using the jcr:like function.
          */
-        stringBuilder.append(version).append("/");
+        pathBuilder.append(version).append("/");
 
-        stringBuilder.append("element(*, ").append(JcrFile.NT_ARTIFACTORY_FILE).append(") ");
-        stringBuilder.append("[jcr:like(@").append(JcrHelper.PROP_ARTIFACTORY_NAME).append(",'")
+        pathBuilder.append("element(*, ").append(JcrFile.NT_ARTIFACTORY_FILE).append(") ");
+        pathBuilder.append("[jcr:like(@").append(JcrHelper.PROP_ARTIFACTORY_NAME).append(",'")
                 .append("%-").append(classifier).append(".%").append("')] ");
-        String path = stringBuilder.toString();
+        String path = pathBuilder.toString();
         String queryStr = "/jcr:root" + JcrPath.get().getRepoJcrRootPath() + "/*/" + path + "order by @" +
                 JcrHelper.PROP_ARTIFACTORY_NAME + " ascending";
 

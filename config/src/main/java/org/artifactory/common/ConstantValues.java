@@ -20,6 +20,7 @@ package org.artifactory.common;
 import org.artifactory.common.property.ArtifactorySystemProperties;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author freds
@@ -33,8 +34,9 @@ public enum ConstantValues {
     artifactoryRevision("revision", null),
     disabledAddons("addons.disabled", ""),
     springConfigDir("spring.configDir", null),
-    jcrFixConsistency("jcr.fixConsistency", FALSE.toString()),
     jcrConfigDir("jcr.configDir", null),
+    jcrFixConsistency("jcr.fixConsistency", FALSE.toString()),
+    jcrAutoRemoveMissingBinaries("jcr.autoRemoveMissingBinaries", TRUE.toString()),
     jcrSessionPoolMaxSize("jcr.session.pool.maxSize", "30"),
     versioningQueryIntervalSecs("versioningQueryIntervalSecs", "43200"),
     logsViewRefreshRateSecs("logs.viewRefreshRateSecs", "10"),
@@ -48,7 +50,7 @@ public enum ConstantValues {
     searchMaxResults("search.maxResults", "500"),
     searchMaxFragments("search.content.maxFragments", "500"),
     searchMaxFragmentsSize("search.content.maxFragmentsSize", "5000"),
-    gcIntervalSecs("gc.intervalSecs", "3600"),
+    gcIntervalSecs("gc.intervalSecs", "14400"),
     gcBatchDeleteMaxSize("gc.batchDeleteMaxSize", "30"),
     gcSleepBetweenNodesMillis("gc.sleepBetweenNodesMillis", "20"),
     forceArchiveIndexing("search.content.forceArchiveIndexing", FALSE.toString()),

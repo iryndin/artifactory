@@ -37,7 +37,9 @@ import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrRepoService;
 import org.artifactory.jcr.JcrService;
+import org.artifactory.jcr.schedule.JcrGarbageCollectorJob;
 import org.artifactory.log.LoggerFactory;
+import org.artifactory.repo.index.IndexerJob;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.update.utils.BackupUtils;
@@ -387,18 +389,22 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                     "into Artifactory.");
         }
         settings.setExportVersion(backupVersion);
+        toggleImportExportRelatedTasks(false);
+        try {
+            getCentralConfig().importFrom(settings);
+            getSecurityService().importFrom(settings);
 
-        getCentralConfig().importFrom(settings);
-        getSecurityService().importFrom(settings);
+            AddonsManager addonsManager = beanForType(AddonsManager.class);
+            WebstartAddon webstartAddon = addonsManager.addonByType(WebstartAddon.class);
+            webstartAddon.importKeyStore(settings);
 
-        AddonsManager addonsManager = beanForType(AddonsManager.class);
-        WebstartAddon webstartAddon = addonsManager.addonByType(WebstartAddon.class);
-        webstartAddon.importKeyStore(settings);
-
-        if (!settings.isExcludeContent()) {
-            getRepositoryService().importFrom(settings);
+            if (!settings.isExcludeContent()) {
+                getRepositoryService().importFrom(settings);
+            }
+            status.setStatus("### Full system import finished ###", log);
+        } finally {
+            toggleImportExportRelatedTasks(true);
         }
-        status.setStatus("### Full system import finished ###", log);
     }
 
     public void exportTo(ExportSettings settings) {
@@ -441,42 +447,48 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         //Export the repositories to the temp dir
         ExportSettings exportSettings = new ExportSettings(tmpExportDir, settings);
         CentralConfigService centralConfig = getCentralConfig();
-        centralConfig.exportTo(exportSettings);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
-        //Security export
-        exportSecurity(exportSettings);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
-        // keystore export
-        AddonsManager addonsManager = beanForType(AddonsManager.class);
-        WebstartAddon webstartAddon = addonsManager.addonByType(WebstartAddon.class);
-        webstartAddon.exportKeyStore(exportSettings);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
-        //artifactory.properties export
-        exportArtifactoryProperties(exportSettings);
-        if (status.isError() && settings.isFailFast()) {
-            return;
-        }
-        exportSystemProperties(exportSettings);
-        if (incremental && settings.isCreateArchive()) {
-            log.warn("Cannot create archive for an in place backup.");
-        }
-        if (!incremental) {
-            //Create an archive if necessary
-            if (settings.isCreateArchive()) {
-                createArchive(status, timestamp, baseDir, tmpExportDir);
-            } else {
-                moveTmpToBackupDir(status, timestamp, baseDir, tmpExportDir);
+
+        toggleImportExportRelatedTasks(false);
+        try {
+            centralConfig.exportTo(exportSettings);
+            if (status.isError() && settings.isFailFast()) {
+                return;
             }
-        } else {
-            status.setCallback(tmpExportDir);
+            //Security export
+            exportSecurity(exportSettings);
+            if (status.isError() && settings.isFailFast()) {
+                return;
+            }
+            // keystore export
+            AddonsManager addonsManager = beanForType(AddonsManager.class);
+            WebstartAddon webstartAddon = addonsManager.addonByType(WebstartAddon.class);
+            webstartAddon.exportKeyStore(exportSettings);
+            if (status.isError() && settings.isFailFast()) {
+                return;
+            }
+            //artifactory.properties export
+            exportArtifactoryProperties(exportSettings);
+            if (status.isError() && settings.isFailFast()) {
+                return;
+            }
+            exportSystemProperties(exportSettings);
+            if (incremental && settings.isCreateArchive()) {
+                log.warn("Cannot create archive for an in place backup.");
+            }
+            if (!incremental) {
+                //Create an archive if necessary
+                if (settings.isCreateArchive()) {
+                    createArchive(status, timestamp, baseDir, tmpExportDir);
+                } else {
+                    moveTmpToBackupDir(status, timestamp, baseDir, tmpExportDir);
+                }
+            } else {
+                status.setCallback(tmpExportDir);
+            }
+            status.setStatus("Full system export completed successfully.", log);
+        } finally {
+            toggleImportExportRelatedTasks(true);
         }
-        status.setStatus("Full system export completed successfully.", log);
     }
 
     private void moveTmpToBackupDir(StatusHolder status, String timestamp, File baseDir,
@@ -573,6 +585,18 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
 
     public List<ReloadableBean> getBeans() {
         return reloadableBeans;
+    }
+
+    private void toggleImportExportRelatedTasks(boolean start) {
+        TaskService taskService = getTaskService();
+        //Turn on/off indexing and garbage collection
+        if (start) {
+            taskService.resumeTasks(JcrGarbageCollectorJob.class);
+            taskService.resumeTasks(IndexerJob.class);
+        } else {
+            taskService.stopTasks(IndexerJob.class, true);
+            taskService.stopTasks(JcrGarbageCollectorJob.class, true);
+        }
     }
 
     private ObjectName createArtifactoryMBeanName(Class mbeanIfc, String mbeanProps) {

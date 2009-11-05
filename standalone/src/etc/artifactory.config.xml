@@ -16,8 +16,8 @@
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<config xmlns="http://artifactory.jfrog.org/xsd/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.0 http://www.jfrog.org/xsd/artifactory-v1_4_0.xsd">
+<config xmlns="http://artifactory.jfrog.org/xsd/1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.1 http://www.jfrog.org/xsd/artifactory-v1_4_1.xsd">
 
     <security>
         <anonAccessEnabled>true</anonAccessEnabled>

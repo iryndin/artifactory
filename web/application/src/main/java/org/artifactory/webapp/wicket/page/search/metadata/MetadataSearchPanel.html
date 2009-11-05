@@ -1,16 +1,18 @@
 <wicket:extend>
     <div class="field required">
-        <label>Metadata Name</label>
-        <span wicket:id="metadataName.help"/>
+        <label>XML Name</label>
+        <span wicket:id="metadataName.help"></span>
 
         <div class="value">
-            <input wicket:id="metadataNameField" class="text" name="search" type="text" align="right"/>
-            <input wicket:id="pomSearch" type="checkbox"/>
+            <span wicket:id="comboContainer">
+                <select wicket:id="metadataName"></select>
+            </span>
+            <input wicket:id="metaDataSearch" type="checkbox"/>
         </div>
     </div>
     <div class="field required field-sep x-path">
         <label>Field XPath</label>
-        <span wicket:id="xpath.help"/>
+        <span wicket:id="xpath.help"></span>
 
         <div class="value">
             <textarea wicket:id="xPathTextArea" name="search" class="metadata-search-wide-field"></textarea>
@@ -28,6 +30,6 @@
     </div>
 
     <div class="field-sep meta-field">
-        <button wicket:id="submit" type="submit"/>
+        <button wicket:id="submit" type="submit"></button>
     </div>
 </wicket:extend>

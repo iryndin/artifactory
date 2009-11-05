@@ -53,6 +53,14 @@ public class InternalArtifactoryResponse extends ArtifactoryResponseBase {
         // ignore
     }
 
+    public int getContentLength() {
+        return -1;
+    }
+
+    public boolean isContentLengthSet() {
+        return false;
+    }
+
     public void setContentLength(int length) {
         // ignore
     }

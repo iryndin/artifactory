@@ -25,7 +25,14 @@ import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.mail.MailServerDescriptor;
 import org.artifactory.descriptor.property.PropertySet;
-import org.artifactory.descriptor.repo.*;
+import org.artifactory.descriptor.repo.HttpRepoDescriptor;
+import org.artifactory.descriptor.repo.LocalRepoDescriptor;
+import org.artifactory.descriptor.repo.ProxyDescriptor;
+import org.artifactory.descriptor.repo.RealRepoDescriptor;
+import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
+import org.artifactory.descriptor.repo.RepoBaseDescriptor;
+import org.artifactory.descriptor.repo.RepoDescriptor;
+import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.repo.jaxb.LocalRepositoriesMapAdapter;
 import org.artifactory.descriptor.repo.jaxb.RemoteRepositoriesMapAdapter;
 import org.artifactory.descriptor.repo.jaxb.VirtualRepositoriesMapAdapter;
@@ -33,7 +40,13 @@ import org.artifactory.descriptor.security.SecurityDescriptor;
 import org.artifactory.util.AlreadyExistsException;
 import org.artifactory.util.DoesNotExistException;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -146,6 +159,11 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     }
 
     public ProxyDescriptor getDefaultProxy() {
+        for (ProxyDescriptor proxy : proxies) {
+            if (proxy.isDefaultProxy()) {
+                return proxy;
+            }
+        }
         return defaultProxy;
     }
 
@@ -201,6 +219,16 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         this.addons = addons;
     }
 
+    public void addDefaultProxyToRemoteRepositories(ProxyDescriptor proxyDescriptor) {
+        OrderedMap<String, RemoteRepoDescriptor> descriptorOrderedMap = getRemoteRepositoriesMap();
+        for (RemoteRepoDescriptor descriptor : descriptorOrderedMap.values()) {
+            if (descriptor instanceof HttpRepoDescriptor) {
+                HttpRepoDescriptor httpRepoDescriptor = (HttpRepoDescriptor) descriptor;
+                httpRepoDescriptor.setProxy(proxyDescriptor);
+            }
+        }
+    }
+
     public MailServerDescriptor getMailServer() {
         return mailServer;
     }
@@ -254,11 +282,13 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
             for (BackupDescriptor backup : getBackups()) {
                 backup.removeExcludedRepository((RealRepoDescriptor) removedRepo);
             }
+        }
 
+        if (removedRepo instanceof RepoBaseDescriptor) {
             // remove from the indexer exclude list
             IndexerDescriptor indexer = getIndexer();
             if (indexer != null) {
-                indexer.removeExcludedRepository((RealRepoDescriptor) removedRepo);
+                indexer.removeExcludedRepository((RepoBaseDescriptor) removedRepo);
             }
         }
 
@@ -291,6 +321,12 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         String repoKey = remoteRepoDescriptor.getKey();
         repoKeyExists(repoKey, false);
         remoteRepositoriesMap.put(repoKey, remoteRepoDescriptor);
+        ProxyDescriptor defaultProxyDescriptor = defaultProxyDefined();
+        if (defaultProxyDescriptor != null) {
+            if (remoteRepoDescriptor instanceof HttpRepoDescriptor) {
+                ((HttpRepoDescriptor) remoteRepoDescriptor).setProxy(defaultProxyDescriptor);
+            }
+        }
         updateDefaultProxy();
     }
 
@@ -308,6 +344,12 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         String proxyKey = proxyDescriptor.getKey();
         if (isProxyExists(proxyKey)) {
             throw new AlreadyExistsException("Proxy " + proxyKey + " already exists");
+        }
+        if (proxyDescriptor.isDefaultProxy()) {
+            // remove default flag from other existing proxy if exist
+            for (ProxyDescriptor proxy : proxies) {
+                proxy.setDefaultProxy(false);
+            }
         }
         proxies.add(proxyDescriptor);
     }
@@ -330,6 +372,31 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         updateDefaultProxy();
 
         return proxyDescriptor;
+    }
+
+    public void proxyChanged(ProxyDescriptor proxy, boolean updateExistingRepos) {
+        if (proxy.isDefaultProxy()) {
+            defaultProxy = proxy;
+            if (updateExistingRepos) {
+                updateExisingRepos(defaultProxy);
+            }
+            for (ProxyDescriptor proxyDescriptor : proxies) {
+                if (!proxy.equals(proxyDescriptor)) {
+                    proxyDescriptor.setDefaultProxy(false);
+                }
+            }
+        } else if (defaultProxy == proxy) {
+            defaultProxy = null;
+        }
+    }
+
+    private void updateExisingRepos(ProxyDescriptor proxy) {
+        for (RemoteRepoDescriptor remoteRepoDescriptor : remoteRepositoriesMap.values()) {
+            if (remoteRepoDescriptor instanceof HttpRepoDescriptor) {
+                HttpRepoDescriptor httpRepoDescriptor = (HttpRepoDescriptor) remoteRepoDescriptor;
+                httpRepoDescriptor.setProxy(proxy);
+            }
+        }
     }
 
     public boolean isBackupExists(String backupKey) {
@@ -398,6 +465,15 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     public boolean isOfflineMode() {
         return offlineMode;
+    }
+
+    public ProxyDescriptor defaultProxyDefined() {
+        for (ProxyDescriptor proxyDescriptor : proxies) {
+            if (proxyDescriptor.isDefaultProxy()) {
+                return proxyDescriptor;
+            }
+        }
+        return null;
     }
 
     private ProxyDescriptor getProxy(String proxyKey) {

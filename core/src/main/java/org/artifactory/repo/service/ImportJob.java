@@ -55,7 +55,7 @@ public class ImportJob extends QuartzCommand {
                     repositoryService.importAll(settings);
                 } else {
                     if (deleteRepo) {
-                        RepoPath deleteRepoPath = RepoPath.repoPathForRepo(repoKey);
+                        RepoPath deleteRepoPath = RepoPath.secureRepoPathForRepo(repoKey);
                         status.setStatus("Fully removing repository '" + deleteRepoPath + "'.", log);
                         try {
                             repositoryService.undeploy(deleteRepoPath);

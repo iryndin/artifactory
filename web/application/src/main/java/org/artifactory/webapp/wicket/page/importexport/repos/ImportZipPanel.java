@@ -112,12 +112,12 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
         ZipInputStream zipinputstream = null;
         FileOutputStream fos = null;
         File uploadedFile = null;
+        File destFolder = null;
         try {
             uploadedFile = uploadForm.getUploadedFile();
             zipinputstream = new ZipInputStream(new FileInputStream(uploadedFile));
             ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
-            File destFolder =
-                    new File(artifactoryHome.getTmpUploadsDir(), uploadedFile.getName() + "_extract");
+            destFolder = new File(artifactoryHome.getTmpUploadsDir(), uploadedFile.getName() + "_extract");
             FileUtils.deleteDirectory(destFolder);
 
             byte[] buf = new byte[DEFAULT_BUFF_SIZE];
@@ -160,6 +160,8 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
         } finally {
             IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(zipinputstream);
+            FileUtils.deleteQuietly(destFolder);
+            FileUtils.deleteQuietly(uploadedFile);
         }
     }
 

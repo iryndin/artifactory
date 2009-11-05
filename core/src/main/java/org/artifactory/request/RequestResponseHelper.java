@@ -53,10 +53,16 @@ public final class RequestResponseHelper {
             throws IOException {
         try {
             RepoPath repoPath = res.getRepoPath();
+            //First, update the real length
+            updateResponseActualLength(response, handle);
             updateResponseFromRepoResource(response, res);
             AccessLogger.downloaded(repoPath);
             InputStream inputStream = handle.getInputStream();
             final long start = System.currentTimeMillis();
+            if (log.isDebugEnabled()) {
+                log.debug("Sending back body response for '{}'. Original resource size: {}, actual size: {}.",
+                        new Object[]{repoPath, res.getSize(), handle.getSize()});
+            }
             response.sendStream(inputStream);
             final DownloadEntry downloadEntry =
                     new DownloadEntry(repoPath.getId(), res.getSize(), System.currentTimeMillis() - start);
@@ -110,10 +116,29 @@ public final class RequestResponseHelper {
         response.sendError(HttpStatus.SC_NOT_MODIFIED, null, log);
     }
 
+    /**
+     * Update the actual size according to the size of the content being sent. This may be different from the size
+     * contained in the RepoResource, which was retrieved using getInfo() on the repository, and may have changed in the
+     * repo just before sending back the stream, since we do not lock the repository item between getInfo() and
+     * getResourceStreamHandle().
+     *
+     * @param response
+     * @param handle
+     */
+    private void updateResponseActualLength(ArtifactoryResponse response, ResourceStreamHandle handle) {
+        long actualSize = handle.getSize();
+        if (actualSize > 0) {
+            response.setContentLength((int) actualSize);
+        }
+    }
+
     private void updateResponseFromRepoResource(ArtifactoryResponse response, RepoResource res) {
         String mimeType = res.getMimeType();
         response.setContentType(mimeType);
-        response.setContentLength((int) res.getSize());
+        if (!response.isContentLengthSet()) {
+            //Only set the content length once
+            response.setContentLength((int) res.getSize());
+        }
         response.setLastModified(res.getLastModified());
         response.setEtag(res.getInfo().getSha1());
 

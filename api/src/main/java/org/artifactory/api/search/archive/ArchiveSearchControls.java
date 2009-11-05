@@ -36,6 +36,7 @@ public class ArchiveSearchControls extends SearchControlsBase {
      */
     public ArchiveSearchControls() {
         shouldCalcEntries = true;
+        exactMatch = true;
     }
 
     /**

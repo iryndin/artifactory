@@ -18,16 +18,21 @@
 package org.artifactory.webapp.wicket.page.config.proxy;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
+import org.artifactory.common.wicket.WicketProperty;
+import org.artifactory.common.wicket.ajax.ConfirmAjaxBehavior;
 import org.artifactory.common.wicket.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.common.wicket.component.CreateUpdateAction;
 import org.artifactory.common.wicket.component.CreateUpdatePanel;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
+import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
 import org.artifactory.common.wicket.component.links.TitledAjaxSubmitLink;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.common.wicket.component.modal.links.ModalCloseLink;
@@ -49,6 +54,9 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
 
     @SpringBean
     private CentralConfigService centralConfigService;
+    @WicketProperty
+    private boolean isDefaultProxy;
+    private boolean defaultForAllRemotRepo;
 
     public ProxyCreateUpdatePanel(CreateUpdateAction action, ProxyDescriptor proxyDescriptor,
             ProxiesListPanel proxiesListPanel) {
@@ -81,9 +89,12 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         border.add(new TextField("ntHost"));
         border.add(new TextField("domain"));
 
+        //Global Proxy check box
+        SystemDefaultCheckbox sysCheckbox = new SystemDefaultCheckbox(entity.isDefaultProxy());
+        border.add(sysCheckbox);
+
         // Cancel button
         form.add(new ModalCloseLink("cancel"));
-
         // Submit button
         TitledAjaxSubmitLink submit = createSubmitButton(proxiesListPanel);
         form.add(submit);
@@ -96,7 +107,7 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         border.add(new SchemaHelpBubble("password.help"));
         border.add(new SchemaHelpBubble("ntHost.help"));
         border.add(new SchemaHelpBubble("domain.help"));
-
+        border.add(new SchemaHelpBubble("defaultProxy.help"));
     }
 
     private TitledAjaxSubmitLink createSubmitButton(final ProxiesListPanel proxiesListPanel) {
@@ -108,15 +119,16 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
                     error("Please specify a NT host value to use with the NT domain.");
                     return;
                 }
+                entity.setDefaultProxy(isDefaultProxy);
                 MutableCentralConfigDescriptor mutableCentralConfig = proxiesListPanel.getEditingDescriptor();
                 if (isCreate()) {
                     mutableCentralConfig.addProxy(entity);
-                    centralConfigService.saveEditedDescriptorAndReload(mutableCentralConfig);
                     getPage().info("Proxy '" + entity.getKey() + "' successfully created.");
                 } else {
-                    centralConfigService.saveEditedDescriptorAndReload(mutableCentralConfig);
                     getPage().info("Proxy '" + entity.getKey() + "' successfully updated.");
                 }
+                mutableCentralConfig.proxyChanged(entity, defaultForAllRemotRepo);
+                centralConfigService.saveEditedDescriptorAndReload(mutableCentralConfig);
                 AjaxUtils.refreshFeedback(target);
                 target.addComponent(proxiesListPanel);
                 ModalHandler.closeCurrent(target);
@@ -124,4 +136,31 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         };
     }
 
+    private class SystemDefaultCheckbox extends StyledCheckbox {
+
+        public SystemDefaultCheckbox(final boolean checked) {
+            super("sysCheckbox", new Model(checked));
+            setOutputMarkupId(true);
+
+            ConfirmAjaxBehavior confirmAjaxBehavior = new ConfirmAjaxBehavior("onclick",
+                    "Do you wish to use this proxy with existing remote repositories (and override any assigned proxies)?") {
+
+                @Override
+                protected IAjaxCallDecorator getAjaxCallDecorator() {
+                    return super.getAjaxCallDecorator();
+                }
+
+                @Override
+                protected void onUpdate(boolean approved, AjaxRequestTarget target) {
+                    boolean checked = isChecked();
+                    defaultForAllRemotRepo = checked && approved;
+                    isDefaultProxy = checked;
+                    setConfirmEnabled(!checked);
+                    target.addComponent(SystemDefaultCheckbox.this);
+                }
+            };
+            confirmAjaxBehavior.setConfirmEnabled(!checked);
+            add(confirmAjaxBehavior);
+        }
+    }
 }

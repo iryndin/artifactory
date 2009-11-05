@@ -53,8 +53,12 @@ public class MavenServiceImpl implements MavenService {
         SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
         StringWriter stringWriter = new StringWriter();
         settingsWriter.write(stringWriter, settings);
-
-        return stringWriter.toString();
+        String settingsXml = stringWriter.toString();
+        settingsXml = settingsXml.replace("<settings>", "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"\n" +
+                "          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "          xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0\n" +
+                "                      http://maven.apache.org/xsd/settings-1.0.0.xsd\">");
+        return settingsXml;
     }
 
     /**

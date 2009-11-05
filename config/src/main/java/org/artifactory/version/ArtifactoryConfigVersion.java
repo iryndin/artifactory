@@ -33,6 +33,7 @@ import org.artifactory.version.converter.v132.LdapListConverter;
 import org.artifactory.version.converter.v135.ProxyNTHostConverter;
 import org.artifactory.version.converter.v136.IndexerCronRemoverConverter;
 import org.artifactory.version.converter.v136.RepositoryTypeConverter;
+import org.artifactory.version.converter.v141.ProxyDefaultConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +98,10 @@ public enum ArtifactoryConfigVersion implements SubConfigElementVersion {
     v140("http://artifactory.jfrog.org/xsd/1.4.0",
             "http://www.jfrog.org/xsd/artifactory-v1_4_0.xsd",
             ArtifactoryVersion.v210,
+            ArtifactoryVersion.v210, new ProxyDefaultConverter()),
+    v141("http://artifactory.jfrog.org/xsd/1.4.1",
+            "http://www.jfrog.org/xsd/artifactory-v1_4_1.xsd",
+            ArtifactoryVersion.v211,
             ArtifactoryVersion.getCurrent());
 
     private final String xsdUri;

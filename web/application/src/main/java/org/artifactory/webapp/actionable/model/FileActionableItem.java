@@ -29,8 +29,17 @@ import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.ArtifactoryPermission;
 import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.ivy.IvyNaming;
+import org.artifactory.webapp.actionable.FileActionable;
 import org.artifactory.webapp.actionable.RepoAwareActionableItemBase;
-import org.artifactory.webapp.actionable.action.*;
+import org.artifactory.webapp.actionable.action.CopyAction;
+import org.artifactory.webapp.actionable.action.DeleteAction;
+import org.artifactory.webapp.actionable.action.DownloadAction;
+import org.artifactory.webapp.actionable.action.ItemAction;
+import org.artifactory.webapp.actionable.action.MoveAction;
+import org.artifactory.webapp.actionable.action.ViewTextFileAction;
+import org.artifactory.webapp.actionable.action.ZapAction;
+import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.jnlp.JnlpViewTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.maven.PomViewTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.stats.StatsTabPanel;
@@ -39,33 +48,40 @@ import org.artifactory.webapp.wicket.util.ItemCssClass;
 import java.util.List;
 import java.util.Set;
 
+import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.GENERAL_XML;
+import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.IVY_XML;
+
 /**
  * Created by IntelliJ IDEA. User: yoav
  */
-public class FileActionableItem extends RepoAwareActionableItemBase {
+public class FileActionableItem extends RepoAwareActionableItemBase implements FileActionable {
 
     private final FileInfo fileInfo;
     private ItemAction downloadAction;
     private ItemAction viewAction;
+
     private ItemAction deleteAction;
     private ItemAction zapAction;
     private MoveAction moveAction;
+    private CopyAction copyAction;
     private ItemAction watchAction;
 
     public FileActionableItem(FileInfo fileInfo) {
         super(fileInfo);
         this.fileInfo = fileInfo;
         Set<ItemAction> actions = getActions();
-        downloadAction = new DownloadAction();
-        actions.add(downloadAction);
         viewAction = new ViewTextFileAction();
         actions.add(viewAction);
-        deleteAction = new DeleteAction();
-        actions.add(deleteAction);
-        zapAction = new ZapAction();
-        actions.add(zapAction);
+        downloadAction = new DownloadAction();
+        actions.add(downloadAction);
         moveAction = new MoveAction();
         actions.add(moveAction);
+        copyAction = new CopyAction();
+        actions.add(copyAction);
+        zapAction = new ZapAction();
+        actions.add(zapAction);
+        deleteAction = new DeleteAction();
+        actions.add(deleteAction);
 
         AddonsManager addonsManager = getAddonsProvider();
         WatchAddon watchAddon = addonsManager.addonByType(WatchAddon.class);
@@ -111,13 +127,25 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
             });
         }
 
-        if (isJnlpFile()) {
-            tabs.add(new AbstractTab(new Model("JNLP")) {
+        if (isXmlFile() && !isPomFile()) {
+            //xml tab
+            final XmlViewTabPanel.XmlTypes xmlType = isIvyFile() ? IVY_XML : GENERAL_XML;
+            tabs.add(new AbstractTab(new Model(xmlType.getTabTitle())) {
+
                 @Override
                 public Panel getPanel(String panelId) {
-                    return new JnlpViewTabPanel(panelId, FileActionableItem.this);
+                    return new XmlViewTabPanel(panelId, FileActionableItem.this, xmlType);
                 }
             });
+
+            if (isJnlpFile()) {
+                tabs.add(new AbstractTab(new Model("JNLP")) {
+                    @Override
+                    public Panel getPanel(String panelId) {
+                        return new JnlpViewTabPanel(panelId, FileActionableItem.this);
+                    }
+                });
+            }
         }
     }
 
@@ -134,7 +162,7 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
         } else if (!getRepo().isCache()) {
             zapAction.setEnabled(false);
         }
-        if (!isPomFile()) {
+        if (!isPomFile() && !isXmlFile()) {
             viewAction.setEnabled(false);
         }
 
@@ -147,9 +175,22 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
             moveAction.setEnabled(false);
         }
 
+        if (!canDelete || NamingUtils.isSystem(repoPath.getPath()) ||
+                !authService.hasPermission(ArtifactoryPermission.DEPLOY)) {
+            copyAction.setEnabled(false);
+        }
+
         if (!canRead || authService.isAnonymous()) {
             watchAction.setEnabled(false);
         }
+    }
+
+    private boolean isXmlFile() {
+        return NamingUtils.getContentType(getFileInfo().getName()).isXml();
+    }
+
+    private boolean isIvyFile() {
+        return IvyNaming.isIvyFileName(getFileInfo().getName());
     }
 
     private boolean isPomFile() {
@@ -159,6 +200,7 @@ public class FileActionableItem extends RepoAwareActionableItemBase {
     private boolean isJnlpFile() {
         return NamingUtils.getContentType((getFileInfo().getName())).isJnlp();
     }
+
 
     private boolean shouldShowTabs() {
         //Hack - dont display anything for checksums or metadata

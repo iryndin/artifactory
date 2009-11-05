@@ -101,7 +101,7 @@ public class MetadataTabPanel extends Panel {
                 return new ConfirmationAjaxCallDecorator(message);
             }
         };
-        removeButton.setVisible(authorizationService.canDelete(repoPath));
+        removeButton.setVisible(authorizationService.canAnnotate(repoPath));
         form.add(removeButton);
         add(form);
 

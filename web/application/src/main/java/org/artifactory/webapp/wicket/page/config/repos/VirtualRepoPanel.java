@@ -29,6 +29,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.wicket.WebstartWebAddon;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.CreateUpdateAction;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
 import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
@@ -57,11 +58,12 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
     private AddonsManager addonsManager;
 
     public VirtualRepoPanel(CreateUpdateAction action, VirtualRepoDescriptor repoDescriptor,
-            MutableCentralConfigDescriptor mutableCentralConfig) {
+                            MutableCentralConfigDescriptor mutableCentralConfig) {
         super(action, repoDescriptor, mutableCentralConfig);
 
         TitledBorder virtualRepoFields = new TitledBorder("virtualRepoFields");
         form.add(virtualRepoFields);
+        form.add(new CssClass("virtual-repo-panel-form"));
 
         virtualRepoFields.add(new StyledCheckbox("artifactoryRequestsCanRetrieveRemoteArtifacts"));
         virtualRepoFields.add(new SchemaHelpBubble("artifactoryRequestsCanRetrieveRemoteArtifacts.help"));

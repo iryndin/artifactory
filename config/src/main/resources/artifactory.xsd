@@ -12,13 +12,13 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU Lesser General Public License for more details.
   ~
-  ~ You should have received a copy of the GNU Lesser General Public License
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
+  ~ You should have received a copy of the GNU Lesser General Public License
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
-           targetNamespace="http://artifactory.jfrog.org/xsd/1.4.0"
-           xmlns="http://artifactory.jfrog.org/xsd/1.4.0"
+           targetNamespace="http://artifactory.jfrog.org/xsd/1.4.1"
+           xmlns="http://artifactory.jfrog.org/xsd/1.4.1"
            elementFormDefault="qualified">
 
     <!-- TODO: storage type -->
@@ -47,7 +47,7 @@
             <xs:element name="fileUploadMaxSizeMb" type="xs:int" default="100" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        The maximun size in megabytes for uploaded artifact files. Set to '0' for unlimited size.
+                        The maximum size in megabytes for uploaded artifact files. Set to '0' for unlimited size.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -207,8 +207,8 @@
                     <xs:element name="maxUniqueSnapshots" type="xs:int" default="0" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
-                                The maximun number unique snapshots (of the same artifact) to store.
-                                Any number of sanpshots above the max will be automatically removed by age.
+                                The maximum number unique snapshots (of the same artifact) to store.
+                                Any number of snapshots above the max will be automatically removed by age.
                                 A value of 0 (the default) means no limits on unique snapshots number (thus
                                 no automatic cleanup).
                             </xs:documentation>
@@ -243,9 +243,9 @@
                     <xs:element name="propertySets" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
-                                The property sets that users will be able to use of itmes hosted under this repository.
+                                The property sets that users will be able to use of items hosted under this repository.
                                 As property sets are purely assistive and not enforcing, setting this on a repository
-                                only affects the list of predefined properties in the user iterface properties tab for
+                                only affects the list of predefined properties in the user interface properties tab for
                                 items under the repository. You will still be able to attach arbitrary properties to
                                 repository items.
                             </xs:documentation>
@@ -439,20 +439,20 @@
                     <xs:element name="checksumPolicyType" default="generate-if-absent" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
-                                Checksum policy determines how Artifactory behaves when a cheksum for a remote resource
+                                Checksum policy determines how Artifactory behaves when a checksum for a remote resource
                                 is missing or conflicts with the locally calculated checksum (bad checksum).
                                 Checksum checking effectively verifies the integrity of the remote resource.
                                 The options are:
                                 (1) Generate if absent (the default) - A bad remote checksum will fail the resource
-                                request. If, however, a remote checksum could not be found Artifatory will
-                                automcatically genrate one.
+                                request. If, however, a remote checksum could not be found Artifactory will
+                                automatically generate one.
                                 (2) Fail: A bad or missing remote checksum will fail the resource request.
                                 (3) Ignore and generate: Artifactory will locally generate a checksum for both bad or
-                                missing remote checksum. Remote resource retrival will never fail, but integrity might
+                                missing remote checksum. Remote resource retrieval will never fail, but integrity might
                                 be compromised.
                                 (4) Pass-thru: Artifactory will store and pass-thorugh all remote checksums including
                                 bad ones and will locally generate a checksum for a missing remote checksum cannot be
-                                found. Remote esource retrival will never fail, but integrity might be compromised and
+                                found. Remote resource retrieval will never fail, but integrity might be compromised and
                                 client-side checksum validation (such as the one done by Maven) will fail.
                             </xs:documentation>
                         </xs:annotation>
@@ -508,7 +508,7 @@
                                 default="false">
                         <xs:annotation>
                             <xs:documentation source="description">
-                                Determines whether artifact requests comming from other Artifactories
+                                Determines whether artifact requests coming from other Artifactories
                                 can be fulfilled by accessing this virtual repository's remote repositories
                                 or by only accessing its caches (the default).
                             </xs:documentation>
@@ -597,6 +597,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="defaultProxy" type="xs:boolean" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Make this proxy the default for new remote repositories and for internal HTTP requests.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -644,9 +651,9 @@
             <xs:element name="retentionPeriodHours" type="xs:int" default="168" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        The maximun number of hours to keep old backups in the destination dir.
+                        The maximum number of hours to keep old backups in the destination dir.
                         Checking the "Incremental" checkbox, means that backups will be incrementally (delta only)
-                        written to the same directory: ${backupDir}/current. This "in place" backup type is suitbale
+                        written to the same directory: ${backupDir}/current. This "in place" backup type is suitable
                         for file-system based backup support, and cleanup of old backups is inactive in this mode.
                         The default is 168 hours = 7 days.
                     </xs:documentation>
@@ -759,7 +766,7 @@
             <xs:element name="showAddonsInfoCookie" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        A variable used for calculating the path for a user cookie storing his personal addon
+                        A variable used for calculating the path for a user cookie storing his personal add-on
                         info showing preferences.
                     </xs:documentation>
                 </xs:annotation>
@@ -872,7 +879,7 @@
             <xs:element name="encryptionPolicy" default="supported" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        Determines the password requirements from users indetified to Artifactory from a remote
+                        Determines the password requirements from users identified to Artifactory from a remote
                         client, such as Maven.
                         The options are:
                         (1) Supported (the default) - Users can authenticate using both secure encrypted
@@ -929,7 +936,8 @@ to manage user permissions that are not attached to his default groups.
                 <xs:annotation>
                     <xs:documentation source="description">
                         <![CDATA[
-                                The name of the HTTP request variable to use for extracting the user identity. Default is: REMOTE_USER.
+                                The name of the HTTP request variable to use for extracting the user identity.
+                                Default is: REMOTE_USER.
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
@@ -1077,7 +1085,7 @@ to manage user permissions that are not attached to his default groups.
             <xs:element name="visible" type="xs:boolean">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        Whether this property set will be visible in the proprties managment user interface, or is
+                        Whether this property set will be visible in the properties management user interface, or is
                         intended for internal use.
                     </xs:documentation>
                 </xs:annotation>
@@ -1085,7 +1093,7 @@ to manage user permissions that are not attached to his default groups.
             <xs:element name="properties" type="PropertiesType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        The list of proprties grouped under this property set.
+                        The list of properties grouped under this property set.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>

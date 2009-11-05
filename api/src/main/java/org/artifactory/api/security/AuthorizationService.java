@@ -53,6 +53,11 @@ public interface AuthorizationService {
     boolean canImplicitlyReadParentPath(RepoPath repoPath);
 
     /**
+     * @return True if the current user can annotate the specified path.
+     */
+    boolean canAnnotate(RepoPath repoPath);
+
+    /**
      * @return True if the current user can delete the specified path.
      */
     boolean canDelete(RepoPath path);
@@ -81,6 +86,11 @@ public interface AuthorizationService {
     boolean canRead(UserInfo user, RepoPath path);
 
     /**
+     * @return True if the user can annotate the specified path.
+     */
+    boolean canAnnotate(UserInfo user, RepoPath path);
+
+    /**
      * @return True if the user can delete the specified path.
      */
     boolean canDelete(UserInfo user, RepoPath path);
@@ -99,6 +109,11 @@ public interface AuthorizationService {
      * @return True if users in the group can read the specified path.
      */
     boolean canRead(GroupInfo group, RepoPath path);
+
+    /**
+     * @return True if users in the group can annotate the specified path.
+     */
+    boolean canAnnotate(GroupInfo group, RepoPath path);
 
     /**
      * @return True if users in the group can delete the specified path.
@@ -131,4 +146,12 @@ public interface AuthorizationService {
     String currentUsername();
 
     boolean isAuthenticated();
+
+    /**
+     * Indicates if the given user has any permissions at all, no matter the target
+     *
+     * @param username Name of user to check
+     * @return True if user has any permissions, false if not
+     */
+    boolean userHasPermissions(String username);
 }

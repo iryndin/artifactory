@@ -29,4 +29,5 @@ import org.artifactory.spring.ReloadableBean;
 public interface InternalSecurityService extends ReloadableBean,
         AuthorizationService, UserGroupService, AclService, SecurityService {
     String USER_UNKNOWN = "unknown";
+
 }

@@ -68,6 +68,11 @@ public class ImportRepoPanel extends BasicImportPanel {
     @Override
     protected void onBeforeImport() {/*Nothing needs doing*/}
 
+    @Override
+    protected void cleanupResources() {
+        /*Nothing needs doing**/
+    }
+
     private String getRepoSelectHelpText() {
         StringBuilder sb = new StringBuilder();
         sb.append("Selects where to import the uploaded content.\n");

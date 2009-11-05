@@ -40,6 +40,10 @@ public interface ArtifactoryResponse {
 
     void setContentLength(int length);
 
+    int getContentLength();
+
+    boolean isContentLengthSet();
+
     void setContentType(String contentType);
 
     OutputStream getOutputStream() throws IOException;

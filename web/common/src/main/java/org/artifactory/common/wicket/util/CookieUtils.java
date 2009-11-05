@@ -50,4 +50,24 @@ public class CookieUtils {
         WebResponse response = (WebResponse) RequestCycle.get().getResponse();
         response.clearCookie(new Cookie(name, null));
     }
+
+    /**
+     * Search for a perssistent component coockie. for every web page there should be only one cookie for every
+     * component
+     *
+     * @param componentId
+     * @return The first cookie if exist, that his name ends with the component id
+     */
+    public static Cookie getCookieBycomponentId(String componentId) {
+        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
+        Cookie[] cookies = request.getCookies();
+        Cookie cookie = null;
+        for (Cookie c : cookies) {
+            if (c.getName().endsWith(componentId)) {
+                cookie = c;
+                break;
+            }
+        }
+        return cookie;
+    }
 }

@@ -54,10 +54,10 @@ public class LocalRepoActionableItem extends RepoAwareActionableItemBase
         Set<ItemAction> actions = getActions();
         deleteAction = new RepoDeleteAction();
         actions.add(deleteAction);
-        zapAction = new ZapAction();
-        actions.add(zapAction);
         delVersions = new DeleteVersionsAction();
         actions.add(delVersions);
+        zapAction = new ZapAction();
+        actions.add(zapAction);
 
         AddonsManager addonsManager = getAddonsProvider();
         WatchAddon watchAddon = addonsManager.addonByType(WatchAddon.class);
@@ -108,9 +108,9 @@ public class LocalRepoActionableItem extends RepoAwareActionableItemBase
     public void filterActions(AuthorizationService authService) {
         String key = getRepoPath().getRepoKey();
         boolean isAnonymous = authService.isAnonymous();
-        boolean deployer = authService.canDeploy(RepoPath.repoPathForRepo(key));
-        boolean canDelete = authService.canDelete(RepoPath.repoPathForRepo(key));
-        boolean canRead = authService.canRead(RepoPath.repoPathForRepo(key));
+        boolean deployer = authService.canDeploy(RepoPath.secureRepoPathForRepo(key));
+        boolean canDelete = authService.canDelete(RepoPath.secureRepoPathForRepo(key));
+        boolean canRead = authService.canRead(RepoPath.secureRepoPathForRepo(key));
 
         if (!canDelete) {
             deleteAction.setEnabled(false);

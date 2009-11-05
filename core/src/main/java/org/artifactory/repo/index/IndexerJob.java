@@ -19,12 +19,15 @@ package org.artifactory.repo.index;
 
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
+import org.artifactory.jcr.schedule.JcrGarbageCollectorJob;
 import org.artifactory.repo.cleanup.ArtifactCleanupJob;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
+import org.artifactory.security.SystemAuthenticationToken;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.security.context.SecurityContextHolder;
 
 import java.util.Date;
 
@@ -37,10 +40,12 @@ public class IndexerJob extends QuartzCommand {
 
     @Override
     protected void onExecute(JobExecutionContext context) throws JobExecutionException {
+        SecurityContextHolder.getContext().setAuthentication(new SystemAuthenticationToken());
         ArtifactoryContext artifactoryContext = ContextHelper.get();
         TaskService taskService = artifactoryContext.beanForType(TaskService.class);
         try {
-            //Stop the clean-up job while the indexer is running
+            //Stop the clean-up and gc jobs while the indexer is running
+            taskService.stopTasks(JcrGarbageCollectorJob.class, true);
             taskService.stopTasks(ArtifactCleanupJob.class, true);
 
             InternalIndexerService indexer = artifactoryContext.beanForType(InternalIndexerService.class);
@@ -49,7 +54,9 @@ public class IndexerJob extends QuartzCommand {
             Date fireTime = context.getFireTime();
             indexer.index(fireTime, manualRun);
         } finally {
+            SecurityContextHolder.getContext().setAuthentication(null);
             taskService.resumeTasks(ArtifactCleanupJob.class);
+            taskService.resumeTasks(JcrGarbageCollectorJob.class);
         }
     }
 }

@@ -213,7 +213,7 @@ public class IndexerServiceImpl implements InternalIndexerService {
                 }
                 //Create a temp lucene dir and merge each local into it
                 ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
-                File dir = FileUtils.createRandomDir(artifactoryHome.getTmpDir(), "artifactory.merged-index");
+                File dir = FileUtils.createRandomDir(artifactoryHome.getWorkTmpDir(), "artifactory.merged-index");
                 try {
                     FSDirectory virtualIndexMergeDir = FSDirectory.getDirectory(dir);
                     RepoIndexer repoIndexer = new RepoIndexer(virtualRepo);

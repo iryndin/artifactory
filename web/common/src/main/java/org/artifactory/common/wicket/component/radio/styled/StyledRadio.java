@@ -34,6 +34,7 @@ import org.apache.wicket.util.lang.Objects;
 import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.behavior.DelegateEventBehavior;
 import org.artifactory.common.wicket.contributor.ResourcePackage;
+import org.artifactory.common.wicket.model.DelegetedModel;
 import org.artifactory.common.wicket.model.Titled;
 
 /**
@@ -57,7 +58,7 @@ public class StyledRadio extends LabeledWebMarkupContainer implements Titled {
         add(ResourcePackage.forJavaScript(StyledRadio.class));
         add(new CssClass("styled-checkbox"));
 
-        radio = new Radio("radio", new DelegetedModel());
+        radio = new Radio("radio", new DelegetedModel(this));
         radio.setOutputMarkupId(true);
         add(radio);
 
@@ -165,18 +166,4 @@ public class StyledRadio extends LabeledWebMarkupContainer implements Titled {
                     + "</div></div></div>";
         }
     }
-
-    private class DelegetedModel implements IModel {
-        public Object getObject() {
-            return getModelObject();
-        }
-
-        public void setObject(Object object) {
-            setModelObject(object);
-        }
-
-        public void detach() {
-        }
-    }
-
 }

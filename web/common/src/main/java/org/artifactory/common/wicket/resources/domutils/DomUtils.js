@@ -129,8 +129,8 @@ var DomUtils = {
     },
 
     addOnRender: function(func) {
-        if (dojo.isIE && !dojo._postLoad) {
-            dojo.addOnLoad(func);
+        if (dojo.isIE) {
+            Wicket.Event.addDomReadyEvent(func);
         } else {
             func();
         }
@@ -319,5 +319,5 @@ var DojoUtils = {
             css += ' ' + name + ' ' + name + '-' + version;
         }
     });
-    document.documentElement.className = 'JS' + css;
+    document.documentElement.className = navigator.platform + css;
 })();

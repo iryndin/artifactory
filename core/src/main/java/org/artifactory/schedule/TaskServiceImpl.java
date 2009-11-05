@@ -21,7 +21,7 @@ import org.artifactory.cache.InternalCacheService;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
-import org.artifactory.jcr.schedule.JcrGarbageCollectorCommand;
+import org.artifactory.jcr.schedule.JcrGarbageCollectorJob;
 import org.artifactory.jcr.trash.EmptyTrashJob;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
@@ -60,7 +60,7 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
 
         //Run the datastore gc every 12 hours after 2 hours from startup
         QuartzTask jcrGarbageCollectorTask = new QuartzTask(
-                JcrGarbageCollectorCommand.class,
+                JcrGarbageCollectorJob.class,
                 TimeUnit.SECONDS.toMillis(ConstantValues.gcIntervalSecs.getLong()),
                 TimeUnit.SECONDS.toMillis(1));
         jcrGarbageCollectorTask.setSingleton(true);
@@ -257,6 +257,23 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
 
     public boolean hasTaskOfType(Class<? extends TaskCallback> callbackType) {
         return hasTaskOfType(callbackType, activeTasksByToken);
+    }
+
+    public TaskBase getSingletonTaskTaskOfType(Class<? extends TaskCallback> callbackType) {
+        if (callbackType == null) {
+            throw new IllegalArgumentException("Task type cannot be null.");
+        }
+        for (TaskBase task : activeTasksByToken.values()) {
+            if (ClassUtils.isAssignable(callbackType, task.getType())) {
+                if (task.isSingleton()) {
+                    return task;
+                } else {
+                    throw new IllegalArgumentException(
+                            "Task of type '" + callbackType.getName() + "' is not a singleton.");
+                }
+            }
+        }
+        return null;
     }
 
     private boolean hasTaskOfType(Class<? extends TaskCallback> callbackType, ConcurrentMap<String, TaskBase> taskMap) {

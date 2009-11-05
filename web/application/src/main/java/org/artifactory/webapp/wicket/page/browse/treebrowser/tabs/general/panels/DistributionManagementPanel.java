@@ -76,7 +76,7 @@ public class DistributionManagementPanel extends FieldSetPanel {
             appendEsc(secondIndention);
             appendEsc("<id>");
             appendEsc(id);
-            appendEsc("-releases</id>\n");
+            appendEsc("</id>\n");
             appendEsc(secondIndention);
             appendEsc("<name>");
             appendEsc(id);
@@ -99,7 +99,7 @@ public class DistributionManagementPanel extends FieldSetPanel {
             appendEsc(secondIndention);
             appendEsc("<id>");
             appendEsc(id);
-            appendEsc("-snapshots</id>\n");
+            appendEsc("</id>\n");
             appendEsc(secondIndention);
             appendEsc("<name>");
             appendEsc(id);

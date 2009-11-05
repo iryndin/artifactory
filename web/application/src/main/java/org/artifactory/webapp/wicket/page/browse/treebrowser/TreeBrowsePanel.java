@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.persistence.IValuePersister;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -73,6 +74,7 @@ public abstract class TreeBrowsePanel extends TitledPanel implements ActionableI
 
     @SpringBean
     private AuthorizationService authService;
+    private static final IValuePersister COMPACT_PERSISTER = new CompactPersister();
 
     public TreeBrowsePanel(String id) {
         this(id, null);
@@ -81,7 +83,7 @@ public abstract class TreeBrowsePanel extends TitledPanel implements ActionableI
     public TreeBrowsePanel(String id, ActionableItem initialItem) {
         super(id);
 
-        WebMarkupContainer menuPlaceHolder = new WebMarkupContainer("contextMenu");
+        Component menuPlaceHolder = new WebMarkupContainer("contextMenu");
         menuPlaceHolder.setOutputMarkupId(true);
         add(menuPlaceHolder);
 
@@ -170,44 +172,44 @@ public abstract class TreeBrowsePanel extends TitledPanel implements ActionableI
      * @param target The ajax target to use for refreshing the component
      */
     public void removeNodePanel(AjaxRequestTarget target) {
-        Panel dummy = new EmptyPanel("nodePanel");
-        dummy.setOutputMarkupId(true);
-        setItemDisplayPanel(dummy);
-        nodePanelContainer.replace(dummy);
-        target.addComponent(dummy);
+        Panel dummyPanel = new EmptyPanel("nodePanel");
+        dummyPanel.setOutputMarkupId(true);
+        setItemDisplayPanel(dummyPanel);
+        nodePanelContainer.replace(dummyPanel);
+        target.addComponent(dummyPanel);
     }
 
     /**
      * StyledCheckbox with persist load on c'tor.
      */
     private class CompactFoldersCheckbox extends StyledCheckbox {
-        final EscapeCookieValuePersister persister = new MyPersister();
-
-        public CompactFoldersCheckbox(String id) {
+        private CompactFoldersCheckbox(String id) {
             super(id, new Model(true));
 
             setPersistent(true);
-            persister.load(this);
+            COMPACT_PERSISTER.load(this);
             add(new AjaxFormComponentUpdatingBehavior("onclick") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    persister.save(CompactFoldersCheckbox.this);
+                    COMPACT_PERSISTER.save(CompactFoldersCheckbox.this);
                     tree.setCompactAllowed(isCompactAllowed());
                     target.addComponent(tree);
+                    target.addComponent(tree.refreshDisplayPanel());
+                    tree.adjustLayout(target);
                 }
             });
 
         }
 
         public Boolean isCompactAllowed() {
-            return (Boolean) CompactFoldersCheckbox.this.getModelObject();
+            return (Boolean) getModelObject();
         }
+    }
 
-        private class MyPersister extends EscapeCookieValuePersister {
-            @Override
-            protected String getName(FormComponent component) {
-                return "browseRepoPanel.compactCheckbox";
-            }
+    private static class CompactPersister extends EscapeCookieValuePersister {
+        @Override
+        protected String getName(FormComponent component) {
+            return "browseRepoPanel.compactCheckbox";
         }
     }
 }

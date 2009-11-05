@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
@@ -72,8 +73,11 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
     final StyledCheckbox createIncremental;
     private StyledCheckbox createArchiveCheckbox;
 
+    private FileBrowserButton browserButton;
+    private PathAutoCompleteTextField backupDir;
+
     public BackupCreateUpdatePanel(CreateUpdateAction action, BackupDescriptor backupDescriptor,
-            BackupsListPanel backupsListPanel) {
+                                   BackupsListPanel backupsListPanel) {
         super(action, backupDescriptor);
         createIncrementalBackup = backupDescriptor.isIncremental();
         setWidth(550);
@@ -105,26 +109,28 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
 
         PropertyModel pathModel = new PropertyModel(backupDescriptor, "dir");
 
-        final PathAutoCompleteTextField backupDir = new PathAutoCompleteTextField("dir", pathModel);
+        backupDir = new PathAutoCompleteTextField("dir", pathModel);
         backupDir.setMask(PathMask.FOLDERS);
         simpleFields.add(backupDir);
         simpleFields.add(new SchemaHelpBubble("dir.help"));
 
 
-        FileBrowserButton browserButton = new FileBrowserButton("browseButton", pathModel) {
+        browserButton = new FileBrowserButton("browseButton", pathModel) {
             @Override
             protected void onOkClicked(AjaxRequestTarget target) {
                 super.onOkClicked(target);
                 target.addComponent(backupDir);
             }
         };
+        browserButton.setOutputMarkupId(true);
         simpleFields.add(browserButton);
 
         TitledBorder advancedFields = new TitledBorder("advanced");
         form.add(advancedFields);
 
-        retentionHoursField = new TextField("retentionPeriodHours", Integer.class);
+        retentionHoursField = new TextField("retentionPeriodHours");
         retentionHoursField.setOutputMarkupId(true);
+        retentionHoursField.setEnabled(!createIncrementalBackup);
         advancedFields.add(retentionHoursField);
         advancedFields.add(new SchemaHelpBubble("retentionPeriodHours.help"));
 
@@ -197,6 +203,13 @@ public class BackupCreateUpdatePanel extends CreateUpdatePanel<BackupDescriptor>
                 AjaxUtils.refreshFeedback(target);
                 target.addComponent(backupsListPanel);
                 close(target);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target) {
+                super.onError(target);
+                IModel dirModal = browserButton.getModel();
+                backupDir.setModel(dirModal);
             }
         };
     }

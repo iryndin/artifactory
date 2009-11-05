@@ -115,7 +115,8 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
     ResourceStreamHandle index(Date fireTime) throws Exception {
         //Use a file based dir with a temp file to conserve memory
         ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
-        File dir = FileUtils.createRandomDir(artifactoryHome.getTmpDir(), "artifactory.index." + repo.getKey());
+        // TODO: Should use the temp file of the repo
+        File dir = FileUtils.createRandomDir(artifactoryHome.getWorkTmpDir(), "artifactory.index." + repo.getKey());
         Directory indexDir = FSDirectory.getDirectory(dir);
         try {
             return createIndex(indexDir, true);
@@ -163,7 +164,7 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
             throw new RuntimeException("Index properties calculation failed.", e);
         }
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-        ResourceStreamHandle handle = new SimpleResourceStreamHandle(is);
+        ResourceStreamHandle handle = new SimpleResourceStreamHandle(is, os.size());
         return handle;
     }
 
@@ -245,7 +246,7 @@ class RepoIndexer extends DefaultNexusIndexer implements ArtifactScanningListene
             LockingHelper.removeLockEntry(new RepoPath(repo.getKey(), MavenNaming.NEXUS_INDEX_ZIP_PATH));
             //Extract the index zip
             ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
-            File indexUnzippedDir = FileUtils.createRandomDir(artifactoryHome.getTmpDir(),
+            File indexUnzippedDir = FileUtils.createRandomDir(artifactoryHome.getWorkTmpDir(),
                     "artifactory.merged-index." + repo.getKey());
             indexUnzippedDir.deleteOnExit();
             ZipUtils.extract(indexZipFile, indexUnzippedDir);

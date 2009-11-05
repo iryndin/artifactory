@@ -18,6 +18,8 @@
 package org.artifactory.maven;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.metadata.Metadata;
@@ -29,12 +31,15 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.repo.exception.maven.BadPomException;
+import org.artifactory.ivy.IvyNaming;
+import org.artifactory.ivy.IvyService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.util.PathUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -244,6 +249,7 @@ public class MavenModelUtils {
      * @param file File to gather information from
      * @return MavenArtifactInfo object containing gathered information
      */
+    //TODO: [by YS] move this method to new service - ArtifactDeployService
     public static MavenArtifactInfo artifactInfoFromFile(File file) {
         MavenArtifactInfo result = new MavenArtifactInfo();
         gatherInfoFromFile(file, result);
@@ -290,9 +296,10 @@ public class MavenModelUtils {
             //File is a jar
             result.setType(MavenArtifactInfo.JAR);
             gatherInfoFromJarFile(file, result);
-        } else if (ct.isXml()) {
-            //File is a pom
+        } else if (MavenNaming.isPom(fileName)) {
             gatherInfoFromPomFile(file, result);
+        } else if (IvyNaming.isIvyFileName(fileName)) {
+            gatherInfoFromIvyFile(file, result);
         } else {
             //Other extension
             String extension = PathUtils.getExtension(fileName);
@@ -381,11 +388,27 @@ public class MavenModelUtils {
             }
             result.setType(MavenArtifactInfo.POM);
         } catch (Exception e) {
-            //Ignore exception - not every xml is a pom
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to read maven model from '" + file.getName() + "'. Cause: " + e.getMessage() + ".");
-            }
+            log.debug("Failed to read maven model from '{}'. Cause: {}.", file.getName(), e.getMessage());
             result.setType(MavenArtifactInfo.XML);
+        }
+    }
+
+    private static void gatherInfoFromIvyFile(File file, MavenArtifactInfo result) {
+        result.setType(MavenArtifactInfo.XML);
+        try {
+            IvyService ivyService = ContextHelper.get().beanForType(IvyService.class);
+            ModuleDescriptor ivyDescriptor = ivyService.parseIvyFile(file);
+            if (ivyDescriptor != null) {
+                ModuleRevisionId ivyModule = ivyDescriptor.getModuleRevisionId();
+                result.setGroupId(ivyModule.getOrganisation());
+                result.setArtifactId(ivyModule.getName());
+                result.setVersion(ivyModule.getRevision());
+                result.setClassifier("ivy");
+            } else {
+                log.debug("Failed to read ivy model from '{}'", file.getName());
+            }
+        } catch (Exception e) {
+            log.debug("Failed to read ivy model from '{}'. Cause: {}.", file.getName(), e.getMessage());
         }
     }
 

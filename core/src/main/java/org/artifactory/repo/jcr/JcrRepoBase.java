@@ -25,7 +25,6 @@ import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
 import org.artifactory.api.context.ContextHelper;
-import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.md.Properties;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.FileExpectedException;
@@ -89,7 +88,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         //Purge and recreate the (temp) repo dir
         final String key = getKey();
         ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
-        File repoTmpDir = new File(artifactoryHome.getTmpDir(), key);
+        File repoTmpDir = new File(artifactoryHome.getRepoTmpDir(), key);
         tempFileRepoUrl = repoTmpDir.toURI().toString();
         if (repoTmpDir.exists()) {
             try {
@@ -206,8 +205,8 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         status.setStatus("Repository '" + getKey() + "' imported from " + baseDir + ".", log);
     }
 
-    public String getTextFileContent(FileInfo fileInfo) {
-        String relativePath = fileInfo.getRelPath();
+    public String getTextFileContent(RepoPath repoPath) {
+        String relativePath = repoPath.getPath();
         JcrFile jcrFile = getLocalJcrFile(relativePath);
         if (jcrFile != null) {
             try {
@@ -349,9 +348,5 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
 
     public JcrFolder getLockedJcrFolder(String relPath, boolean createIfMissing) throws FolderExpectedException {
         return storageMixin.getLockedJcrFolder(relPath, createIfMissing);
-    }
-
-    public JcrFsItem tryGetLockedJcrFsItem(RepoPath repoPath) {
-        return storageMixin.tryGetLockedJcrFsItem(repoPath);
     }
 }

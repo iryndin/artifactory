@@ -24,10 +24,13 @@ import org.artifactory.update.security.v2.SimpleUserConverter;
 import org.artifactory.update.security.v3.AclRepoKeysConverter;
 import org.artifactory.update.security.v3.AnyRemoteConverter;
 import org.artifactory.update.security.v3.OcmStorageConverter;
+import org.artifactory.update.security.v4.AnnotatePermissionOcmConverter;
+import org.artifactory.update.security.v4.AnnotatePermissionXmlConverter;
 import org.artifactory.version.ArtifactoryVersion;
 import org.artifactory.version.SubConfigElementVersion;
 import org.artifactory.version.VersionComparator;
 import org.artifactory.version.XmlConverterUtils;
+import org.artifactory.version.converter.ConfigurationConverter;
 import org.artifactory.version.converter.XmlConverter;
 
 import javax.jcr.Session;
@@ -51,24 +54,27 @@ public enum SecurityVersion implements SubConfigElementVersion {
             null, new SimpleUserConverter(), new RepoPathAclConverter()),
     v3(ArtifactoryVersion.v130beta3, ArtifactoryVersion.v208, new OcmStorageConverter(),
             new AnyRemoteConverter(), new AclRepoKeysConverter()),
-    v4(ArtifactoryVersion.v210, ArtifactoryVersion.getCurrent(), null);
+    v4(ArtifactoryVersion.v210, ArtifactoryVersion.v210, new AnnotatePermissionOcmConverter(),
+            new AnnotatePermissionXmlConverter()),
+    v5(ArtifactoryVersion.v211, ArtifactoryVersion.getCurrent(), null);
 
     private final VersionComparator comparator;
     private final XmlConverter[] xmlConverters;
-    private final OcmStorageConverter ocmStorageConverter;
+    private final ConfigurationConverter<Session> configurationConverter;
     private static final String VERSION_ATT = "version=\"";
 
     /**
      * Represents Artifactory security version. For each change in the security files new security version is created.
      *
-     * @param from                Artifactory version this security version started at
-     * @param until               Last Artifactory version this security version was valid
-     * @param ocmStorageConverter OCM converter to convert security data from this version to the next
-     * @param xmlConverters       List of converters needed to convert the security.xml of this version to the next one
+     * @param from                   Artifactory version this security version started at
+     * @param until                  Last Artifactory version this security version was valid
+     * @param configurationConverter OCM converter to convert security data from this version to the next
+     * @param xmlConverters          List of converters needed to convert the security.xml of this version to the next
+     *                               one
      */
-    SecurityVersion(ArtifactoryVersion from, ArtifactoryVersion until, OcmStorageConverter ocmStorageConverter,
-            XmlConverter... xmlConverters) {
-        this.ocmStorageConverter = ocmStorageConverter;
+    SecurityVersion(ArtifactoryVersion from, ArtifactoryVersion until,
+            ConfigurationConverter<Session> configurationConverter, XmlConverter... xmlConverters) {
+        this.configurationConverter = configurationConverter;
         this.comparator = new VersionComparator(this, from, until);
         this.xmlConverters = xmlConverters;
     }
@@ -105,8 +111,8 @@ public enum SecurityVersion implements SubConfigElementVersion {
     }
 
     public void convert(Session rawSession) {
-        if (ocmStorageConverter != null) {
-            ocmStorageConverter.convert(rawSession);
+        if (configurationConverter != null) {
+            configurationConverter.convert(rawSession);
         }
     }
 
@@ -129,8 +135,7 @@ public enum SecurityVersion implements SubConfigElementVersion {
 
     public static SecurityVersion getCurrent() {
         SecurityVersion[] versions = SecurityVersion.values();
-        for (int i = 0; i < versions.length; i++) {
-            SecurityVersion version = versions[i];
+        for (SecurityVersion version : versions) {
             if (version.isCurrent()) {
                 return version;
             }
@@ -142,8 +147,10 @@ public enum SecurityVersion implements SubConfigElementVersion {
         // Version exists since v4
         int versionIdx = securityData.indexOf(VERSION_ATT);
         if (versionIdx != -1) {
-            // TODO: Actually read the version
-            return v4;
+            int versionStartIndex = versionIdx + VERSION_ATT.length();
+            String cutVersion = securityData.substring(versionStartIndex);
+            String isolatedVersion = cutVersion.substring(0, cutVersion.indexOf("\""));
+            return valueOf(isolatedVersion);
         } else {
             // Hack to find old versions
             int groupsIdx = securityData.indexOf("<groups>");

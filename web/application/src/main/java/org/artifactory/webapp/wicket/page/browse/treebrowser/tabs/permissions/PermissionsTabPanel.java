@@ -83,6 +83,7 @@ public class PermissionsTabPanel extends Panel {
 
         columns.add(new BooleanColumn(new Model("Delete"), "delete", "delete"));
         columns.add(new BooleanColumn(new Model("Deploy"), "deploy", "deploy"));
+        columns.add(new BooleanColumn(new Model("Annotate"), "annotate", "annotate"));
         columns.add(new BooleanColumn(new Model("Read"), "read", "read"));
 
         PermissionsTabTableDataProvider dataProvider =

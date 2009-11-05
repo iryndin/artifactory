@@ -23,7 +23,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.api.security.UserInfo;
-import org.artifactory.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -85,10 +84,6 @@ public class RestAuthenticationFilter implements ContainerRequestFilter {
             } else {
                 request.setSecurityContext(new RoleAuthenticator(username, AuthorizationService.ROLE_USER));
             }
-
-            //Update the user's current login info in the database
-            String remoteAddress = HttpUtils.getRemoteClientAddress(httpRequest);
-            securityService.updateUserLastLogin(username, remoteAddress, System.currentTimeMillis());
         }
         return request;
     }

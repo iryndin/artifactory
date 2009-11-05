@@ -34,8 +34,6 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.wicket.ajax.CancelDefaultDecorator;
 import org.artifactory.common.wicket.ajax.ConfirmationAjaxCallDecorator;
 import org.artifactory.common.wicket.behavior.CssClass;
-import static org.artifactory.common.wicket.component.CreateUpdateAction.CREATE;
-import static org.artifactory.common.wicket.component.CreateUpdateAction.UPDATE;
 import org.artifactory.common.wicket.component.links.TitledAjaxLink;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.common.wicket.component.modal.links.ModalShowLink;
@@ -51,12 +49,16 @@ import org.artifactory.log.LoggerFactory;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpModel;
+import org.artifactory.webapp.wicket.page.config.repos.remote.RemoteRepoImportPanel;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.artifactory.common.wicket.component.CreateUpdateAction.CREATE;
+import static org.artifactory.common.wicket.component.CreateUpdateAction.UPDATE;
 
 /**
  * Repositories configuration page.
@@ -71,11 +73,11 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     @SpringBean
     private CentralConfigService centralConfigService;
 
-    private final MutableCentralConfigDescriptor mutableDescriptor;
+    private MutableCentralConfigDescriptor mutableDescriptor;
     private WebMarkupContainer reposListContainer;
 
     public RepositoryConfigPage() {
-        mutableDescriptor = centralConfigService.getMutableDescriptor();
+        mutableDescriptor = refreshDescriptor();
 
         reposListContainer = new WebMarkupContainer("reposList");
         reposListContainer.setOutputMarkupId(true);
@@ -84,6 +86,10 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         addLocalReposList();
         addRemoteReposList();
         addVirtualReposList();
+    }
+
+    private MutableCentralConfigDescriptor refreshDescriptor() {
+        return centralConfigService.getMutableDescriptor();
     }
 
     @Override
@@ -202,9 +208,18 @@ public class RepositoryConfigPage extends AuthenticatedPage {
             protected Component newToolbar(String id) {
                 return new SchemaHelpBubble(id, getHelpModel("remoteRepositoriesMap"));
             }
+
+            @Override
+            protected Component getImportLink(String id) {
+                return new ModalShowLink(id, "Import") {
+                    @Override
+                    protected BaseModalPanel getModelPanel() {
+                        return new RemoteRepoImportPanel(mutableDescriptor);
+                    }
+                };
+            }
         });
     }
-
 
     private void addVirtualReposList() {
         IModel repoListModel = new RepoListModel<VirtualRepoDescriptor>() {
@@ -305,6 +320,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     ModalHandler modalHandler = ModalHandler.getInstanceFor(RepoListPanel.this);
+                    mutableDescriptor = refreshDescriptor();
                     T itemObject = (T) item.getModelObject();
                     modalHandler.setModalPanel(newUpdateItemPanel(itemObject));
                     modalHandler.show(target);
