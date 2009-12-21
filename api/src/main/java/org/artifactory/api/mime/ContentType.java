@@ -37,12 +37,12 @@ public enum ContentType {
     applicationXmlSchema(new MimeEntry("application/xml-schema", "xsd"), applicationXml),
     applicationXmlExternal(new MimeEntry("application/xml-external-parsed-entity", "ent"), applicationXml),
     zip(new MimeEntry("application/zip", "zip")),
-    javaArchive(new MimeEntry("application/java-archive", "jar", "war", "ear", "sar", "har", "rar"), zip),
+    javaArchive(new MimeEntry("application/java-archive", "jar", "war", "ear", "sar", "har", "rar")),
     javaPack200(new MimeEntry("application/x-java-pack200", "jar.pack.gz")),
     javaArchiveDiff(new MimeEntry("application/x-java-archive-diff", "jardiff")),
     javaJnlp(new MimeEntry("application/x-java-jnlp-file", "jnlp")),
-    cheksum(new MimeEntry("application/x-checksum", "sha1", "asc", "md5"), textPlain);
-    //ivyXml(new MimeEntry("application/x-ivy+xml", "ivy.xml"));
+    cheksum(new MimeEntry("application/x-checksum", "sha1", "asc", "md5"), textPlain),
+    ivyXml(new MimeEntry("application/x-ivy+xml", "ivy"));
 
     private final MimeEntry mimeEntry;
     private final ContentType alternate;
@@ -76,7 +76,7 @@ public enum ContentType {
         if (alternate != null) {
             return alternate.isXml();
         }
-        return this == textXml || this == applicationXml || this == mavenPom;
+        return this == textXml || this == applicationXml || this == mavenPom || this == ivyXml;
     }
 
     public boolean isChecksum() {

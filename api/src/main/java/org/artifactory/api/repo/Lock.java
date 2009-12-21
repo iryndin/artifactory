@@ -39,11 +39,4 @@ public @interface Lock {
      * Should start a transaction or join an exiting one
      */
     boolean transactional() default false;
-
-    /**
-     * Curently not being used???
-     *
-     * @return
-     */
-    boolean readOnly() default false;
 }

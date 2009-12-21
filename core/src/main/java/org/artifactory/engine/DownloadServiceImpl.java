@@ -21,6 +21,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.mime.ChecksumType;
 import org.artifactory.api.repo.exception.RepoAccessException;
+import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.request.ArtifactoryRequest;
 import org.artifactory.api.request.ArtifactoryResponse;
 import org.artifactory.cache.InternalCacheService;
@@ -37,6 +38,7 @@ import org.artifactory.request.RequestResponseHelper;
 import org.artifactory.resource.RepoResource;
 import org.artifactory.resource.UnfoundRepoResource;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.traffic.InternalTrafficService;
 import org.artifactory.util.PathUtils;
@@ -45,11 +47,12 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
 @Service
+@Reloadable(beanClass = InternalDownloadService.class,
+        initAfter = {InternalRepositoryService.class, InternalCacheService.class})
 public class DownloadServiceImpl implements InternalDownloadService {
 
     private static final Logger log = LoggerFactory.getLogger(DownloadServiceImpl.class);
@@ -64,11 +67,6 @@ public class DownloadServiceImpl implements InternalDownloadService {
     InternalTrafficService trafficService;
 
     private RequestResponseHelper requestResponseHelper;
-
-    @PostConstruct
-    private void register() {
-        InternalContextHelper.get().addReloadableBean(InternalDownloadService.class);
-    }
 
     public void init() {
         requestResponseHelper = new RequestResponseHelper(trafficService);
@@ -153,6 +151,7 @@ public class DownloadServiceImpl implements InternalDownloadService {
     }
 
     //Send the response back to the client
+
     private void respond(ArtifactoryRequest request, ArtifactoryResponse response, RepoResource resource)
             throws IOException {
         try {
@@ -189,6 +188,8 @@ public class DownloadServiceImpl implements InternalDownloadService {
                         response.sendError(HttpStatus.SC_CONFLICT, cpe.getMessage(), log);
                     } catch (RemoteRequestException rre) {
                         response.sendError(rre.getRemoteReturnCode(), rre.getMessage(), log);
+                    } catch (BadPomException bpe) {
+                        response.sendError(HttpStatus.SC_BAD_REQUEST, bpe.getMessage(), log);
                     }
                 }
             }
@@ -212,13 +213,22 @@ public class DownloadServiceImpl implements InternalDownloadService {
         if (checksumType == null) {
             throw new IllegalArgumentException("Checksum type not found for path " + checksumFilePath);
         }
-        String checksum = repo.getChecksum(checksumFilePath, res);
-        if (checksum == null) {
-            response.sendError(HttpStatus.SC_NOT_FOUND, "Checksum not found", log);
-        } else {
-            // send the checksum as the response body, use the original repo path from the request
-            requestResponseHelper.sendBodyResponse(response, request.getRepoPath(), checksum);
+
+        try {
+            String checksum = repo.getChecksum(checksumFilePath, res);
+            if (checksum != null) {
+                // send the checksum as the response body, use the original repo path from the request
+                requestResponseHelper.sendBodyResponse(response, request.getRepoPath(), checksum);
+            } else {
+                throw new IllegalArgumentException("Checksum not found");
+            }
+        } catch (IllegalArgumentException e) {
+            respondUnfoundChecksum(response, e.getMessage());
         }
+    }
+
+    private void respondUnfoundChecksum(ArtifactoryResponse response, String message) throws IOException {
+        response.sendError(HttpStatus.SC_NOT_FOUND, message, log);
     }
 
     private RepoResource callGetInfoInTransaction(Repo repo, RequestContext context) {

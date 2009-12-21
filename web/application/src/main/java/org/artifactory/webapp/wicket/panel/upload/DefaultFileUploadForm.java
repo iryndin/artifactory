@@ -22,7 +22,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.common.wicket.panel.upload.FileUploadForm;
-import org.artifactory.common.wicket.panel.upload.FileUploadParentPanel;
+import org.artifactory.common.wicket.panel.upload.UploadListener;
 
 /**
  * Default file upload form that takes the max upload size and temp upload directory from artifactory config.
@@ -34,8 +34,8 @@ public class DefaultFileUploadForm extends FileUploadForm {
     @SpringBean
     private CentralConfigService centralConfig;
 
-    public DefaultFileUploadForm(String name, FileUploadParentPanel parent) {
-        super(name, ContextHelper.get().getArtifactoryHome().getTmpUploadsDir().getAbsolutePath(), parent);
+    public DefaultFileUploadForm(String name, UploadListener listener) {
+        super(name, ContextHelper.get().getArtifactoryHome().getTmpUploadsDir().getAbsolutePath(), listener);
         //Set maximum upload size
         int uploadMaxSizeMb = centralConfig.getDescriptor().getFileUploadMaxSizeMb();
         if (uploadMaxSizeMb > 0) {

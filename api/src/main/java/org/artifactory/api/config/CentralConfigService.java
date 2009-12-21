@@ -21,6 +21,7 @@ import org.artifactory.descriptor.DescriptorAware;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 
+import java.io.IOException;
 import java.text.DateFormat;
 
 /**
@@ -45,6 +46,15 @@ public interface CentralConfigService extends DescriptorAware<CentralConfigDescr
     String getConfigXml();
 
     void setConfigXml(String xmlConfig);
+
+    /**
+     * Update the logo branding path.
+     *
+     * @param logoPath The logo path, can be a file path or a url.
+     * @return The logo path
+     * @throws IOException
+     */
+    String updateLogo(String logoPath, boolean delete) throws IOException;
 
     boolean defaultProxyDefined();
 }

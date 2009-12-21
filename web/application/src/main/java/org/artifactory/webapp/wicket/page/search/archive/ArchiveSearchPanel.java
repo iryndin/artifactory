@@ -80,6 +80,11 @@ public class ArchiveSearchPanel extends BaseSearchPanel<ArchiveSearchResult> {
     }
 
     @Override
+    protected ArchiveSearchControls getSearchControles() {
+        return searchControls;
+    }
+
+    @Override
     protected Class<? extends BaseSearchPage> getMenuPageClass() {
         return ArchiveSearchPage.class;
     }

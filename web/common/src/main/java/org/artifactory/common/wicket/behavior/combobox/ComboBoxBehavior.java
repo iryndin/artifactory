@@ -23,23 +23,31 @@ import org.artifactory.common.wicket.behavior.template.TemplateBehavior;
 import org.artifactory.common.wicket.resources.dojo.DojoPackage;
 
 /**
+ * Adding this behavior to DropDownChoice will convert it to Dojo ComboBox widget.<br/>
+ * <br/>
+ * <b>NOTE!</b> When using this behavior will not be able add the dropdown to ajax target regularly,
+ * meaning <b>you can't do <code>target.addComponent(dropDown)</code></b>.
+ * Instead add a containing parent: <code>target.addComponent(anyParent)</code>
+ * or add <b>"-widget"</b> to target markup id like so:
+ * <code>target.addComponent(dropdown, dropdown.getMarkupId() <b>+ "-widget"</b>)</code>
+ *
  * @author Yoav Aharoni
  */
 public class ComboBoxBehavior extends TemplateBehavior {
-    public ComboBoxBehavior() {
-        getResourcePackage().dependsOn(new DojoPackage()).addJavaScript();
-    }
+	public ComboBoxBehavior() {
+		getResourcePackage().dependsOn(new DojoPackage()).addJavaScript();
+	}
 
-    @Override
-    public void onComponentTag(Component component, ComponentTag tag) {
-        super.onComponentTag(component, tag);
-        assertTagName(tag, "select");
-        tag.put("dojoType", "dijit.form.ComboBox");
-    }
+	@Override
+	public void onComponentTag(Component component, ComponentTag tag) {
+		super.onComponentTag(component, tag);
+		assertTagName(tag, "select");
+		tag.put("dojoType", "dijit.form.ComboBox");
+	}
 
-    @Override
-    public void bind(Component component) {
-        super.bind(component);
-        component.setOutputMarkupId(true);
-    }
+	@Override
+	public void bind(Component component) {
+		super.bind(component);
+		component.setOutputMarkupId(true);
+	}
 }

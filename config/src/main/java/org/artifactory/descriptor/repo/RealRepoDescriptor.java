@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlType(name = "RealRepoType", propOrder = {"blackedOut", "handleReleases", "handleSnapshots",
-        "maxUniqueSnapshots", "includesPattern", "excludesPattern", "suppressPomConsistencyChecks", "propertySets"},
+        "maxUniqueSnapshots", "suppressPomConsistencyChecks", "propertySets"},
         namespace = Descriptor.NS)
 public abstract class RealRepoDescriptor extends RepoBaseDescriptor {
 
@@ -45,12 +45,6 @@ public abstract class RealRepoDescriptor extends RepoBaseDescriptor {
 
     @XmlElement(defaultValue = "0", required = false)
     private int maxUniqueSnapshots;
-
-    @XmlElement(defaultValue = "**/*", required = false)
-    private String includesPattern = "**/*";
-
-    @XmlElement(defaultValue = "", required = false)
-    private String excludesPattern;
 
     @XmlElement(defaultValue = "false", required = false)
     private boolean suppressPomConsistencyChecks = false;
@@ -76,21 +70,6 @@ public abstract class RealRepoDescriptor extends RepoBaseDescriptor {
         this.handleSnapshots = handleSnapshots;
     }
 
-    public String getIncludesPattern() {
-        return includesPattern;
-    }
-
-    public void setIncludesPattern(String includesPattern) {
-        this.includesPattern = includesPattern;
-    }
-
-    public String getExcludesPattern() {
-        return excludesPattern;
-    }
-
-    public void setExcludesPattern(String excludesPattern) {
-        this.excludesPattern = excludesPattern;
-    }
 
     public boolean isBlackedOut() {
         return blackedOut;

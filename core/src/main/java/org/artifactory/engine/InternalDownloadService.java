@@ -32,6 +32,6 @@ public interface InternalDownloadService extends DownloadService, ReloadableBean
     /**
      * Internal method to open a transation before calling getInfo on the repository.
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     RepoResource getInfo(Repo repo, RequestContext context);
 }

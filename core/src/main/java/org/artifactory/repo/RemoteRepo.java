@@ -31,6 +31,8 @@ public interface RemoteRepo<T extends RemoteRepoDescriptor> extends RealRepo<T> 
 
     boolean isHardFail();
 
+    String getUrl();
+
     LocalCacheRepo getLocalCacheRepo();
 
     /**

@@ -34,7 +34,7 @@ import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.index.IndexerJob;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.storage.mbean.Storage;
 import org.artifactory.storage.mbean.StorageMBean;
 import org.artifactory.version.CompoundVersionDetails;
@@ -42,13 +42,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 
 /**
  * @author yoavl
  */
 @Service
+@Reloadable(beanClass = InternalStorageService.class, initAfter = JcrService.class)
 public class StorageServiceImpl implements InternalStorageService {
     private static final Logger log = LoggerFactory.getLogger(StorageServiceImpl.class);
 
@@ -127,11 +127,6 @@ public class StorageServiceImpl implements InternalStorageService {
         return derbyUsed;
     }
 
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalStorageService.class);
-    }
-
     public void init() {
         derbyUsed = DerbyUtils.isDerbyUsed();
         InternalContextHelper.get().registerArtifactoryMBean(new Storage(this), StorageMBean.class, null);
@@ -139,11 +134,6 @@ public class StorageServiceImpl implements InternalStorageService {
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
         derbyUsed = DerbyUtils.isDerbyUsed();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{JcrService.class};
     }
 
     public void destroy() {

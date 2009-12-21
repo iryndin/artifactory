@@ -24,7 +24,8 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "LdapSettingType",
-        propOrder = {"key", "enabled", "ldapUrl", "userDnPattern", "search"}, namespace = Descriptor.NS)
+        propOrder = {"key", "enabled", "ldapUrl", "userDnPattern", "search", "autoCreateUser"},
+        namespace = Descriptor.NS)
 public class LdapSetting implements Descriptor {
 
     @XmlID
@@ -39,6 +40,9 @@ public class LdapSetting implements Descriptor {
     private String userDnPattern;
 
     private SearchPattern search;
+    @XmlElement(defaultValue = "false")
+    private boolean autoCreateUser = false;
+
 
     public String getKey() {
         return key;
@@ -80,6 +84,14 @@ public class LdapSetting implements Descriptor {
         this.search = search;
     }
 
+    public boolean isAutoCreateUser() {
+        return autoCreateUser;
+    }
+
+    public void setAutoCreateUser(boolean autoCreateUser) {
+        this.autoCreateUser = autoCreateUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -91,15 +103,17 @@ public class LdapSetting implements Descriptor {
 
         LdapSetting setting = (LdapSetting) o;
 
-        if (!key.equals(setting.key)) {
+        if (key == null || !key.equals(setting.key)) {
             return false;
         }
-
         return true;
     }
 
     @Override
     public int hashCode() {
+        if (key == null) {
+            return super.hashCode();
+        }
         return key.hashCode();
     }
 

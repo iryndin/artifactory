@@ -78,6 +78,10 @@ public class BaseModalPanel<E extends Serializable> extends Panel implements Tit
         return modalHandler;
     }
 
+    public boolean isResizable() {
+        return true;
+    }
+
     @SuppressWarnings({"unchecked"})
     public E getPanelModelObject() {
         return (E) getModelObject();

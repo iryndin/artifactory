@@ -21,6 +21,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.artifactory.common.wicket.behavior.CssClass;
 
 /**
@@ -30,13 +31,12 @@ import org.artifactory.common.wicket.behavior.CssClass;
  */
 public abstract class BaseTab extends AbstractTab {
 
-    /**
-     * Default constructor
-     *
-     * @param title Title model
-     */
     public BaseTab(IModel title) {
         super(title);
+    }
+
+    public BaseTab(String title) {
+        super(new Model(title));
     }
 
     public boolean isEnabled() {

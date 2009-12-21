@@ -17,6 +17,7 @@
 
 package org.artifactory.search;
 
+import com.google.common.collect.Lists;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
@@ -37,6 +38,7 @@ import org.artifactory.api.search.property.PropertySearchControls;
 import org.artifactory.api.search.property.PropertySearchResult;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.util.Pair;
+import org.artifactory.build.api.Build;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrPath;
@@ -50,13 +52,14 @@ import org.artifactory.repo.jcr.StoringRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.search.archive.ArchiveIndexer;
 import org.artifactory.search.archive.ArchiveSearcher;
+import org.artifactory.search.build.BuildSearcher;
 import org.artifactory.search.gavc.GavcSearcher;
 import org.artifactory.search.metadata.MetadataSearcher;
-import org.artifactory.search.metadata.pom.XmlFileSearcher;
+import org.artifactory.search.metadata.xml.XmlFileSearcher;
 import org.artifactory.search.property.PropertySearcher;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.version.CompoundVersionDetails;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -65,7 +68,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -81,6 +83,8 @@ import java.util.List;
  * @author Yoav Landman
  */
 @Service
+@Reloadable(beanClass = InternalSearchService.class,
+        initAfter = {MetadataService.class, InternalRepositoryService.class})
 public class SearchServiceImpl implements InternalSearchService {
 
     private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
@@ -98,11 +102,6 @@ public class SearchServiceImpl implements InternalSearchService {
 
     private JcrVersion originalVersion;
 
-    @PostConstruct
-    public void register() {
-        context.addReloadableBean(InternalSearchService.class);
-    }
-
     @Autowired
     private void setApplicationContext(ApplicationContext context) throws BeansException {
         this.context = (InternalArtifactoryContext) context;
@@ -110,17 +109,25 @@ public class SearchServiceImpl implements InternalSearchService {
 
     public SearchResults<ArtifactSearchResult> searchArtifacts(ArtifactSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<ArtifactSearchResult>(new ArrayList<ArtifactSearchResult>());
+            return new SearchResults<ArtifactSearchResult>(Lists.<ArtifactSearchResult>newArrayList());
         }
         ArtifactSearcher searcher = new ArtifactSearcher();
         SearchResults<ArtifactSearchResult> results = searcher.search(controls);
         return results;
+    }
 
+    public List<RepoPath> searchArtifactsByChecksum(String sha1, String md5) {
+        ArtifactSearcher searcher = new ArtifactSearcher();
+        try {
+            return searcher.searchArtifactsByChecksum(sha1, md5);
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
+        }
     }
 
     public SearchResults<ArchiveSearchResult> searchArchiveContent(ArchiveSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<ArchiveSearchResult>(new ArrayList<ArchiveSearchResult>());
+            return new SearchResults<ArchiveSearchResult>(Lists.<ArchiveSearchResult>newArrayList());
         }
         ArchiveSearcher searcher = new ArchiveSearcher();
         SearchResults<ArchiveSearchResult> results = searcher.search(controls);
@@ -129,7 +136,7 @@ public class SearchServiceImpl implements InternalSearchService {
 
     public SearchResults<MetadataSearchResult> searchMetadata(MetadataSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<MetadataSearchResult>(new ArrayList<MetadataSearchResult>());
+            return new SearchResults<MetadataSearchResult>(Lists.<MetadataSearchResult>newArrayList());
         }
         MetadataSearcher searcher = new MetadataSearcher();
         SearchResults<MetadataSearchResult> results = searcher.search(controls);
@@ -138,7 +145,7 @@ public class SearchServiceImpl implements InternalSearchService {
 
     public SearchResults<GavcSearchResult> searchGavc(GavcSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<GavcSearchResult>(new ArrayList<GavcSearchResult>());
+            return new SearchResults<GavcSearchResult>(Lists.<GavcSearchResult>newArrayList());
         }
 
         GavcSearcher searcher = new GavcSearcher();
@@ -149,7 +156,7 @@ public class SearchServiceImpl implements InternalSearchService {
 
     public SearchResults<PomSearchResult> searchXmlContent(MetadataSearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<PomSearchResult>(new ArrayList<PomSearchResult>());
+            return new SearchResults<PomSearchResult>(Lists.<PomSearchResult>newArrayList());
         }
 
         XmlFileSearcher searcher = new XmlFileSearcher();
@@ -160,7 +167,7 @@ public class SearchServiceImpl implements InternalSearchService {
 
     public SearchResults<PropertySearchResult> searchProperty(PropertySearchControls controls) {
         if (shouldReturnEmptyResults(controls)) {
-            return new SearchResults<PropertySearchResult>(new ArrayList<PropertySearchResult>());
+            return new SearchResults<PropertySearchResult>(Lists.<PropertySearchResult>newArrayList());
         }
 
         PropertySearcher searcher = new PropertySearcher();
@@ -216,6 +223,51 @@ public class SearchServiceImpl implements InternalSearchService {
         return result;
     }
 
+    public List<Build> getLatestBuildsByName() {
+        BuildSearcher searcher = new BuildSearcher();
+        try {
+            return searcher.getLatestBuildsByName();
+        } catch (Exception e) {
+            throw new RepositoryRuntimeException(e);
+        }
+    }
+
+    public List<Build> findBuildsByArtifactChecksum(String sha1, String md5) {
+        BuildSearcher searcher = new BuildSearcher();
+        try {
+            return searcher.findBuildsByArtifactChecksum(sha1, md5);
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
+        }
+    }
+
+    public List<Build> findBuildsByDependencyChecksum(String sha1, String md5) {
+        BuildSearcher searcher = new BuildSearcher();
+        try {
+            return searcher.findBuildsByDependencyChecksum(sha1, md5);
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
+        }
+    }
+
+    public List<Build> searchBuildsByName(String buildName) {
+        BuildSearcher searcher = new BuildSearcher();
+        try {
+            return searcher.searchBuildsByName(buildName);
+        } catch (RepositoryException e) {
+            throw new RepositoryRuntimeException(e);
+        }
+    }
+
+    public Build getLatestBuildByNameAndNumber(String buildName, long buildNumber) {
+        BuildSearcher searcher = new BuildSearcher();
+        try {
+            return searcher.getLatestBuildByNameAndNumber(buildName, buildNumber);
+        } catch (Exception e) {
+            throw new RepositoryRuntimeException(e);
+        }
+    }
+
     private boolean shouldReturnEmptyResults(SearchControls controls) {
         return checkUnauthorized() || controls.isEmpty();
     }
@@ -239,11 +291,6 @@ public class SearchServiceImpl implements InternalSearchService {
         }
         //Index archives marked for indexing (might have left overs from abrupt shutdown after deploy)
         getAdvisedMe().indexMarkedArchives();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{MetadataService.class, InternalRepositoryService.class};
     }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
@@ -329,17 +376,27 @@ public class SearchServiceImpl implements InternalSearchService {
     }
 
     public void index(RepoPath archiveRepoPath) {
+        ContentType contentType = NamingUtils.getContentType(archiveRepoPath.getPath());
+        if (!contentType.isJarVariant()) {
+            log.trace("Not indexing non jar variant path '{}' - with mime type '{}'.", archiveRepoPath, contentType);
+            return;
+        }
+
         StoringRepo repo = repoService.storingRepositoryByKey(archiveRepoPath.getRepoKey());
+        if (repo == null) {
+            log.debug("Skipping archive indexing for {} - repo does not exist.", archiveRepoPath.getRepoKey());
+            return;
+        }
         JcrFsItem item = repo.getLockedJcrFsItem(archiveRepoPath);
         if ((item != null) && item.isFile()) {
             ArchiveIndexer.index((JcrFile) item);
         } else {
-            log.debug("Skipping archive indexing for {} - item is non-existing or not a file.", archiveRepoPath);
+            log.debug("Skipping archive indexing for {} - item does not exist or not a file.", archiveRepoPath);
         }
     }
 
-    public void asyncIndex(RepoPath archiveRepoPath) {
-        index(archiveRepoPath);
+    public void asyncIndex(RepoPath repoPath) {
+        index(repoPath);
     }
 
     /**

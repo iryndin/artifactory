@@ -27,15 +27,11 @@ import java.awt.event.ActionEvent;
  * @author yoavl
  */
 public class ItemEvent extends ActionEvent {
-
-    private final AjaxRequestTarget target;
-
     private ItemAction action;
 
-    public ItemEvent(ActionableItem source, ItemAction action, AjaxRequestTarget target) {
+    public ItemEvent(ActionableItem source, ItemAction action) {
         super(source, 0, action.getName());
         this.action = action;
-        this.target = target;
     }
 
     public ItemAction getAction() {
@@ -53,7 +49,7 @@ public class ItemEvent extends ActionEvent {
     }
 
     public AjaxRequestTarget getTarget() {
-        return target;
+        return AjaxRequestTarget.get();
     }
 
     public ItemEventTargetComponents getTargetComponents() {

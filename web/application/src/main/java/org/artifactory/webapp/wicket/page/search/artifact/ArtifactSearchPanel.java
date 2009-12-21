@@ -72,6 +72,11 @@ public class ArtifactSearchPanel extends BaseSearchPanel<ArtifactSearchResult> {
     }
 
     @Override
+    protected ArtifactSearchControls getSearchControles() {
+        return searchControls;
+    }
+
+    @Override
     protected Class<? extends BaseSearchPage> getMenuPageClass() {
         return ArtifactSearchPage.class;
     }

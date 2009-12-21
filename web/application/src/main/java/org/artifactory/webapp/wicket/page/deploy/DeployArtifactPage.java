@@ -17,15 +17,32 @@
 
 package org.artifactory.webapp.wicket.page.deploy;
 
+import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
+import org.artifactory.webapp.wicket.page.deploy.step1.UploadArtifactPanel;
+
+import java.util.List;
 
 @AuthorizeInstantiation(AuthorizationService.ROLE_USER)
 public class DeployArtifactPage extends AuthenticatedPage {
+    @SpringBean
+    private RepositoryService repoService;
 
     public DeployArtifactPage() {
-        add(new DeployArtifactPanel("deployArtifactPanel"));
+        checkAuthorization();
+        add(new UploadArtifactPanel());
+    }
+
+    private void checkAuthorization() {
+        List<LocalRepoDescriptor> repos = repoService.getDeployableRepoDescriptors();
+        if (repos.isEmpty()) {
+            throw new UnauthorizedInstantiationException(DeployArtifactPage.class);
+        }
     }
 
     @Override

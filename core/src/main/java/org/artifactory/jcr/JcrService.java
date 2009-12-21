@@ -20,6 +20,7 @@ package org.artifactory.jcr;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.artifactory.api.fs.DeployableUnit;
 import org.artifactory.api.repo.ArtifactCount;
+import org.artifactory.api.repo.Async;
 import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
@@ -47,7 +48,9 @@ public interface JcrService extends ReloadableBean {
     String NODE_ARTIFACTORY_METADATA = ARTIFACTORY_PREFIX + "metadata";
     String NODE_ARTIFACTORY_XML = ARTIFACTORY_PREFIX + "xml";
     String NODE_ARTIFACTORY_PROPERTIES = ARTIFACTORY_PREFIX + "properties";
-
+    String NODE_ARTIFACTORY_BUILD_NAME = ARTIFACTORY_PREFIX + "buildName";
+    String NODE_ARTIFACTORY_BUILD_NUMBER = ARTIFACTORY_PREFIX + "buildNumber";
+    String NODE_ARTIFACTORY_BUILD_STARTED = ARTIFACTORY_PREFIX + "buildStarted";
 
     @Transactional
     Repository getRepository();
@@ -60,14 +63,20 @@ public interface JcrService extends ReloadableBean {
      * @param absPath The absolute path of the node (must start with '/')
      * @return True if a node with the absolute path exists.
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     boolean itemNodeExists(String absPath);
 
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     boolean fileNodeExists(String absPath);
 
     @Transactional
     int delete(String absPath);
+
+    @Async(transactional = false, delayUntilAfterCommit = true)
+    void emptyTrash();
+
+    @Async(transactional = false)
+    void deleteFromTrash(String sessionFolderName);
 
     /**
      * Create an unstructure node under the root node of the jcr repository
@@ -94,7 +103,7 @@ public interface JcrService extends ReloadableBean {
      * @return ArtifactCount
      * @throws RepositoryException
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     ArtifactCount getArtifactCount() throws RepositoryException;
 
     /**
@@ -104,7 +113,7 @@ public interface JcrService extends ReloadableBean {
      * @return ArtifactCount
      * @throws RepositoryException
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     ArtifactCount getArtifactCount(String repoKey) throws RepositoryException;
 
     /**
@@ -132,7 +141,7 @@ public interface JcrService extends ReloadableBean {
      * @return deployable units under a certain path
      * @throws RepositoryException On jcr connection error.
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     List<DeployableUnit> getDeployableUnitsUnder(RepoPath repoPath) throws RepositoryException;
 
     /**
@@ -142,7 +151,7 @@ public interface JcrService extends ReloadableBean {
      * @param repo     Repository to search in
      * @return JcrFiles of plugin poms
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     List<JcrFile> getPluginPomNodes(RepoPath repoPath, StoringRepo repo) throws RepositoryException;
 
     /**

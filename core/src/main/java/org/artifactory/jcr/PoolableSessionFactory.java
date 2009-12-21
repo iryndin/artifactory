@@ -60,6 +60,7 @@ public class PoolableSessionFactory extends BasePoolableObjectFactory {
         JcrSession session = (JcrSession) obj;
         validateSessionCleaness(session);
         //Extremely important to call this so that all session-scoped node locks are cleaned!
+        log.debug("logging out session");
         session.getSession().logout();
     }
 

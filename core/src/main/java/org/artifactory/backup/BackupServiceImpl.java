@@ -39,7 +39,7 @@ import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalArtifactoryContext;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.util.EmailException;
 import org.artifactory.version.CompoundVersionDetails;
@@ -50,7 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +67,7 @@ import java.util.ResourceBundle;
  * Created by IntelliJ IDEA. User: yoavl
  */
 @Service
+@Reloadable(beanClass = InternalBackupService.class, initAfter = {InternalRepositoryService.class, TaskService.class})
 public class BackupServiceImpl implements InternalBackupService {
     private static final Logger log = LoggerFactory.getLogger(BackupServiceImpl.class);
 
@@ -88,11 +88,6 @@ public class BackupServiceImpl implements InternalBackupService {
     @Autowired
     private UserGroupService userGroupService;
 
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalBackupService.class);
-    }
-
     @SuppressWarnings({"unchecked"})
     public Class<? extends ReloadableBean>[] initAfter() {
         return new Class[]{
@@ -104,7 +99,7 @@ public class BackupServiceImpl implements InternalBackupService {
     public void init() {
         List<BackupDescriptor> backupDescriptors = centralConfig.getDescriptor().getBackups();
         if (backupDescriptors.isEmpty()) {
-            log.info("No backups configured. Backups is disabled.");
+            log.info("No backups configured. Backup is disabled.");
             return;
         }
         for (int i = 0; i < backupDescriptors.size(); i++) {
@@ -144,8 +139,7 @@ public class BackupServiceImpl implements InternalBackupService {
             new CronExpression(cronExp);
         } catch (ParseException e) {
             log.error(
-                    "Bad backup cron expression '" + cronExp + "'" +
-                            " backup number " + index + " will be ignored (" +
+                    "Bad backup cron expression '" + cronExp + "' backup number " + index + " will be ignored (" +
                             e.getMessage() + ").");
             return;
         }

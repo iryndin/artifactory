@@ -17,7 +17,10 @@
 
 package org.artifactory.api.mime;
 
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import static org.testng.Assert.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -28,11 +31,29 @@ import java.io.File;
  */
 public class MimeTableTest {
 
+    @BeforeMethod
+    public void bindProperties() {
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void unbindProperties() {
+        ArtifactorySystemProperties.unbind();
+    }
+
     @Test
     public void xmlAppTest() {
         ContentType ct = NamingUtils.getContentType(new File("/tmp/anXmlFile.xml"));
         assertNotNull(ct);
         assertTrue(ct.isXml());
         assertEquals(ct.getMimeType(), "application/xml");
+    }
+
+    @Test
+    public void ivyAppTest() {
+        ContentType ct = NamingUtils.getContentType(new File("/tmp/anXmlFile.ivy"));
+        assertNotNull(ct);
+        assertEquals(ct.getMimeType(), "application/x-ivy+xml");
+        assertTrue(ct.isXml());
     }
 }

@@ -41,7 +41,7 @@ public interface InternalTrafficService extends ReloadableBean, TrafficService {
     void cleanup();
 
     /**
-     * Get an iterator for traffic entries for the specified time window (edges inlusive)
+     * Get an iterator for traffic entries for the specified time window (edges inclusive)
      */
     @Transactional
     TrafficEntriesIterator getDatabaseEntries(Calendar from, Calendar to);

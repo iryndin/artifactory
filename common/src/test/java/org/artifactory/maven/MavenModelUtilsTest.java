@@ -20,9 +20,12 @@ package org.artifactory.maven;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.artifactory.api.maven.MavenNaming;
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -35,6 +38,16 @@ import java.io.InputStream;
  */
 @Test
 public class MavenModelUtilsTest {
+
+    @BeforeMethod
+    public void bindProperties() {
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void unbindProperties() {
+        ArtifactorySystemProperties.unbind();
+    }
 
     public void testToMaven1Path() {
         String maven1Url = MavenNaming.toMaven1Path(

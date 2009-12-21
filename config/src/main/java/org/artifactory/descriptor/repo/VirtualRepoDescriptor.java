@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlType(name = "VirtualRepoType",
-        propOrder = {"artifactoryRequestsCanRetrieveRemoteArtifacts", "repositories", "keyPair"},
+        propOrder = {"artifactoryRequestsCanRetrieveRemoteArtifacts", "repositories", "keyPair",
+                "pomRepositoryReferencesCleanupPolicy"},
         namespace = Descriptor.NS)
 public class VirtualRepoDescriptor extends RepoBaseDescriptor {
 
@@ -45,6 +46,9 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
 
     @XmlElement(required = true)
     private String keyPair;
+
+    @XmlElement(defaultValue = "Discard Active References", required = true)
+    private PomCleanupPolicy pomRepositoryReferencesCleanupPolicy = PomCleanupPolicy.discard_active_reference;
 
     public List<RepoDescriptor> getRepositories() {
         return repositories;
@@ -81,5 +85,13 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
 
     public void removeKeyPair() {
         keyPair = null;
+    }
+
+    public PomCleanupPolicy getPomRepositoryReferencesCleanupPolicy() {
+        return pomRepositoryReferencesCleanupPolicy;
+    }
+
+    public void setPomRepositoryReferencesCleanupPolicy(PomCleanupPolicy pomRepositoryReferencesCleanupPolicy) {
+        this.pomRepositoryReferencesCleanupPolicy = pomRepositoryReferencesCleanupPolicy;
     }
 }

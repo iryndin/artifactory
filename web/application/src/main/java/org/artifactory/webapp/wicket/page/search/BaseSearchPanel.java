@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.persistence.IValuePersister;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -57,6 +58,7 @@ import org.artifactory.common.wicket.util.AjaxUtils;
 import org.artifactory.webapp.actionable.event.ItemEventTargetComponents;
 import org.artifactory.webapp.servlet.RequestUtils;
 import org.artifactory.webapp.wicket.page.search.actionable.ActionableSearchResult;
+import org.artifactory.webapp.wicket.panel.advanced.AdvancedSearchPanel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -142,6 +144,11 @@ public abstract class BaseSearchPanel<T extends SearchResult> extends Panel impl
 
         addSearchComponents(form);
 
+        //selected repo for search
+        CompoundPropertyModel advancedModel = new CompoundPropertyModel(getSearchControles());
+        AdvancedSearchPanel advancedPanel = new AdvancedSearchPanel("advancedPanel", advancedModel);
+        form.add(advancedPanel);
+
         SearchAddon searchAddon = addons.addonByType(SearchAddon.class);
         SaveSearchResultsPanel saveSearchResultsPanel = searchAddon.getSaveSearchResultsPanel("saveResultsPanel",
                 new PropertyModel(this, "searchResults.results"), this);
@@ -176,6 +183,8 @@ public abstract class BaseSearchPanel<T extends SearchResult> extends Panel impl
     }
 
     protected abstract void addSearchComponents(Form form);
+
+    protected abstract Object getSearchControles();
 
     protected abstract Class<? extends BaseSearchPage> getMenuPageClass();
 

@@ -27,17 +27,8 @@ public class IvyNaming {
         if (StringUtils.isBlank(fileName)) {
             return false;
         }
-        if (IvyNaming.IVY_XML.equals(fileName)) {
-            return true;
-        }
-        if (fileName.startsWith("ivy-") && fileName.endsWith(".xml")) {
-            return true;
-        }
-        if (fileName.endsWith("-" + IVY_XML)) {
-            return true;
-        }
-        return false;
+        return IvyNaming.IVY_XML.equals(fileName) || (fileName.startsWith("ivy-") && fileName.endsWith(".xml")) ||
+                fileName.endsWith(".ivy") ||
+                fileName.endsWith("-" + IVY_XML);
     }
-
-
 }

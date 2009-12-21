@@ -19,11 +19,13 @@ package org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.permissions;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.artifactory.addon.AddonsManager;
 import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
@@ -50,6 +52,9 @@ public class PermissionsTabPanel extends Panel {
     @SpringBean
     private UserGroupService userGroupService;
 
+    @SpringBean
+    private AddonsManager addonsManager;
+
     private RepoPath repoPath;
 
     public PermissionsTabPanel(String id, RepoAwareActionableItem item) {
@@ -63,6 +68,14 @@ public class PermissionsTabPanel extends Panel {
         }
 
         addTable();
+        addWarning();
+    }
+
+    private void addWarning() {
+        Label label = new Label("ldapGroupWarning",
+                "LDAP groups authorization is active - not showing user-specific permissions implied by the user's effective LDAP groups.");
+        label.setVisible(addonsManager.isAddonActivated("ldap"));
+        add(label);
     }
 
     private void addTable() {

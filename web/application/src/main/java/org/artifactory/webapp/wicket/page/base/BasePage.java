@@ -78,15 +78,23 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
         add(new GreenSkin());
 
         add(new Label("pageTitle", new PropertyModel(this, "pageTitle")));
-
+        String footer = getFooter();
+        WebMarkupContainer footerWrapper = new WebMarkupContainer("footerWrapper");
+        footerWrapper.setOutputMarkupId(true);
+        Label footerLabel = new Label("footer", new Model(footer));
+        footerWrapper.add(footerLabel);
+        add(footerWrapper);
         WebMarkupContainer revisionHeader = new WebMarkupContainer("revision", new Model());
         String revisionValue = centralConfig.getVersionInfo().getRevision();
         revisionHeader.add(new AttributeModifier("content", new Model(revisionValue)));
         add(revisionHeader);
 
         WebApplicationAddon addon = addons.addonByType(WebApplicationAddon.class);
+        WebMarkupContainer logoWrapper = new WebMarkupContainer("logoWrapper");
+        logoWrapper.setOutputMarkupId(true);
+        add(logoWrapper);
         WebMarkupContainer homeLink = addon.getHomeLink("artifactoryLink");
-        add(homeLink);
+        logoWrapper.add(homeLink);
 
         addAjaxIndicator();
         addFeedback();
@@ -95,6 +103,11 @@ public abstract class BasePage extends WebPage implements HasModalHandler {
         addMenu();
         addSearchForm();
         addModalHandler();
+    }
+
+    private String getFooter() {
+        String footer = centralConfig.getMutableDescriptor().getFooter();
+        return footer;
     }
 
     @Override

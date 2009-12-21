@@ -47,7 +47,11 @@ import org.artifactory.util.ZipUtils;
 import org.artifactory.version.ArtifactoryVersion;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jmx.access.MBeanProxyFactoryBean;
 
@@ -214,7 +218,11 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
                         log.error("Failed to run configuration conversion.", e);
                     }
                 }
-                reloadableBean.init();
+                try {
+                    reloadableBean.init();
+                } catch (Exception e) {
+                    throw new BeanInitializationException("Failed to initialize bean '" + beanIfc + "'.", e);
+                }
                 log.debug("Initialized {}", beanIfc);
             }
             //After all converters have run we can declare we are running on the latest version. We always update the
@@ -227,6 +235,34 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         } finally {
             ArtifactoryContextThreadBinder.unbind();
         }
+    }
+
+    @Override
+    protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        super.prepareBeanFactory(beanFactory);
+        //Add our own post processor that registers all reloadable beans automagically after construction
+        beanFactory.addBeanPostProcessor(new BeanPostProcessor() {
+            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+                Class<?> targetClass = AopUtils.getTargetClass(bean);
+                if (ReloadableBean.class.isAssignableFrom(targetClass)) {
+                    Reloadable annotation;
+                    if (targetClass.isAnnotationPresent(Reloadable.class)) {
+                        annotation = targetClass.getAnnotation(Reloadable.class);
+                        Class<? extends ReloadableBean> beanClass = annotation.beanClass();
+                        addReloadableBean(beanClass);
+                    } else {
+                        throw new IllegalStateException("Bean " + targetClass.getName() +
+                                " requires initialization beans to be initialized, but no such beans were found");
+                    }
+                }
+                return bean;
+            }
+
+            public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+                //Do nothing
+                return bean;
+            }
+        });
     }
 
     public void init() {
@@ -303,6 +339,7 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         return bean.getClass().getInterfaces()[0].getName();
     }
 
+    @SuppressWarnings({"unchecked"})
     private void orderReloadableBeans(Set<Class<? extends ReloadableBean>> beansLeftToInit,
             Class<? extends ReloadableBean> beanClass) {
         if (!beansLeftToInit.contains(beanClass)) {
@@ -310,13 +347,21 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
             return;
         }
         ReloadableBean initializingBean = beanForType(beanClass);
-        Class<? extends ReloadableBean>[] dependsUpon = initializingBean.initAfter();
+        Class<? extends ReloadableBean> targetClass = AopUtils.getTargetClass(initializingBean);
+        Reloadable annotation;
+        if (targetClass.isAnnotationPresent(Reloadable.class)) {
+            annotation = targetClass.getAnnotation(Reloadable.class);
+        } else {
+            throw new IllegalStateException(
+                    "Bean " + targetClass.getName() + " requires the @Reloadable annotation to be present.");
+        }
+        Class<? extends ReloadableBean>[] dependsUpon = annotation.initAfter();
         for (Class<? extends ReloadableBean> doBefore : dependsUpon) {
             //Sanity check that prerequisite bean was registered
             if (!toInitialize.contains(doBefore)) {
                 throw new IllegalStateException(
-                        "Bean '" + beanClass.getName() + "' reuqires bean '" + doBefore.getName() +
-                                "' to be initalized, but no such bean is registered for init.");
+                        "Bean '" + beanClass.getName() + "' requires bean '" + doBefore.getName() +
+                                "' to be initialized, but no such bean is registered for init.");
             }
             if (!doBefore.isInterface()) {
                 throw new IllegalStateException(
@@ -425,7 +470,7 @@ public class ArtifactoryApplicationContext extends ClassPathXmlApplicationContex
         //in-place and make sure all exports except repositories delete their target or write to temp before exporting
         File tmpExportDir;
         if (incremental) {
-            //Will alwyas be baseDir/CURRENT_TIME_EXPORT_DIR_NAME
+            //Will always be baseDir/CURRENT_TIME_EXPORT_DIR_NAME
             tmpExportDir = new File(baseDir, timestamp);
         } else {
             tmpExportDir = new File(baseDir, timestamp + ".tmp");

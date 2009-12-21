@@ -25,6 +25,7 @@ public class AnnotatePermissionXmlConverter implements XmlConverter {
     private static final String MASK = "mask";
     private static final String PRINCIPAL = "principal";
     private static final String ACE = "ace";
+    private static final String GROUP = "group";
 
     @SuppressWarnings({"unchecked"})
     public void convert(Document doc) {
@@ -35,13 +36,13 @@ public class AnnotatePermissionXmlConverter implements XmlConverter {
             List<Element> aces = acesTag.getChildren(ACE);
             Element newAces = new Element(ACES);
             Element aceTemplate = new Element(ACE);
-            Element groupEl = new Element("group");
-            groupEl.setText("false");
+            Element groupEl = new Element(GROUP);
             aceTemplate.addContent(new Element(PRINCIPAL)).addContent(groupEl).addContent(new Element(MASK));
             for (Element ace : aces) {
                 Element child = ace.getChild("principal");
                 Element newAce = (Element) aceTemplate.clone();
                 newAce.getChild(PRINCIPAL).setText(ace.getChildText(PRINCIPAL));
+                newAce.getChild(GROUP).setText(ace.getChildText(GROUP));
 
                 Element maskEl = ace.getChild(MASK);
                 int mask = Integer.parseInt(maskEl.getText());

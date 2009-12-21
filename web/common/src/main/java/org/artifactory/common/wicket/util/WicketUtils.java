@@ -19,10 +19,7 @@ package org.artifactory.common.wicket.util;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.protocol.http.*;
 import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,5 +80,9 @@ public class WicketUtils {
 
     public static Page getPage() {
         return RequestCycle.get().getResponsePage();
+    }
+
+    public static String getWicketAppPath() {
+        return RequestUtils.toAbsolutePath(RequestCycle.get().getRequest().getRelativePathPrefixToWicketHandler());
     }
 }

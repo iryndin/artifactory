@@ -17,8 +17,6 @@
 
 package org.artifactory.repo.cleanup;
 
-import org.artifactory.api.common.MultiStatusHolder;
-import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.SearchService;
@@ -30,19 +28,17 @@ import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
-import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.log.LoggerFactory;
+import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzTask;
-import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -51,6 +47,8 @@ import java.util.List;
  * @author Noam Tenne
  */
 @Service
+@Reloadable(beanClass = InternalArtifactCleanupService.class,
+        initAfter = {TaskService.class, InternalRepositoryService.class})
 public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupService {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactCleanupServiceImpl.class);
@@ -64,19 +62,10 @@ public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupServic
     @Autowired
     private SearchService searchService;
 
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalArtifactCleanupService.class);
-    }
-
     public void init() {
         scheduleCleanup();
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{TaskService.class, InternalRepositoryService.class};
-    }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
         init();
@@ -90,27 +79,30 @@ public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupServic
 
     public void clean(String repoKey, long periodMillis) {
         LocalRepoDescriptor descriptor = repositoryService.localOrCachedRepoDescriptorByKey(repoKey);
+        LocalRepo storingRepo = (LocalRepo) repositoryService.repositoryByKey(repoKey);
 
         //Perform sanity checks
         if (descriptor == null) {
-            log.warn("Could no find the repository '{}' - auto-clean was not performed.", repoKey);
+            log.warn("Could not find the repository '{}' - auto-clean was not performed.", repoKey);
             return;
         }
-        if (!descriptor.isCache()) {
-            throw new IllegalArgumentException("Cannot cleanup a non-cache repository.");
+        if (storingRepo == null) {
+            log.warn("Could not find the storing repository '{}' - auto-clean was not performed.", repoKey);
+            return;
         }
-        log.debug("Auto-clean has begun on the repository '{}'", repoKey);
-        MultiStatusHolder multiStatusHolder = new MultiStatusHolder();
+        if (!descriptor.isCache() || !storingRepo.isCache()) {
+            throw new IllegalArgumentException(String.format("Cannot cleanup non-cache repository '%s'.", repoKey));
+        }
+
+        log.debug("Auto-clean has begun on the repository '{}'.", repoKey);
 
         //Perform a metadata search on the given repo. Look for artifacts that have lastDownloaded stats
         MetadataSearchControls<StatsInfo> searchControls = new MetadataSearchControls<StatsInfo>();
-        searchControls.setRepoToSearch(repoKey);
+        searchControls.addRepoToSearch(repoKey);
         searchControls.setMetadataName(StatsInfo.ROOT);
         searchControls.setPath(StatsInfo.ROOT + "/lastDownloaded");
         searchControls.setMetadataObjectClass(StatsInfo.class);
         SearchResults<MetadataSearchResult> metadataSearchResults = searchService.searchMetadata(searchControls);
-
-        int cleanedItemsCounter = 0;
 
         //Calculate unused artifact expiry
         long expiryMillis = (System.currentTimeMillis() - periodMillis);
@@ -120,35 +112,18 @@ public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupServic
 
             //If the artifact wasn't downloaded within the expiry window, remove it
             if (expiryMillis > lastDownloaded) {
+
                 RepoPath repoPath = metadataSearchResult.getItemInfo().getRepoPath();
-                //We need to write lock for delete, so release the read lock held by the fetching the query result first
-                LockingHelper.releaseReadLock(repoPath);
-                StatusHolder statusHolder = repositoryService.undeploy(repoPath);
-                if (!statusHolder.isError()) {
-                    cleanedItemsCounter++;
-                    log.debug("The item '{}' has successfully been removed from the repository '{}' during auto-clean.",
-                            repoPath.getId(), repoKey);
+
+                try {
+                    storingRepo.undeploy(repoPath);
+                } catch (Exception e) {
+                    log.error(String.format("Could not auto-clean artifact '%s'.", repoPath.getId()), e);
                 }
-                multiStatusHolder.merge(statusHolder);
             }
         }
 
-        boolean warningsProduced = multiStatusHolder.hasWarnings();
-        if (warningsProduced) {
-            log.warn("Warnings have been produced while auto-cleaning the repository '{}'", repoKey);
-        }
-        boolean errorsProduced = multiStatusHolder.hasErrors();
-        if (errorsProduced) {
-            log.error("Errors have been produced while auto-cleaning the repository '{}'", repoKey);
-        }
-
-        if (!warningsProduced && !errorsProduced) {
-            String cleanedItems = "";
-            if (cleanedItemsCounter != 0) {
-                cleanedItems = " of " + cleanedItemsCounter + " items";
-            }
-            log.info("The repository '{}' has been succesfully cleaned{}", repoKey, cleanedItems);
-        }
+        log.debug("Auto-clean on the repository '{}' has ended.", repoKey);
     }
 
     /**
@@ -159,8 +134,7 @@ public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupServic
 
         int cleanupIntervalHours = ConstantValues.repoCleanupIntervalHours.getInt();
         if (cleanupIntervalHours < 1) {
-            throw new IllegalArgumentException(
-                    "Remote repository cache clean-up interval hours cannot be less than 1.");
+            throw new IllegalArgumentException("Remote repository cache cleanup interval hours cannot be less than 1.");
         }
 
         List<LocalCacheRepoDescriptor> cachedRepoDescriptors = repositoryService.getCachedRepoDescriptors();

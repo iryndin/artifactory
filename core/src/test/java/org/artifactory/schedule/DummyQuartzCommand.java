@@ -52,7 +52,7 @@ public class DummyQuartzCommand extends QuartzCommand {
         }
         long count = (long) (msecsToRun / (float) SLEEP);
         for (int i = 0; i < count; i++) {
-            boolean shouldBreak = getTaskService().blockIfPausedAndShouldBreak();
+            boolean shouldBreak = getTaskService().pauseOrBreak();
             if (shouldBreak) {
                 log.debug("Command for task " + currentTaskToken() + " is breaking.");
                 break;

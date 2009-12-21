@@ -19,14 +19,19 @@ package org.artifactory.jcr.lock;
 
 import org.artifactory.api.repo.Lock;
 import org.artifactory.api.repo.RepoPath;
+import org.artifactory.concurrent.LockingException;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.lock.aop.LockingAdvice;
 
 /**
+ * Public lock helper exposing static operations on the thread (tx) based lock manager.
+ *
  * @author freds
- * @date Oct 27, 2008
+ * @author Yoav Landman
  */
 public class LockingHelper {
+
+    private static LockingExceptionListener lockingExceptionListener;
 
     public static InternalLockManager getLockManager() {
         InternalLockManager result = LockingAdvice.getLockManager();
@@ -38,15 +43,30 @@ public class LockingHelper {
     }
 
     public static FsItemLockEntry readLock(LockEntryId lockEntry) {
-        return getLockManager().readLock(lockEntry);
+        try {
+            return getLockManager().readLock(lockEntry);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
     public static FsItemLockEntry writeLock(LockEntryId lockEntryId) {
-        return getLockManager().writeLock(lockEntryId);
+        try {
+            return getLockManager().writeLock(lockEntryId);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
     public static JcrFsItem getIfLockedByMe(RepoPath repoPath) {
-        return getLockManager().getIfLockedByMe(repoPath);
+        try {
+            return getLockManager().getIfLockedByMe(repoPath);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
     /**
@@ -56,7 +76,12 @@ public class LockingHelper {
      * @return true if read lock was actually released, false otherwise
      */
     public static boolean releaseReadLock(RepoPath repoPath) {
-        return getLockManager().releaseReadLock(repoPath);
+        try {
+            return getLockManager().releaseReadLock(repoPath);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
     /**
@@ -65,11 +90,39 @@ public class LockingHelper {
      * @param repoKey
      */
     public static void unlockAllReadLocks(String repoKey) {
-        getLockManager().unlockAllReadLocks(repoKey);
+        try {
+            getLockManager().unlockAllReadLocks(repoKey);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
     public static void removeLockEntry(RepoPath repoPath) {
-        getLockManager().removeEntry(repoPath);
+        try {
+            getLockManager().removeEntry(repoPath);
+        } catch (RuntimeException e) {
+            handleException(e);
+            throw e;
+        }
     }
 
+    public static void registerLockingExceptionListener(LockingExceptionListener lockingExceptionListener) {
+        LockingHelper.lockingExceptionListener = lockingExceptionListener;
+    }
+
+    private static void handleException(RuntimeException e) {
+        if (lockingExceptionListener != null) {
+            if (e instanceof LockingException) {
+                lockingExceptionListener.onLockingException((LockingException) e);
+            }
+        }
+    }
+
+    /**
+     * Listener for locking exceptions (session and repository wide) - used for testing mainly
+     */
+    public interface LockingExceptionListener {
+        void onLockingException(LockingException e);
+    }
 }

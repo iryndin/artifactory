@@ -20,7 +20,6 @@ package org.artifactory.search.archive;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.archive.ArchiveSearchControls;
@@ -29,7 +28,6 @@ import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.fs.FileInfoProxy;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.log.LoggerFactory;
-import org.artifactory.repo.LocalRepo;
 import org.artifactory.resource.ArtifactResource;
 import org.artifactory.search.SearcherBase;
 import org.artifactory.util.PathUtils;
@@ -61,12 +59,11 @@ public class ArchiveSearcher extends SearcherBase<ArchiveSearchControls, Archive
 
         String exp = buildSearchExpression(controls.getQuery(), exactMatch, searchAllTypes);
 
-        // select all the elements of type artifactory:file with element artifactory:name
-        // that contains the search term. Use jcr contains while surrounding the expression with wildcards
-        String queryStr =
-                "/jcr:root" + JcrPath.get().getRepoJcrRootPath() + "//element(*, " + JcrFile.NT_ARTIFACTORY_FILE +
-                        ") [jcr:contains(.," + exp + ")]/@" + ArchiveIndexer.PROP_ARTIFACTORY_ARCHIVE_ENTRY +
-                        " order by jcr:score decending";
+        StringBuilder queryBuilder = getPathQueryBuilder(controls);
+        queryBuilder.append("/element(*,").append(JcrFile.NT_ARTIFACTORY_FILE).append(") [jcr:contains(.,");
+        queryBuilder.append(exp).append(")]/@").append(ArchiveIndexer.PROP_ARTIFACTORY_ARCHIVE_ENTRY)
+                .append("");
+        String queryStr = queryBuilder.toString();
         log.debug("Executing archive search query: {}", queryStr);
         QueryResult queryResult = getJcrService().executeXpathQuery(queryStr);
         List<ArchiveSearchResult> resultList = new ArrayList<ArchiveSearchResult>();
@@ -84,14 +81,7 @@ public class ArchiveSearcher extends SearcherBase<ArchiveSearchControls, Archive
             if (!controls.isLimitSearchResults() || (resultList.size() < getMaxResults())) {
                 String artifactPath = row.getValue(JcrConstants.JCR_PATH).getString();
                 RepoPath repoPath = JcrPath.get().getRepoPath(artifactPath);
-                LocalRepo localRepo = getRepoService().localOrCachedRepositoryByKey(repoPath.getRepoKey());
-                if (localRepo == null) {
-                    // Some left over in JCR of non configured repo
-                    continue;
-                }
-
-                if (NamingUtils.isChecksum(repoPath.getPath())) {
-                    // don't show checksum files
+                if (!isResultRepoPathValid(repoPath)) {
                     continue;
                 }
 

@@ -17,15 +17,7 @@
 
 package org.artifactory.repo;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
@@ -140,7 +132,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
     public ResourceStreamHandle downloadResource(String relPath) throws IOException {
         assert !isOffline() : "Should never be called in offline mode";
         RepoType repoType = getType();
-        String fullUrl = getUrl() + "/" + pathConvert(repoType, relPath);
+        final String fullUrl = getUrl() + "/" + pathConvert(repoType, relPath);
         if (log.isDebugEnabled()) {
             log.debug("Retrieving " + relPath + " from remote repository '" + getKey() + "' URL '" + fullUrl + "'.");
         }
@@ -161,7 +153,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         }
         //Found
         if (log.isInfoEnabled()) {
-            log.info(this + ": Retrieving '" + fullUrl + "'...");
+            log.info(this + ": Retrieving '{}'...", fullUrl);
         }
         final InputStream is = method.getResponseBodyAsStream();
         //Create a handle and return it
@@ -177,6 +169,9 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
             public void close() {
                 IOUtils.closeQuietly(is);
                 method.releaseConnection();
+                StatusLine statusLine = method.getStatusLine();
+                log.info(HttpRepo.this + ": Retrieved '{}' with return code: {}.", fullUrl,
+                        statusLine != null ? statusLine.getStatusCode() : "unknown");
             }
         };
         return handle;
@@ -257,14 +252,14 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         client.getHostConfiguration().setHost(host);
         //Set the local address if exists
         String localAddress = getLocalAddress();
-        if (!StringUtils.isEmpty(localAddress)) {
+        if (StringUtils.isNotBlank(localAddress)) {
             InetAddress address;
             try {
                 address = InetAddress.getByName(localAddress);
+                client.getHostConfiguration().setLocalAddress(address);
             } catch (UnknownHostException e) {
-                throw new RuntimeException("Invalid local address: " + localAddress, e);
+                log.error("Invalid local address: " + localAddress, e);
             }
-            client.getHostConfiguration().setLocalAddress(address);
         }
         //Set the proxy
         ProxyDescriptor proxy = getProxy();

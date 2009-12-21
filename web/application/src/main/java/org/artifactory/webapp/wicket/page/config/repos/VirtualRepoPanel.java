@@ -20,6 +20,9 @@ package org.artifactory.webapp.wicket.page.config.repos;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -37,6 +40,7 @@ import org.artifactory.common.wicket.component.dnd.select.DragDropSelection;
 import org.artifactory.common.wicket.component.help.HelpBubble;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
+import org.artifactory.descriptor.repo.PomCleanupPolicy;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoResolver;
@@ -44,6 +48,7 @@ import org.artifactory.webapp.wicket.components.IconDragDropSelection;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -58,7 +63,7 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
     private AddonsManager addonsManager;
 
     public VirtualRepoPanel(CreateUpdateAction action, VirtualRepoDescriptor repoDescriptor,
-                            MutableCentralConfigDescriptor mutableCentralConfig) {
+            MutableCentralConfigDescriptor mutableCentralConfig) {
         super(action, repoDescriptor, mutableCentralConfig);
 
         TitledBorder virtualRepoFields = new TitledBorder("virtualRepoFields");
@@ -67,6 +72,18 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
 
         virtualRepoFields.add(new StyledCheckbox("artifactoryRequestsCanRetrieveRemoteArtifacts"));
         virtualRepoFields.add(new SchemaHelpBubble("artifactoryRequestsCanRetrieveRemoteArtifacts.help"));
+
+        virtualRepoFields.add(new TextArea("includesPattern"));
+        virtualRepoFields.add(new TextArea("excludesPattern"));
+        virtualRepoFields.add(new SchemaHelpBubble("includesPattern.help"));
+        virtualRepoFields.add(new SchemaHelpBubble("excludesPattern.help"));
+
+        PomCleanupPolicy[] policies = PomCleanupPolicy.values();
+        DropDownChoice pomCleanPolycy =
+                new DropDownChoice("pomRepositoryReferencesCleanupPolicy", Arrays.asList(policies),
+                        new ChoiceRenderer("message"));
+        virtualRepoFields.add(pomCleanPolycy);
+        virtualRepoFields.add(new SchemaHelpBubble("pomRepositoryReferencesCleanupPolicy.help"));
 
         final WebMarkupContainer resolvedRepo = new WebMarkupContainer("resolvedRepoWrapper");
         resolvedRepo.setOutputMarkupId(true);

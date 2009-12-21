@@ -17,6 +17,7 @@
 
 package org.artifactory.maven;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -59,7 +60,7 @@ public class MavenModelUtils {
     private static final Logger log = LoggerFactory.getLogger(MavenModelUtils.class);
 
     public static void validatePomTargetPath(InputStream in, String relPath, boolean suppressPomConsistencyChecks)
-            throws IOException, BadPomException {
+            throws IOException {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         try {
             Model model = reader.read(new InputStreamReader(in, "utf-8"));
@@ -101,7 +102,17 @@ public class MavenModelUtils {
                 }
             }
         } catch (XmlPullParserException e) {
-            throw new BadPomException("Failed to read POM for '" + relPath + "'.");
+            if (log.isDebugEnabled()) {
+                try {
+                    in.reset();
+                    InputStreamReader isr = new InputStreamReader(in, "utf-8");
+                    String s = readString(isr);
+                    log.debug("Could not parse bad POM for '{}'. Bad POM content:\n{}\n", relPath, s);
+                } catch (Exception ex) {
+                    log.trace("Could not extract bad POM content for '{}': {}.", relPath, e.getMessage());
+                }
+            }
+            throw new BadPomException("Failed to read POM for '" + relPath + "': " + e.getMessage() + ".");
         }
     }
 
@@ -113,7 +124,7 @@ public class MavenModelUtils {
         try {
             return SnapshotTransformation.getUtcDateFormatter().parse(timestamp);
         } catch (ParseException e) {
-            throw new RuntimeException("Failed to transfor timestamp to date.", e);
+            throw new RuntimeException("Failed to transfer timestamp to date.", e);
         }
     }
 
@@ -249,7 +260,6 @@ public class MavenModelUtils {
      * @param file File to gather information from
      * @return MavenArtifactInfo object containing gathered information
      */
-    //TODO: [by YS] move this method to new service - ArtifactDeployService
     public static MavenArtifactInfo artifactInfoFromFile(File file) {
         MavenArtifactInfo result = new MavenArtifactInfo();
         gatherInfoFromFile(file, result);
@@ -259,7 +269,7 @@ public class MavenModelUtils {
     }
 
     public static File addPomFileMetadata(File uploadedFile, Artifact artifact, String pomAsString,
-            File tempUploadsDir) {
+                                          File tempUploadsDir) {
         //Create the pom file in the uploads dir
         String pomFileName = uploadedFile.getName() + "." + MavenArtifactInfo.POM;
         //Create the upload folder every time (e.g., in case it has been reaped)
@@ -277,8 +287,10 @@ public class MavenModelUtils {
             IOUtils.closeQuietly(osw);
         }
         //Add project metadata that will trigger additional deployment of the pom file
-        ArtifactMetadata metadata = new ProjectArtifactMetadata(artifact, pomFile);
-        artifact.addMetadata(metadata);
+        if (artifact != null) {
+            ArtifactMetadata metadata = new ProjectArtifactMetadata(artifact, pomFile);
+            artifact.addMetadata(metadata);
+        }
         return pomFile;
     }
 
@@ -296,7 +308,7 @@ public class MavenModelUtils {
             //File is a jar
             result.setType(MavenArtifactInfo.JAR);
             gatherInfoFromJarFile(file, result);
-        } else if (MavenNaming.isPom(fileName)) {
+        } else if (MavenNaming.isClientOrServerPom(fileName)) {
             gatherInfoFromPomFile(file, result);
         } else if (IvyNaming.isIvyFileName(fileName)) {
             gatherInfoFromIvyFile(file, result);
@@ -474,17 +486,27 @@ public class MavenModelUtils {
      */
     private static void gatheringFallback(File file, MavenArtifactInfo result) {
         String fileName = file.getName();
+        String baseFileName = FilenameUtils.getBaseName(fileName);
 
         //Complete values by falling back to dumb defaults
         if (MavenArtifactInfo.NA.equals(result.getArtifactId())) {
-            result.setArtifactId(fileName);
+            result.setArtifactId(baseFileName);
         }
         if (MavenArtifactInfo.NA.equals(result.getGroupId())) {
             //If we have no group, set it to be the same as the artifact name
             result.setGroupId(result.getArtifactId());
         }
         if (MavenArtifactInfo.NA.equals(result.getVersion())) {
-            result.setVersion(fileName);
+            result.setVersion(baseFileName);
         }
+    }
+
+    private static String readString(Reader reader) throws IOException {
+        final StringBuffer buffer = new StringBuffer(2048);
+        int value;
+        while ((value = reader.read()) != -1) {
+            buffer.append((char) value);
+        }
+        return buffer.toString();
     }
 }

@@ -204,7 +204,7 @@ var DomUtils = {
     },
 
     autoHeight: function(node, container) {
-        var height = node.clientHeight - container.scrollHeight + container.clientHeight;
+        var height = node.clientHeight - container.scrollHeight + container.clientHeight - 5;
         node.style.height = height + 'px';
     }
 };

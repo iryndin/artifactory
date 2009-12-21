@@ -48,6 +48,7 @@ public class ArchiveSearchControls extends SearchControlsBase {
         this.query = archiveSearchControls.query;
         this.exactMatch = archiveSearchControls.exactMatch;
         this.searchAllTypes = archiveSearchControls.searchAllTypes;
+        this.selectedRepoForSearch = archiveSearchControls.selectedRepoForSearch;
         setLimitSearchResults(archiveSearchControls.isLimitSearchResults());
         this.shouldCalcEntries = archiveSearchControls.shouldCalcEntries;
     }

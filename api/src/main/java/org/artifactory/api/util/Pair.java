@@ -17,12 +17,14 @@
 
 package org.artifactory.api.util;
 
+import java.io.Serializable;
+
 /**
  * Generic pair class
  *
  * @author Noam Tenne
  */
-public class Pair<X, Y> {
+public class Pair<X extends Serializable, Y extends Serializable> implements Serializable {
 
     private X first;
     private Y second;

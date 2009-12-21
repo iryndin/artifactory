@@ -34,8 +34,6 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.artifactory.api.rest.SystemInfo;
 import org.artifactory.api.xstream.XStreamFactory;
 import org.testng.Assert;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -44,6 +42,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * User: freds Date: Aug 12, 2008 Time: 5:36:40 PM
@@ -82,7 +83,7 @@ public class TestSystemRest {
         //SystemActionInfo action = systemInfo.actionExample;
         //Assert.assertNotNull(action);
         //log.debug("Received SystemInfo " + systemInfo);
-        //action.importFrom = "/tmp/testRestExport/20080901.121146";
+        //action.importFrom = "/tmp/testRestartifacts/20080901.121146";
         //action.exportTo = "";
         //action.repositories = "";// All repos if empty
         //action.security = true;

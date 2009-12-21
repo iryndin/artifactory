@@ -17,6 +17,8 @@
 
 package org.artifactory.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 import java.rmi.dgc.VMID;
 import java.util.ArrayList;
@@ -380,5 +382,9 @@ public class PathUtils {
         } else {
             return "";
         }
+    }
+
+    public static boolean isDirectoryPath(String path) {
+        return StringUtils.isEmpty(path) || path.matches(".*[/\\\\]$");
     }
 }

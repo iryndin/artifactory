@@ -16,6 +16,7 @@ public class IvyNamingTest {
     public void ivyFileName() {
         assertTrue(IvyNaming.isIvyFileName("ivy.xml"));
         assertTrue(IvyNaming.isIvyFileName("ivy-.xml"));
+        assertTrue(IvyNaming.isIvyFileName("ivy-.ivy"));
         assertTrue(IvyNaming.isIvyFileName("organisation-ivy.xml"));
         assertTrue(IvyNaming.isIvyFileName("ivy-1.2.2.3.4.xml"));
         assertFalse(IvyNaming.isIvyFileName("1ivy.xml"));

@@ -24,7 +24,6 @@ import org.artifactory.api.security.AceInfo;
 import org.artifactory.api.security.AclInfo;
 import org.artifactory.api.security.GroupInfo;
 import org.artifactory.api.security.PermissionTargetInfo;
-import static org.artifactory.api.security.PermissionTargetInfo.*;
 import org.artifactory.api.security.SecurityInfo;
 import org.artifactory.api.security.SecurityService;
 import org.artifactory.api.security.UserInfo;
@@ -45,6 +44,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.artifactory.api.security.PermissionTargetInfo.*;
+
 /**
  * Converts the security ocm data from security version 3 to version 4. This converter performs these actions: <ol> <li>
  * Converts the acls from one repo key to multiple repo keys per target info. Adds the new any remote default permission
@@ -63,6 +64,7 @@ public class OcmStorageConverter implements ConfigurationConverter<Session> {
     private static final String GROUPS_KEY = "groups";
 
     public void convert(Session session) {
+        log.info("Starting OcmStorageConverter");
         List<UserInfo> users = getUsers(session);
         List<GroupInfo> groups = getGroups(session);
         List<AclInfo> acls = getAcls(session);
@@ -78,6 +80,7 @@ public class OcmStorageConverter implements ConfigurationConverter<Session> {
         //Save the new security data
         SecurityService securityService = ContextHelper.get().beanForType(SecurityService.class);
         securityService.importSecurityData(descriptor);
+        log.info("Finished OcmStorageConverter");
     }
 
     private List<AclInfo> getAcls(Session session) {
@@ -89,7 +92,7 @@ public class OcmStorageConverter implements ConfigurationConverter<Session> {
             while (allAcls.hasNext()) {
                 Node node = allAcls.nextNode();
                 String jcrName = node.getProperty("jcrName").getString();
-                // up to version 3 acl contained one repo key 
+                // up to version 3 acl contained one repo key
                 String repoKey = node.getProperty("repoKey").getString();
                 String includes = node.getProperty("includesPattern").getString();
                 String excludes = node.getProperty("excludesPattern").getString();

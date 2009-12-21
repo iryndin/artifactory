@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.jackrabbit.JcrConstants.*;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.GarbageCollectorFactory;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
@@ -68,6 +69,7 @@ import org.artifactory.search.InternalSearchService;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.traffic.InternalTrafficService;
 import org.artifactory.tx.SessionResource;
@@ -107,14 +109,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.jackrabbit.JcrConstants.*;
-
 /**
  * Spring based session factory for tx jcr sessions
  *
  * @author yoavl
  */
 @Repository
+@Reloadable(beanClass = JcrService.class)
 public class JcrServiceImpl implements JcrService, JcrRepoService {
     private static final Logger log = LoggerFactory.getLogger(JcrServiceImpl.class);
 
@@ -238,11 +239,14 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         return new ObjectContentManagerImpl(session, ocmMapper);
     }
 
-    public boolean itemNodeExists(final String absPath) {
+    public boolean itemNodeExists(String absPath) {
+        return itemNodeExists(absPath, getManagedSession());
+    }
+
+    public boolean itemNodeExists(String absPath, JcrSession session) {
         if (absPath == null || !absPath.startsWith("/")) {
             return false;
         }
-        JcrSession session = getManagedSession();
         try {
             return session.itemExists(absPath);
         } catch (RepositoryRuntimeException e) {
@@ -267,14 +271,57 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
     }
 
     public int delete(String absPath) {
-        if (itemNodeExists(absPath)) {
-            Node node = (Node) getManagedSession().getItem(absPath);
+        return delete(absPath, getManagedSession());
+    }
+
+    public void emptyTrash() {
+        JcrSession session = getUnmanagedSession();
+        try {
+            Node trashNode = (Node) session.getItem(JcrPath.get().getTrashJcrRootPath());
+            NodeIterator trashChildren = trashNode.getNodes();
+            while (trashChildren.hasNext()) {
+                Node trashChild = trashChildren.nextNode();
+                deleteFromTrash(trashChild.getName());
+            }
+        } catch (Exception e) {
+            //Fail gracefully
+            log.error("Could not empty trash.", e);
+        } finally {
+            session.logout();
+        }
+    }
+
+    public void deleteFromTrash(String sessionFolderName) {
+        if (StringUtils.isBlank(sessionFolderName)) {
+            log.info("Received blank folder name as trash removal target. Ignoring.");
+            return;
+        }
+        String sessionFolderPath = JcrPath.get().getTrashJcrRootPath() + "/" + sessionFolderName;
+        JcrSession session = getUnmanagedSession();
+        try {
+            int deletedItems = delete(sessionFolderPath, session);
+            if (deletedItems > 0) {
+                log.debug("Emptied " + deletedItems + " nodes from trash folder " + sessionFolderName + ".");
+            }
+        } catch (Exception e) {
+            //Fail gracefully
+            LoggingUtils.warnOrDebug(log, "Could not empty trash folder " + sessionFolderName + ".", e);
+        } finally {
+            session.logout();
+        }
+    }
+
+    private int delete(String absPath, JcrSession session) {
+        if (itemNodeExists(absPath, session)) {
+            Node node = (Node) session.getItem(absPath);
             try {
                 return deleteNodeRecursively(node);
             } catch (RepositoryException e) {
                 log.warn("Attempting force removal of parent node at '{}.'", absPath);
                 try {
                     node.remove();
+                    //Saving the session manually after removal since we might not be in a transaction
+                    node.getSession().save();
                     log.warn("Force removal of node at '{}' succeeded.", absPath);
                 } catch (RepositoryException e1) {
                     LoggingUtils.warnOrDebug(
@@ -331,7 +378,7 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             return false;
         }
 
-        //TODO: [by yl] This event should really be emitted from the fsitem itself, but is done here for tx propagation
+        //Done here for tx propagation
         fsItem.getRepo().onDelete(fsItem);
         return true;
     }
@@ -421,18 +468,22 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             NodeIterator nodes = parentNode.getNodes();
             while (nodes.hasNext()) {
                 Node node = nodes.nextNode();
-                if (JcrHelper.isFsItemType(node)) {
-                    JcrFsItem item;
-                    if (writeLock) {
-                        item = folder.getRepo().getLockedJcrFsItem(node);
-                    } else {
-                        item = folder.getRepo().getJcrFsItem(node);
+                try {
+                    if (JcrHelper.isFsItemType(node)) {
+                        JcrFsItem item;
+                        if (writeLock) {
+                            item = folder.getRepo().getLockedJcrFsItem(node);
+                        } else {
+                            item = folder.getRepo().getJcrFsItem(node);
+                        }
+                        if (item != null) {
+                            items.add(item);
+                        } else {
+                            log.warn("Node was removed during children loop for " + absPath);
+                        }
                     }
-                    if (item != null) {
-                        items.add(item);
-                    } else {
-                        log.warn("Node was removed during children loop for " + absPath);
-                    }
+                } catch (Exception e) {
+                    log.error("Could not list child node '{}'.", node, e);
                 }
             }
         } catch (RepositoryException e) {
@@ -605,8 +656,8 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
             parser.parse(ncis, resolvingContentHandler);
         } catch (ParserConfigurationException e) {
             //Here ncis is always null
-            throw new RepositoryException("SAX parser configuration error", e);
-        } catch (Exception e) {
+            throw new RepositoryException("SAX parser configuration error when parsing " + absPath, e);
+        } catch (Throwable e) {
             //Check for wrapped repository exception
             if (e instanceof SAXException) {
                 Exception e1 = ((SAXException) e).getException();
@@ -618,6 +669,7 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
                 }
             }
             LoggingUtils.warnOrDebug(log, "Ignoring bad XML stream while importing '" + absPath + "'", e);
+            throw new RepositoryException("Parsing of " + absPath + " error", e);
         }
     }
 
@@ -671,8 +723,6 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         InternalArtifactoryContext context = InternalContextHelper.get();
         JcrTransactionManager txMgr = context.beanForType(JcrTransactionManager.class);
         txMgr.setSessionFactory(sessionFactory);
-
-        context.addReloadableBean(JcrService.class);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -902,6 +952,7 @@ public class JcrServiceImpl implements JcrService, JcrRepoService {
         if (JcrFile.NT_ARTIFACTORY_FILE.equals(nodeType) || JcrFolder.NT_ARTIFACTORY_FOLDER.equals(nodeType) ||
                 "nt:unstructured".equals(nodeType)) {
             //Remove myself
+            log.debug("Deleting node: {}", node.getPath());
             node.remove();
             count++;
         }

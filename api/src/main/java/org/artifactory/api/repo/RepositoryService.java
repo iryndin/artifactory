@@ -28,18 +28,14 @@ import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.repo.exception.RepoAccessException;
-import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,22 +52,6 @@ public interface RepositoryService extends ImportableExportable {
      */
     @Lock(transactional = true)
     List<DirectoryItem> getDirectoryItems(RepoPath repoPath, boolean withPseudoUpDirItem);
-
-    @Lock(transactional = true)
-    MavenArtifactInfo getArtifactInfo(File uploadedFile);
-
-    @Request
-    @Lock(transactional = true)
-    void deploy(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo, File uploadedFile, boolean forceDeployPom,
-            boolean partOfBundleDeploy) throws RepoAccessException;
-
-    @Request
-    @Lock(transactional = true)
-    public void deploy(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo,
-            File file, String pomString, boolean forceDeployPom, boolean partOfBundleDeploy) throws RepoAccessException;
-
-    @Request
-    void deployBundle(File bundle, RealRepoDescriptor targetRepo, StatusHolder status);
 
     @Lock(transactional = true)
     boolean pomExists(RepoDescriptor targetRepo, MavenArtifactInfo artifactInfo);
@@ -328,20 +308,16 @@ public interface RepositoryService extends ImportableExportable {
 
     boolean isRepoPathAccepted(RepoPath repoPath);
 
-    public String getModelString(MavenArtifactInfo artifactInfo);
-
-    public void validatePom(String pomContent, String relPath, boolean suppressPomConsistencyChecks)
-            throws BadPomException, IOException;
-
     /**
-     * Calculate the maven metadata asynchronously after the current transaction is commited. The reason is the metadata
-     * calculator uses xpath queries for its job and since the move is not committed yet, the xpath query result might
-     * not be accurate (for example when moving plugins from one repo to another the query on the source repository will
-     * return the moved plugins while the target repo will not return them). <p/> Note: you should call the
-     * markBaseForMavenMetadataRecalculation() before calling this method to recover in case this task is interrupted in
-     * the middle.
+     * Calculate the maven metadata asynchronously after the current transaction is committed. The reason is the
+     * metadata calculator uses xpath queries for its job and since the move is not committed yet, the xpath query
+     * result might not be accurate (for example when moving plugins from one repo to another the query on the source
+     * repository will return the moved plugins while the target repo will not return them). <p/> Note: you should call
+     * the markBaseForMavenMetadataRecalculation() before calling this method to recover in case this task is
+     * interrupted in the middle.
      *
-     * @param baseFolderPath A path to a folder to start calculating metadata from
+     * @param baseFolderPath A path to a folder to start calculating metadata from. Must be a local non-cache repository
+     *                       path.
      */
     @Async(delayUntilAfterCommit = true, transactional = true)
     public void calculateMavenMetadata(RepoPath baseFolderPath);
@@ -349,7 +325,7 @@ public interface RepositoryService extends ImportableExportable {
     /**
      * Marks a folder for maven metadata recalculation.
      *
-     * @param basePath Base folder path for the recalculation
+     * @param basePath Base folder path for the recalculation. Must be a local non-cache repository path.
      */
     @Lock(transactional = true)
     void markBaseForMavenMetadataRecalculation(RepoPath basePath);

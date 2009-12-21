@@ -50,6 +50,9 @@ public class ExternalImage extends WebMarkupContainer {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
         checkComponentTag(tag, "img");
-        tag.put("src", getModelObjectAsString());
+        String url = getModelObjectAsString();
+        url = url + ((url.indexOf("?") >= 0) ? "&" : "?");
+        url = url + "wicket:antiCache=" + System.currentTimeMillis();
+        tag.put("src", url);
     }
 }

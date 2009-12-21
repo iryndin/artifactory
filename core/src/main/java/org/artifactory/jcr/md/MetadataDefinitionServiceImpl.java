@@ -30,13 +30,12 @@ import org.artifactory.api.xstream.XStreamFactory;
 import org.artifactory.config.InternalCentralConfigService;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.log.LoggerFactory;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Map;
 
@@ -45,6 +44,7 @@ import java.util.Map;
  * @date Sep 3, 2008
  */
 @Service
+@Reloadable(beanClass = MetadataDefinitionService.class, initAfter = InternalCentralConfigService.class)
 public class MetadataDefinitionServiceImpl implements MetadataDefinitionService {
     private static final Logger log = LoggerFactory.getLogger(MetadataDefinitionServiceImpl.class);
 
@@ -54,11 +54,6 @@ public class MetadataDefinitionServiceImpl implements MetadataDefinitionService 
 
     public XStream getXstream() {
         return xstream;
-    }
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(MetadataDefinitionService.class);
     }
 
     @SuppressWarnings({"unchecked"})

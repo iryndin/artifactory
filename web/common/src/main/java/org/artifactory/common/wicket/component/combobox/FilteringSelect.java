@@ -25,46 +25,59 @@ import org.artifactory.common.wicket.behavior.filteringselect.FilteringSelectBeh
 import java.util.List;
 
 /**
+ * A Dojo FilteringSelect widget.<br/>
+ * <br/>
+ * <b>NOTE!</b> You cannot add FilteringSelect to ajax target regularly,
+ * meaning <b>you can't do <code>target.addComponent(dropDown)</code></b>.
+ * Instead add a containing parent: <code>target.addComponent(anyParent)</code>
+ * or pass getAjaxTargetMarkupId() as target markup id like so:
+ * <code>target.addComponent(dropDown<b>, dropDown.getAjaxTargetMarkupId()</b>)</code>
+ *
  * @author Yoav Aharoni
+ * @see FilteringSelect#getAjaxTargetMarkupId()
  */
 public class FilteringSelect extends DropDownChoice {
-    public FilteringSelect(String id) {
-        super(id);
-    }
+	public FilteringSelect(String id) {
+		super(id);
+	}
 
-    public FilteringSelect(String id, List choices) {
-        super(id, choices);
-    }
+	public FilteringSelect(String id, List choices) {
+		super(id, choices);
+	}
 
-    public FilteringSelect(String id, List data, IChoiceRenderer renderer) {
-        super(id, data, renderer);
-    }
+	public FilteringSelect(String id, List data, IChoiceRenderer renderer) {
+		super(id, data, renderer);
+	}
 
-    public FilteringSelect(String id, IModel model, List choices) {
-        super(id, model, choices);
-    }
+	public FilteringSelect(String id, IModel model, List choices) {
+		super(id, model, choices);
+	}
 
-    public FilteringSelect(String id, IModel model, List data, IChoiceRenderer renderer) {
-        super(id, model, data, renderer);
-    }
+	public FilteringSelect(String id, IModel model, List data, IChoiceRenderer renderer) {
+		super(id, model, data, renderer);
+	}
 
-    public FilteringSelect(String id, IModel choices) {
-        super(id, choices);
-    }
+	public FilteringSelect(String id, IModel choices) {
+		super(id, choices);
+	}
 
-    public FilteringSelect(String id, IModel model, IModel choices) {
-        super(id, model, choices);
-    }
+	public FilteringSelect(String id, IModel model, IModel choices) {
+		super(id, model, choices);
+	}
 
-    public FilteringSelect(String id, IModel choices, IChoiceRenderer renderer) {
-        super(id, choices, renderer);
-    }
+	public FilteringSelect(String id, IModel choices, IChoiceRenderer renderer) {
+		super(id, choices, renderer);
+	}
 
-    public FilteringSelect(String id, IModel model, IModel choices, IChoiceRenderer renderer) {
-        super(id, model, choices, renderer);
-    }
+	public FilteringSelect(String id, IModel model, IModel choices, IChoiceRenderer renderer) {
+		super(id, model, choices, renderer);
+	}
 
-    {
-        add(new FilteringSelectBehavior());
-    }
+	{
+		add(new FilteringSelectBehavior());
+	}
+
+	public String getAjaxTargetMarkupId() {
+		return getMarkupId() + "-widget";
+	}
 }

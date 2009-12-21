@@ -36,6 +36,7 @@ public class LdapsListPage extends AuthenticatedPage {
         add(new LdapsListPanel("ldapListPanel"));
     }
 
+    @Override
     public String getPageName() {
         return "LDAP Settings";
     }

@@ -19,11 +19,9 @@ package org.artifactory.jcr.lock;
 
 import org.artifactory.api.repo.RepoPath;
 
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
- * An immutable lock holder - holds a RWLock per a certain repo fsItem. RW-locks are managed per storing repo and are
- * passed to each session's InternalLockManager. On the InternalLockManager each session performs read-write
+ * An immutable lock holder - holds a RWLock per a certain repo fsItem. RW-locks are managed (shared) per storing repo
+ * and are passed to each session's InternalLockManager. On the InternalLockManager each session performs read-write
  * lock/release operations on the saved locks.
  *
  * @author freds
@@ -33,10 +31,10 @@ public class LockEntryId {
     /**
      * The unique lock from the lock maps for the repo path of the items
      */
-    private final ReentrantReadWriteLock lock;
+    private final MonitoringReadWriteLock lock;
     private final RepoPath repoPath;
 
-    public LockEntryId(ReentrantReadWriteLock lock, RepoPath repoPath) {
+    public LockEntryId(MonitoringReadWriteLock lock, RepoPath repoPath) {
         if (lock == null) {
             throw new IllegalArgumentException("Cannot create lock entry with no lock object for " + repoPath);
         }
@@ -48,7 +46,7 @@ public class LockEntryId {
         return repoPath;
     }
 
-    public ReentrantReadWriteLock getLock() {
+    public MonitoringReadWriteLock getLock() {
         return lock;
     }
 

@@ -17,16 +17,12 @@
 
 package org.artifactory.cli.main;
 
-import org.artifactory.cli.command.CompressCommand;
-import org.artifactory.cli.command.ConfigurationCommand;
-import org.artifactory.cli.command.ExportCommand;
-import org.artifactory.cli.command.HelpCommand;
-import org.artifactory.cli.command.ImportCommand;
-import org.artifactory.cli.command.InfoCommand;
-import org.artifactory.cli.command.SecurityCommand;
+import org.artifactory.cli.command.*;
 import org.artifactory.cli.common.BaseParam;
 import org.artifactory.cli.common.Command;
 import org.artifactory.cli.common.Param;
+
+import java.util.Locale;
 
 /**
  * Enumeration which holdes the different CLI commands and their specs
@@ -138,7 +134,7 @@ public enum CommandDefinition {
      * @return CommandDefinition The requested command
      */
     public static CommandDefinition get(String commandName) {
-        commandName = commandName.toLowerCase();
+        commandName = commandName.toLowerCase(Locale.ENGLISH);
         try {
             return CommandDefinition.valueOf(commandName);
         } catch (IllegalArgumentException e) {

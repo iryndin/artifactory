@@ -254,7 +254,7 @@ public abstract class TaskBase implements Task {
                 //Wait forever (tries * lock timeout) until it finished the current execution
                 int tries = ConstantValues.taskCompletionLockTimeoutRetries.getInt();
                 while (!(completed = executed && (state == TaskState.STOPPED || state == TaskState.CANCELED))) {
-                    boolean success = this.completed.await(ConstantValues.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
+                    boolean success = this.completed.await(ConstantValues.locksTimeoutSecs.getLong(), TimeUnit.SECONDS);
                     if (success) {
                         completed = true;
                         break;
@@ -331,7 +331,7 @@ public abstract class TaskBase implements Task {
     }
 
     private TaskState guardedWaitForNextStep() {
-        long timeout = ConstantValues.lockTimeoutSecs.getLong();
+        long timeout = ConstantValues.locksTimeoutSecs.getLong();
         return guardedWaitForNextStep(timeout);
     }
 
@@ -397,7 +397,7 @@ public abstract class TaskBase implements Task {
     }
 
     private long getStateLockTimeOut() {
-        return ConstantValues.lockTimeoutSecs.getLong();
+        return ConstantValues.locksTimeoutSecs.getLong();
     }
 
     private void unlockState() {

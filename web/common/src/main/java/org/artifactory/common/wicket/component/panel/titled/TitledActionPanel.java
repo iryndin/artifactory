@@ -31,7 +31,6 @@ import org.artifactory.common.wicket.behavior.defaultbutton.DefaultButtonBehavio
  * @author Yossi Shaul
  */
 public abstract class TitledActionPanel extends TitledPanel {
-
     private RepeatingView buttonsContainer;
 
     protected TitledActionPanel(String id) {

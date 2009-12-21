@@ -25,6 +25,7 @@ import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.repo.exception.RepoAccessException;
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
@@ -101,7 +102,7 @@ public interface InternalRepositoryService extends RepositoryService, Reloadable
     @Lock(transactional = true)
     ResourceStreamHandle getResourceStreamHandle(Repo repo, RepoResource res) throws IOException, RepoAccessException;
 
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     void exportTo(ExportSettings settings);
 
     List<StoringRepo> getStoringRepositories();
@@ -118,7 +119,7 @@ public interface InternalRepositoryService extends RepositoryService, Reloadable
     /**
      * Removes a mark for maven metadata recalculation if such exists.
      *
-     * @param basePath Repo path to remove the mark from.
+     * @param basePath Repo path to remove the mark from. Must be a local non-cache repository path.
      */
     @Lock(transactional = true)
     void removeMarkForMavenMetadataRecalculation(RepoPath basePath);
@@ -127,4 +128,7 @@ public interface InternalRepositoryService extends RepositoryService, Reloadable
     void updateStats(RepoPath repoPath);
 
     Repository getJcrHandle();
+
+    @Lock(transactional = true)
+    void reload(CentralConfigDescriptor oldDescriptor);
 }

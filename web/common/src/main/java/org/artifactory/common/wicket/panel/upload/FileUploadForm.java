@@ -30,31 +30,26 @@ import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadProgressB
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.util.file.Files;
-import org.artifactory.log.LoggerFactory;
-import org.slf4j.Logger;
 
 import java.io.File;
 
+import static org.artifactory.util.FileUtils.removeFile;
+
 
 public class FileUploadForm extends Form {
-    private static final Logger log = LoggerFactory.getLogger(FileUploadForm.class);
-
     protected FileUploadField fileUploadField;
-
     private File uploadedFile;
-
-    private FileUploadParentPanel parent;
+    private UploadListener listener;
     private File tempUploadsDir;
 
     /**
      * @param id            The wicket component id
      * @param tempUploadDir Path to a temp upload directory
-     * @param parent        Parent component holding this upload form which will receive events
+     * @param listener      Parent component holding this upload form which will receive events
      */
-    public FileUploadForm(String id, String tempUploadDir, FileUploadParentPanel parent) {
+    public FileUploadForm(String id, String tempUploadDir, UploadListener listener) {
         super(id);
-        this.parent = parent;
+        this.listener = listener;
         tempUploadsDir = new File(tempUploadDir);
 
         //Set this form to multipart mode (always needed for uploads!)
@@ -71,7 +66,7 @@ public class FileUploadForm extends Form {
         if (upload != null) {
             //Create a new file
             uploadedFile = new File(tempUploadsDir, upload.getClientFileName());
-            //Check new file, delete if it allready existed
+            //Check new file, delete if it already existed
             if (!removeUploadedFile()) {
                 error("File " + uploadedFile + " already exists and cannot be deleted !!");
                 uploadedFile = null;
@@ -82,9 +77,9 @@ public class FileUploadForm extends Form {
                 FileUtils.forceMkdir(tempUploadsDir);
                 uploadedFile.createNewFile();
                 upload.writeTo(uploadedFile);
-                parent.onFileSaved();
+                listener.onFileSaved(uploadedFile);
             } catch (Exception e) {
-                parent.onException();
+                listener.onException();
                 removeUploadedFile();
                 throw new IllegalStateException(
                         "Unable to write file to '" + tempUploadsDir.getAbsolutePath() + "'.", e);
@@ -104,19 +99,16 @@ public class FileUploadForm extends Form {
      * @return boolean
      */
     public boolean removeUploadedFile() {
-        if (uploadedFile != null && uploadedFile.exists()) {
-            //Try to delete the file
-            if (!Files.remove(uploadedFile)) {
-                log.warn("Unable to remove/overwrite " + uploadedFile.getAbsolutePath());
-                return false;
-            }
-        }
-        return true;
+        return removeFile(uploadedFile);
     }
 
     @Override
     protected void onDetach() {
+        cleanupOnDetach();
         super.onDetach();
+    }
+
+    protected void cleanupOnDetach() {
         //Cleanup resources if we are not staying on the same page
         Page targetPage = RequestCycle.get().getResponsePage();
         Page page = getPage();

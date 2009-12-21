@@ -17,8 +17,10 @@
 
 package org.artifactory.addon.wicket;
 
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.artifactory.addon.AddonFactory;
+import org.artifactory.build.api.Build;
 import org.artifactory.common.wicket.model.sitemap.MenuNode;
 import org.artifactory.webapp.wicket.page.search.LimitlessCapableSearcher;
 import org.artifactory.webapp.wicket.page.search.SaveSearchResultsPanel;
@@ -36,4 +38,15 @@ public interface SearchAddon extends AddonFactory {
             LimitlessCapableSearcher limitlessCapableSearcher);
 
     MenuNode getBrowserSearchMenuNode();
+
+    String getSearchResultsPageMountPath();
+
+    /**
+     * Returns the build save search results panel
+     *
+     * @param requestingAddon The addon that requests the panel
+     * @param build           Build to use for results
+     * @return Build save search results panel
+     */
+    Panel getBuildSearchResultsPanel(Addon requestingAddon, Build build);
 }

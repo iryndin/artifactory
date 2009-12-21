@@ -49,8 +49,7 @@ public class MailServerConfiguration {
     }
 
     public MailServerConfiguration(String host, int port, String username, String password, String from,
-            String subjectPrefix,
-            boolean useTls, boolean useSsl) {
+            String subjectPrefix, boolean useTls, boolean useSsl) {
         this.host = host;
         this.port = port;
         this.username = username;

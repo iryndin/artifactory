@@ -28,6 +28,16 @@ public interface RepoDescriptor extends Descriptor, Comparable {
     String getDescription();
 
     /**
+     * @return A comma separated list of artifact patterns to include when evaluating requests.
+     */
+    String getIncludesPattern();
+
+    /**
+     * @return A comma separated list of artifact patterns to exclude when evaluating requests.
+     */
+    String getExcludesPattern();
+
+    /**
      * @return True if not a virtual repository (for example remote cached or local)
      */
     boolean isReal();

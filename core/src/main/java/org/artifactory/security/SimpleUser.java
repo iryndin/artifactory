@@ -27,7 +27,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Simple user - comparisson is done only by user name. This class is immutable and will return new instances when
+ * Simple user - comparison is done only by user name. This class is immutable and will return new instances when
  * getters are called.
  */
 public class SimpleUser implements UserDetails, Comparable {

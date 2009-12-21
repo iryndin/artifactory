@@ -162,6 +162,7 @@ public class JcrSession implements XASession {
     public void save() {
         try {
             getSessionResourceManager().onSessionSave();
+            log.debug("saving session");
             session.save();
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);
@@ -306,14 +307,14 @@ public class JcrSession implements XASession {
         ((XASessionImpl) session).addListener(listener);
     }
 
-    @Override
+    /*@Override
     protected void finalize() throws Throwable {
         if (sessionResourceManager != null) {
             sessionResourceManager.afterCompletion(false);
         }
         session.logout();
         super.finalize();
-    }
+    }*/
 
     public SessionResourceManager getSessionResourceManager() {
         return sessionResourceManager;

@@ -37,13 +37,12 @@ import org.artifactory.common.ConstantValues;
 import org.artifactory.common.ResourceStreamHandle;
 import org.artifactory.jcr.jackrabbit.query.LenientOnWorkspaceInconsistency;
 import org.artifactory.log.LoggerFactory;
-import org.artifactory.util.LoggingUtils;
+import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 import java.io.File;
@@ -85,9 +84,17 @@ public class JcrRepoInitStrategy {
                 if (pm instanceof AbstractBundlePersistenceManager) {
                     pmConfig.getParameters().put("consistencyCheck", "true");
                     pmConfig.getParameters().put("consistencyFix", "true");
-                    log.info("Fix consistency requested on '" + className + "'.");
+                    log.warn("\n###########################################################################\n" +
+                            "                STARTUP CONSISTENCY CHECKS ARE ACTIVE!\n" +
+                            "Startup will take considerably longer while running consistency checks.\n" +
+                            "Make sure you do not leave consistency checks permanently on by\n" +
+                            "disabling/commenting-out the '{}' property\n" +
+                            "in the '$ARTIFACTORY_HOME/etc/artifactory.system.properties' file.\n" +
+                            "###########################################################################",
+                            ConstantValues.jcrFixConsistency.getPropertyName());
                 } else {
-                    log.warn("Fix consistency requested on a persistence manager that does not support this feature.");
+                    log.warn("Consistency checks requested on a persistence manager that doesn't support it: {}.",
+                            className);
                 }
             }
             //register our own workspace inconsistency handler
@@ -142,16 +149,9 @@ public class JcrRepoInitStrategy {
     }
 
     protected void initializeTrash() {
-        Node node = jcrService.getOrCreateUnstructuredNode(JcrPath.get().getTrashJcrRootPath());
-        try {
-            NodeIterator children = node.getNodes();
-            while (children.hasNext()) {
-                Node child = children.nextNode();
-                child.remove();
-            }
-        } catch (RepositoryException e) {
-            LoggingUtils.warnOrDebug(log, "Cannot clean trash on startup", e);
-        }
+        jcrService.getOrCreateUnstructuredNode(JcrPath.get().getTrashJcrRootPath());
+        //Empty whatever is left in the trash
+        InternalContextHelper.get().getJcrService().emptyTrash();
     }
 
     protected void registerTypes(Workspace workspace, NodeTypeDef[] types)
@@ -199,7 +199,7 @@ public class JcrRepoInitStrategy {
     private void updateCurrentWorkspaces() {
         ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
         if (artifactoryHome.startedFromDifferentVersion()) {
-            //Make the loaded repo.xml overwrite any existing wokspace by clearing data/workspaces
+            //Make the loaded repo.xml overwrite any existing workspace by clearing data/workspaces
             File workspacesDir = new File(artifactoryHome.getDataDir(), "workspaces");
             CompoundVersionDetails originalStorageVersion = artifactoryHome.getOriginalVersionDetails();
             if (originalStorageVersion == null) {

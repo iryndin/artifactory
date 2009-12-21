@@ -19,23 +19,20 @@ package org.artifactory.security.interceptor;
 
 import org.artifactory.api.security.SecurityInfo;
 import org.artifactory.interceptor.Interceptors;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.jcr.JcrService;
+import org.artifactory.spring.Reloadable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
  * @author Yossi Shaul
  */
 @Service
+@Reloadable(beanClass = SecurityConfigurationChangesInterceptors.class, initAfter = JcrService.class)
 public class SecurityConfigurationChangesInterceptorsImpl extends Interceptors<SecurityConfigurationChangesInterceptor>
         implements
         SecurityConfigurationChangesInterceptors {
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(SecurityConfigurationChangesInterceptors.class);
-    }
 
     public void onUserAdd(String user) {
         for (SecurityConfigurationChangesInterceptor interceptor : this) {

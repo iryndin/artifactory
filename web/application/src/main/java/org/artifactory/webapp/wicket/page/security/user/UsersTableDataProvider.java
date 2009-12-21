@@ -133,7 +133,7 @@ class UsersTableDataProvider extends SortableDataProvider {
 
     private boolean passesGroupNameFilter(UserInfo userInfo) {
         String groupNameFilter = usersFilterPanel.getGroupFilter();
-        return (groupNameFilter == null || userInfo.getGroups().contains(groupNameFilter));
+        return (groupNameFilter == null || userInfo.isInGroup(groupNameFilter));
     }
 
 

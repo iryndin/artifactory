@@ -130,6 +130,12 @@
     <logger name="org.apache.jackrabbit">
         <level value="WARN"/>
     </logger>
+    <logger name="org.apache.jackrabbit.core.persistence.bundle.BundleDbPersistenceManager">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.apache.jackrabbit.extractor.XMLTextExtractor">
+        <level value="ERROR"/>
+    </logger>
     <logger name="org.mortbay">
         <level value="INFO"/>
     </logger>
@@ -138,9 +144,6 @@
     </logger>
     <logger name="org.springframework">
         <level value="WARN"/>
-    </logger>
-    <logger name="org.apache.jackrabbit.extractor.XMLTextExtractor">
-        <level value="ERROR"/>
     </logger>
 
     <!--

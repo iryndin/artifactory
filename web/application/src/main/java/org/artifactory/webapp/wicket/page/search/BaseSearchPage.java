@@ -112,7 +112,9 @@ public abstract class BaseSearchPage extends AuthenticatedPage {
                         new SubMenuPanel("sideMenuPanel", getSecondLevelMenuNodes(), menuPageClass);
 
                 BaseSearchPage.this.replace(sideMenuPanel);
-                target.addComponent(sideMenuPanel);
+                if (target != null) {
+                    target.addComponent(sideMenuPanel);
+                }
             }
         };
         tabbedPanel.setSelectedTab(getSelectedTab());

@@ -178,7 +178,7 @@ public class UploadServiceImpl implements InternalUploadService {
             //Async index the uploaded file if needed
             ContentType contentType = NamingUtils.getContentType(repoPath.getPath());
             if (contentType.isJarVariant()) {
-                searchService.indexMarkedArchives();
+                searchService.asyncIndex(repoPath);
             }
         } finally {
             IOUtils.closeQuietly(is);

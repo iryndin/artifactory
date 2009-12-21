@@ -349,7 +349,9 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
             Node node = getNode(session);
             if (node != null) {
                 node.remove();
-                session.save();
+                if (nonTxNodeRemoval) {
+                    session.save();
+                }
             }
         } catch (Exception e) {
             log.warn("Could not brute force delete node: {}", e.getMessage());
@@ -693,17 +695,21 @@ public abstract class JcrFsItem<T extends ItemInfo> extends File implements Comp
      * {item-name}.artifactory-metadata folder, where each metadata is named {metadata-name}.xml
      */
     protected void exportMetadata(File targetPath, StatusHolder status, boolean incremental) {
-        File metadataFolder = getMetadataContainerFolder(targetPath);
         try {
-            FileUtils.forceMkdir(metadataFolder);
-        } catch (IOException e) {
-            throw new RuntimeException(
-                    "Failed to create metadata folder '" + metadataFolder.getPath() + "'.", e);
+            File metadataFolder = getMetadataContainerFolder(targetPath);
+            try {
+                FileUtils.forceMkdir(metadataFolder);
+            } catch (IOException e) {
+                throw new RuntimeException(
+                        "Failed to create metadata folder '" + metadataFolder.getPath() + "'.", e);
+            }
+            // Save the info manually (as opposed to automatic export of persistent metadata)
+            saveInfo(status, metadataFolder, getInfo(), incremental);
+            // Save all other metadata
+            saveXml(status, metadataFolder, incremental);
+        } catch (Exception e) {
+            status.setError("Failed to export metadata for '" + getAbsolutePath() + "'.", e, log);
         }
-        // Save the info manually (as opposed to automatic export of persistent metadata)
-        saveInfo(status, metadataFolder, getInfo(), incremental);
-        // Save all other metadata
-        saveXml(status, metadataFolder, incremental);
     }
 
     private void saveInfo(StatusHolder status, File folder, ItemInfo itemInfo, boolean incremental) {

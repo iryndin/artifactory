@@ -33,7 +33,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.traffic.entry.TrafficEntry;
 import org.artifactory.traffic.entry.TransferEntry;
 import org.artifactory.traffic.mbean.Traffic;
@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -64,6 +63,7 @@ import java.util.concurrent.TimeUnit;
  * @author yoavl
  */
 @Service
+@Reloadable(beanClass = InternalTrafficService.class, initAfter = {InternalRepositoryService.class, TaskService.class})
 public class TrafficServiceImpl implements InternalTrafficService {
     private static final Logger log = LoggerFactory.getLogger(TrafficServiceImpl.class);
 
@@ -89,10 +89,6 @@ public class TrafficServiceImpl implements InternalTrafficService {
 
     private EnumMap<TrafficCollectorResolution, TrafficCollector> collectors;
 
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalTrafficService.class);
-    }
 
     public void init() {
         //Create the traffic log folder
@@ -100,8 +96,7 @@ public class TrafficServiceImpl implements InternalTrafficService {
 
         //Init the collectors
         collectors = Maps.newEnumMap(TrafficCollectorResolution.class);
-        boolean testMode = ConstantValues.test.getBoolean();
-        if (testMode) {
+        if (ConstantValues.test.getBoolean()) {
             createCollector(TrafficCollectorResolution.SECOND,
                     Calendar.MILLISECOND);
         } else {
@@ -126,7 +121,7 @@ public class TrafficServiceImpl implements InternalTrafficService {
         context.registerArtifactoryMBean(traffic, TrafficMBean.class, null);
 
         //Cache the retention period value and log dir
-        //For perfromance, but also required to be done once, so it's not reevaluated when invoked from the traffic
+        //For performance, but also required to be done once, so it's not reevaluated when invoked from the traffic
         //mbean, where no artifactory properties or artifactory context are available on the current thread.
         entriesRetentionSecs = ConstantValues.trafficEntriesRetentionSecs.getInt();
 
@@ -135,11 +130,6 @@ public class TrafficServiceImpl implements InternalTrafficService {
                 TimeUnit.SECONDS.toMillis(ConstantValues.trafficCollectionIntervalSecs.getInt()));
         entriesCollector.setSingleton(true);
         taskService.startTask(entriesCollector);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{InternalRepositoryService.class, TaskService.class};
     }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
@@ -472,16 +462,22 @@ public class TrafficServiceImpl implements InternalTrafficService {
 
         public DelayedTrafficEntry(TrafficEntry entry) {
             this.entry = entry;
-            //Delay handling to the next round minute
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.SECOND, SECS_TO_EXPIRY);
+            //Delay handling to the next round minute
             calendar.clear(Calendar.MILLISECOND);
             calendar.clear(Calendar.SECOND);
             time = calendar.getTimeInMillis();
+            if (log.isTraceEnabled()) {
+                log.trace("Created delayed entry on {}, expiring on {} for {}.",
+                        new Object[]{System.currentTimeMillis(), time, entry});
+            }
         }
 
         public long getDelay(TimeUnit unit) {
-            return unit.convert(time - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            long delta = time - System.currentTimeMillis();
+            long delay = unit.convert(delta < 0 ? 0 : delta, TimeUnit.MILLISECONDS);
+            return delay;
         }
 
         public int compareTo(Delayed o) {

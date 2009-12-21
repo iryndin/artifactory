@@ -28,7 +28,8 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 /**
- * Validates a URI. We use our own validator since the UrlValidator of wicket is broken in 1.3.5.
+ * Validates a URI. We use our own validator since the UrlValidator of wicket is broken in 1.3.5
+ * (http://issues.apache.org/jira/browse/WICKET-1926).
  *
  * @author Yossi Shaul
  */
@@ -67,6 +68,11 @@ public class UriValidator extends StringValidator {
                 addError(validatable, String.format(
                         "Scheme '%s' is not allowed. The following schemes are allowed: %s",
                         scheme, Arrays.asList(allowedSchemes)));
+            }
+
+            String host = parsedUri.getHost();
+            if (host == null) {
+                addError(validatable, "Cannot resolve host from url");
             }
         } catch (URISyntaxException e) {
             addError(validatable, String.format("'%s' is not a valid url", uri));

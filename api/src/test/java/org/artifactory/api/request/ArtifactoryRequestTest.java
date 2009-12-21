@@ -19,7 +19,10 @@ package org.artifactory.api.request;
 
 import com.google.common.collect.SetMultimap;
 import org.artifactory.common.property.ArtifactorySystemProperties;
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -28,12 +31,10 @@ import java.io.InputStream;
 /**
  * @author Yoav Landman
  */
-
+@Test
 public class ArtifactoryRequestTest {
 
-    @Test
-    public void testMatrixParams() {
-        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    public void matrixParams() {
         ArtifactoryRequestBase request = newRequest();
         request.setRepoPath(request.calculateRepoPath("libs-releases/path1/path2:metadata1;a=1;a=11;b=2;c;d=4;e"));
         SetMultimap<String, String> params = request.getMatrixParams();
@@ -50,17 +51,26 @@ public class ArtifactoryRequestTest {
         request.setRepoPath(request.calculateRepoPath("libs-releases;a=1;a=11;b=2;c;d=4;e"));
         params = request.getMatrixParams();
         assertMatrixParams(params);
-        ArtifactorySystemProperties.unbind();
+    }
+
+    public void matrixParamsWithEncodedValues() {
+        ArtifactoryRequestBase request = newRequest();
+        request.setRepoPath(request.calculateRepoPath("libs-releases;a=1+2;b=1%232;c="));
+        SetMultimap<String, String> params = request.getMatrixParams();
+        assertEquals(params.size(), 3, "Expecting 3 parameters");
+        assertEquals(params.get("a").iterator().next(), "1 2", "Character '+' should have been decoded to space");
+        assertEquals(params.get("b").iterator().next(), "1#2", "String '%23' should have been decoded to '#'");
+        assertEquals(params.get("c").iterator().next(), "", "Expecting empty string");
     }
 
     private void assertMatrixParams(SetMultimap<String, String> params) {
-        Assert.assertEquals(params.size(), 6);
-        Assert.assertEquals(params.get("a").toArray(), new String[]{"1", "11"});
-        Assert.assertEquals(params.get("b").iterator().next(), "2");
-        Assert.assertEquals(params.get("c").iterator().next(), "");
-        Assert.assertEquals(params.get("d").iterator().next(), "4");
-        Assert.assertEquals(params.get("e").iterator().next(), "");
-        Assert.assertFalse(params.get("f").iterator().hasNext());
+        assertEquals(params.size(), 6);
+        assertEquals(params.get("a").toArray(), new String[]{"1", "11"});
+        assertEquals(params.get("b").iterator().next(), "2");
+        assertEquals(params.get("c").iterator().next(), "");
+        assertEquals(params.get("d").iterator().next(), "4");
+        assertEquals(params.get("e").iterator().next(), "");
+        assertFalse(params.get("f").iterator().hasNext());
     }
 
     private ArtifactoryRequestBase newRequest() {
@@ -117,6 +127,16 @@ public class ArtifactoryRequestTest {
                 return null;
             }
         };
+    }
+
+    @BeforeMethod
+    public void setup() {
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        ArtifactorySystemProperties.unbind();
     }
 
 }

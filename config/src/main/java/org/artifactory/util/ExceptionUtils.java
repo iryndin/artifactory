@@ -76,6 +76,15 @@ public abstract class ExceptionUtils {
         return cause;
     }
 
+    public static CharSequence getStackTrace(Thread thread) {
+        StringBuilder b = new StringBuilder();
+        StackTraceElement[] elements = thread.getStackTrace();
+        for (StackTraceElement element : elements) {
+            b.append(element.toString()).append('\n');
+        }
+        return b;
+    }
+
     private static boolean isTypeOf(Throwable source, Class<? extends Throwable>... targetTypes) {
         Class<? extends Throwable> sourceType = source.getClass();
         for (Class<? extends Throwable> targetType : targetTypes) {

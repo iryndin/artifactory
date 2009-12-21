@@ -93,6 +93,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         return new FolderInfoImpl(repoPath);
     }
 
+    @Override
     protected FolderInfo createInfo(FolderInfo copy) {
         return new FolderInfoImpl(copy);
     }
@@ -284,7 +285,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         try {
             TaskService taskService = InternalContextHelper.get().getTaskService();
             //Check if we need to break/pause
-            boolean stop = taskService.blockIfPausedAndShouldBreak();
+            boolean stop = taskService.pauseOrBreak();
             if (stop) {
                 status.setError("Export was stopped on " + this, log);
                 return;
@@ -308,10 +309,14 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
                 exportMavenFiles(status, targetDir);
             }
 
+            //The children we get have read locks we do not want to keep
             List<JcrFsItem> list = getItems();
 
-            //Release the folder read lock immediately - no need to hold for children
+            //Release the folder read lock immediately - no need to hold for self or children
             LockingHelper.releaseReadLock(getRepoPath());
+            for (JcrFsItem item : list) {
+                LockingHelper.releaseReadLock(item.getRepoPath());
+            }
 
             if (exportChildren(settings, status, taskService, list)) {
                 // task should stop
@@ -321,8 +326,8 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
             if (settings.isIncremental()) {
                 cleanupIncrementalBackupDirectory(list, targetDir);
             }
-
         } catch (Exception e) {
+            //If a child export fails, we collect the error but not fail the whole export
             File exportDir = settings.getBaseDir();
             String msg;
             if (exportDir != null) {
@@ -339,7 +344,7 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
         boolean shouldStop = false;
         for (JcrFsItem item : list) {
             //Check if we need to break/pause
-            shouldStop = taskService.blockIfPausedAndShouldBreak();
+            shouldStop = taskService.pauseOrBreak();
             if (shouldStop) {
                 status.setError("Export was stopped on " + this, log);
                 return true;
@@ -364,16 +369,21 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     private void exportMavenFiles(StatusHolder status, File targetDir) {
         String metadataName = MavenNaming.MAVEN_METADATA_NAME;
         if (hasXmlMetadata(metadataName)) {
-            MetadataInfo metadataInfo = getMdService().getMetadataInfo(this, metadataName);
-            long lastModified = metadataInfo.getLastModified();
-            File metadataFile = new File(targetDir, metadataName);
-            writeMetadataFile(status, metadataFile, metadataName, lastModified);
-            // create checksum files for the maven-metadata.xml
-            writeChecksums(targetDir, metadataInfo.getChecksumsInfo(), metadataName, lastModified);
+            try {
+                MetadataInfo metadataInfo = getMdService().getMetadataInfo(this, metadataName);
+                long lastModified = metadataInfo.getLastModified();
+                File metadataFile = new File(targetDir, metadataName);
+                writeMetadataFile(status, metadataFile, metadataName, lastModified);
+                // create checksum files for the maven-metadata.xml
+                writeChecksums(targetDir, metadataInfo.getChecksumsInfo(), metadataName, lastModified);
+            } catch (Exception e) {
+                status.setError("Failed to export maven info for '" + getAbsolutePath() + "'.", e, log);
+            }
         }
     }
 
     // remove files and folders from the incremental backup dir if they were deleted from the repository
+
     private void cleanupIncrementalBackupDirectory(List<JcrFsItem> currentJcrFolderItems, File targetDir) {
         //Metadata File filter
         IOFileFilter metadataFilter = new AbstractFileFilter() {
@@ -621,7 +631,11 @@ public class JcrFolder extends JcrFsItem<FolderInfo> {
     public boolean deleteChildren() {
         List<JcrFsItem> children = getJcrRepoService().getChildren(this, true);
         for (JcrFsItem child : children) {
-            child.delete();
+            try {
+                child.delete();
+            } catch (Exception e) {
+                log.error("Could not directly delete child node '{}'.", child.getName(), e);
+            }
         }
         return true;
     }

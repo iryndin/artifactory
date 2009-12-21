@@ -150,7 +150,8 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
     }
 
     public List<ActionableItem> getChildren(AuthorizationService authService) {
-        if (children == null) {
+        boolean childrenCacheUpToDate = childrenCacheUpToDate();
+        if (!childrenCacheUpToDate) {
             List<DirectoryItem> items = getRepoService().getDirectoryItems(getCanonicalPath(), false);
             children = new ArrayList<ActionableItem>(items.size());
             for (DirectoryItem dirItem : items) {
@@ -175,29 +176,32 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
                 }
                 children.add(child);
             }
-        } else {
-            //Child items can potentially be removed externally. If a child node does no longer
-            //exists we need to remove it from the cache.
-            //Need an external collection to avoid ConcurrentModificationException
-            List<RepoAwareActionableItem> childrenToRemove =
-                    new ArrayList<RepoAwareActionableItem>(children.size());
-            for (ActionableItem item : children) {
-                if (item instanceof RepoAwareActionableItem) {
-                    RepoAwareActionableItem repoAwareItem = (RepoAwareActionableItem) item;
-                    RepositoryService repoService = getRepoService();
-                    RepoPath repoPath = repoAwareItem.getRepoPath();
-                    boolean exists = repoService.exists(repoPath);
-                    if (!exists) {
-                        childrenToRemove.add(repoAwareItem);
-                    }
-                }
-            }
-            //Now remove what's needed
-            for (RepoAwareActionableItem item : childrenToRemove) {
-                children.remove(item);
-            }
         }
         return children;
+    }
+
+    //Child items can potentially be removed externally. If a child node does no longer
+    //exists we need to recalculate the children.
+    // We don't simply remove the deleted item since it might be a compacted folder and we don't
+    // want to repeat the same logic.
+    private boolean childrenCacheUpToDate() {
+        if (children == null) {
+            return false;
+        }
+        for (ActionableItem item : children) {
+            if (item instanceof RepoAwareActionableItem) {
+                RepoAwareActionableItem repoAwareItem = (RepoAwareActionableItem) item;
+                RepoPath repoPath = repoAwareItem.getRepoPath();
+                if (repoAwareItem instanceof FolderActionableItem) {
+                    repoPath = ((FolderActionableItem) repoAwareItem).getCanonicalPath();
+                }
+                RepositoryService repoService = getRepoService();
+                if (!repoService.exists(repoPath)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public boolean hasChildren(AuthorizationService authService) {
@@ -211,8 +215,7 @@ public class FolderActionableItem extends RepoAwareActionableItemBase implements
         if (!canDelete) {
             deleteAction.setEnabled(false);
         }
-        boolean canAdmin = authService.canAdmin(repoPath);
-        if (!canAdmin) {
+        if (!canDelete) {
             zapAction.setEnabled(false);
         } else if (!getRepo().isCache()) {
             zapAction.setEnabled(false);

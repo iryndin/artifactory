@@ -18,7 +18,10 @@
 package org.artifactory.api.maven;
 
 import org.artifactory.api.repo.RepoPath;
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import static org.testng.Assert.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -28,6 +31,17 @@ import org.testng.annotations.Test;
  */
 @Test
 public class MavenArtifactInfoTest {
+
+    @BeforeMethod
+    public void bindProps() {
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void unbindProps() {
+        ArtifactorySystemProperties.unbind();
+    }
+
     public void fromSimplePath() {
         RepoPath path = new RepoPath("repo", "/org/jfrog/artifactory-core/2.0/artifactory-core-2.0.pom");
         MavenArtifactInfo artifactInfo = MavenArtifactInfo.fromRepoPath(path);

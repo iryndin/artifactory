@@ -33,7 +33,10 @@
 
     <!-- Enable configuration by annotations -->
     <context:annotation-config/>
-    <context:component-scan base-package="org.artifactory"/>
+    <context:component-scan base-package="org.artifactory">
+        <context:include-filter type="annotation"
+                                expression="org.artifactory.spring.Reloadable"/>
+    </context:component-scan>
 
     <!-- enable the configuration of transactional behavior based on annotations -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>

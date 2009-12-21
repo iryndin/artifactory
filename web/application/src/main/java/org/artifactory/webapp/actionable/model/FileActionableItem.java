@@ -40,6 +40,8 @@ import org.artifactory.webapp.actionable.action.MoveAction;
 import org.artifactory.webapp.actionable.action.ViewTextFileAction;
 import org.artifactory.webapp.actionable.action.ZapAction;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel;
+import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.GENERAL_XML;
+import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.IVY_XML;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.jnlp.JnlpViewTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.maven.PomViewTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.stats.StatsTabPanel;
@@ -47,9 +49,6 @@ import org.artifactory.webapp.wicket.util.ItemCssClass;
 
 import java.util.List;
 import java.util.Set;
-
-import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.GENERAL_XML;
-import static org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.ivy.XmlViewTabPanel.XmlTypes.IVY_XML;
 
 /**
  * Created by IntelliJ IDEA. User: yoav
@@ -137,17 +136,18 @@ public class FileActionableItem extends RepoAwareActionableItemBase implements F
                     return new XmlViewTabPanel(panelId, FileActionableItem.this, xmlType);
                 }
             });
+        }
 
-            if (isJnlpFile()) {
-                tabs.add(new AbstractTab(new Model("JNLP")) {
-                    @Override
-                    public Panel getPanel(String panelId) {
-                        return new JnlpViewTabPanel(panelId, FileActionableItem.this);
-                    }
-                });
-            }
+        if (isJnlpFile()) {
+            tabs.add(new AbstractTab(new Model("JNLP")) {
+                @Override
+                public Panel getPanel(String panelId) {
+                    return new JnlpViewTabPanel(panelId, FileActionableItem.this);
+                }
+            });
         }
     }
+
 
     public void filterActions(AuthorizationService authService) {
         RepoPath repoPath = getFileInfo().getRepoPath();

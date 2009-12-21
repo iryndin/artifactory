@@ -23,9 +23,11 @@ import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.wicket.BuildAddon;
 import org.artifactory.addon.wicket.PropertiesAddon;
 import org.artifactory.addon.wicket.WatchAddon;
 import org.artifactory.api.context.ContextHelper;
+import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
@@ -37,8 +39,6 @@ import org.artifactory.webapp.actionable.model.FolderActionableItem;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.general.GeneralTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.maven.MetadataTabPanel;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.permissions.PermissionsTabPanel;
-import org.artifactory.webapp.wicket.panel.tabbed.PersistentTabbedPanel;
-import org.artifactory.webapp.wicket.panel.tabbed.StyledTabbedPanel;
 import org.artifactory.webapp.wicket.panel.tabbed.TabbedPanel;
 import org.artifactory.webapp.wicket.panel.tabbed.tab.BaseTab;
 
@@ -104,10 +104,6 @@ public abstract class RepoAwareActionableItemBase extends ActionableItemBase
                 RepoAwareActionableItemBase.this.addTabs(tabs);
             }
 
-            @Override
-            protected StyledTabbedPanel newTabbedPanel(List<ITab> tabs) {
-                return new PersistentTabbedPanel("tabs", tabs);
-            }
         };
     }
 
@@ -169,6 +165,12 @@ public abstract class RepoAwareActionableItemBase extends ActionableItemBase
             WatchAddon watchAddon = getAddonsProvider().addonByType(WatchAddon.class);
             ITab watchersTab = watchAddon.getWatchersTab("Watchers", canonicalRepoPath);
             tabs.add(watchersTab);
+        }
+
+
+        if (!itemInfo.isFolder() && itemInfo instanceof FileInfo) {
+            BuildAddon buildAddon = getAddonsProvider().addonByType(BuildAddon.class);
+            tabs.add(buildAddon.getBuildsTab(item));
         }
     }
 

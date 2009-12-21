@@ -24,14 +24,14 @@ import org.artifactory.jcr.JcrSession;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.jcr.JcrHelper;
-import org.artifactory.schedule.TaskService;
-import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.tx.SessionResource;
+import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -53,11 +53,7 @@ public class Trashman implements SessionResource {
 
     public void afterCompletion(boolean commit) {
         if (sessionFolderName != null && commit && hasPendingResources()) {
-            //Fire a job to clean the trashed items
-            QuartzTask task = new QuartzTask(EmptyTrashJob.class, "EmptyTrash");
-            task.addAttribute(EmptyTrashJob.SESSION_FOLDER, sessionFolderName);
-            TaskService taskService = InternalContextHelper.get().getTaskService();
-            taskService.startTask(task);
+            InternalContextHelper.get().getJcrService().deleteFromTrash(sessionFolderName);
         }
         //Reset internal state
         sessionFolderName = null;
@@ -73,6 +69,15 @@ public class Trashman implements SessionResource {
     }
 
     public void addItemsToTrash(List<JcrFsItem> items, JcrService jcr) {
+        List<String> jcrAbsolutePaths = new ArrayList<String>();
+        for (JcrFsItem item : items) {
+            String path = item.getPath();
+            jcrAbsolutePaths.add(path);
+        }
+        addPathsToTrash(jcrAbsolutePaths, jcr);
+    }
+
+    public void addPathsToTrash(List<String> jcrAbsolutePaths, JcrService jcr) {
         String sessionFolderPath = getSessionFolderName(jcr);
 
         JcrSession session = jcr.getManagedSession();
@@ -80,12 +85,12 @@ public class Trashman implements SessionResource {
         try {
             Node sessionFolderNode =
                     (Node) session.getItem(JcrPath.get().getTrashJcrRootPath() + "/" + sessionFolderPath);
-            Node itemFolderNode = sessionFolderNode.addNode(tempItemFolderName, JcrHelper.NT_UNSTRUCTURED);
-            itemFolderNode.addMixin("mix:referenceable");
+            Node tempItemFolderNode = sessionFolderNode.addNode(tempItemFolderName, JcrHelper.NT_UNSTRUCTURED);
+            tempItemFolderNode.addMixin("mix:referenceable");
             //Move items to the trash folder
-            for (JcrFsItem item : items) {
-                String path = item.getPath();
-                session.move(path, itemFolderNode.getPath() + "/" + item.getName());
+            for (String jcrPath : jcrAbsolutePaths) {
+                String name = PathUtils.getName(jcrPath);
+                session.move(jcrPath, tempItemFolderNode.getPath() + "/" + name);
             }
         } catch (RepositoryException e) {
             throw new RepositoryRuntimeException(e);

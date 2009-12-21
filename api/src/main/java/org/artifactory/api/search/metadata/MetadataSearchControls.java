@@ -25,7 +25,6 @@ import org.artifactory.api.search.SearchControlsBase;
  */
 public class MetadataSearchControls<T> extends SearchControlsBase {
 
-    private String repoToSearch;
     private String metadataName;
     private String path;
     private String value;
@@ -44,22 +43,14 @@ public class MetadataSearchControls<T> extends SearchControlsBase {
      * @param metadataSearchControls Controls to copy
      */
     public MetadataSearchControls(MetadataSearchControls metadataSearchControls) {
-        this.repoToSearch = metadataSearchControls.repoToSearch;
         this.metadataName = metadataSearchControls.metadataName;
         this.path = metadataSearchControls.path;
         this.value = metadataSearchControls.value;
         this.exactMatch = metadataSearchControls.exactMatch;
+        this.selectedRepoForSearch = metadataSearchControls.selectedRepoForSearch;
         //noinspection unchecked
         this.metadataObjectClass = metadataSearchControls.metadataObjectClass;
         setLimitSearchResults(metadataSearchControls.isLimitSearchResults());
-    }
-
-    public String getRepoToSearch() {
-        return repoToSearch;
-    }
-
-    public void setRepoToSearch(String repoToSearch) {
-        this.repoToSearch = repoToSearch;
     }
 
     public String getMetadataName() {

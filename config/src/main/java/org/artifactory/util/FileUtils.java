@@ -112,8 +112,8 @@ public class FileUtils {
     }
 
     /**
-     * Deletes all the empty directories (directories that doesn't contain any files) under the input directory. The
-     * input directory will not be deleted.
+     * Deletes all empty directories (directories that don't contain any files) under the input directory. The input
+     * directory will not be deleted.
      *
      * @param directory The directory to cleanup
      */
@@ -122,7 +122,7 @@ public class FileUtils {
     }
 
     /**
-     * Deletes all the empty directories (directories that doesn't contain any files) under the input directory.
+     * Deletes all empty directories (directories that don't contain any files) under the input directory.
      *
      * @param directory            The directory to cleanup
      * @param includeBaseDirectory if true the input directory will also be deleted if it is empty
@@ -159,6 +159,36 @@ public class FileUtils {
             }
         }
 
+    }
+
+    public static boolean removeFile(File file) {
+        if (file != null && file.exists()) {
+            //Try to delete the file
+            if (!remove(file)) {
+                log.warn("Unable to remove " + file.getAbsolutePath());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean remove(final File file) {
+        if (!file.delete()) {
+            // NOTE: fix for java/win bug. see:
+            // http://forum.java.sun.com/thread.jsp?forum=4&thread=158689&tstart=
+            // 0&trange=15
+            System.gc();
+            try {
+                Thread.sleep(100);
+            }
+            catch (InterruptedException e) {
+                // nop
+            }
+
+            // Try one more time to delete the file
+            return file.delete();
+        }
+        return true;
     }
 
 }

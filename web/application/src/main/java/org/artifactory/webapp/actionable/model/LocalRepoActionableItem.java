@@ -18,9 +18,12 @@
 package org.artifactory.webapp.actionable.model;
 
 import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.wicket.BuildAddon;
 import org.artifactory.addon.wicket.WatchAddon;
+import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FolderInfo;
+import org.artifactory.api.repo.ArtifactCount;
 import org.artifactory.api.repo.DirectoryItem;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.security.AuthorizationService;
@@ -32,6 +35,7 @@ import org.artifactory.webapp.actionable.action.DeleteAction;
 import org.artifactory.webapp.actionable.action.DeleteVersionsAction;
 import org.artifactory.webapp.actionable.action.ItemAction;
 import org.artifactory.webapp.actionable.action.ZapAction;
+import org.artifactory.webapp.actionable.event.RepoAwareItemEvent;
 import org.artifactory.webapp.wicket.util.ItemCssClass;
 
 import java.util.ArrayList;
@@ -139,6 +143,7 @@ public class LocalRepoActionableItem extends RepoAwareActionableItemBase
     }
 
     private static class RepoDeleteAction extends DeleteAction {
+
         @Override
         public String getDisplayName(ActionableItem actionableItem) {
             return "Delete Content";
@@ -147,6 +152,23 @@ public class LocalRepoActionableItem extends RepoAwareActionableItemBase
         @Override
         public String getCssClass() {
             return DeleteAction.class.getSimpleName();
+        }
+
+        @Override
+        protected String getDeleteConfirmMessage(RepoAwareItemEvent e) {
+            String key = e.getSource().getDisplayName();
+            ArtifactCount count = getRepoService().getArtifactCount(key);
+            //if remote repo has no cash
+            int totalCount = count.getTotalCount();
+            StringBuilder builder = new StringBuilder("Are you sure you wish to delete the repository");
+            if (totalCount == 0) {
+                builder.append("?");
+            } else {
+                builder.append(" (").append(totalCount).append(" artifacts will be permanently deleted)?");
+            }
+            AddonsManager addonsManager = ContextHelper.get().beanForType(AddonsManager.class);
+            BuildAddon buildAddon = addonsManager.addonByType(BuildAddon.class);
+            return buildAddon.getDeleteItemWarningMessage(e.getSource().getItemInfo(), builder.toString());
         }
     }
 }

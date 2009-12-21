@@ -18,6 +18,8 @@
 package org.artifactory.util;
 
 import org.testng.Assert;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,7 +38,8 @@ public class FileUtilsTest {
     @BeforeMethod
     public void createTempDir() {
         baseTestDir = new File(System.getProperty("java.io.tmpdir"), "fileutilstest");
-        Assert.assertTrue(baseTestDir.mkdirs(), "Failed to create base test dir");
+        baseTestDir.mkdirs();
+        assertTrue(baseTestDir.exists(), "Failed to create base test dir");
     }
 
     @AfterMethod
@@ -46,13 +49,13 @@ public class FileUtilsTest {
 
     public void cleanupEmptyDirectoriesNonExistentDir() {
         File nonExistentFile = new File("pampam123");
-        Assert.assertFalse(nonExistentFile.exists());
+        assertFalse(nonExistentFile.exists());
         FileUtils.cleanupEmptyDirectories(nonExistentFile);
     }
 
     public void cleanupEmptyDirectoriesEmptyDir() {
         FileUtils.cleanupEmptyDirectories(baseTestDir);
-        Assert.assertTrue(baseTestDir.exists(), "Method should not delete base directory");
+        assertTrue(baseTestDir.exists(), "Method should not delete base directory");
         Assert.assertEquals(baseTestDir.listFiles().length, 0, "Expected empty directory");
     }
 
@@ -63,8 +66,8 @@ public class FileUtilsTest {
 
         FileUtils.cleanupEmptyDirectories(baseTestDir);
 
-        Assert.assertTrue(baseTestDir.exists(), "Method should not delete base directory");
-        Assert.assertFalse(nested1.exists() || nested2.exists(), "Nested empty directory wasn't deleted");
+        assertTrue(baseTestDir.exists(), "Method should not delete base directory");
+        assertFalse(nested1.exists() || nested2.exists(), "Nested empty directory wasn't deleted");
         File[] files = baseTestDir.listFiles();
         Assert.assertEquals(files.length, 0, "Expected empty directory but received: " + Arrays.asList(files));
     }
@@ -78,9 +81,9 @@ public class FileUtilsTest {
 
         FileUtils.cleanupEmptyDirectories(baseTestDir);
 
-        Assert.assertTrue(baseTestDir.exists(), "Method should not delete base directory");
-        Assert.assertFalse(nested1.exists(), "Nested empty directory wasn't deleted");
-        Assert.assertTrue(nested2.exists(), "Nested directory was deleted but wasn't empty");
+        assertTrue(baseTestDir.exists(), "Method should not delete base directory");
+        assertFalse(nested1.exists(), "Nested empty directory wasn't deleted");
+        assertTrue(nested2.exists(), "Nested directory was deleted but wasn't empty");
         Assert.assertEquals(nested2.listFiles().length, 1, "One file expected");
         Assert.assertEquals(nested2.listFiles()[0], file, "Unexpected file found " + file);
         File[] files = baseTestDir.listFiles();
@@ -89,7 +92,7 @@ public class FileUtilsTest {
 
     private File createNestedDirectory(String relativePath) {
         File nested = new File(baseTestDir, relativePath);
-        Assert.assertTrue(nested.mkdirs(), "Failed to create nested directory" + nested);
+        assertTrue(nested.mkdirs(), "Failed to create nested directory" + nested);
         return nested;
     }
 

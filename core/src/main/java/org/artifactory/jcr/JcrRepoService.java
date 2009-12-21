@@ -71,7 +71,7 @@ public interface JcrRepoService {
      * @param withWriteLock true to acquire write lock, false for read lock
      * @return The list of children
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     List<JcrFsItem> getChildren(JcrFolder folder, boolean withWriteLock);
 
     boolean delete(JcrFsItem fsItem);

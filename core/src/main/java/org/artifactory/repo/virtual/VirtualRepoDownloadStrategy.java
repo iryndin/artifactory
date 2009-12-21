@@ -17,6 +17,8 @@
 
 package org.artifactory.repo.virtual;
 
+import org.apache.commons.collections15.OrderedMap;
+import org.apache.commons.collections15.map.ListOrderedMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.artifactory.api.config.CentralConfigService;
@@ -34,7 +36,10 @@ import org.artifactory.io.checksum.ChecksumCalculator;
 import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.maven.MavenModelUtils;
+import org.artifactory.repo.LocalCacheRepo;
+import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
+import org.artifactory.repo.RemoteRepo;
 import org.artifactory.repo.Repo;
 import org.artifactory.repo.context.NullRequestContext;
 import org.artifactory.repo.context.RequestContext;
@@ -75,15 +80,36 @@ public class VirtualRepoDownloadStrategy {
     public RepoResource getInfo(RequestContext context) {
         log.debug("Request processing done on virtual repo '{}'.", virtualRepo);
         // first look in local storage
-        final String path = context.getResourcePath();
-        RepoResource repoResource = getInfoFromLocalStorage(context);
-        if (repoResource.isFound()) {
+        RepoResource cachedResource = getInfoFromLocalStorage(context);
+        String path = context.getResourcePath();
+        if (cachedResource.isFound() && MavenNaming.isIndex(path)) {
             log.debug("Found '{}' in virtual repo local storage", path);
-            return repoResource;
+            return cachedResource;
         }
 
+        // release the read lock on the virtual repo local cache to prevent deadlock in any of the interceptors
+        // (in case one of them needs to write back to the virtual repo cache)
+        RepoPath localCacheRepoPath = new RepoPath(virtualRepo.getKey(), context.getResourcePath());
+        LockingHelper.releaseReadLock(localCacheRepoPath);
+
         // not found in local virtual repository storage, look in configured repositories
-        return getInfoFromSearchableRepositories(context);
+        RepoResource searchableResource = getInfoFromSearchableRepositories(context);
+        if (!cachedResource.isFound() && !searchableResource.isFound()) {
+            // not found
+            return searchableResource;
+        } else if (cachedResource.isFound() && !searchableResource.isFound()) {
+            // delete the local cached artifact and return the not found resource
+            virtualRepo.undeploy(localCacheRepoPath);
+            return searchableResource;
+        } else if (cachedResource.isFound() && searchableResource.isFound()) {
+            if (cachedResource.getLastModified() >= searchableResource.getLastModified()) {
+                // locally stored resource is latest, just return it
+                return cachedResource;
+            }
+        }
+
+        // found newer resource in the searchable repositories
+        return virtualRepo.interceptBeforeReturn(context, searchableResource);
     }
 
     public RepoResource getInfoFromLocalStorage(RequestContext context) {
@@ -96,6 +122,10 @@ public class VirtualRepoDownloadStrategy {
         RepoResource result;
         try {
             List<RealRepo> repositories = assembleSearchRepositoriesList(repoPath, context);
+            if (repositories.isEmpty()) {
+                return new UnfoundRepoResource(repoPath, "No repository found to serve the request for " + repoPath);
+            }
+
             if (MavenNaming.isMavenMetadata(path)) {
                 result = processMavenMetadata(repoPath, repositories);
             } else if (MavenNaming.isSnapshot(path)) {
@@ -222,17 +252,17 @@ public class VirtualRepoDownloadStrategy {
                 continue;
             }
 
-            log.debug("{}: found maven metadata res: {}", repo, path);
-            if (repo.isLocal()) {
-                foundInLocalRepo = true;
-            }
-
             Metadata metadata = getMavenMetadataContent(repo, res);
-            mergedMavenMetadata.merge(metadata, res);
-            if (log.isDebugEnabled()) {
-                log.debug(res.getRepoPath() + " last modified " + centralConfig.format(res.getLastModified()));
+            if (metadata != null) {
+                mergedMavenMetadata.merge(metadata, res);
+                if (log.isDebugEnabled()) {
+                    log.debug("{}: found maven metadata res: {}", repo, path);
+                    log.debug(res.getRepoPath() + " last modified " + centralConfig.format(res.getLastModified()));
+                }
+                if (repo.isLocal()) {
+                    foundInLocalRepo = true;
+                }
             }
-
         }   // end repositories iteration
 
         if (mergedMavenMetadata.getMetadata() == null) {
@@ -249,7 +279,6 @@ public class VirtualRepoDownloadStrategy {
     }
 
     private Metadata getMavenMetadataContent(Repo repo, RepoResource res) {
-        Metadata metadata = null;
         ResourceStreamHandle handle = null;
         try {
             handle = repositoryService.getResourceStreamHandle(repo, res);
@@ -269,7 +298,7 @@ public class VirtualRepoDownloadStrategy {
                 handle.close();
             }
         }
-        return metadata;
+        return null;
     }
 
     private RepoResource createMavenMetadataFoundResource(RepoPath mavenMetadataRepoPath,
@@ -288,12 +317,25 @@ public class VirtualRepoDownloadStrategy {
         return new StringResource(metadataInfo, metadataContent);
     }
 
+    /**
+     * @return A list of local and remote repositories to search the resource in, ordered firts by type (local non-cache
+     *         first) and secondly by order of appearance.
+     */
     private List<RealRepo> assembleSearchRepositoriesList(RepoPath repoPath, RequestContext context) {
-        List<RealRepo> repositories = new ArrayList<RealRepo>();
+        OrderedMap<String, LocalRepo> searchableLocalRepositories = newOrderedMap();
+        OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories = newOrderedMap();
+        OrderedMap<String, RemoteRepo> searchableRemoteRepositories = newOrderedMap();
+        deeplyAssembleSearchRepositoryLists(repoPath,
+                new ListOrderedMap<String, VirtualRepo>(),
+                searchableLocalRepositories,
+                searchableLocalCacheRepositories,
+                searchableRemoteRepositories);
+
         //Add all local repositories
-        repositories.addAll(virtualRepo.getSearchableLocalRepositories().values());
+        List<RealRepo> repositories = new ArrayList<RealRepo>();
+        repositories.addAll(searchableLocalRepositories.values());
         //Add all caches
-        repositories.addAll(virtualRepo.getSearchableLocalCacheRepositories().values());
+        repositories.addAll(searchableLocalCacheRepositories.values());
 
         //Add all remote repositories conditionally
         boolean fromAnotherArtifactory = context.isFromAnotherArtifactory();
@@ -303,9 +345,54 @@ public class VirtualRepoDownloadStrategy {
             //If the request comes from another artifactory don't bother checking any remote repos
             log.debug("Skipping remote repository checks for path '{}'", repoPath);
         } else {
-            repositories.addAll(virtualRepo.getSearchableRemoteRepositories().values());
+            repositories.addAll(searchableRemoteRepositories.values());
         }
         return repositories;
+    }
+
+    /**
+     * Assembles a list of search repositories groupd by type. Virtual repositories that don't accept the input repoPath
+     * pattern are not added to the list and are not recursively visited.
+     */
+    private void deeplyAssembleSearchRepositoryLists(
+            RepoPath repoPath, OrderedMap<String, VirtualRepo> visitedVirtualRepositories,
+            OrderedMap<String, LocalRepo> searchableLocalRepositories,
+            OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories,
+            OrderedMap<String, RemoteRepo> searchableRemoteRepositories) {
+
+        if (!virtualRepo.accepts(repoPath)) {
+            return;
+        }
+        visitedVirtualRepositories.put(virtualRepo.getKey(), virtualRepo);
+
+        //Add its local repositories
+        searchableLocalRepositories.putAll(virtualRepo.getLocalRepositoriesMap());
+        //Add the caches
+        searchableLocalCacheRepositories.putAll(virtualRepo.getLocalCacheRepositoriesMap());
+        //Add the remote repositories
+        searchableRemoteRepositories.putAll(virtualRepo.getRemoteRepositoriesMap());
+        //Add any contained virtual repo
+        List<VirtualRepo> childrenVirtualRepos = virtualRepo.getVirtualRepositories();
+        for (VirtualRepo childVirtualRepo : childrenVirtualRepos) {
+            String key = childVirtualRepo.getKey();
+            if (visitedVirtualRepositories.containsKey(key)) {
+                //Avoid infinite loop - stop if already processed virtual repo is encountered
+                log.warn("Repositories list assembly has been truncated to avoid recursive loop " +
+                        "on the virtual repo '{}'. Already processed virtual repositories: {}.",
+                        key, visitedVirtualRepositories.keySet());
+                return;
+            } else {
+                childVirtualRepo.downloadStrategy.deeplyAssembleSearchRepositoryLists(
+                        repoPath, visitedVirtualRepositories,
+                        searchableLocalRepositories,
+                        searchableLocalCacheRepositories,
+                        searchableRemoteRepositories);
+            }
+        }
+    }
+
+    private <K, V> OrderedMap<K, V> newOrderedMap() {
+        return new ListOrderedMap<K, V>();
     }
 
     private static class MergedMavenMetadata {
@@ -326,10 +413,8 @@ public class VirtualRepoDownloadStrategy {
                 metadata = otherMetedata;
                 lastModified = otherLastModified;
             } else {
-                if (otherLastModified > lastModified) {
-                    lastModified = otherLastModified;
-                }
                 metadata.merge(otherMetedata);
+                lastModified = Math.max(otherLastModified, lastModified);
             }
         }
     }

@@ -80,9 +80,9 @@ public class ModalHandler extends ModalWindow implements TitleModel {
 
             setMinimalWidth(modalPanel.getMinimalWidth());
             setMinimalHeight(modalPanel.getMinimalHeight());
-
             setInitialWidth(modalPanel.getInitialWidth());
             setInitialHeight(modalPanel.getInitialHeight());
+            setResizable(modalPanel.isResizable());
         }
     }
 

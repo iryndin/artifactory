@@ -21,6 +21,8 @@ import org.artifactory.test.TestUtils;
 import org.artifactory.version.XmlConverterUtils;
 import org.artifactory.version.converter.XmlConverter;
 import org.jdom.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -30,10 +32,16 @@ import java.io.InputStream;
  * @author Yossi Shaul
  */
 public abstract class XmlConverterTest {
+    private static final Logger log = LoggerFactory.getLogger(XmlConverterTest.class);
+
     protected Document convertXml(String resourcePath, XmlConverter converter) throws Exception {
         InputStream is = TestUtils.getResource(resourcePath);
         Document doc = XmlConverterUtils.parse(is);
         converter.convert(doc);
         return doc;
+    }
+
+    protected void debugContent(Document doc) {
+        log.debug(XmlConverterUtils.outputString(doc));
     }
 }

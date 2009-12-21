@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Yoav Landman
@@ -248,6 +249,6 @@ public class ImportSystemPanel extends TitledPanel {
     }
 
     private boolean isZip(File file) {
-        return file.isFile() && file.getName().toLowerCase().endsWith(".zip");
+        return file.isFile() && file.getName().toLowerCase(Locale.ENGLISH).endsWith(".zip");
     }
 }

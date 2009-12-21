@@ -72,14 +72,13 @@ var ModalHandler = {
             return;
         }
 
-        var content = modal.content;        
+        var content = modal.content;
         var height = node.clientHeight + content.offsetHeight - content.childNodes[0].offsetHeight - 5;
 
-        /*Height 0 Is acords on IE6/7*/
-        if(height != 0)
-           node.style.height = height + 'px';
+        if (height > 0)
+            node.style.height = height + 'px';
         else
-           node.style.height = 'auto';
+            node.style.height = 'auto';
     },
 
     centerCurrent: function() {
@@ -95,7 +94,7 @@ var ModalHandler = {
         }
 
         var width = modal.settings.width;
-        var height = modal.settings.height;        
+        var height = modal.settings.height;
 
         if (width == 0) {
             width = modal.content.firstChild.scrollWidth + 5;
@@ -112,6 +111,11 @@ var ModalHandler = {
 
         modal.window.style.width = width + modal.settings.widthUnit;
         modal.content.style.height = height + modal.settings.heightUnit;
+    },
+
+    resizeAndCenter:function() {
+        ModalHandler.resizeCurrent();
+        ModalHandler.centerCurrent();
     }
 };
 
@@ -201,6 +205,8 @@ function(idWindow, idClassElement, idCaption, idContent, idTop, idTopLeft, idTop
 
     return s;
 };
+
+Wicket.Window.unloadConfirmation = false
 
 Wicket.Window.prototype.superClose = Wicket.Window.prototype.close;
 Wicket.Window.prototype.checkedClose = function() {

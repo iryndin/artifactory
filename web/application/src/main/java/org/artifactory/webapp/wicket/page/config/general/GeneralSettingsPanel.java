@@ -55,9 +55,7 @@ public class GeneralSettingsPanel extends TitledPanel {
         RequiredTextField dateFormatField = new RequiredTextField("dateFormat");
         dateFormatField.add(new DateFormatValidator());
         add(dateFormatField);
-
         add(new StyledCheckbox("offlineMode"));
-
         add(new SchemaHelpBubble("serverName.help"));
         add(applicationAddon.getUrlBaseHelpBubble("urlBase.help"));
         add(new SchemaHelpBubble("fileUploadMaxSizeMb.help"));

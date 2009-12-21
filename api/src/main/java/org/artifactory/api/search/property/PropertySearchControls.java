@@ -59,6 +59,7 @@ public class PropertySearchControls extends SearchControlsBase {
     public PropertySearchControls(PropertySearchControls propertySearchControls) {
         this.properties = propertySearchControls.properties;
         this.propertyOpenIndication = propertySearchControls.propertyOpenIndication;
+        this.selectedRepoForSearch = propertySearchControls.selectedRepoForSearch;
         setLimitSearchResults(propertySearchControls.isLimitSearchResults());
     }
 

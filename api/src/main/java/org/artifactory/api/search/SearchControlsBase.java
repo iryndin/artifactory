@@ -17,6 +17,10 @@
 
 package org.artifactory.api.search;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 /**
  * A base implementation for all search control classes
  *
@@ -25,6 +29,15 @@ package org.artifactory.api.search;
 public abstract class SearchControlsBase implements SearchControls {
 
     private boolean limitSearchResults = true;
+    protected List<String> selectedRepoForSearch;
+
+    public List<String> getSelectedRepoForSearch() {
+        return selectedRepoForSearch;
+    }
+
+    public void setSelectedRepoForSearch(List<String> selectedRepoForSearch) {
+        this.selectedRepoForSearch = selectedRepoForSearch;
+    }
 
     public boolean isLimitSearchResults() {
         return limitSearchResults;
@@ -41,5 +54,16 @@ public abstract class SearchControlsBase implements SearchControls {
 
     public void resetResultLimit() {
         limitSearchResults = true;
+    }
+
+    public boolean isSpecificRepoSearch() {
+        return selectedRepoForSearch != null && !selectedRepoForSearch.isEmpty();
+    }
+
+    public void addRepoToSearch(String repoKey) {
+        if (selectedRepoForSearch == null) {
+            selectedRepoForSearch = Lists.newArrayList();
+        }
+        selectedRepoForSearch.add(repoKey);
     }
 }

@@ -30,9 +30,9 @@ public class ArchiveSearchValidator extends StringValidator {
     @Override
     protected void onValidate(IValidatable validatable) {
         String archiveSearchValue = (String) validatable.getValue();
-        if (archiveSearchValue.length() < 3) {
+        if (archiveSearchValue.length() < 4) {
             ValidationError validateError = new ValidationError();
-            validateError.setMessage("Search term must be at least 3 characters long");
+            validateError.setMessage("Search term must be at least 4 characters long");
             validatable.error(validateError);
         }
     }

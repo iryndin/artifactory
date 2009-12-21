@@ -28,8 +28,8 @@ import org.artifactory.webapp.actionable.action.RepoAwareItemAction;
 public class RepoAwareItemEvent extends ItemEvent {
 
     public RepoAwareItemEvent(RepoAwareActionableItem source, RepoAwareItemAction action,
-            AjaxRequestTarget target) {
-        super(source, action, target);
+                              AjaxRequestTarget target) {
+        super(source, action);
     }
 
     @Override

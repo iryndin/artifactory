@@ -17,13 +17,14 @@
 
 package org.artifactory.api.mime;
 
+import com.google.common.collect.Maps;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.util.Pair;
+import org.artifactory.common.ConstantValues;
 import org.artifactory.util.PathUtils;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,42 +34,33 @@ import java.util.Map;
  * @author yoavl
  */
 public class NamingUtils {
-    private static Map<String, ContentType> contentTypePerExtension = new HashMap<String, ContentType>();
+    private static Map<String, ContentType> contentTypePerExtension;
 
     public static final String METADATA_PREFIX = ":";
-
-    static {
-        final ContentType[] contentTypes = ContentType.values();
-        for (ContentType type : contentTypes) {
-            final MimeEntry mimeEntry = type.getMimeEntry();
-            Collection<String> exts = mimeEntry.getFileExts();
-            if (exts != null) {
-                for (String ext : exts) {
-                    contentTypePerExtension.put(ext, type);
-                }
-            }
-        }
-    }
 
     public static ContentType getContentType(File file) {
         return getContentType(file.getName());
     }
 
+    /**
+     * @param path A file path
+     * @return The content type for the path. Will return default content type if not mapped.
+     */
     public static ContentType getContentType(String path) {
         String extension = PathUtils.getExtension(path);
         return getContentTypeByExtension(extension);
     }
 
     public static ContentType getContentTypeByExtension(String extension) {
+        if (contentTypePerExtension == null) {
+            initializeContentTypesMap();
+        }
         ContentType result = null;
-        if (extension != null && extension.length() > 0) {
+        if (extension != null) {
             result = contentTypePerExtension.get(extension.toLowerCase());
         }
-        if (result == null) {
-            return ContentType.def;
-        } else {
-            return result;
-        }
+
+        return result != null ? result : ContentType.def;
     }
 
     public static String getMimeTypeByPathAsString(String path) {
@@ -233,5 +225,32 @@ public class NamingUtils {
         }
         String metadataName = metadataPath.substring(0, followingSlash);
         return metadataName;
+    }
+
+    public static void initializeContentTypesMap() {
+        Map<String, ContentType> types = Maps.newHashMap();
+        ContentType[] contentTypes = ContentType.values();
+        for (ContentType type : contentTypes) {
+            MimeEntry mimeEntry = type.getMimeEntry();
+            Collection<String> exts = mimeEntry.getFileExts();
+            if (exts != null) {
+                for (String ext : exts) {
+                    types.put(ext, type);
+                }
+            }
+        }
+
+        //add any xmlAdditionalMimeTypeExtensions from a.s.p to applicationXml content type
+        String additionalMimeTypes = ConstantValues.xmlAdditionalMimeTypeExtensions.getString();
+        if (additionalMimeTypes != null) {
+            String[] exts = additionalMimeTypes.split(",");
+            for (String ext : exts) {
+                //for support *.ext
+                String fileExt = PathUtils.getExtension(ext);
+                types.put(fileExt != null ? fileExt : ext, ContentType.applicationXml);
+            }
+        }
+
+        contentTypePerExtension = types;
     }
 }

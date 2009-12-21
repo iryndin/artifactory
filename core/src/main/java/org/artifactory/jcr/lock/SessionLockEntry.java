@@ -16,13 +16,17 @@
  */
 package org.artifactory.jcr.lock;
 
+import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.concurrent.LockingException;
 import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.log.LoggerFactory;
+import org.artifactory.thread.ThreadDumper;
+import org.artifactory.util.ExceptionUtils;
 import org.slf4j.Logger;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -41,11 +45,15 @@ class SessionLockEntry implements FsItemLockEntry {
     //The (per-session) acquired lock state
     private ReentrantReadWriteLock.ReadLock acquiredReadLock;
 
+    enum LockMode {
+        READ, WRITE
+    }
+
     SessionLockEntry(LockEntryId lockEntryId) {
         this.id = lockEntryId;
     }
 
-    public ReentrantReadWriteLock getLock() {
+    public MonitoringReadWriteLock getLock() {
         return id.getLock();
     }
 
@@ -72,9 +80,7 @@ class SessionLockEntry implements FsItemLockEntry {
                     "Cannot acquire read lock when write lock is acquired and mutable item was null " +
                             id);
         }
-        ReentrantReadWriteLock.ReadLock lock = getReadLock();
-        acquire("Read", lock);
-        acquiredReadLock = lock;
+        acquire(LockMode.READ);
     }
 
     void acquireWriteLock() {
@@ -86,7 +92,7 @@ class SessionLockEntry implements FsItemLockEntry {
         if (acquiredReadLock != null) {
             throw new LockingException("Cannot acquire write lock if has read lock on " + id);
         }
-        acquire("Write", getWriteLock());
+        acquire(LockMode.WRITE);
     }
 
     public boolean isLockedByMe() {
@@ -189,7 +195,8 @@ class SessionLockEntry implements FsItemLockEntry {
     }
 
     boolean isUnsaved() {
-        return lockedFsItem != null && !lockedFsItem.isDeleted() && (immutableFsItem == null || !immutableFsItem.isIdentical(lockedFsItem));
+        return lockedFsItem != null && !lockedFsItem.isDeleted() &&
+                (immutableFsItem == null || !immutableFsItem.isIdentical(lockedFsItem));
     }
 
     /**
@@ -210,23 +217,33 @@ class SessionLockEntry implements FsItemLockEntry {
         }
     }
 
-    private ReentrantReadWriteLock.ReadLock getReadLock() {
-        return getLock().readLock();
-    }
-
-    private ReentrantReadWriteLock.WriteLock getWriteLock() {
-        return getLock().writeLock();
-    }
-
-    private void acquire(String lockName, Lock lock) {
+    private void acquire(LockMode mode) {
+        MonitoringReadWriteLock rwLock = getLock();
+        Lock lock = mode == LockMode.READ ? rwLock.readLock() : rwLock.writeLock();
         try {
-            boolean success = lock.tryLock(ConstantValues.lockTimeoutSecs.getLong(), TimeUnit.SECONDS);
+            boolean success = lock.tryLock(ConstantValues.locksTimeoutSecs.getLong(), TimeUnit.SECONDS);
             if (!success) {
-                throw new LockingException(lockName + " lock on " + id + " not acquired in " +
-                        ConstantValues.lockTimeoutSecs.getLong() + " seconds");
+                StringBuilder msg =
+                        new StringBuilder().append(mode).append(" lock on ").append(id).append(" not acquired in ")
+                                .append(ConstantValues.locksTimeoutSecs.getLong()).append(" seconds. Lock info: ")
+                                .append(lock)
+                                .append(".");
+                if (ConstantValues.locksDebugTimeouts.getBoolean()) {
+                    try {
+                        ThreadDumper threadDumper = ContextHelper.get().beanForType(ThreadDumper.class);
+                        CharSequence dump = threadDumper.dumpThreads();
+                        msg.append(dump);
+                    } catch (Throwable t) {
+                        log.info("Could not dump threads: {}.", t.getMessage());
+                    }
+                }
+                //msg.append("Lock thread dump:\n").append(getThreadDump(rwLock));
+                throw new LockingException(msg.toString());
+            } else if (mode == LockMode.READ) {
+                acquiredReadLock = (ReentrantReadWriteLock.ReadLock) lock;
             }
         } catch (InterruptedException e) {
-            throw new LockingException(lockName + " lock on " + id + " not acquired!", e);
+            throw new LockingException(mode + " lock on " + id + " not acquired!", e);
         }
     }
 
@@ -240,7 +257,42 @@ class SessionLockEntry implements FsItemLockEntry {
                 }
             }
             lockedFsItem = null;
-            getWriteLock().unlock();
+            getLock().writeLock().unlock();
         }
+    }
+
+    private String getThreadDump(MonitoringReadWriteLock lock) {
+        StringBuilder b = new StringBuilder();
+        try {
+            //owner
+            Thread owner = lock.getOwner();
+            b.append("Current OWNER - ").append(owner).append(":\n");
+            if (owner != null) {
+                b.append(ExceptionUtils.getStackTrace(owner));
+            }
+            b.append("\n");
+            //writers
+            Collection<Thread> writers = lock.getQueuedWriterThreads();
+            b.append("Queued WRITERS (").append(writers.size()).append("):\n");
+            int i = 1;
+            for (Thread writer : writers) {
+                b.append("WRITER #").append(i).append(" - ").append(writer).append(":\n");
+                b.append(ExceptionUtils.getStackTrace(writer));
+                i++;
+            }
+            b.append("\n");
+            //readers
+            Collection<Thread> readers = lock.getQueuedReaderThreads();
+            b.append("Queued READERS (").append(readers.size()).append("):\n");
+            i = 1;
+            for (Thread reader : readers) {
+                b.append("READER #").append(i).append(" - ").append(reader).append(":\n");
+                b.append(ExceptionUtils.getStackTrace(reader));
+                i++;
+            }
+        } catch (Throwable t) {
+            b.append("(Problem getting thread dump: ").append(t.getMessage()).append(')');
+        }
+        return b.toString();
     }
 }

@@ -26,7 +26,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -36,6 +35,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.metadata.MetadataSearchControls;
 import org.artifactory.api.search.metadata.MetadataSearchResult;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
 import org.artifactory.common.wicket.component.combobox.ComboBox;
 import org.artifactory.common.wicket.component.help.HelpBubble;
@@ -70,21 +70,17 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
 
     @Override
     protected void addSearchComponents(Form form) {
+        add(new CssClass("metadata-panel"));
         searchControls = new MetadataSearchControls();
         xmlTypes = Lists.newArrayList("*.pom", "*ivy*.xml");
         searchControls.setMetadataName(xmlTypes.get(0));
-
-        //todo remove when component bug fixed RTFACT-2257
-        final WebMarkupContainer comboContainer = new WebMarkupContainer("comboContainer");
-        comboContainer.setOutputMarkupId(true);
-        form.add(comboContainer);
         final ComboBox typesChoices =
                 new ComboBox("metadataName", new PropertyModel(searchControls, "metadataName"),
                         new PropertyModel(this, "metaDataNames"));
         typesChoices.setPersistent(true);
         typesChoices.setRequired(true);
         typesChoices.setOutputMarkupId(true);
-        comboContainer.add(typesChoices);
+        form.add(typesChoices);
         metaDataSearchCheckBox = new StyledCheckbox("metaDataSearch", new Model());
         metaDataSearchCheckBox.setLabel(new Model("Metadata Search"));
         metaDataSearchCheckBox.setPersistent(true);
@@ -97,7 +93,7 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
                 } else {
                     metaDataNames = xmlTypes;
                 }
-                target.addComponent(comboContainer);
+                target.addComponent(typesChoices, typesChoices.getAjaxTargetMarkupId());
             }
         });
 
@@ -121,6 +117,11 @@ public class MetadataSearchPanel<T extends MetadataSearchResult> extends BaseSea
         exactMatchCheckbox.setLabel(new Model("Exact Match"));
         exactMatchCheckbox.setPersistent(true);
         form.add(exactMatchCheckbox);
+    }
+
+    @Override
+    protected MetadataSearchControls getSearchControles() {
+        return searchControls;
     }
 
     private void adjustForMetadataLastSearch() {

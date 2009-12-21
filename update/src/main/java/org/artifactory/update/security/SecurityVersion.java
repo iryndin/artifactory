@@ -56,7 +56,8 @@ public enum SecurityVersion implements SubConfigElementVersion {
             new AnyRemoteConverter(), new AclRepoKeysConverter()),
     v4(ArtifactoryVersion.v210, ArtifactoryVersion.v210, new AnnotatePermissionOcmConverter(),
             new AnnotatePermissionXmlConverter()),
-    v5(ArtifactoryVersion.v211, ArtifactoryVersion.getCurrent(), null);
+    v5(ArtifactoryVersion.v211, ArtifactoryVersion.v212, null, null),
+    v6(ArtifactoryVersion.v213, ArtifactoryVersion.getCurrent(), null);
 
     private final VersionComparator comparator;
     private final XmlConverter[] xmlConverters;
@@ -111,8 +112,19 @@ public enum SecurityVersion implements SubConfigElementVersion {
     }
 
     public void convert(Session rawSession) {
-        if (configurationConverter != null) {
-            configurationConverter.convert(rawSession);
+        // First create the list of converters to apply
+        List<ConfigurationConverter<Session>> converters = new ArrayList<ConfigurationConverter<Session>>();
+
+        // All converters of versions above me needs to be executed in sequence
+        SecurityVersion[] versions = SecurityVersion.values();
+        for (SecurityVersion version : versions) {
+            if (version.ordinal() >= ordinal() && version.configurationConverter != null) {
+                converters.add(version.configurationConverter);
+            }
+        }
+
+        for (ConfigurationConverter<Session> converter : converters) {
+            converter.convert(rawSession);
         }
     }
 

@@ -20,7 +20,7 @@ package org.artifactory.webapp.actionable.action;
 import org.artifactory.webapp.actionable.ActionableItem;
 import org.artifactory.webapp.actionable.event.ItemEvent;
 
-import javax.swing.AbstractAction;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -78,6 +78,16 @@ public abstract class ItemAction extends AbstractAction {
         onAction(event);
 
         //Fire the event to listeners
+        if (isNotifyingListeners()) {
+            notifyListeners(event);
+        }
+    }
+
+    public boolean isNotifyingListeners() {
+        return true;
+    }
+
+    public void notifyListeners(ItemEvent event) {
         ActionableItem actionableItem = event.getSource();
         actionableItem.fireActionEvent(event);
     }

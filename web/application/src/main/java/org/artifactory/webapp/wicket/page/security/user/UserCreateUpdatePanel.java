@@ -31,16 +31,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.CoreAddons;
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.api.security.SecurityService;
-import org.artifactory.api.security.UserGroupService;
-import org.artifactory.api.security.UserInfo;
-import org.artifactory.api.security.UserInfoBuilder;
+import org.artifactory.api.security.*;
 import org.artifactory.api.util.Pair;
 import org.artifactory.common.wicket.ajax.NoAjaxIndicatorDecorator;
 import org.artifactory.common.wicket.behavior.defaultbutton.DefaultButtonBehavior;
@@ -151,6 +148,11 @@ public class UserCreateUpdatePanel extends CreateUpdatePanel<UserModel> {
                     return;
                 }
                 super.validate(form);
+            }
+
+            @Override
+            protected String resourceKey() {
+                return Classes.simpleName(EqualPasswordInputValidator.class);
             }
         });
 

@@ -19,6 +19,7 @@ package org.artifactory.common.wicket.component.panel.sortedlist;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -98,6 +99,13 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         //Add import link
         add(getImportLink("importItemLink"));
 
+        //add save repo list order
+        Component saveOrderLink = getSaveOrderLink("saveOrderLink");
+        add(saveOrderLink);
+
+        //add cancel order button
+        Component cancelOrderLink = getCancelOrderLink("cancelOrderLink");
+        add(cancelOrderLink);
         // add items container
         WebMarkupContainer container = new WebMarkupContainer("items");
         container.setOutputMarkupId(true);
@@ -131,6 +139,30 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
         add(template);
     }
 
+    private Component getCancelOrderLink(String id) {
+        SimpleTitledLink cancelOrder = new SimpleTitledLink(id, "Reset");
+        cancelOrder.add(new AjaxEventBehavior("onclick") {
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                resetListOrder(target);
+            }
+        });
+        return cancelOrder;
+    }
+
+    private Component getSaveOrderLink(String id) {
+        SimpleTitledLink saveOrder = new SimpleTitledLink(id, "Save");
+        saveOrder.add(new AjaxEventBehavior("onclick") {
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                saveRepos(target);
+            }
+        });
+        return saveOrder;
+    }
+
     protected Component getImportLink(String id) {
         WebMarkupContainer child = new WebMarkupContainer(id);
         child.setVisible(false);
@@ -142,6 +174,10 @@ public abstract class OrderedListPanel<T> extends TitledPanel {
     public String getTitle() {
         return getString(getId() + ".title", null, getId() + ".title");
     }
+
+    protected abstract void saveRepos(AjaxRequestTarget target);
+
+    protected abstract void resetListOrder(AjaxRequestTarget target);
 
     protected abstract String getItemDisplayValue(T itemObject);
 

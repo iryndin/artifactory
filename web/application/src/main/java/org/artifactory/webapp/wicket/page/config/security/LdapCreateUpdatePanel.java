@@ -97,6 +97,7 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
         TitledBorder borderDn = new TitledBorder("borderDn");
         form.add(borderDn);
         borderDn.add(new TextField("userDnPattern"));
+        borderDn.add(new StyledCheckbox("autoCreateUser"));
         borderDn.add(new SchemaHelpBubble("userDnPattern.help"));
 
         addSearchFields(ldapDescriptor, borderDn);
@@ -224,6 +225,12 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
             error("Ldap settings should provide a userDnPattern or a searchFilter (or both)");
             return false;
         }
+        if (searchPattern.getSearchBase() == null) {
+            searchPattern.setSearchBase("");
+        }
+        if (searchPattern.getSearchFilter() == null) {
+            searchPattern.setSearchFilter("");
+        }
 
         // if the search filter has value set the search pattern
         if (StringUtils.hasText(searchPattern.getSearchFilter())) {
@@ -232,4 +239,6 @@ public class LdapCreateUpdatePanel extends CreateUpdatePanel<LdapSetting> {
 
         return true;
     }
+
+
 }

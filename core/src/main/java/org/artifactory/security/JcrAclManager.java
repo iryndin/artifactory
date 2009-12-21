@@ -29,7 +29,6 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.security.AclInfo;
-import static org.artifactory.api.security.PermissionTargetInfo.*;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.cache.InternalCacheService;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
@@ -37,7 +36,7 @@ import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.util.AlreadyExistsException;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
@@ -47,17 +46,19 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Node;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static org.artifactory.api.security.PermissionTargetInfo.*;
+
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
 @Repository
+@Reloadable(beanClass = InternalAclManager.class, initAfter = {JcrService.class, InternalCacheService.class})
 public class JcrAclManager implements InternalAclManager {
     private static final Logger log = LoggerFactory.getLogger(JcrAclManager.class);
 
@@ -73,16 +74,6 @@ public class JcrAclManager implements InternalAclManager {
 
     public static String getAclsJcrPath() {
         return JcrPath.get().getConfigJcrPath(ACLS_KEY);
-    }
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalAclManager.class);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{JcrService.class, InternalCacheService.class};
     }
 
     public void init() {

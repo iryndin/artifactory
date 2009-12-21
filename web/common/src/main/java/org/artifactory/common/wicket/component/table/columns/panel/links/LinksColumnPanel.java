@@ -50,6 +50,11 @@ public class LinksColumnPanel extends Panel {
         add(initScript);
     }
 
+    @Override
+    public boolean isVisible() {
+        return super.isVisible() && linksPanel.hasAnyLinks();
+    }
+
     public void addLink(AbstractLink link) {
         linksPanel.addLink(link);
     }

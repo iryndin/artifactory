@@ -16,8 +16,8 @@
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<config xmlns="http://artifactory.jfrog.org/xsd/1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.1 http://www.jfrog.org/xsd/artifactory-v1_4_1.xsd">
+<config xmlns="http://artifactory.jfrog.org/xsd/1.4.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.4.2 http://www.jfrog.org/xsd/artifactory-v1_4_2.xsd">
 
     <security>
         <anonAccessEnabled>true</anonAccessEnabled>
@@ -78,29 +78,29 @@
         </localRepository>
         <localRepository>
             <key>UNIQUE</key>
+            <includesPattern>**/*</includesPattern>
             <blackedOut>false</blackedOut>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
             <maxUniqueSnapshots>5</maxUniqueSnapshots>
-            <includesPattern>**/*</includesPattern>
             <snapshotVersionBehavior>unique</snapshotVersionBehavior>
         </localRepository>
         <localRepository>
             <key>NONUNIQUE</key>
+            <includesPattern>**/*</includesPattern>
             <blackedOut>false</blackedOut>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
             <maxUniqueSnapshots>0</maxUniqueSnapshots>
-            <includesPattern>**/*</includesPattern>
             <snapshotVersionBehavior>non-unique</snapshotVersionBehavior>
         </localRepository>
         <localRepository>
             <key>DEPLOYER</key>
+            <includesPattern>**/*</includesPattern>
             <blackedOut>false</blackedOut>
             <handleReleases>true</handleReleases>
             <handleSnapshots>true</handleSnapshots>
             <maxUniqueSnapshots>5</maxUniqueSnapshots>
-            <includesPattern>**/*</includesPattern>
             <snapshotVersionBehavior>deployer</snapshotVersionBehavior>
         </localRepository>
     </localRepositories>
@@ -108,9 +108,9 @@
     <remoteRepositories>
         <remoteRepository>
             <key>remote-repo</key>
+            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <handleReleases>true</handleReleases>
             <handleSnapshots>false</handleSnapshots>
-            <excludesPattern>org/artifactory/**,org/jfrog/**</excludesPattern>
             <url>http://repo.jfrog.org/artifactory/remote-repos</url>
             <!--<url>http://repo1.maven.org/maven2</url>-->
         </remoteRepository>
@@ -138,6 +138,7 @@
                 <repositoryRef>DEPLOYER</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
             </repositories>
+            <pomRepositoryReferencesCleanupPolicy>discard_active_reference</pomRepositoryReferencesCleanupPolicy>
         </virtualRepository>
         <virtualRepository>
             <key>plugins-releases</key>
@@ -146,6 +147,7 @@
                 <repositoryRef>ext-releases-local</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
             </repositories>
+            <pomRepositoryReferencesCleanupPolicy>discard_active_reference</pomRepositoryReferencesCleanupPolicy>
         </virtualRepository>
         <virtualRepository>
             <key>libs-snapshots</key>
@@ -157,6 +159,7 @@
                 <repositoryRef>DEPLOYER</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
             </repositories>
+            <pomRepositoryReferencesCleanupPolicy>discard_active_reference</pomRepositoryReferencesCleanupPolicy>
         </virtualRepository>
         <virtualRepository>
             <key>plugins-snapshots</key>
@@ -165,6 +168,7 @@
                 <repositoryRef>ext-snapshots-local</repositoryRef>
                 <repositoryRef>remote-repos</repositoryRef>
             </repositories>
+            <pomRepositoryReferencesCleanupPolicy>discard_active_reference</pomRepositoryReferencesCleanupPolicy>
         </virtualRepository>
     </virtualRepositories>
 </config>

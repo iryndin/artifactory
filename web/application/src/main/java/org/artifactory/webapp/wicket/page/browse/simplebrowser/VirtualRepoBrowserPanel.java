@@ -69,6 +69,7 @@ public class VirtualRepoBrowserPanel extends TitledPanel {
 
     public VirtualRepoBrowserPanel(String id, RepoPath repoPath) {
         super(id);
+        add(new CssClass("virtual-repo-browser"));
         add(new BreadCrumbsPanel("breadCrumbs", repoPath.getId()));
 
         final String virtualRepoKey = repoPath.getRepoKey();
@@ -83,17 +84,6 @@ public class VirtualRepoBrowserPanel extends TitledPanel {
 
         //Collect the items under the virtual directory viewed from all local repositories
         List<VirtualRepoItem> result = repoService.getVirtualRepoItems(repoPath);
-
-        //If no results are found
-        if (result.isEmpty()) {
-
-            //Make sure that the requested item actually exists
-            boolean virtualItemExists = repoService.virtualItemExists(repoPath);
-            if (!virtualItemExists) {
-                //Return a 404
-                throw new AbortWithWebErrorCodeException(HttpServletResponse.SC_NOT_FOUND);
-            }
-        }
 
         for (VirtualRepoItem item : result) {
             DirectoryItem directoryItem = new DirectoryItem(item);

@@ -39,8 +39,10 @@
         <td class="main">
             <div class="header">
                 <div class="spacer">
-                    <div wicket:id="artifactoryLink">
-                        <span>Artifactory</span>
+                    <div wicket:id="logoWrapper">
+                        <div wicket:id="artifactoryLink">
+                            <span>Artifactory</span>
+                        </div>
                     </div>
 
                     <div class="top-menu">
@@ -80,7 +82,11 @@
         <td class="footer">
             <div class="footer">
                 <p class="copywrites">
-                    <a href="http://www.jfrog.org/" target="_blank">www.jfrog.org</a> &copy; 2009
+                    <span>© Copyright 2009</span>
+                    <a href="http://www.jfrog.org">JFrog Ltd.</a>
+                    <span wicket:id="footerWrapper">
+                    <span wicket:id="footer" name="footer" content="#"></span>
+                    </span>
                 </p>
 
                 <p wicket:id="version" class="version">Artifactory version</p>

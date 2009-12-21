@@ -49,6 +49,10 @@ public class LinksPanel extends Panel {
         return this;
     }
 
+    public boolean hasAnyLinks() {
+        return repeatingView.iterator().hasNext();
+    }
+
     public LinksPanel addLinkFor(final Class<? extends Page> pageClass) {
         WebMarkupContainer item = new WebMarkupContainer(repeatingView.newChildId());
         repeatingView.add(item);

@@ -20,13 +20,12 @@ package org.artifactory.webapp.wicket.page.config.repos;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.NumberValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.artifactory.addon.wicket.PropertiesAddon;
 import org.artifactory.common.wicket.behavior.collapsible.CollapsibleBehavior;
 import org.artifactory.common.wicket.component.CreateUpdateAction;
@@ -40,6 +39,8 @@ import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.artifactory.webapp.wicket.util.validation.UriValidator;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,7 @@ import java.util.List;
  */
 public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescriptor> {
     public HttpRepoPanel(CreateUpdateAction action, HttpRepoDescriptor repoDescriptor,
-            MutableCentralConfigDescriptor mutableCentralConfig) {
+                         MutableCentralConfigDescriptor mutableCentralConfig) {
         super(action, repoDescriptor, mutableCentralConfig);
 
         TitledBorder localRepoFields = new TitledBorder("remoteRepoFields");
@@ -76,7 +77,9 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
         localRepoFields.add(passwordField);
         localRepoFields.add(new SchemaHelpBubble("password.help"));
 
-        localRepoFields.add(new TextField("localAddress"));
+        TextField localAddressField = new TextField("localAddress");
+        localAddressField.add(new LocalAddressValidator());
+        localRepoFields.add(localAddressField);
         localRepoFields.add(new SchemaHelpBubble("localAddress.help"));
 
         List<ProxyDescriptor> proxies = mutableCentralConfig.getProxies();
@@ -102,7 +105,7 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
         localRepoFields.add(new SchemaHelpBubble("suppressPomConsistencyChecks.help"));
 
         TitledBorder advanced = new TitledBorder("advanced");
-        advanced.add(new CollapsibleBehavior(false, true));
+        advanced.add(new CollapsibleBehavior().setResizeModal(true));
         form.add(advanced);
 
         advanced.add(new StyledCheckbox("hardFail"));
@@ -223,5 +226,20 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
                 return super.getDisplayValue(object);
             }
         }
+    }
+
+    private class LocalAddressValidator extends StringValidator {
+        @Override
+        protected void onValidate(IValidatable validatable) {
+            String localAddress = (String) validatable.getValue();
+            try {
+                InetAddress.getByName(localAddress);
+            } catch (UnknownHostException e) {
+                ValidationError error = new ValidationError();
+                error.setMessage("Invalid local address: " + e.getMessage());
+                validatable.error(error);
+            }
+        }
+
     }
 }

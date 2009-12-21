@@ -19,6 +19,8 @@ package org.artifactory.resource;
 
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FileInfoImpl;
+import org.artifactory.api.mime.ContentType;
+import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 
 /**
@@ -27,7 +29,7 @@ import org.artifactory.api.repo.RepoPath;
 public class FileResource implements RepoResource {
 
     private final FileInfo info;
-    private RepoPath repoPath;
+    private RepoPath responseRepoPath;
 
     public FileResource(FileInfo fileInfo) {
         this.info = new FileInfoImpl(fileInfo);
@@ -42,11 +44,11 @@ public class FileResource implements RepoResource {
     }
 
     public RepoPath getResponseRepoPath() {
-        return repoPath != null ? repoPath : getRepoPath();
+        return responseRepoPath != null ? responseRepoPath : getRepoPath();
     }
 
     public void setResponseRepoPath(RepoPath responsePath) {
-        this.repoPath = responsePath;
+        this.responseRepoPath = responsePath;
     }
 
     public FileInfo getInfo() {
@@ -74,7 +76,8 @@ public class FileResource implements RepoResource {
     }
 
     public String getMimeType() {
-        return info.getMimeType();
+        ContentType contentType = NamingUtils.getContentType(info.getRelPath());
+        return contentType.getMimeType();
     }
 
     public long getCacheAge() {

@@ -140,6 +140,9 @@
     <logger name="org.apache.jackrabbit">
         <level value="WARN"/>
     </logger>
+    <logger name="org.apache.jackrabbit.core.persistence.bundle.BundleDbPersistenceManager">
+        <level value="INFO"/>
+    </logger>
     <logger name="org.mortbay">
         <level value="WARN"/>
     </logger>

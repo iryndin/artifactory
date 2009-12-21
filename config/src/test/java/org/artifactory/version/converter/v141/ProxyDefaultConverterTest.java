@@ -16,7 +16,7 @@ public class ProxyDefaultConverterTest extends XmlConverterTest {
 
     @Test
     public void covertRemoteRepositoriesWithDefaultProxy() throws Exception {
-        Document doc = convertXml("/config/test/config.1.4.1_default-proxy.xml",
+        Document doc = convertXml("/config/test/config.1.4.0_default-proxy.xml",
                 new ProxyDefaultConverter());
         Element root = doc.getRootElement();
         Namespace ns = root.getNamespace();

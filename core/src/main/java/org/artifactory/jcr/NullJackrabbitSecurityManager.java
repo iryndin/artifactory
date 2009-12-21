@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -43,7 +44,7 @@ import java.lang.reflect.Proxy;
 
 /**
  * Null jackrabbit security manager thar allows access to all resources to any user. Artifactory is doing its own
- * security management so a "real" jackrbbit security manager is not needed.
+ * security management so a "real" jackrabbit security manager is not needed.
  *
  * @author Yossi Shaul
  */
@@ -77,23 +78,26 @@ public class NullJackrabbitSecurityManager implements JackrabbitSecurityManager 
             public void checkPermission(ItemId id, int permissions) {
             }
 
+            public void checkPermission(Path absPath, int permissions) throws RepositoryException {
+            }
+
             public boolean isGranted(ItemId id, int permissions) {
                 return true;
             }
 
-            public boolean isGranted(Path absPath, int permissions) {
+            public boolean isGranted(Path absPath, int permissions) throws RepositoryException {
                 return true;
             }
 
-            public boolean isGranted(Path parentPath, Name childName, int permissions) {
+            public boolean isGranted(Path parentPath, Name childName, int permissions) throws RepositoryException {
                 return true;
             }
 
-            public boolean canRead(Path itemPath) {
+            public boolean canRead(Path itemPath) throws RepositoryException {
                 return true;
             }
 
-            public boolean canAccess(String workspaceName) {
+            public boolean canAccess(String workspaceName) throws RepositoryException {
                 return true;
             }
         };

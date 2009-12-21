@@ -42,7 +42,7 @@ public class IvyServiceImpl implements IvyService {
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Could not parse Ivy file.", e);
         }
-        return parseIvy(input);
+        return parseIvy(input, file.length());
     }
 
     public ModuleDescriptor parseIvyFile(RepoPath repoPath) {
@@ -54,13 +54,13 @@ public class IvyServiceImpl implements IvyService {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("Could not parse Ivy file.", e);
         }
-        return parseIvy(input);
+        return parseIvy(input, content.length());
     }
 
-    private ModuleDescriptor parseIvy(InputStream input) {
+    private ModuleDescriptor parseIvy(InputStream input, long contentLength) {
         IvyParser ivyParser = new IvyParser();
         try {
-            ModuleDescriptor md = ivyParser.getModuleDescriptorForStringContent(input);
+            ModuleDescriptor md = ivyParser.getModuleDescriptorForStringContent(input, contentLength);
             return md;
         } catch (Exception e) {
             log.warn("Could not parse the item at {} as a valid Ivy file.", e);
@@ -71,10 +71,9 @@ public class IvyServiceImpl implements IvyService {
     }
 
     class IvyParser extends XmlModuleDescriptorParser {
-        public ModuleDescriptor getModuleDescriptorForStringContent(InputStream input)
+        public ModuleDescriptor getModuleDescriptorForStringContent(InputStream input, long contentLength)
                 throws IOException, ParseException {
-            //TODO: [by YS] pass resource to this method (fileresource if file, basic with data from the jcrfile)
-            Resource resource = new BasicResource("ivyBasicResource", true, 1000l, new Date().getTime(), true);
+            Resource resource = new BasicResource("ivyBasicResource", true, contentLength, new Date().getTime(), true);
             return getModuleDescriptor(settings, input, resource, true);
         }
 

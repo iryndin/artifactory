@@ -52,7 +52,7 @@ public class LdapConnectionTester {
         StatusHolder status = new StatusHolder();
         try {
             SpringSecurityContextSource securityContext =
-                    LdapAuthenticatorWrapper.createSecurityContext(ldapSetting);
+                    ArtifactoryLdapAuthenticator.createSecurityContext(ldapSetting);
             ArtifactoryBindAuthenticator authenticator = new ArtifactoryBindAuthenticator(
                     securityContext, ldapSetting);
             UsernamePasswordAuthenticationToken authentication =

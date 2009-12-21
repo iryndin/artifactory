@@ -68,15 +68,6 @@ public class JcrTransactionManager extends LocalTransactionManager implements Tr
 
     @Override
     protected void doCommit(DefaultTransactionStatus status) {
-        //Save any pending changes (no need to test for rollback at this phase)
-        JcrSession session = getCurrentSession();
-        if (log.isDebugEnabled()) {
-            log.debug("Saving session: " + session + ".");
-        }
-        if (!status.isRollbackOnly() && !status.isReadOnly() && session.isLive()) {
-            //Flush the changes - as early as possible to save on memory resources + fires up save in session resources
-            session.save();
-        }
         //Print debug info
         traceTx(status, false);
         //Now send the commit
@@ -89,6 +80,7 @@ public class JcrTransactionManager extends LocalTransactionManager implements Tr
         }
     }
 
+
     @Override
     protected void doSetRollbackOnly(DefaultTransactionStatus status) {
         super.doSetRollbackOnly(status);
@@ -99,7 +91,7 @@ public class JcrTransactionManager extends LocalTransactionManager implements Tr
         session.getSessionResourceManager().afterCompletion(false);
         if (session.isLive() && session.hasPendingChanges()) {
             if (log.isDebugEnabled()) {
-                log.debug("Early changes discrading for a rolled back transaction.");
+                log.debug("Early changes discarding for a rolled back transaction.");
                 session.refresh(false);
             }
         }
@@ -112,6 +104,15 @@ public class JcrTransactionManager extends LocalTransactionManager implements Tr
     }
 
     public void beforeCommit(boolean readOnly) {
+        //Save any pending changes (no need to test for rollback at this phase)
+        JcrSession session = getCurrentSession();
+        if (log.isDebugEnabled()) {
+            log.debug("Saving session: " + session + ".");
+        }
+        if (!readOnly && session.isLive()) {
+            //Flush the changes - as early as possible to save on memory resources + fires up save in session resources
+            session.save();
+        }
     }
 
     public void beforeCompletion() {

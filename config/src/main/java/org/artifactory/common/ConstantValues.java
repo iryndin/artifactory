@@ -40,7 +40,8 @@ public enum ConstantValues {
     jcrSessionPoolMaxSize("jcr.session.pool.maxSize", "30"),
     versioningQueryIntervalSecs("versioningQueryIntervalSecs", "43200"),
     logsViewRefreshRateSecs("logs.viewRefreshRateSecs", "10"),
-    lockTimeoutSecs("lockTimeoutSecs", "120"),
+    locksTimeoutSecs("locks.timeoutSecs", "120"),
+    locksDebugTimeouts("locks.debugTimeouts", FALSE.toString()),
     taskCompletionLockTimeoutRetries("task.completionLockTimeoutRetries", "100"),
     substituteRepoKeys("repo.key.subst.", null),
     repoCleanupIntervalHours("repo.cleanup.intervalHours", "1"),
@@ -60,7 +61,9 @@ public enum ConstantValues {
     userLastAccessUpdatesResolutionSecs("security.userLastAccessUpdatesResolutionSecs", "60"),
     mvnCentralHostPattern("mvn.central.hostPattern", ".maven.org"),
     mvnCentralIndexerMaxQueryIntervalSecs("mvn.central.indexerMaxQueryIntervalSecs", "86400"),
-    applicationContextClass("applicationContextClass", null);
+    applicationContextClass("applicationContextClass", null),
+    xmlAdditionalMimeTypeExtensions("xmlAdditionalMimeTypeExtensions", null),
+    buildMaxFoldersToScanForDeletionWarnings("build.maxFoldersToScanForDeletionWarnings", "2");
 
     public static final String SYS_PROP_PREFIX = "artifactory.";
 

@@ -19,9 +19,9 @@ package org.artifactory.webapp.wicket.page.browse.treebrowser.tabs.maven;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.fs.FileInfo;
-import org.artifactory.api.fs.FileInfoImpl;
 import org.artifactory.api.maven.MavenArtifactInfo;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.TextContentPanel;
 import org.artifactory.common.wicket.component.border.fieldset.FieldSetBorder;
 import org.artifactory.webapp.actionable.FileActionable;
@@ -36,21 +36,29 @@ public class PomViewTabPanel extends Panel {
     @SpringBean
     private RepositoryService repoService;
 
-    private FileActionable repoItem;
-
+    /**
+     * Main constructor
+     *
+     * @param id       ID to assign to the panel
+     * @param repoItem Selected repo item
+     */
     public PomViewTabPanel(String id, FileActionable repoItem) {
         super(id);
-        this.repoItem = repoItem;
+        add(new CssClass("veiw-tab"));
 
-        addDependencySection();
-
-        addPomContent();
+        FileInfo fileInfo = repoItem.getFileInfo();
+        MavenArtifactInfo artifactInfo = MavenArtifactInfo.fromRepoPath(fileInfo.getRepoPath());
+        addMavenDependencySection(artifactInfo);
+        addIvyDependencySection(artifactInfo);
+        addPomContent(fileInfo);
     }
 
-    private void addDependencySection() {
-        FileInfo fileInfo = new FileInfoImpl(repoItem.getRepoPath());
-        MavenArtifactInfo artifactInfo = MavenArtifactInfo.fromRepoPath(fileInfo.getRepoPath());
-
+    /**
+     * Adds the maven dependency declaration content
+     *
+     * @param artifactInfo Artifact info to display
+     */
+    private void addMavenDependencySection(MavenArtifactInfo artifactInfo) {
         StringBuilder sb = new StringBuilder();
         sb.append("<dependency>\n");
         sb.append("    <groupId>").append(artifactInfo.getGroupId()).append("</groupId>\n");
@@ -59,16 +67,40 @@ public class PomViewTabPanel extends Panel {
         sb.append("    <version>").append(artifactInfo.getVersion()).append("</version>\n");
         sb.append("</dependency>");
 
-        FieldSetBorder border = new FieldSetBorder("dependencyBorder");
+        FieldSetBorder border = new FieldSetBorder("mavenDependencyBorder");
         add(border);
-        border.add(new TextContentPanel("dependencyDeclaration").setContent(sb.toString()));
+        border.add(new TextContentPanel("mavenDependencyDeclaration").setContent(sb.toString()));
     }
 
-    public void addPomContent() {
+    /**
+     * Adds the ivy dependency declaration content
+     *
+     * @param artifactInfo Artifact info to display
+     */
+    private void addIvyDependencySection(MavenArtifactInfo artifactInfo) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<dependency org=\"");
+        sb.append(artifactInfo.getGroupId()).append("\" ");
+        sb.append("name=\"");
+        sb.append(artifactInfo.getArtifactId()).append("\" ");
+        sb.append("rev=\"");
+        sb.append(artifactInfo.getVersion()).append("\" />");
+
+        FieldSetBorder border = new FieldSetBorder("ivyDependencyBorder");
+        add(border);
+        border.add(new TextContentPanel("ivyDependencyDeclaration").setContent(sb.toString()));
+    }
+
+    /**
+     * Adds the complete pom display
+     *
+     * @param fileInfo Pom file info
+     */
+    public void addPomContent(FileInfo fileInfo) {
         FieldSetBorder border = new FieldSetBorder("pomBorder");
         add(border);
 
-        String content = repoService.getTextFileContent(repoItem.getFileInfo());
+        String content = repoService.getTextFileContent(fileInfo);
         TextContentPanel contentPanel = new TextContentPanel("pomContent");
         contentPanel.setContent(content);
         border.add(contentPanel);

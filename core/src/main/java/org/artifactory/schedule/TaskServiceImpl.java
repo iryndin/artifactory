@@ -22,21 +22,19 @@ import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.schedule.JcrGarbageCollectorJob;
-import org.artifactory.jcr.trash.EmptyTrashJob;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.maven.WagonManagerTempArtifactsCleaner;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.ContextReadinessListener;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.util.LoggingUtils;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author yoavl
  */
 @Service
+@Reloadable(beanClass = TaskService.class, initAfter = {InternalCacheService.class, JcrService.class})
 public class TaskServiceImpl implements TaskService, ContextReadinessListener {
     private static final Logger log = LoggerFactory.getLogger(TaskServiceImpl.class);
 
@@ -72,10 +71,6 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
                 TimeUnit.SECONDS.toMillis(10 * 60));
         wagonManagerTempArtifactsCleanerTask.setSingleton(true);
         startTask(wagonManagerTempArtifactsCleanerTask);
-
-        //Empty whatever is left in the trash
-        QuartzTask emptyTrashTask = new QuartzTask(EmptyTrashJob.class, 0);
-        startTask(emptyTrashTask);
     }
 
     public void destroy() {
@@ -93,11 +88,6 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
     }
 
     public void convert(CompoundVersionDetails source, CompoundVersionDetails target) {
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{InternalCacheService.class, JcrService.class};
     }
 
     public void reload(CentralConfigDescriptor oldDescriptor) {
@@ -222,7 +212,7 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
         return task == null || task.waitForCompletion();
     }
 
-    public boolean blockIfPausedAndShouldBreak() {
+    public boolean pauseOrBreak() {
         String token = TaskCallback.currentTaskToken();
         // If not in a task the token is null
         if (token == null) {
@@ -236,11 +226,6 @@ public class TaskServiceImpl implements TaskService, ContextReadinessListener {
             return false;
         }
         return task.blockIfPausedAndShouldBreak();
-    }
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(TaskService.class);
     }
 
     public TaskBase getInternalActiveTask(String token) {

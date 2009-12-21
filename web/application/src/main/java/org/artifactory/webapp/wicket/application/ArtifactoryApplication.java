@@ -19,11 +19,7 @@ package org.artifactory.webapp.wicket.application;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
-import org.apache.wicket.Application;
-import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.*;
 import org.apache.wicket.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
@@ -34,11 +30,7 @@ import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.request.IRequestCycleProcessor;
-import org.apache.wicket.settings.IApplicationSettings;
-import org.apache.wicket.settings.IMarkupSettings;
-import org.apache.wicket.settings.IRequestCycleSettings;
-import org.apache.wicket.settings.IResourceSettings;
-import org.apache.wicket.settings.ISecuritySettings;
+import org.apache.wicket.settings.*;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.time.Duration;
 import org.artifactory.addon.BootstrapListener;
@@ -71,14 +63,17 @@ import org.artifactory.webapp.wicket.page.security.login.LogoutPage;
 import org.artifactory.webapp.wicket.page.security.login.forgot.ForgotPasswordPage;
 import org.artifactory.webapp.wicket.page.security.login.reset.ResetPasswordPage;
 import org.artifactory.webapp.wicket.page.security.profile.ProfilePage;
+import org.artifactory.webapp.wicket.resource.LogoResource;
 import org.artifactory.webapp.wicket.service.authentication.LogoutService;
 import org.slf4j.Logger;
+import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -86,6 +81,7 @@ import java.util.Map;
  */
 public class ArtifactoryApplication extends AuthenticatedWebApplication implements SiteMapAware {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryApplication.class);
+    private static final Locale LOCALE = Locale.US;
 
     @SpringBean
     private CentralConfigService centralConfig;
@@ -125,11 +121,37 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
 
         buildSiteMap();
         mountPages();
+        new AnnotatedMountScanner().scanPackage("org.artifactory.webapp.wicket.page.build").
+                mount(ArtifactoryApplication.get());
         mountResources(artifactoryHome.getRunningVersionDetails());
+        mountLogo(artifactoryHome);
         deleteUploadsFolder();
 
         notifyBootstrapListeners();
         ArtifactorySystemProperties.unbind();
+    }
+
+    private void mountLogo(ArtifactoryHome artifactoryHome) {
+        mountResource("/logo", new LogoResource(artifactoryHome));
+    }
+
+    public void mountResource(String path, ResourceReference resourceReference) {
+        mountSharedResource(path, resourceReference.getSharedResourceKey());
+    }
+
+    /**
+     * Mount a resource.
+     *
+     * @param path     The path of the resource.
+     * @param resource The resource itself
+     */
+    public void mountResource(String path, final Resource resource) {
+        mountResource(path, new ResourceReference(path) {
+            @Override
+            protected Resource newResource() {
+                return resource;
+            }
+        });
     }
 
     private void notifyBootstrapListeners() {
@@ -200,7 +222,7 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
     }
 
     public void mountPage(Class<? extends Page> pageClass) {
-        String url = "/" + pageClass.getSimpleName().replaceFirst("Page", "").toLowerCase() + ".html";
+        String url = "/" + pageClass.getSimpleName().replaceFirst("Page", "").toLowerCase(Locale.ENGLISH) + ".html";
         mountBookmarkablePage(url, pageClass);
     }
 

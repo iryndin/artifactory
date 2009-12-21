@@ -28,7 +28,7 @@ public abstract class LoggingUtils {
         warnOrDebug(logger, msg, null);
     }
 
-    public static void warnOrDebug(Logger logger, String msg, Exception e) {
+    public static void warnOrDebug(Logger logger, String msg, Throwable e) {
         if (logger.isDebugEnabled()) {
             if (e == null) {
                 e = new RuntimeException();

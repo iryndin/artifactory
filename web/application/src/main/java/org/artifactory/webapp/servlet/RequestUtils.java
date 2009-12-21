@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -112,7 +113,7 @@ public class RequestUtils {
     }
 
     public static boolean isWebdavRequest(HttpServletRequest request) {
-        if (WEBDAV_METHODS.contains(request.getMethod().toLowerCase())) {
+        if (WEBDAV_METHODS.contains(request.getMethod().toLowerCase(Locale.ENGLISH))) {
             return true;
         }
         String wagonProvider = request.getHeader("X-wagon-provider");
@@ -159,7 +160,7 @@ public class RequestUtils {
     }
 
     public static boolean setAuthentication(HttpServletRequest request, Authentication authentication,
-            boolean createSession) {
+                                            boolean createSession) {
         HttpSession session = request.getSession(createSession);
         if (session == null) {
             return false;

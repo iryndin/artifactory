@@ -24,8 +24,7 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
-import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.version.CompoundVersionDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -33,7 +32,6 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Node;
 import java.util.Collection;
 
@@ -41,6 +39,7 @@ import java.util.Collection;
  * Created by IntelliJ IDEA. User: yoavl
  */
 @Repository("userDetailsService")
+@Reloadable(beanClass = UserGroupManager.class, initAfter = JcrService.class)
 public class JcrUserGroupManager implements UserGroupManager {
 
     private static final String USERS_KEY = "users";
@@ -55,11 +54,6 @@ public class JcrUserGroupManager implements UserGroupManager {
 
     public static String getGroupsJcrPath() {
         return JcrPath.get().getConfigJcrPath(GROUPS_KEY);
-    }
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(UserGroupManager.class);
     }
 
     public void init() {
@@ -77,11 +71,6 @@ public class JcrUserGroupManager implements UserGroupManager {
     }
 
     public void convert(CompoundVersionDetails source, CompoundVersionDetails target) {
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{JcrService.class};
     }
 
     @SuppressWarnings({"unchecked"})

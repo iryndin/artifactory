@@ -32,14 +32,6 @@ public interface ReloadableBean {
     void init();
 
     /**
-     * List the others reloadable beans that need to be initialized before this one. The final init order will be used
-     * in reverse for destroy.
-     *
-     * @return
-     */
-    Class<? extends ReloadableBean>[] initAfter();
-
-    /**
      * This is called when the configuration xml changes. It is using the same init order all beans that need to do
      * something on reload.
      *

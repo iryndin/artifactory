@@ -81,7 +81,7 @@ public class ConcurrentStateManager {
     }
 
     public State guardedWaitForNextStep() {
-        long timeout = ConstantValues.lockTimeoutSecs.getLong();
+        long timeout = ConstantValues.locksTimeoutSecs.getLong();
         return guardedWaitForNextStep(timeout);
     }
 
@@ -148,7 +148,7 @@ public class ConcurrentStateManager {
     }
 
     private long getStateLockTimeOut() {
-        return ConstantValues.lockTimeoutSecs.getLong();
+        return ConstantValues.locksTimeoutSecs.getLong();
     }
 
     private void unlockState() {

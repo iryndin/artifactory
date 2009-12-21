@@ -29,6 +29,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.gavc.GavcSearchControls;
 import org.artifactory.api.search.gavc.GavcSearchResult;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
 import org.artifactory.common.wicket.component.help.HelpBubble;
 import org.artifactory.common.wicket.component.table.groupable.column.GroupableColumn;
@@ -55,6 +56,7 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
 
     @Override
     protected void addSearchComponents(Form form) {
+        add(new CssClass("gavc-panel"));
         searchControls = new GavcSearchControls();
 
         TextField groupIdField = new TextField("groupIdField", new PropertyModel(searchControls, "groupId"));
@@ -96,6 +98,11 @@ public class GavcSearchPanel extends BaseSearchPanel<GavcSearchResult> {
         addCheckboxLabel(classifierCheckbox);
         form.add(classifierCheckbox);
         form.add(new HelpBubble("classifierHelp", "The artifact's classifier."));
+    }
+
+    @Override
+    protected GavcSearchControls getSearchControles() {
+        return searchControls;
     }
 
     @Override

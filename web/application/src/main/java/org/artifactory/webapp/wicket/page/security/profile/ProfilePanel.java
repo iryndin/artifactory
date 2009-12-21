@@ -41,6 +41,7 @@ import org.artifactory.api.security.SecurityService;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.common.wicket.ajax.NoAjaxIndicatorDecorator;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.TextContentPanel;
 import org.artifactory.common.wicket.component.border.fieldset.FieldSetBorder;
 import org.artifactory.common.wicket.component.help.HelpBubble;
@@ -87,6 +88,7 @@ public class ProfilePanel extends TitledActionPanel {
     public ProfilePanel(String id) {
         super(id, new CompoundPropertyModel(new ProfileModel()));
         setOutputMarkupId(true);
+        add(new CssClass("profile-panel"));
 
 
         // load user email

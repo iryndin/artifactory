@@ -19,10 +19,9 @@ package org.artifactory.config;
 
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.interceptor.Interceptors;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.jcr.JcrService;
+import org.artifactory.spring.Reloadable;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Central config interceptors chain manager.
@@ -30,12 +29,9 @@ import javax.annotation.PostConstruct;
  * @author Yossi Shaul
  */
 @Service
+@Reloadable(beanClass = ConfigurationChangesInterceptors.class, initAfter = JcrService.class)
 public class ConfigurationChangesInterceptorsImpl extends Interceptors<ConfigurationChangesInterceptor>
         implements ConfigurationChangesInterceptors {
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(ConfigurationChangesInterceptors.class);
-    }
 
     public void onBeforeSave(CentralConfigDescriptor newDescriptor) {
         for (ConfigurationChangesInterceptor interceptor : this) {

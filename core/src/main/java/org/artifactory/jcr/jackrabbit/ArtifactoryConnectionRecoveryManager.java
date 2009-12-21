@@ -167,55 +167,6 @@ public class ArtifactoryConnectionRecoveryManager implements GenericConnectionRe
     }
 
     /**
-     * Executes the given SQL query. Retries once or blocks (when the <code>block</code> parameter has been set to true
-     * on construction) if this fails and autoReconnect is enabled.
-     *
-     * @param sql the SQL query to execute
-     * @return the executed ResultSet
-     * @throws java.sql.SQLException         on error
-     * @throws javax.jcr.RepositoryException if the database driver could not be loaded
-     */
-    public synchronized ResultSet executeQuery(String sql) throws SQLException, RepositoryException {
-        int trials = 2;
-        SQLException lastException;
-        do {
-            trials--;
-            try {
-                return executeQueryInternal(sql);
-            } catch (SQLException e) {
-                lastException = e;
-            }
-        } while (autoReconnect && (block || trials > 0));
-        throw lastException;
-    }
-
-    /**
-     * Executes the given SQL query.
-     *
-     * @param sql query to execute
-     * @return a <code>ResultSet</code> object
-     * @throws java.sql.SQLException         if an error occurs
-     * @throws javax.jcr.RepositoryException if the database driver could not be loaded
-     */
-    private ResultSet executeQueryInternal(String sql) throws SQLException, RepositoryException {
-        PreparedStatement stmt = null;
-        try {
-            stmt = preparedStatements.get(sql);
-            if (stmt == null) {
-                stmt = getConnection().prepareStatement(sql);
-                preparedStatements.put(sql, stmt);
-            }
-            return stmt.executeQuery();
-        } catch (SQLException e) {
-            logException("could not execute statement", e);
-            close();
-            throw e;
-        } finally {
-            resetStatement(stmt);
-        }
-    }
-
-    /**
      * Executes the given SQL statement with the specified parameters.
      *
      * @param sql    statement to execute

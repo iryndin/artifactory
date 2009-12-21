@@ -110,7 +110,7 @@ public class RepoPathMover {
                      */
                     sourceRootFolder = cleanEmptyFolders(fsFolderToMove, status);
                 } else {
-                    //If ordinary artifacts are being handeled, return the source folder to be calculated 
+                    //If ordinary artifacts are being handeled, return the source folder to be calculated
                     sourceRootFolder = fsFolderToMove;
                 }
             } else {
@@ -304,7 +304,7 @@ public class RepoPathMover {
             return false;
         }
 
-        if (!targetRepo.accepts(targetPath)) {
+        if (!targetRepo.accepts(targetRepoPath)) {
             status.setWarning(
                     "The repository '" + targetRepo.getKey() + "' rejected the path '" + targetPath +
                             "' due to its include/exclude patterns.", log);

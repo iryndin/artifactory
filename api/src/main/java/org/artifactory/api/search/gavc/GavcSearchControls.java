@@ -54,6 +54,7 @@ public class GavcSearchControls extends SearchControlsBase {
         this.version = gavcSearchControls.version;
         this.versionExactMatch = gavcSearchControls.versionExactMatch;
         this.classifier = gavcSearchControls.classifier;
+        this.selectedRepoForSearch = gavcSearchControls.selectedRepoForSearch;
         setLimitSearchResults(gavcSearchControls.isLimitSearchResults());
     }
 

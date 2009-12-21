@@ -22,6 +22,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.artifactory.common.wicket.component.modal.panel.BaseModalPanel;
 
+import java.util.Locale;
+
 /**
  * Created by IntelliJ IDEA. User: yoavl
  */
@@ -49,7 +51,7 @@ public abstract class CreateUpdatePanel<E> extends BaseModalPanel {
 
     @Override
     public String getTitle() {
-        return getLocalizer().getString(TITLE_KEY + "." + action.name().toLowerCase(), this);
+        return getLocalizer().getString(TITLE_KEY + "." + action.name().toLowerCase(Locale.ENGLISH), this);
     }
 
     public void replaceWith(AjaxRequestTarget target, CreateUpdatePanel<E> panel) {

@@ -24,6 +24,8 @@ import org.artifactory.jcr.JcrService;
 import org.artifactory.schedule.TaskService;
 import org.springframework.context.ApplicationContext;
 
+import javax.management.MBeanServer;
+
 /**
  * User: freds Date: Aug 3, 2008 Time: 6:48:52 PM
  */
@@ -49,4 +51,6 @@ public interface InternalArtifactoryContext extends ArtifactoryContext, Reloadab
      * @return The registered mbean (might be a proxy of the original instance)
      */
     <T> T registerArtifactoryMBean(T mbean, Class<T> mbeanIfc, String mbeanProps);
+
+    MBeanServer getMBeanServer();
 }

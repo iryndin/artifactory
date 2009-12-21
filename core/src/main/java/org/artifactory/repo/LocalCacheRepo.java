@@ -21,7 +21,7 @@ import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 
 /**
- * Interfarce for the local cache repositories.
+ * Interface for the local cache repositories.
  *
  * @author Noam Tenne
  */

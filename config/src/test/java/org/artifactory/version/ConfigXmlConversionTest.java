@@ -17,7 +17,6 @@
 
 package org.artifactory.version;
 
-import ch.qos.logback.classic.LoggerContext;
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.common.ConstantValues;
@@ -37,8 +36,6 @@ import org.artifactory.descriptor.security.ldap.SearchPattern;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.version.converter.XmlConverter;
 import org.slf4j.Logger;
-import static org.testng.Assert.*;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import javax.xml.XMLConstants;
@@ -54,19 +51,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.testng.Assert.*;
+
 /**
  * @author freds
  * @author Yossi Shaul
  */
 public class ConfigXmlConversionTest {
     private static final Logger log = LoggerFactory.getLogger(ConfigXmlConversionTest.class);
-
-    @BeforeClass
-    public void setLevel() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        //lc.getLogger(ConfigXmlConversionTest.class).setLevel(Level.DEBUG);
-        //lc.getLogger(ConverterUtils.class).setLevel(Level.DEBUG);
-    }
 
     @Test
     public void convert100() throws Exception {
@@ -208,6 +200,14 @@ public class ConfigXmlConversionTest {
     }
 
     @Test
+    public void convert132WithNoSchemaLocation() throws Exception {
+        CentralConfigDescriptor cc =
+                transform("/config/test/config.1.3.2_no-location.xml", ArtifactoryConfigVersion.v132);
+        assertTrue(cc.getSecurity().isAnonAccessEnabled());
+        assertEquals(cc.getFileUploadMaxSizeMb(), 100);
+    }
+
+    @Test
     public void convert134Install() throws Exception {
         CentralConfigDescriptor cc = transform("/config/install/config.1.3.4.xml", ArtifactoryConfigVersion.v134);
 
@@ -248,9 +248,9 @@ public class ConfigXmlConversionTest {
     }
 
     @Test
-    public void convert141DefaultProxy() throws Exception {
+    public void convert140DefaultProxy() throws Exception {
         CentralConfigDescriptor cc =
-                transform("/config/test/config.1.4.1_default-proxy.xml", ArtifactoryConfigVersion.v140);
+                transform("/config/test/config.1.4.0_default-proxy.xml", ArtifactoryConfigVersion.v140);
 
         List<ProxyDescriptor> proxies = cc.getProxies();
         ProxyDescriptor proxy = proxies.get(0);
@@ -258,11 +258,26 @@ public class ConfigXmlConversionTest {
     }
 
     @Test
-    public void convertWithNoSchemaLocation() throws Exception {
+    public void convert141() throws Exception {
+        CentralConfigDescriptor cc = transform("/config/install/config.1.4.1.xml", ArtifactoryConfigVersion.v141);
+        assertNull(cc.getLocalRepositoriesMap().get("libs-releases-local").getExcludesPattern());
+        assertEquals(cc.getRemoteRepositoriesMap().get("java.net.m2").getExcludesPattern(), "commons-*,org/apache/**");
+        assertEquals(cc.getRemoteRepositoriesMap().get("java.net.m2").getIncludesPattern(), "**/*");
+        assertEquals(cc.getRemoteRepositoriesMap().get("codehaus").getIncludesPattern(), "org/**,com/**,net/**");
+        assertEquals(cc.getRemoteRepositoriesMap().get("codehaus").getExcludesPattern(),
+                "org/apache/**,commons-*,org/artifactory/**,org/jfrog/**");
+        assertEquals(cc.getVirtualRepositoriesMap().get("libs-releases").getIncludesPattern(), "**/*");
+        assertNull(cc.getVirtualRepositoriesMap().get("libs-releases").getExcludesPattern());
+    }
+
+    @Test
+    public void convert141Custom() throws Exception {
         CentralConfigDescriptor cc =
-                transform("/config/test/config.1.3.2_no-location.xml", ArtifactoryConfigVersion.v132);
-        assertTrue(cc.getSecurity().isAnonAccessEnabled());
-        assertEquals(cc.getFileUploadMaxSizeMb(), 100);
+                transform("/config/test/config.1.4.1_with_type.xml", ArtifactoryConfigVersion.v141);
+
+        assertEquals(cc.getLocalRepositoriesMap().get("libs-snapshots-local").getIncludesPattern(), "org/jfrog/**");
+        assertNull(cc.getLocalRepositoriesMap().get("libs-snapshots-local").getExcludesPattern());
+        assertEquals(cc.getRemoteRepositoriesMap().get("jfrog-libs").getExcludesPattern(), "org/apache/maven/**");
     }
 
     @Test

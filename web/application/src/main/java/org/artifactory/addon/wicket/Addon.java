@@ -9,7 +9,9 @@ public enum Addon {
     PROPERTIES("properties", "Properties"),
     WATCH("watch", "Watches"),
     SSO("sso", "Single Sign-on"),
-    AOL("aol", "Artifactory Online");
+    LDAP("ldapgroup", "LDAP Group Synchronization"),
+    AOL("aol", "Artifactory Online"),
+    BUILD("build", "Build Integration");
 
     private String addonName;
     private String addonDisplayName;

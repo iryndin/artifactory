@@ -18,6 +18,10 @@
 package org.artifactory.webapp.wicket.page.security.group;
 
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.artifactory.addon.AddonFactory;
+import org.artifactory.addon.AddonsManager;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
 
@@ -26,8 +30,16 @@ import org.artifactory.webapp.wicket.page.base.AuthenticatedPage;
  */
 @AuthorizeInstantiation(AuthorizationService.ROLE_ADMIN)
 public class GroupsPage extends AuthenticatedPage {
+    @SpringBean
+    private AddonsManager addonsManager;
+
     public GroupsPage() {
+
         add(new GroupsListPanel("groupsList"));
+        Label warningLabel = new Label("warning",
+                "LDAP groups authorization is active - not showing user-specific permissions implied by the user's effective LDAP groups.");
+        add(warningLabel);
+        warningLabel.setVisible(addonsManager.<AddonFactory>isAddonActivated("ldap"));
     }
 
     @Override

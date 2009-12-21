@@ -62,6 +62,7 @@ public class ArtifactoryHome {
     private File workTmpDir;
     private File repoTmpDir;
     private File tmpUploadsDir;
+    private File logoDir;
 
     public ArtifactoryHome() {
         this(new SimpleLog() {
@@ -143,6 +144,10 @@ public class ArtifactoryHome {
         return tmpUploadsDir;
     }
 
+    public File getLogoDir() {
+        return logoDir;
+    }
+
     public File getOrCreateSubDir(String subDirName) throws IOException {
         return getOrCreateSubDir(getHomeDir(), subDirName);
     }
@@ -166,6 +171,7 @@ public class ArtifactoryHome {
             workTmpDir = getOrCreateSubDir(rootTmpDir, "work");
             repoTmpDir = getOrCreateSubDir(rootTmpDir, "repositories");
             tmpUploadsDir = getOrCreateSubDir(rootTmpDir, "artifactory-uploads");
+            logoDir = getOrCreateSubDir(etcDir, "ui");
 
             //Manage the artifactory.system.properties file under etc dir
             initAndLoadSystemPropertyFile();
@@ -323,7 +329,8 @@ public class ArtifactoryHome {
         CompoundVersionDetails details = ArtifactoryVersionReader.read(inputStream);
         //Sanity check
         if (!details.isCurrent()) {
-            throw new IllegalStateException("Running version is not the current version.");
+            throw new IllegalStateException("Running version is not the current version. " +
+                    "Running: " + details + " Current: " + details.getVersion());
         }
         return details;
     }

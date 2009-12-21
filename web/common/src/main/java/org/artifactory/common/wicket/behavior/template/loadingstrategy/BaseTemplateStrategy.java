@@ -40,8 +40,9 @@ public abstract class BaseTemplateStrategy implements Serializable {
     }
 
     protected String getDefaultTemplate(TemplateBehavior behavior) {
-        String filename = behavior.getClass().getSimpleName() + ".html";
-        return new PackagedTextTemplate(behavior.getClass(), filename).getString();
+        final Class<? extends TemplateBehavior> resourceClass = behavior.getResourceClass();
+        String filename = resourceClass.getSimpleName() + ".html";
+        return new PackagedTextTemplate(resourceClass, filename).getString();
     }
 
     public void setTemplate(String template) {

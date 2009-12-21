@@ -58,7 +58,7 @@ public interface TaskService extends ReloadableBean {
      *
      * @return true if the caller needs break from the task's callback execution loop
      */
-    boolean blockIfPausedAndShouldBreak();
+    boolean pauseOrBreak();
 
     /**
      * Cancels and stops all active tasks of the specified type

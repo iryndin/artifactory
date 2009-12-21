@@ -27,15 +27,22 @@
         </div>
 
         <div wicket:id="borderDn" class="ldap-dn-fields">
-            <div class="field field-100">
-                <label>User DN Pattern</label>
-                <span wicket:id="userDnPattern.help"/>
+            <div class="field-row">
+                <div class="field field-100 float-left">
+                    <label>User DN Pattern</label>
+                    <span wicket:id="userDnPattern.help"/>
 
-                <div class="value">
-                    <input wicket:id="userDnPattern" type="text" class="text"/>
+                    <div class="value">
+                        <input wicket:id="userDnPattern" type="text" class="text"/>
+                    </div>
+                </div>
+
+                <div class="float-right">
+                    <div class="value">
+                        <input wicket:id="autoCreateUser" type="checkbox"/>
+                    </div>
                 </div>
             </div>
-
             <div class="field field-left">
                 <label>Search Filter</label>
                 <span wicket:id="searchFilter.help"/>
@@ -72,7 +79,7 @@
                 </div>
             </div>
 
-            <div class="clear"/>
+            <div class="clear"></div>
             <div class="field field-sep">
                 <div class="value">
                     <input wicket:id="searchSubTree" type="checkbox"/>

@@ -18,7 +18,7 @@
 package org.artifactory.webapp.wicket.page.config.proxy;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -27,12 +27,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.common.wicket.WicketProperty;
-import org.artifactory.common.wicket.ajax.ConfirmAjaxBehavior;
 import org.artifactory.common.wicket.behavior.defaultbutton.DefaultButtonBehavior;
 import org.artifactory.common.wicket.component.CreateUpdateAction;
 import org.artifactory.common.wicket.component.CreateUpdatePanel;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
 import org.artifactory.common.wicket.component.checkbox.styled.StyledCheckbox;
+import org.artifactory.common.wicket.component.confirm.AjaxConfirm;
+import org.artifactory.common.wicket.component.confirm.ConfirmDialog;
 import org.artifactory.common.wicket.component.links.TitledAjaxSubmitLink;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.common.wicket.component.modal.links.ModalCloseLink;
@@ -41,6 +42,7 @@ import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.artifactory.webapp.wicket.util.validation.JcrNameValidator;
+import org.artifactory.webapp.wicket.util.validation.PortNumberValidator;
 import org.artifactory.webapp.wicket.util.validation.UniqueXmlIdValidator;
 import org.artifactory.webapp.wicket.util.validation.XsdNCNameValidator;
 import org.springframework.util.StringUtils;
@@ -61,7 +63,7 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
     public ProxyCreateUpdatePanel(CreateUpdateAction action, ProxyDescriptor proxyDescriptor,
             ProxiesListPanel proxiesListPanel) {
         super(action, proxyDescriptor);
-        setWidth(380);
+        setWidth(410);
 
         add(form);
 
@@ -79,7 +81,11 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         border.add(proxyKeyField);
 
         border.add(new RequiredTextField("host"));
-        border.add(new RequiredTextField("port", Integer.class));
+
+        RequiredTextField portField = new RequiredTextField("port");
+        portField.add(new PortNumberValidator());
+        border.add(portField);
+
         border.add(new TextField("username"));
         PasswordTextField passwordField = new PasswordTextField("password");
         passwordField.setRequired(false);
@@ -110,6 +116,11 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
         border.add(new SchemaHelpBubble("defaultProxy.help"));
     }
 
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
     private TitledAjaxSubmitLink createSubmitButton(final ProxiesListPanel proxiesListPanel) {
         String submitCaption = isCreate() ? "Create" : "Save";
         return new TitledAjaxSubmitLink("submit", submitCaption, form) {
@@ -137,30 +148,35 @@ public class ProxyCreateUpdatePanel extends CreateUpdatePanel<ProxyDescriptor> {
     }
 
     private class SystemDefaultCheckbox extends StyledCheckbox {
-
-        public SystemDefaultCheckbox(final boolean checked) {
+        private SystemDefaultCheckbox(final boolean checked) {
             super("sysCheckbox", new Model(checked));
             setOutputMarkupId(true);
 
-            ConfirmAjaxBehavior confirmAjaxBehavior = new ConfirmAjaxBehavior("onclick",
-                    "Do you wish to use this proxy with existing remote repositories (and override any assigned proxies)?") {
-
+            add(new AjaxFormComponentUpdatingBehavior("onclick") {
                 @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return super.getAjaxCallDecorator();
-                }
+                protected void onUpdate(AjaxRequestTarget target) {
+                    if (isChecked()) {
+                        AjaxConfirm.get().confirm(new ConfirmDialog() {
+                            public String getMessage() {
+                                return "Do you wish to use this proxy with existing remote repositories (and override any assigned proxies)?";
+                            }
 
-                @Override
-                protected void onUpdate(boolean approved, AjaxRequestTarget target) {
-                    boolean checked = isChecked();
-                    defaultForAllRemotRepo = checked && approved;
-                    isDefaultProxy = checked;
-                    setConfirmEnabled(!checked);
-                    target.addComponent(SystemDefaultCheckbox.this);
+                            public void onConfirm(boolean approved, AjaxRequestTarget target) {
+                                update(approved, target);
+                            }
+                        });
+                    } else {
+                        update(true, target);
+                    }
                 }
-            };
-            confirmAjaxBehavior.setConfirmEnabled(!checked);
-            add(confirmAjaxBehavior);
+            });
+        }
+
+        private void update(boolean approved, AjaxRequestTarget target) {
+            boolean checked = isChecked();
+            defaultForAllRemotRepo = checked && approved;
+            isDefaultProxy = checked;
+            target.addComponent(this);
         }
     }
 }

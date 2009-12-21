@@ -38,7 +38,7 @@ public class ArtifactoryPool {
     protected final ArtifactoryBaseDataStore factory;
     protected final BlockingQueue<ArtifactoryConnectionRecoveryManager> pool =
             new LinkedBlockingQueue<ArtifactoryConnectionRecoveryManager>();
-    private final long timeout = ConstantValues.lockTimeoutSecs.getLong() / 10L;
+    private final long timeout = ConstantValues.locksTimeoutSecs.getLong() / 10L;
 
     /**
      * Create a new pool using the given factory and maximum pool size.

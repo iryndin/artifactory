@@ -10,7 +10,7 @@ import java.io.File;
  * @author Yoav Landman
  */
 public interface IvyService {
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     ModuleDescriptor parseIvyFile(RepoPath repoPath);
 
     ModuleDescriptor parseIvyFile(File file);

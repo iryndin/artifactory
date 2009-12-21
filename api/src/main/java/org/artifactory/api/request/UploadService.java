@@ -17,8 +17,6 @@
 
 package org.artifactory.api.request;
 
-import org.artifactory.api.repo.Lock;
-
 import java.io.IOException;
 
 public interface UploadService {

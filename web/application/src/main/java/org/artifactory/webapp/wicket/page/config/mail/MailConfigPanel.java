@@ -47,6 +47,7 @@ import org.artifactory.log.LoggerFactory;
 import org.artifactory.util.EmailException;
 import org.artifactory.webapp.wicket.page.config.SchemaHelpBubble;
 import org.artifactory.webapp.wicket.page.logs.SystemLogsPage;
+import org.artifactory.webapp.wicket.util.validation.PortNumberValidator;
 import org.slf4j.Logger;
 
 /**
@@ -75,7 +76,7 @@ public class MailConfigPanel extends TitledPanel {
         form = new Form("form", compoundPropertyModel);
 
         addField("host", null, true, false, null, descriptor);
-        final TextField portTextField = addField("port", Integer.class, true, true, null, descriptor);
+        final TextField portTextField = addField("port", null, true, true, new PortNumberValidator(), descriptor);
         addField("username", null, false, false, null, descriptor);
         PasswordTextField passwordTextField =
                 new PasswordTextField("password", new PropertyModel(descriptor, "password"));
@@ -237,7 +238,7 @@ public class MailConfigPanel extends TitledPanel {
      * @return TextField - The newly created and added text field
      */
     private TextField addField(String id, Class type, boolean required, boolean outputMarkupId, IValidator validator,
-                               Descriptor descriptor) {
+            Descriptor descriptor) {
         TextField textField = (type != null) ? new TextField(id, type) : new TextField(id);
         textField.setOutputMarkupId(outputMarkupId);
         textField.setRequired(required);

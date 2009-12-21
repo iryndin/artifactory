@@ -19,8 +19,6 @@ package org.artifactory.jcr.md;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
-import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.fs.ChecksumInfo;
 import org.artifactory.api.fs.MetadataInfo;
@@ -38,13 +36,13 @@ import org.artifactory.jcr.JcrServiceImpl;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -61,10 +59,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
+import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
+
 /**
  * User: freds Date: Aug 10, 2008 Time: 3:27:38 PM
  */
 @Service
+@Reloadable(beanClass = MetadataService.class,
+        initAfter = {MetadataDefinitionService.class, InternalCacheService.class})
 public class MetadataServiceImpl implements InternalMetadataService {
     private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
@@ -79,11 +82,6 @@ public class MetadataServiceImpl implements InternalMetadataService {
 
     @Autowired
     private AuthorizationService authorizationService;
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(MetadataService.class);
-    }
 
     public void init() {
     }
@@ -167,6 +165,7 @@ public class MetadataServiceImpl implements InternalMetadataService {
     }
 
     //Unprotected data - called from import (among others)
+
     public void setXmlMetadata(MetadataAware metadataAware, String metadataName, InputStream is, StatusHolder status) {
         //We need to verify the data requested to be saved, since we have no control over it
         MetadataDefinition definition = definitionService.getMetadataDefinition(metadataName);

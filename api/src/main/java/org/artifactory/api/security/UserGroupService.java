@@ -27,6 +27,7 @@ import java.util.Set;
  */
 public interface UserGroupService {
     // Own profile page
+
     UserInfo currentUser();
 
     /**
@@ -100,7 +101,7 @@ public interface UserGroupService {
     String resetPassword(String userName, String remoteAddress, String resetPageUrl);
 
     /**
-     * For use with external authentication methods only (CAS\LDAP\SSO) Tries to locate a user with the given name. When
+     * For use with external authentication methods only (CAS\LDAP\SSO) tries to locate a user with the given name. When
      * can't be found a new user will be created. The user will have no defined email, will not be an admin, and will
      * not have an updatable profile
      *

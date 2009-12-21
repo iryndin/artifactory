@@ -71,6 +71,8 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
         CompoundVersionDetails runningVersionDetails = artifactoryHome.getRunningVersionDetails();
         String versionNumber = runningVersionDetails.getVersionName();
         String revision = runningVersionDetails.getRevision();
+        versionNumber = fixVersion(versionNumber);
+        revision = fixVersion(revision);
 
         log.info(
                 "\n" +
@@ -82,7 +84,7 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
                         "/_/    \\_\\_|   \\__|_|_| \\__,_|\\___|\\__\\___/|_|   \\__, |\n" +
                         String.format(" Version: %-19s Revision: %-9s __/ |\n", versionNumber, revision) +
                         "                                                 |___/\n" +
-                        " Artifactory Home: '" + artifactoryHome.getHomeDir().getAbsolutePath() + "'"
+                        " Artifactory Home: '" + artifactoryHome.getHomeDir().getAbsolutePath() + "'\n"
         );
 
         if (!isSupportedJava6()) {
@@ -121,6 +123,13 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
                 String.format("%-17s", (DurationFormatUtils.formatPeriod(start, System.currentTimeMillis(), "s")) +
                         " seconds)") + " ###\n" +
                 "###########################################################\n");
+    }
+
+    private String fixVersion(String version) {
+        if (version.startsWith("${")) {
+            return "Unknown";
+        }
+        return version;
     }
 
     public void contextDestroyed(ServletContextEvent event) {

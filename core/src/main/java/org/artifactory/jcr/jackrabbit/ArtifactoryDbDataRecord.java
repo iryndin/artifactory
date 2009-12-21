@@ -52,7 +52,8 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
     private final ArtifactoryBaseDataStore store;
 
     // Length coming from DB (or file system ?)
-    /* package */ long length;
+    /* package */
+    long length;
 
     // Last modified time coming from DB
     private final AtomicLong lastModified;
@@ -173,7 +174,7 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
     }
 
     private long getLoadSyncTimeOut() {
-        return ConstantValues.lockTimeoutSecs.getLong();
+        return ConstantValues.locksTimeoutSecs.getLong();
     }
 
     public class DataRecordFileStream extends FileInputStream {
@@ -525,12 +526,12 @@ public class ArtifactoryDbDataRecord extends AbstractDataRecord implements State
                     }
                 } else {
                     File parentFile = file.getParentFile();
-                    if (!parentFile.exists()) {
-                        if (!parentFile.mkdirs()) {
-                            throw new DataStoreException(
-                                    "Could not create folder " + parentFile.getAbsolutePath() + " for file store");
-                        }
+                    // Check that folder exists in case that 2 threads are trying to create at the same time
+                    if (!parentFile.mkdirs() && !parentFile.exists()) {
+                        throw new DataStoreException(
+                                "Could not create folder " + parentFile.getAbsolutePath() + " for file store");
                     }
+
                     if (!tempFile.renameTo(file)) {
                         throw new DataStoreException("File move for id " + getIdentifier() +
                                 " from " + tempFile.getAbsolutePath() +

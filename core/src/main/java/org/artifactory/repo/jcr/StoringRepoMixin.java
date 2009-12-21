@@ -17,9 +17,6 @@
 
 package org.artifactory.repo.jcr;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.common.MultiStatusHolder;
@@ -50,13 +47,13 @@ import org.artifactory.jcr.fs.JcrFsItem;
 import org.artifactory.jcr.lock.FsItemLockEntry;
 import org.artifactory.jcr.lock.LockEntryId;
 import org.artifactory.jcr.lock.LockingHelper;
+import org.artifactory.jcr.lock.MonitoringReadWriteLock;
 import org.artifactory.jcr.lock.aop.LockingAdvice;
 import org.artifactory.jcr.md.MetadataService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.context.RequestContext;
 import org.artifactory.repo.interceptor.RepoInterceptors;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.resource.ArtifactResource;
 import org.artifactory.resource.FileResource;
 import org.artifactory.resource.MetadataResource;
 import org.artifactory.resource.RepoResource;
@@ -71,15 +68,13 @@ import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T> {
     private static final Logger log = LoggerFactory.getLogger(StoringRepoMixin.class);
@@ -87,7 +82,7 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     private final JcrFileCreator jcrFileCreator = new JcrFileCreator();
     private final JcrFolderCreator jcrFolderCreator = new JcrFolderCreator();
     private String repoRootPath;
-    private Map<RepoPath, ReentrantReadWriteLock> locks;
+    private Map<RepoPath, MonitoringReadWriteLock> locks;
     private Map<RepoPath, JcrFsItem> fsItemCache;
     private RepoInterceptors interceptors;
     private JcrRepoService jcrService;
@@ -195,6 +190,11 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         return getJcrFile(repoPath);
     }
 
+    public JcrFile getJcrFile(String relPath) throws FileExpectedException {
+        RepoPath repoPath = new RepoPath(getKey(), relPath);
+        return getJcrFile(repoPath);
+    }
+
     public JcrFile getJcrFile(RepoPath repoPath) throws FileExpectedException {
         JcrFsItem item = getJcrFsItem(repoPath);
         if (item != null && !item.isFile()) {
@@ -229,15 +229,6 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
     public JcrFsItem getLockedJcrFsItem(Node node) {
         JcrFsItemLocator locator = new JcrFsItemLocator(node, false);
         return internalGetLockedJcrFsItem(locator);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private <T extends JcrFsItem<? extends ItemInfo>> FsItemCreator<T> getCreator(T item) {
-        if (item.isDirectory()) {
-            return (FsItemCreator<T>) jcrFolderCreator;
-        } else {
-            return (FsItemCreator<T>) jcrFileCreator;
-        }
     }
 
     public JcrFile getLockedJcrFile(String relPath, boolean createIfMissing) throws FileExpectedException {
@@ -375,21 +366,6 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         }
     }
 
-    public Model getModel(ArtifactResource res) {
-        String pom = getPomContent(res);
-        if (pom == null) {
-            return null;
-        }
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        try {
-            Model model = reader.read(new StringReader(pom));
-            return model;
-        } catch (Exception e) {
-            log.warn("Failed to read pom from '" + pom + "'.", e);
-            return null;
-        }
-    }
-
     /**
      * Create the resource in the local repository
      *
@@ -425,6 +401,9 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
             } else {
                 //Create the parent folder if it does not exist
                 RepoPath parentPath = repoPath.getParent();
+                if (parentPath == null) {
+                    throw new RepositoryException("Cannot save resource, no parent repo path exists");
+                }
                 if (!itemExists(parentPath.getPath())) {
                     JcrFolder jcrFolder = getLockedJcrFolder(parentPath, true);
                     jcrFolder.mkdirs();
@@ -477,19 +456,6 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         }
     }
 
-    public String getPomContent(ArtifactResource res) {
-        return getPomContent(res.getRepoPath().getPath());
-    }
-
-    public String getPomContent(ItemInfo itemInfo) {
-        if (itemInfo.isFolder()) {
-            // TODO: Try to extract a POM from the folder
-            throw new IllegalArgumentException("Item " + itemInfo + " is not a maven artifact with a POM");
-        }
-        String relPath = itemInfo.getRelPath();
-        return getPomContent(relPath);
-    }
-
     public boolean shouldProtectPathDeletion(String path, boolean overwrite) {
         //Never protect checksums
         boolean protect = !NamingUtils.isChecksum(path);
@@ -532,9 +498,15 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
 
     public void delete() {
         JcrFolder rootFolder = getLockedRootFolder();
-        List<JcrFsItem> children = jcrService.getChildren(rootFolder, true);
+        //Delete 1st level children
+        List<JcrFsItem> children;
+        children = jcrService.getChildren(rootFolder, true);
         for (JcrFsItem child : children) {
-            child.delete();
+            try {
+                child.delete();
+            } catch (Exception e) {
+                log.error("Could not delete repository child node '{}'.", child.getName(), e);
+            }
         }
         //Move the deleted item to the trash
         jcrService.trash(children);
@@ -615,46 +587,12 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         return fsItem;
     }
 
-    private ReentrantReadWriteLock getLock(RepoPath path) {
-        ReentrantReadWriteLock lockEntry = locks.get(path);
+    private MonitoringReadWriteLock getLock(RepoPath path) {
+        MonitoringReadWriteLock lockEntry = locks.get(path);
         if (lockEntry == null) {
-            lockEntry = locks.put(path, new ReentrantReadWriteLock());
+            lockEntry = locks.put(path, new MonitoringReadWriteLock());
         }
         return lockEntry;
-    }
-
-    private String getPomContent(String relPath) {
-        String relativePath;
-        if (!relPath.endsWith(".pom")) {
-            File file = new File(relPath);
-            String fileName = file.getName();
-            int dotIdx = fileName.lastIndexOf(".");
-            if (dotIdx < 0) {
-                return "No content found.";
-            }
-            String pomFileName = fileName.substring(0, dotIdx) + ".pom";
-            relativePath = new File(file.getParent(), pomFileName).getPath();
-        } else {
-            relativePath = relPath;
-        }
-        JcrFile jcrFile;
-        try {
-            jcrFile = getLockedJcrFile(relativePath, true);
-        } catch (FileExpectedException e) {
-            throw new RuntimeException("Cannot read a POM from a folder name " + relPath, e);
-        }
-        if (jcrFile != null) {
-            InputStream is = null;
-            try {
-                is = jcrFile.getStream();
-                return IOUtils.toString(is, "utf-8");
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read pom from '" + relativePath + "'.", e);
-            } finally {
-                IOUtils.closeQuietly(is);
-            }
-        }
-        return null;
     }
 
     private JcrFsItem internalGetLockedJcrFsItem(JcrFsItemLocator locator) {
@@ -813,7 +751,7 @@ public class StoringRepoMixin<T extends RepoDescriptor> implements StoringRepo<T
         }
 
         public JcrFsItem lock(JcrFsItem fsItem) {
-            if (acquireReadLock && fsItem != null) {
+            if (acquireReadLock && (fsItem != null)) {
                 if (fsItem.isMutable()) {
                     throw new IllegalStateException("Cannot acquire read lock on mutable object " + fsItem);
                 }

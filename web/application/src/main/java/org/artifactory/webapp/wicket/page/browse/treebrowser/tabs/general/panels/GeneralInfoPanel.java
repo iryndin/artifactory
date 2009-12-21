@@ -133,7 +133,7 @@ public class GeneralInfoPanel extends Panel {
         infoBorder.add(urlLabelContainer);
         infoBorder.add(urlContainer);
 
-        if ((authorizationService.isAdmin()) && isCache) {
+        if (isCache) {
             urlLabelContainer.replaceWith(new Label("urlLabel", "Remote URL: "));
             String remoteRepoUrl = remoteRepo.getUrl();
             if ((remoteRepoUrl != null) && (!StringUtils.endsWith(remoteRepoUrl, "/"))) {
@@ -191,7 +191,7 @@ public class GeneralInfoPanel extends Panel {
 
         infoBorder.add(watchAddon.getWatchingSinceLabel("watchingSince", selectedPath));
         infoBorder.add(watchAddon.getDirectlyWatchedPathPanel("watchedPath", selectedPath));
-        LabeledValue repoPath = new LabeledValue("repoPath", "Repository path: ", repoItem.getRepoPath() + "");
+        LabeledValue repoPath = new LabeledValue("repoPath", "Repository Path: ", repoItem.getRepoPath() + "");
         infoBorder.add(repoPath);
         // disable/enable and set info according to the node type
         if (itemInfo.isFolder()) {

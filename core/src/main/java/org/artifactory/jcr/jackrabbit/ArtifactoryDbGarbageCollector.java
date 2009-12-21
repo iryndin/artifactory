@@ -34,15 +34,7 @@ import org.artifactory.jcr.gc.JcrGarbageCollector;
 import org.artifactory.log.LoggerFactory;
 import org.slf4j.Logger;
 
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
+import javax.jcr.*;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -417,8 +409,10 @@ public class ArtifactoryDbGarbageCollector implements JcrGarbageCollector {
                                 " is not a binary property for node " + nodePath);
                     }
                 }
-            } catch (InvalidItemStateException e) {
+            } catch (ItemNotFoundException e) {
                 // The node was already deleted, ignore
+            } catch (InvalidItemStateException e) {
+                // The node was already deleted or moved, ignore
             } catch (RepositoryException e) {
                 log.warn("Repository access error during read of garbage collection", e);
                 throw e;

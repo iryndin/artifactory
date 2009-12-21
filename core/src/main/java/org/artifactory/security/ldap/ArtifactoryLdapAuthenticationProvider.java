@@ -17,6 +17,7 @@
 
 package org.artifactory.security.ldap;
 
+import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.security.SimpleUser;
@@ -27,6 +28,7 @@ import org.springframework.security.AuthenticationException;
 import org.springframework.security.AuthenticationServiceException;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.ldap.LdapAuthenticationProvider;
+import org.springframework.security.providers.ldap.LdapAuthenticator;
 
 /**
  * Custom Ldap authentication provider just for creating local users for newly ldap authenticated users.
@@ -34,22 +36,27 @@ import org.springframework.security.providers.ldap.LdapAuthenticationProvider;
  * @author Yossi Shaul
  */
 public class ArtifactoryLdapAuthenticationProvider extends LdapAuthenticationProvider {
-    private static final Logger log =
-            LoggerFactory.getLogger(ArtifactoryLdapAuthenticationProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ArtifactoryLdapAuthenticationProvider.class);
 
     @Autowired
     private UserGroupService userGroupService;
 
-    private InternalLdapAutenticator authenticator;
+    @Autowired
+    private CentralConfigService centralConfig;
 
-    public ArtifactoryLdapAuthenticationProvider(InternalLdapAutenticator authenticator) {
+    private LdapAuthenticator authenticator;
+
+
+    @Autowired
+    public ArtifactoryLdapAuthenticationProvider(LdapAuthenticator authenticator) {
         super(authenticator);
         this.authenticator = authenticator;
     }
 
     @Override
     public boolean supports(Class authentication) {
-        return authenticator.isLdapActive() && super.supports(authentication);
+        return centralConfig.getDescriptor().getSecurity().getEnabledLdapSettings() != null &&
+                super.supports(authentication);
     }
 
     @Override

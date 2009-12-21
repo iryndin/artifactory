@@ -17,7 +17,6 @@
 
 package org.artifactory.repo.index;
 
-import org.apache.commons.collections15.OrderedMap;
 import org.apache.lucene.store.FSDirectory;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.context.ContextHelper;
@@ -28,7 +27,6 @@ import org.artifactory.descriptor.repo.RepoBaseDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.log.LoggerFactory;
-import org.artifactory.repo.LocalCacheRepo;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
 import org.artifactory.repo.RemoteRepo;
@@ -39,6 +37,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.schedule.quartz.QuartzTask;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.util.ExceptionUtils;
 import org.artifactory.util.FileUtils;
@@ -48,7 +47,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -65,6 +63,7 @@ import java.util.TreeSet;
  * Created by IntelliJ IDEA. User: yoavl
  */
 @Service
+@Reloadable(beanClass = InternalIndexerService.class, initAfter = {TaskService.class, InternalRepositoryService.class})
 public class IndexerServiceImpl implements InternalIndexerService {
     private static final Logger log = LoggerFactory.getLogger(IndexerServiceImpl.class);
 
@@ -78,11 +77,6 @@ public class IndexerServiceImpl implements InternalIndexerService {
     private InternalRepositoryService repositoryService;
 
     private IndexerDescriptor descriptor;
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalIndexerService.class);
-    }
 
     @SuppressWarnings({"unchecked"})
     public Class<? extends ReloadableBean>[] initAfter() {
@@ -129,7 +123,7 @@ public class IndexerServiceImpl implements InternalIndexerService {
         //Do the indexing work
         for (RealRepo indexedRepo : indexedRepos) {
             //Check if we need to stop/suspend
-            if (taskService.blockIfPausedAndShouldBreak()) {
+            if (taskService.pauseOrBreak()) {
                 return;
             }
             RepoIndexerData repoIndexerData = new RepoIndexerData(indexedRepo);
@@ -141,7 +135,7 @@ public class IndexerServiceImpl implements InternalIndexerService {
                 taskService.startTask(taskFindOrCreateIndex);
                 taskService.waitForTaskCompletion(taskFindOrCreateIndex.getToken());
                 //Check again if we need to stop/suspend
-                if (taskService.blockIfPausedAndShouldBreak()) {
+                if (taskService.pauseOrBreak()) {
                     return;
                 }
                 QuartzTask saveIndexFileTask = new QuartzTask(SaveIndexFileJob.class, "SaveIndexFile");
@@ -198,16 +192,12 @@ public class IndexerServiceImpl implements InternalIndexerService {
             //Merge virtual repo indexes
             for (VirtualRepo virtualRepo : virtualRepos) {
                 //Check if we need to stop/suspend
-                if (taskService.blockIfPausedAndShouldBreak()) {
+                if (taskService.pauseOrBreak()) {
                     return;
                 }
-                OrderedMap<String, LocalRepo> searchableLocalRepositories =
-                        virtualRepo.getSearchableLocalRepositories();
-                OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories =
-                        virtualRepo.getSearchableLocalCacheRepositories();
                 Set<LocalRepo> localRepos = new HashSet<LocalRepo>();
-                localRepos.addAll(searchableLocalRepositories.values());
-                localRepos.addAll(searchableLocalCacheRepositories.values());
+                localRepos.addAll(virtualRepo.getResolveLocalRepos());
+                localRepos.addAll(virtualRepo.getResolveLocalCachedRepos());
                 if (indexedRepos.size() == 0) {
                     return;
                 }
@@ -222,7 +212,7 @@ public class IndexerServiceImpl implements InternalIndexerService {
                     //Take the local index from each relevant indexed repo (for remote take local cache)
                     for (RealRepo indexedRepo : indexedRepos) {
                         //Check if we need to stop/suspend
-                        if (taskService.blockIfPausedAndShouldBreak()) {
+                        if (taskService.pauseOrBreak()) {
                             return;
                         }
                         LocalRepo localRepo = indexedRepo.isLocal() ? (LocalRepo) indexedRepo :

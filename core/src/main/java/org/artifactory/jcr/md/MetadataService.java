@@ -30,14 +30,14 @@ import java.util.List;
  * User: freds Date: Aug 10, 2008 Time: 3:48:44 PM
  */
 public interface MetadataService extends ReloadableBean {
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     List<String> getXmlMetadataNames(MetadataAware obj);
 
     <MD> MD getXmlMetadataObject(MetadataAware metadataAware, Class<MD> clazz);
 
     <MD> MD getXmlMetadataObject(MetadataAware metadataAware, Class<MD> clazz, boolean createIfMissing);
 
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     String getXmlMetadata(MetadataAware metadataAware, String metadataName);
 
     /**
@@ -61,10 +61,10 @@ public interface MetadataService extends ReloadableBean {
     /**
      * Gets MetadataInfo for <i>existing</i> metadata
      */
-    @Lock(transactional = true, readOnly = false)
+    @Lock(transactional = true)
     MetadataInfo getMetadataInfo(MetadataAware MetadataAware, String metadataName);
 
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     boolean hasXmlMetadata(MetadataAware metadataAware, String metadataName);
 
     @Lock(transactional = true)

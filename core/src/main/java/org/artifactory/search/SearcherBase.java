@@ -23,9 +23,11 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.fs.ItemInfo;
+import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
 import org.artifactory.api.search.SearchControls;
+import org.artifactory.api.search.SearchControlsBase;
 import org.artifactory.api.search.SearchResult;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.security.AuthorizationService;
@@ -37,6 +39,7 @@ import org.artifactory.jcr.fs.FolderInfoProxy;
 import org.artifactory.jcr.fs.ItemInfoProxy;
 import org.artifactory.jcr.fs.JcrFile;
 import org.artifactory.log.LoggerFactory;
+import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.util.ExceptionUtils;
 import org.jdom.Content;
@@ -57,6 +60,7 @@ import java.util.List;
  */
 public abstract class SearcherBase<C extends SearchControls, R extends SearchResult> implements Searcher<C, R> {
     private static final Logger log = LoggerFactory.getLogger(SearcherBase.class);
+    protected static final String FORWARD_SLASH = "/";
 
     private final JcrService jcrService;
     private final InternalRepositoryService repoService;
@@ -92,6 +96,28 @@ public abstract class SearcherBase<C extends SearchControls, R extends SearchRes
         results.setTime(time);
         log.debug("Total search time: {} ms", time);
         return results;
+    }
+
+    protected StringBuilder getPathQueryBuilder(SearchControlsBase controls) {
+        StringBuilder queryBuilder = new StringBuilder("/jcr:root");
+        queryBuilder.append(JcrPath.get().getRepoJcrRootPath()).append(FORWARD_SLASH);
+        addRepoToQuery(controls, queryBuilder);
+        return queryBuilder;
+    }
+
+    //Add specific repositories to search from. If list is empty query will search all repos
+    private void addRepoToQuery(SearchControlsBase controls, StringBuilder queryBuilder) {
+        if (controls.isSpecificRepoSearch()) {
+            List<String> repoKeys = controls.getSelectedRepoForSearch();
+            queryBuilder.append(".[");
+            for (String repoKey : repoKeys) {
+                queryBuilder.append("fn:name() ='");
+                queryBuilder.append(repoKey);
+                queryBuilder.append("' or ");
+            }
+            int builderCurentLength = queryBuilder.length();
+            queryBuilder.replace(builderCurentLength - 4, builderCurentLength, "]/");
+        }
     }
 
     public abstract SearchResults<R> doSearch(C controls) throws RepositoryException;
@@ -278,5 +304,41 @@ public abstract class SearcherBase<C extends SearchControls, R extends SearchRes
             itemInfo = new FolderInfoProxy(repoPath);
         }
         return itemInfo;
+    }
+
+    /**
+     * Appends the given String to the given StringBuilder, and adds a forward slash to the end
+     *
+     * @param sb       StringBuilder to add content to
+     * @param elements Elements to add
+     */
+    protected void addElementsToSb(StringBuilder sb, String... elements) {
+        for (String element : elements) {
+            sb.append(element).append(FORWARD_SLASH);
+        }
+    }
+
+    /**
+     * Indicates whether the given result repo path is valid or not.<br> A repo path will stated as valid if it is
+     * originated in a local repository and if it is not a checksum file.
+     *
+     * @param repoPath Repo path to validate
+     * @return True if the repo path is valid
+     */
+    protected boolean isResultRepoPathValid(RepoPath repoPath) {
+        LocalRepo localRepo = getRepoService().localOrCachedRepositoryByKey(repoPath.getRepoKey());
+        return isRepoPathValid(repoPath, localRepo);
+    }
+
+    /**
+     * Indicates whether the given result repo path is valid or not.<br> A repo path will stated as valid if the given
+     * origin local repo is not null and if it is not a checksum file.
+     *
+     * @param repoPath        Repo path to validate
+     * @param sourceLocalRepo Source local repo to assert as valid
+     * @return True if the repo path is valid
+     */
+    protected boolean isRepoPathValid(RepoPath repoPath, LocalRepo sourceLocalRepo) {
+        return (sourceLocalRepo != null) && (!NamingUtils.isChecksum(repoPath.getPath()));
     }
 }

@@ -96,6 +96,10 @@ public class Properties implements Info {
         return props.isEmpty();
     }
 
+    public boolean containsKey(String key) {
+        return props.containsKey(key);
+    }
+
     @Override
     public boolean equals(@Nullable Object that) {
         if (that instanceof Properties) {

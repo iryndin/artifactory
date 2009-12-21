@@ -52,7 +52,7 @@ import org.artifactory.security.interceptor.SecurityConfigurationChangesIntercep
 import org.artifactory.security.ldap.LdapConnectionTester;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
-import org.artifactory.spring.ReloadableBean;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.update.security.SecurityVersion;
 import org.artifactory.update.utils.BackupUtils;
 import org.artifactory.util.EmailException;
@@ -69,7 +69,6 @@ import org.springframework.security.acls.sid.Sid;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.jcr.Session;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -83,6 +82,8 @@ import java.text.MessageFormat;
 import java.util.*;
 
 @Service
+@Reloadable(beanClass = InternalSecurityService.class,
+        initAfter = {JcrService.class, UserGroupManager.class, InternalAclManager.class})
 public class SecurityServiceImpl implements InternalSecurityService {
     private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
@@ -112,23 +113,13 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
     private InternalArtifactoryContext context;
 
-    @PostConstruct
-    public void register() {
-        context.addReloadableBean(InternalSecurityService.class);
-    }
-
     @Autowired
     private void setApplicationContext(ApplicationContext context) throws BeansException {
         this.context = (InternalArtifactoryContext) context;
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Class<? extends ReloadableBean>[] initAfter() {
-        return new Class[]{JcrService.class, UserGroupManager.class, InternalAclManager.class};
-    }
-
     public void init() {
-        //Locate and import external configuration file 
+        //Locate and import external configuration file
         checkForExternalConfiguration();
         checkOcmFolders();
         CoreAddons coreAddon = addons.addonByType(CoreAddons.class);
@@ -566,7 +557,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
                 stream = getClass().getResourceAsStream("/org/artifactory/email/messages/resetPassword.properties");
                 ResourceBundle resourceBundle = new PropertyResourceBundle(stream);
                 String body = resourceBundle.getString("body");
-                body = MessageFormat.format(body, username, resetPage, adminList);
+                body = MessageFormat.format(body, username, remoteAddress, resetPage, adminList);
                 mailService.sendMail(new String[]{userInfo.getEmail()}, "Reset password request", body);
             } catch (EmailException e) {
                 log.error("Error while resetting password for user: '" + username + "'.", e);
@@ -607,8 +598,8 @@ public class SecurityServiceImpl implements InternalSecurityService {
         try {
             userInfo = findUser(username);
         } catch (UsernameNotFoundException e) {
-            //If can't find user
-            log.warn("Could not retrieve last login info: specified username not found.", e);
+            //If can't find user (might be transient user)
+            log.trace("Could not retrieve last login info for username '{}'.", username);
             return null;
         }
 
@@ -626,8 +617,8 @@ public class SecurityServiceImpl implements InternalSecurityService {
         try {
             userInfo = findUser(username);
         } catch (UsernameNotFoundException e) {
-            //If can't find user
-            log.warn("Could not update non-exiting username: '" + username + ".", e);
+            // user not found (might be a transient user)
+            log.trace("Could not update non-exiting username: {}'.", username);
             return;
         }
         userInfo.setLastLoginTimeMillis(loginTimeMillis);
@@ -1030,7 +1021,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     private void createDefaultAdminUser() {
-        UserInfoBuilder builder = new UserInfoBuilder(USER_DEFAULT_ADMIN);
+        UserInfoBuilder builder = new UserInfoBuilder(DEFAULT_ADMIN_USER);
         builder.password(DigestUtils.md5Hex(DEFAULT_ADMIN_PASSWORD)).email(null).admin(true).updatableProfile(true);
         createUser(builder.build());
     }

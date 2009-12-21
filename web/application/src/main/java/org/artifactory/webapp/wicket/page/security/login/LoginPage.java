@@ -17,6 +17,8 @@
 
 package org.artifactory.webapp.wicket.page.security.login;
 
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
 import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
 import org.artifactory.webapp.wicket.page.base.BasePage;
@@ -30,9 +32,11 @@ public class LoginPage extends BasePage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public LoginPage() {
+        final Form form = new Form("loginForm", new CompoundPropertyModel(new LoginInfo()));
+        add(form);
         TitledBorder border = new TitledBorder("loginBorder", "outer-border");
-        add(border);
-        border.add(new LoginPanel("loginPanel"));
+        form.add(border);
+        border.add(new LoginPanel("loginPanel", form));
     }
 
     @Override

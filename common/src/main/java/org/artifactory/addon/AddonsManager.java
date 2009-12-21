@@ -26,8 +26,6 @@ import java.util.List;
  */
 public interface AddonsManager {
 
-    String ICON_RES_SMALL = "icon16.gif";
-
     <T extends AddonFactory> T addonByType(Class<T> type);
 
     List<String> getInstalledAddonNames();
@@ -35,8 +33,6 @@ public interface AddonsManager {
     List<String> getEnabledAddonNames();
 
     AddonInfo getAddonInfoByName(String addonName);
-
-    String getAddonSmallIconPath(String addonName);
 
     boolean isServerIdValid();
 
@@ -66,4 +62,12 @@ public interface AddonsManager {
      *         New value is not a valid ID
      */
     boolean isServerIdChanged();
+
+    /**
+     * Indicates whether the given addon is activated
+     *
+     * @param addonName Name of addon to inquire for
+     * @return True if the given addon is activated
+     */
+    <T extends AddonFactory> boolean isAddonActivated(String addonName);
 }

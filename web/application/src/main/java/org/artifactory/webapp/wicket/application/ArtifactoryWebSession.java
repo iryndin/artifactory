@@ -51,7 +51,11 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 import org.springframework.security.ui.WebAuthenticationDetails;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA. User: yoavl

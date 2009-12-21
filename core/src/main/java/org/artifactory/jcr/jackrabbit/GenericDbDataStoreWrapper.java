@@ -56,12 +56,12 @@ public class GenericDbDataStoreWrapper implements GenericDbDataStore {
         return store.getMinRecordLength();
     }
 
-    public void setMinRecordLength(int minRecordLength) {
-        store.setMinRecordLength(minRecordLength);
-    }
-
     public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
         return store.getRecord(identifier);
+    }
+
+    public DataRecord getRecordIfStored(DataIdentifier identifier) throws DataStoreException {
+        return store.getRecordIfStored(identifier);
     }
 
     public void init(String homeDir) throws DataStoreException {
@@ -76,56 +76,12 @@ public class GenericDbDataStoreWrapper implements GenericDbDataStore {
         return store.getDatabaseType();
     }
 
-    public void setDatabaseType(String databaseType) {
-        store.setDatabaseType(databaseType);
-    }
-
-    public String getDriver() {
-        return store.getDriver();
-    }
-
-    public void setDriver(String driver) {
-        store.setDriver(driver);
-    }
-
-    public String getPassword() {
-        return store.getPassword();
-    }
-
-    public void setPassword(String password) {
-        store.setPassword(password);
-    }
-
-    public String getUrl() {
-        return store.getUrl();
-    }
-
-    public void setUrl(String url) {
-        store.setUrl(url);
-    }
-
-    public String getUser() {
-        return store.getUser();
-    }
-
-    public void setUser(String user) {
-        store.setUser(user);
-    }
-
-    public void close() {
+    public void close() throws DataStoreException {
         store.close();
     }
 
     public void clearInUse() {
         store.clearInUse();
-    }
-
-    public int getMaxConnections() {
-        return store.getMaxConnections();
-    }
-
-    public void setMaxConnections(int maxConnections) {
-        store.setMaxConnections(maxConnections);
     }
 
     public GenericConnectionRecoveryManager createNewConnection() throws RepositoryException {
@@ -136,21 +92,4 @@ public class GenericDbDataStoreWrapper implements GenericDbDataStore {
         GenericConnectionRecoveryManager crm = createNewConnection();
         return DataStoreHelper.calcStorageSize(crm);
     }
-
-    public boolean getCopyWhenReading() {
-        return store.getCopyWhenReading();
-    }
-
-    public void setCopyWhenReading(boolean copyWhenReading) {
-        store.setCopyWhenReading(copyWhenReading);
-    }
-
-    public String getTablePrefix() {
-        return store.getTablePrefix();
-    }
-
-    public void setTablePrefix(String tablePrefix) {
-        store.setTablePrefix(tablePrefix);
-    }
-
 }

@@ -26,7 +26,7 @@ import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.wicket.component.help.HelpBubble;
-import org.artifactory.common.wicket.panel.upload.FileUploadParentPanel;
+import org.artifactory.common.wicket.panel.upload.UploadListener;
 import org.artifactory.common.wicket.util.WicketUtils;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.traffic.TrafficService;
@@ -45,7 +45,7 @@ import java.util.zip.ZipInputStream;
 /**
  * @author Yoav Aharoni
  */
-public class ImportZipPanel extends BasicImportPanel implements FileUploadParentPanel {
+public class ImportZipPanel extends BasicImportPanel implements UploadListener {
     private static final Logger log = LoggerFactory.getLogger(ImportZipPanel.class);
 
     @SpringBean
@@ -108,7 +108,7 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
         getImportForm().setVisible(false);
     }
 
-    public void onFileSaved() {
+    public void onFileSaved(File file) {
         ZipInputStream zipinputstream = null;
         FileOutputStream fos = null;
         File uploadedFile = null;
@@ -160,7 +160,6 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
         } finally {
             IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(zipinputstream);
-            FileUtils.deleteQuietly(destFolder);
             FileUtils.deleteQuietly(uploadedFile);
         }
     }
@@ -188,6 +187,7 @@ public class ImportZipPanel extends BasicImportPanel implements FileUploadParent
         }
     }
 
+    @Override
     protected void cleanupResources() {
         log.debug("Cleaning up zip import resources.");
         if (getImportFromPath() != null) {

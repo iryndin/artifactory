@@ -24,11 +24,14 @@ import org.artifactory.addon.AddonFactory;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.fs.FolderInfo;
 import org.artifactory.api.fs.ItemInfo;
+import org.artifactory.api.md.Properties;
+import org.artifactory.api.repo.RepoPath;
 import org.artifactory.common.wicket.model.sitemap.MenuNode;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Addon for property creation, addition and searchability
@@ -90,4 +93,14 @@ public interface PropertiesAddon extends AddonFactory {
      */
     WebMarkupContainer getPropertySetsBorder(String borderId, String dragDropId, RealRepoDescriptor entity,
             List<PropertySet> propertySets);
+
+    /**
+     * Returns map of properties for the given repo paths
+     *
+     * @param repoPaths     Paths to extract properties for
+     * @param mandatoryKeys Any property keys that should be mandatory for resulting properties. If provided, property
+     *                      objects will be added to the map only if they contain all the given keys
+     * @return Map of repo paths with their corresponding properties
+     */
+    Map<RepoPath, Properties> getProperties(List<RepoPath> repoPaths, String... mandatoryKeys);
 }

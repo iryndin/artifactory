@@ -20,8 +20,6 @@ package org.artifactory.jcr.lock;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.jcr.fs.JcrFsItem;
 
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  * @author Noam Tenne
  */
@@ -32,7 +30,7 @@ public interface FsItemLockEntry {
 
     JcrFsItem getImmutableFsItem();
 
-    ReentrantReadWriteLock getLock();
+    MonitoringReadWriteLock getLock();
 
     void setWriteFsItem(JcrFsItem fsItem, JcrFsItem mutableFsItem);
 

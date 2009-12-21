@@ -19,12 +19,15 @@ package org.artifactory.repo.virtual;
 
 import org.apache.commons.collections15.OrderedMap;
 import org.apache.commons.collections15.map.ListOrderedMap;
+import org.artifactory.api.context.ContextHelper;
+import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.md.Properties;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.VirtualRepoItem;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.repo.exception.FolderExpectedException;
 import org.artifactory.common.ResourceStreamHandle;
+import org.artifactory.descriptor.repo.PomCleanupPolicy;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
@@ -44,6 +47,7 @@ import org.artifactory.repo.context.RequestContext;
 import org.artifactory.repo.jcr.StoringRepo;
 import org.artifactory.repo.jcr.StoringRepoMixin;
 import org.artifactory.repo.service.InternalRepositoryService;
+import org.artifactory.repo.virtual.interceptor.PomInterceptor;
 import org.artifactory.resource.RepoResource;
 import org.slf4j.Logger;
 
@@ -63,20 +67,17 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
     private OrderedMap<String, LocalCacheRepo> localCacheRepositoriesMap = newOrderedMap();
     private OrderedMap<String, VirtualRepo> virtualRepositoriesMap = newOrderedMap();
 
-    private OrderedMap<String, VirtualRepo> searchableVirtualRepositories = newOrderedMap();
-    private OrderedMap<String, LocalRepo> searchableLocalRepositories = newOrderedMap();
-    private OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories = newOrderedMap();
-    private OrderedMap<String, RemoteRepo> searchableRemoteRepositories = newOrderedMap();
-
     StoringRepo<VirtualRepoDescriptor> storageMixin = new StoringRepoMixin<VirtualRepoDescriptor>(this);
 
     //Use a final policy that always generates checksums
     private final ChecksumPolicy defaultChecksumPolicy = new ChecksumPolicyIgnoreAndGenerate();
     protected VirtualRepoDownloadStrategy downloadStrategy = new VirtualRepoDownloadStrategy(this);
+    private PomInterceptor pomInterceptor;
 
     public VirtualRepo(InternalRepositoryService repositoryService, VirtualRepoDescriptor descriptor) {
         super(repositoryService);
         setDescriptor(descriptor);
+        pomInterceptor = ContextHelper.get().beanForType(PomInterceptor.class);
     }
 
     /**
@@ -130,17 +131,6 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
         storageMixin.init();
     }
 
-    /**
-     * Another init method to assemble the search repositories. Must be called after the init() method!
-     */
-    public void initSearchRepositoryLists() {
-        deeplyAssembleSearchRepositoryLists(
-                searchableVirtualRepositories,
-                searchableLocalRepositories,
-                searchableLocalCacheRepositories,
-                searchableRemoteRepositories);
-    }
-
     public List<RealRepo> getLocalAndRemoteRepositories() {
         List<RealRepo> repos = new ArrayList<RealRepo>();
         repos.addAll(localRepositoriesMap.values());
@@ -170,22 +160,6 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
         List<LocalRepo> repos = new ArrayList<LocalRepo>(localRepos);
         repos.addAll(localCaches);
         return repos;
-    }
-
-    public OrderedMap<String, VirtualRepo> getSearchableVirtualRepositories() {
-        return searchableVirtualRepositories;
-    }
-
-    public OrderedMap<String, LocalRepo> getSearchableLocalRepositories() {
-        return searchableLocalRepositories;
-    }
-
-    public OrderedMap<String, LocalCacheRepo> getSearchableLocalCacheRepositories() {
-        return searchableLocalCacheRepositories;
-    }
-
-    public OrderedMap<String, RemoteRepo> getSearchableRemoteRepositories() {
-        return searchableRemoteRepositories;
     }
 
     public boolean isArtifactoryRequestsCanRetrieveRemoteArtifacts() {
@@ -264,22 +238,68 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
         return remoteRepositoriesMap.get(key);
     }
 
-    public List<VirtualRepoItem> getChildrenDeeply(String path) {
-        //Add items from contained virtual repositories
-        OrderedMap<String, VirtualRepo> virtualRepos =
-                new ListOrderedMap<String, VirtualRepo>();
+    public List<VirtualRepoItem> getChildrenDeeply(RepoPath repoPath) {
         //Assemble the virtual repo deep search lists
-        deeplyAssembleSearchRepositoryLists(
-                virtualRepos, new ListOrderedMap<String, LocalRepo>(),
-                new ListOrderedMap<String, LocalCacheRepo>(),
-                new ListOrderedMap<String, RemoteRepo>());
+        List<VirtualRepo> virtualRepos = getResolveVirtualRepos();
         //Add paths from all children virtual repositories
         List<VirtualRepoItem> items = new ArrayList<VirtualRepoItem>();
-        for (VirtualRepo repo : virtualRepos.values()) {
-            List<VirtualRepoItem> repoItems = repo.getChildren(path);
+        for (VirtualRepo repo : virtualRepos) {
+            List<VirtualRepoItem> repoItems = repo.getChildren(repoPath.getPath());
             items.addAll(repoItems);
         }
         return items;
+    }
+
+    private List<VirtualRepo> getResolveVirtualRepos() {
+        //Add items from contained virtual repositories
+        List<VirtualRepo> virtualRepos = new ArrayList<VirtualRepo>();
+        //Assemble the virtual repo deep search lists
+        resolveVirtualRepos(virtualRepos);
+        return virtualRepos;
+    }
+
+    private void resolveVirtualRepos(List<VirtualRepo> repos) {
+        if (repos.contains(this)) {
+            return;
+        }
+        repos.add(this);
+        List<VirtualRepo> childrenVirtualRepos = getVirtualRepositories();
+        for (VirtualRepo childVirtualRepo : childrenVirtualRepos) {
+            if (!repos.contains(childVirtualRepo)) {
+                resolveVirtualRepos(repos);
+            }
+        }
+    }
+
+    /**
+     * @return Recursively resolved list of all the local non-cache repos of this virtual repo and nested virtual
+     *         repos.
+     */
+    public List<LocalRepo> getResolveLocalRepos() {
+        List<LocalRepo> resolvedLocalRepos = new ArrayList<LocalRepo>();
+        for (VirtualRepo repo : getResolveVirtualRepos()) {
+            for (LocalRepo localRepo : repo.getLocalRepositories()) {
+                if (!resolvedLocalRepos.contains(localRepo)) {
+                    resolvedLocalRepos.add(localRepo);
+                }
+            }
+        }
+        return resolvedLocalRepos;
+    }
+
+    /**
+     * @return Recursively resolved list of all the cache repos of this virtual repo and nested virtual repos.
+     */
+    public List<LocalCacheRepo> getResolveLocalCachedRepos() {
+        List<LocalCacheRepo> resolvedLocalRepos = new ArrayList<LocalCacheRepo>();
+        for (VirtualRepo repo : getResolveVirtualRepos()) {
+            for (LocalCacheRepo localRepo : repo.getLocalCaches()) {
+                if (!resolvedLocalRepos.contains(localRepo)) {
+                    resolvedLocalRepos.add(localRepo);
+                }
+            }
+        }
+        return resolvedLocalRepos;
     }
 
     public List<VirtualRepoItem> getChildren(String path) {
@@ -337,41 +357,30 @@ public class VirtualRepo extends RepoBase<VirtualRepoDescriptor> implements Stor
         return false;
     }
 
-    private void deeplyAssembleSearchRepositoryLists(
-            OrderedMap<String, VirtualRepo> searchableVirtualRepositories,
-            OrderedMap<String, LocalRepo> searchableLocalRepositories,
-            OrderedMap<String, LocalCacheRepo> searchableLocalCacheRepositories,
-            OrderedMap<String, RemoteRepo> searchableRemoteRepositories) {
-        searchableVirtualRepositories.put(getKey(), this);
-        //Add its local repositories
-        searchableLocalRepositories.putAll(getLocalRepositoriesMap());
-        //Add the caches
-        searchableLocalCacheRepositories.putAll(getLocalCacheRepositoriesMap());
-        //Add the remote repositories
-        searchableRemoteRepositories.putAll(getRemoteRepositoriesMap());
-        //Add any contained virtual repo
-        List<VirtualRepo> childrenVirtualRepos = getVirtualRepositories();
-        //Avoid infinite loop - stop if already processed virtual repo is encountered
-        for (VirtualRepo childVirtualRepo : childrenVirtualRepos) {
-            String key = childVirtualRepo.getKey();
-            if (searchableVirtualRepositories.get(key) != null) {
-                log.warn("Repositories list assembly has been truncated to avoid recursive loop " +
-                        "on the virtual repo '{}'. Already processed virtual repositories: {}.",
-                        key, searchableVirtualRepositories.keySet());
-                return;
-            } else {
-                childVirtualRepo.deeplyAssembleSearchRepositoryLists(
-                        searchableVirtualRepositories,
-                        searchableLocalRepositories,
-                        searchableLocalCacheRepositories,
-                        searchableRemoteRepositories);
-            }
-        }
-    }
-
     private <K, V> OrderedMap<K, V> newOrderedMap() {
         return new ListOrderedMap<K, V>();
     }
+
+    /**
+     * This method is called when a resource was found in the searchable repositories, before returning it to the
+     * client. This method will call a list of interceptors that might alter the returned resource and cache it
+     * locally.
+     *
+     * @param context       The request context
+     * @param foundResource The resource that was found in the searchable repositories.
+     * @return Original or transformed resource
+     */
+    protected RepoResource interceptBeforeReturn(RequestContext context, RepoResource foundResource) {
+        if (pomInterceptor != null && MavenNaming.isPom(context.getResourcePath())) {
+            foundResource = pomInterceptor.onBeforeReturn(this, context, foundResource);
+        }
+        return foundResource;
+    }
+
+    public PomCleanupPolicy getPomRepositoryReferencesCleanupPolicy() {
+        return getDescriptor().getPomRepositoryReferencesCleanupPolicy();
+    }
+
 
     //STORING REPO MIXIN
 

@@ -224,7 +224,7 @@ public class RepoIndexerData {
         if (!remoteRepo.isStoreArtifactsLocally() &&
                 remoteRepo.getUrl().contains(ConstantValues.mvnCentralHostPattern.getString())) {
             log.debug("Central index cannot be periodically fetched.Remote repository '{}' does not support " +
-                    "local index storage.", indexedRepo.getUrl());
+                    "local index storage.", remoteRepo.getUrl());
             return false;
         }
         return true;

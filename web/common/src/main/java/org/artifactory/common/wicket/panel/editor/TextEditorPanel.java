@@ -71,7 +71,11 @@ public class TextEditorPanel extends TitledPanel {
     }
 
     private void addTextArea() {
-        editorTextArea = new TextArea("editorTextArea", new PropertyModel(this, "editorValue"));
+        editorTextArea = new TextArea("editorTextArea", newTextModel());
         add(editorTextArea);
+    }
+
+    protected IModel newTextModel() {
+        return new PropertyModel(this, "editorValue");
     }
 }

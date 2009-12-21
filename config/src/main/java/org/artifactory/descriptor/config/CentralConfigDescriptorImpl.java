@@ -56,7 +56,8 @@ import java.util.List;
 @XmlType(name = "CentralConfigType",
         propOrder = {"serverName", "offlineMode", "fileUploadMaxSizeMb", "dateFormat", "addons", "mailServer",
                 "security", "backups", "indexer", "localRepositoriesMap", "remoteRepositoriesMap",
-                "virtualRepositoriesMap", "proxies", "propertySets", "urlBase"}, namespace = Descriptor.NS)
+                "virtualRepositoriesMap", "proxies", "propertySets", "urlBase", "logo", "footer"},
+        namespace = Descriptor.NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CentralConfigDescriptorImpl implements MutableCentralConfigDescriptor {
 
@@ -124,6 +125,12 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     @XmlElement
     private String urlBase;
+
+    @XmlElement
+    private String logo;
+
+    @XmlElement
+    private String footer;
 
     public OrderedMap<String, LocalRepoDescriptor> getLocalRepositoriesMap() {
         return localRepositoriesMap;
@@ -295,6 +302,15 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return removedRepo;
     }
 
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public void setFooter(String footer) {
+        this.footer = footer;
+    }
+
     public boolean isKeyAvailable(String key) {
         return !(VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY.equals(key) ||
                 isRepositoryExists(key) ||
@@ -401,6 +417,15 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     public boolean isBackupExists(String backupKey) {
         return getBackup(backupKey) != null;
+    }
+
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public void addBackup(BackupDescriptor backupDescriptor) {

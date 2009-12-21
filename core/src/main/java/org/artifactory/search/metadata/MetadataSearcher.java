@@ -27,6 +27,7 @@ import org.artifactory.api.search.metadata.MetadataSearchResult;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.fs.JcrFsItem;
+import org.artifactory.jcr.lock.LockingHelper;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.search.SearcherBase;
 
@@ -70,19 +71,15 @@ public class MetadataSearcher extends SearcherBase<MetadataSearchControls, Metad
         //We currently include repository level metadata in the results. If decide to show only movable folder, the
         //search query needs to exclude repositories by changing the query to:
         //"/jcr:root/repositories/**//artifactory:metadata/..."
-        StringBuilder builder = new StringBuilder();
-        builder.append("/jcr:root").append(JcrPath.get().getRepoJcrRootPath());
-        String repoToSearch = controls.getRepoToSearch();
-        if (!StringUtils.isEmpty(repoToSearch)) {
-            builder.append("/").append(repoToSearch);
-        }
-        builder.append("//").append(JcrService.NODE_ARTIFACTORY_METADATA).append("/").append(metadataName).append("/");
+        StringBuilder builder = getPathQueryBuilder(controls);
+
+        builder.append(FORWARD_SLASH).append(JcrService.NODE_ARTIFACTORY_METADATA).append(FORWARD_SLASH)
+                .append(metadataName).append(FORWARD_SLASH);
         builder.append(JcrService.NODE_ARTIFACTORY_XML + "/").append(xpath);
 
         if (!StringUtils.isEmpty(exp)) {
             builder.append("/. [jcr:contains(., ").append(exp).append(")]");
         }
-        builder.append(" order by jcr:score decending");
         String queryStr = builder.toString();
         QueryResult queryResult = getJcrService().executeXpathQuery(queryStr);
         List<MetadataSearchResult> results = new ArrayList<MetadataSearchResult>();
@@ -97,9 +94,13 @@ public class MetadataSearcher extends SearcherBase<MetadataSearchControls, Metad
             Node artifactNode = (Node) getJcrService().getManagedSession().getItem(artifactPath);
             RepoPath repoPath = JcrPath.get().getRepoPath(artifactNode.getPath());
             LocalRepo localRepo = getRepoService().localOrCachedRepositoryByKey(repoPath.getRepoKey());
-            JcrFsItem jcrFsItem = localRepo.getJcrFsItem(repoPath);
-            boolean canRead = getAuthService().canRead(jcrFsItem.getRepoPath());
+            if (!isRepoPathValid(repoPath, localRepo)) {
+                continue;
+            }
+
+            boolean canRead = getAuthService().canRead(repoPath);
             if (canRead) {
+                JcrFsItem jcrFsItem = localRepo.getJcrFsItem(repoPath);
                 Object xmlMetdataObject = null;
                 Class mdObjectClass = controls.getMetadataObjectClass();
                 if (!StringUtils.isEmpty(metadataName) && (mdObjectClass != null)) {
@@ -109,6 +110,8 @@ public class MetadataSearcher extends SearcherBase<MetadataSearchControls, Metad
                         new MetadataSearchResult(jcrFsItem.getInfo(), metadataNameFromPath, xmlMetdataObject);
                 results.add(result);
             }
+            //Release the read locks early
+            LockingHelper.releaseReadLock(repoPath);
         }
         return new SearchResults<MetadataSearchResult>(results, rows.getSize());
     }

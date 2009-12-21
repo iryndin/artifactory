@@ -19,7 +19,6 @@ package org.artifactory.repo.jcr;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.AutoCloseInputStream;
 import org.artifactory.api.common.MultiStatusHolder;
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.api.config.ExportSettings;
@@ -67,7 +66,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
     private static final Logger log = LoggerFactory.getLogger(JcrRepoBase.class);
 
     private boolean anonAccessEnabled;
-    private String tempFileRepoUrl;
     private JcrRepoService jcrRepoService;
     //Use a final policy that always generates checksums
     private final ChecksumPolicy defaultChecksumPolicy = new ChecksumPolicyIgnoreAndGenerate();
@@ -89,7 +87,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         final String key = getKey();
         ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
         File repoTmpDir = new File(artifactoryHome.getRepoTmpDir(), key);
-        tempFileRepoUrl = repoTmpDir.toURI().toString();
         if (repoTmpDir.exists()) {
             try {
                 FileUtils.deleteDirectory(repoTmpDir);
@@ -104,10 +101,6 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
                     "Failed to create local repository directory: " + repoTmpDir.getAbsolutePath());
         }
         storageMixin.init();
-    }
-
-    public String getUrl() {
-        return tempFileRepoUrl;
     }
 
     public boolean isCache() {
@@ -145,7 +138,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         MultiStatusHolder status = settings.getStatusHolder();
         TaskService taskService = InternalContextHelper.get().getTaskService();
         //Check if we need to break/pause
-        boolean stop = taskService.blockIfPausedAndShouldBreak();
+        boolean stop = taskService.pauseOrBreak();
         if (stop) {
             status.setError("Export was stopped on " + this, log);
             return;
@@ -184,7 +177,7 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         TaskService taskService = InternalContextHelper.get().getTaskService();
         RepoPath currentFolder;
         while ((currentFolder = foldersToScan.poll()) != null) {
-            if (taskService.blockIfPausedAndShouldBreak()) {
+            if (taskService.pauseOrBreak()) {
                 status.setError("Import of " + getKey() + " was stopped", log);
                 return;
             }
@@ -209,11 +202,14 @@ public abstract class JcrRepoBase<T extends LocalRepoDescriptor> extends RealRep
         String relativePath = repoPath.getPath();
         JcrFile jcrFile = getLocalJcrFile(relativePath);
         if (jcrFile != null) {
+            InputStream is = null;
             try {
-                InputStream is = new AutoCloseInputStream(jcrFile.getStream());
+                is = jcrFile.getStream();
                 return IOUtils.toString(is, "utf-8");
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read text file content from '" + relativePath + "'.", e);
+            } finally {
+                IOUtils.closeQuietly(is);
             }
         }
         return "";

@@ -17,9 +17,11 @@
 
 package org.artifactory.api.maven;
 
-import static org.testng.Assert.*;
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.*;
 
 /**
  * Tests the MavenNaming.
@@ -49,6 +51,19 @@ public class MavenNamingTest {
         assertTrue(MavenNaming.isSnapshot("a/path/1.0-SNAPSHOT"));
         assertFalse(MavenNaming.isSnapshot("a/path/1.0-SNAPSHOT/sub/path"));
         assertTrue(MavenNaming.isSnapshot("a/path/5.4-SNAPSHOT/path-5.4-20081214.090217-4.pom"));
+    }
+
+    public void testIsClientOrServerPom() {
+        //dummy props so that the isPom method will work
+        ArtifactorySystemProperties props = new ArtifactorySystemProperties();
+        ArtifactorySystemProperties.bind(props);
+
+        assertTrue(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/1.0-SNAPSHOT.pom"));
+        assertTrue(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/pom.xml"));
+        assertTrue(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/1.0.pom"));
+        assertFalse(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/ivy.xml"));
+        assertFalse(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/1.0-SNAPSHOT.jar"));
+        assertFalse(MavenNaming.isClientOrServerPom("a/path/1.0-SNAPSHOT/1.0-SNAPSHOT.txt"));
     }
 
     public void testIsVersionUniqueSnapshot() {

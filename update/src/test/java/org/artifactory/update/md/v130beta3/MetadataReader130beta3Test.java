@@ -28,9 +28,11 @@ import org.artifactory.api.md.MetadataEntry;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.stat.StatsInfo;
 import org.artifactory.api.xstream.XStreamFactory;
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.artifactory.update.md.MetadataReaderBaseTest;
 import org.testng.Assert;
 import static org.testng.Assert.*;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -51,6 +53,12 @@ public class MetadataReader130beta3Test extends MetadataReaderBaseTest {
     @BeforeClass
     public void setup() {
         xstream = XStreamFactory.create(FileInfoImpl.class, StatsInfo.class, FolderInfoImpl.class);
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void unbindProperties() {
+        ArtifactorySystemProperties.unbind();
     }
 
     public void readFolderMetadata() {

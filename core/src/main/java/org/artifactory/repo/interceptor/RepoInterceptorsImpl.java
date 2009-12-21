@@ -19,21 +19,17 @@ package org.artifactory.repo.interceptor;
 
 import org.artifactory.api.common.StatusHolder;
 import org.artifactory.interceptor.Interceptors;
+import org.artifactory.jcr.JcrService;
 import org.artifactory.jcr.fs.JcrFsItem;
-import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author yoav
  */
 @Service
+@Reloadable(beanClass = RepoInterceptors.class, initAfter = JcrService.class)
 public class RepoInterceptorsImpl extends Interceptors<RepoInterceptor> implements RepoInterceptors {
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(RepoInterceptors.class);
-    }
 
     public void onCreate(JcrFsItem fsItem, StatusHolder statusHolder) {
         for (RepoInterceptor repoInterceptor : this) {

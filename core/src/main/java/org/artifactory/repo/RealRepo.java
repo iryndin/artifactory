@@ -26,20 +26,11 @@ import org.artifactory.descriptor.repo.RealRepoDescriptor;
  */
 public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
 
-    //TODO: [by YS] remove this method from the interface - it is only used by HttpRepo
-    String getUrl();
-
     boolean isHandleReleases();
 
     boolean isHandleSnapshots();
 
-    String getIncludesPattern();
-
-    String getExcludesPattern();
-
     boolean isBlackedOut();
-
-    boolean accepts(String path);
 
     StatusHolder checkDownloadIsAllowed(RepoPath repoPath);
 
@@ -48,4 +39,7 @@ public interface RealRepo<T extends RealRepoDescriptor> extends Repo<T> {
     int getMaxUniqueSnapshots();
 
     StatusHolder assertValidPath(RepoPath repoPath);
+
+    boolean accepts(RepoPath repoPath);
+
 }

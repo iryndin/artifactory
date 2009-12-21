@@ -45,6 +45,7 @@ import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.security.AccessLogger;
 import org.artifactory.spring.InternalArtifactoryContext;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.version.ArtifactoryConfigVersion;
 import org.artifactory.version.CompoundVersionDetails;
@@ -53,7 +54,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,6 +70,7 @@ import java.util.Map;
  * This class wraps the JAXB config descriptor.
  */
 @Repository("centralConfig")
+@Reloadable(beanClass = InternalCentralConfigService.class, initAfter = JcrService.class)
 public class CentralConfigServiceImpl implements InternalCentralConfigService {
     private static final Logger log = LoggerFactory.getLogger(CentralConfigServiceImpl.class);
 
@@ -98,11 +99,6 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
     @SuppressWarnings({"unchecked"})
     public Class<? extends ReloadableBean>[] initAfter() {
         return new Class[]{JcrService.class};
-    }
-
-    @PostConstruct
-    public void register() {
-        InternalContextHelper.get().addReloadableBean(InternalCentralConfigService.class);
     }
 
     public void init() {
@@ -209,6 +205,29 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
         reloadConfiguration(newDescriptor);
     }
 
+    public String updateLogo(String logoPath, boolean delete) throws IOException {
+        if (delete) {
+            FileUtils.deleteQuietly(new File(ContextHelper.get().getArtifactoryHome().getLogoDir(), "logo"));
+            return "";
+        }
+        ArtifactoryHome artifactoryHome = ContextHelper.get().getArtifactoryHome();
+        FileUtils.deleteQuietly(new File(artifactoryHome.getLogoDir(), "logo"));
+        File logoDir = artifactoryHome.getLogoDir();
+        File destFile;
+        if (!logoPath.startsWith("http") && !logoPath.startsWith("https")) {
+            File srcFile = new File(logoPath);
+            if (srcFile.exists()) {
+                destFile = new File(logoDir, srcFile.getName());
+                FileUtils.copyFile(srcFile, destFile);
+                destFile.renameTo(new File(logoDir, "logo"));
+                FileUtils.deleteQuietly(srcFile);
+            }
+            return "";
+        } else {
+            return logoPath;
+        }
+    }
+
     public boolean defaultProxyDefined() {
         List<ProxyDescriptor> proxyDescriptors = descriptor.getProxies();
         for (ProxyDescriptor proxyDescriptor : proxyDescriptors) {
@@ -234,9 +253,11 @@ public class CentralConfigServiceImpl implements InternalCentralConfigService {
 
         // before doing anything do a sanity check that the edited descriptor is valid
         // will fail if not valid without affecting the current configuration
-        JaxbHelper.readConfig("SanityCheckReload", JaxbHelper.toXml(descriptor));// will fail if invalid
+        // in any case we will use this newly loaded config as the descriptor
+        CentralConfigDescriptorImpl newDescriptor =
+                JaxbHelper.readConfig("SanityCheckReload", JaxbHelper.toXml(descriptor));// will fail if invalid
 
-        reloadConfiguration(descriptor);
+        reloadConfiguration(newDescriptor);
     }
 
     public void importFrom(ImportSettings settings) {

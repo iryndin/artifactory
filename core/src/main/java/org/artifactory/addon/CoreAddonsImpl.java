@@ -19,9 +19,11 @@ package org.artifactory.addon;
 
 import org.artifactory.api.config.ExportSettings;
 import org.artifactory.api.config.ImportSettings;
+import org.artifactory.api.security.UserInfo;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.repo.virtual.VirtualRepo;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.stereotype.Component;
 
 /**

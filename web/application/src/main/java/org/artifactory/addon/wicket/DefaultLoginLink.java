@@ -17,13 +17,11 @@
 
 package org.artifactory.addon.wicket;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.security.SecurityService;
-import org.artifactory.common.wicket.component.links.TitledAjaxSubmitLink;
-import org.artifactory.common.wicket.util.AjaxUtils;
+import org.artifactory.common.wicket.component.links.TitledSubmitLink;
 import org.artifactory.common.wicket.util.WicketUtils;
 import org.artifactory.security.AuthenticationHelper;
 import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
@@ -36,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Eli Givoni
  */
-public class DefaultLoginLink extends TitledAjaxSubmitLink {
+public class DefaultLoginLink extends TitledSubmitLink {
     @SpringBean
     private SecurityService securityService;
 
@@ -47,8 +45,7 @@ public class DefaultLoginLink extends TitledAjaxSubmitLink {
         super(id, title, form);
     }
 
-    @Override
-    protected void onSubmit(AjaxRequestTarget target, Form form) {
+    public void onSubmit() {
         LoginInfo loginInfo = (LoginInfo) form.getModelObject();
         String username = loginInfo.getUsername();
         String password = loginInfo.getPassword();
@@ -69,10 +66,6 @@ public class DefaultLoginLink extends TitledAjaxSubmitLink {
         } else {
             //Try the component based localizer first. If not found try the application localizer. Else use the default
             error("User name or password are incorrect. Login failed.");
-            if (target != null) {
-                target.addComponent(getForm());
-                AjaxUtils.refreshFeedback(target);
-            }
             rememberMeServices.loginFail(httpServletRequest, getHttpServletResponse());
         }
     }

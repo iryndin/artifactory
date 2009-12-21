@@ -79,7 +79,7 @@ public class ActionLink extends TitledAjaxLink {
             return new RepoAwareItemEvent(repoAwareItem, repoAwareAction, target);
         }
 
-        return new ItemEvent(actionableItem, action, target);
+        return new ItemEvent(actionableItem, action);
     }
 
 }

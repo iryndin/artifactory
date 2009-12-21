@@ -18,7 +18,6 @@
 package org.artifactory.search.gavc;
 
 import org.artifactory.api.maven.MavenArtifactInfo;
-import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.gavc.GavcSearchControls;
@@ -26,7 +25,6 @@ import org.artifactory.api.search.gavc.GavcSearchResult;
 import org.artifactory.jcr.JcrPath;
 import org.artifactory.jcr.fs.FileInfoProxy;
 import org.artifactory.jcr.fs.JcrFile;
-import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.jcr.JcrHelper;
 import org.artifactory.resource.ArtifactResource;
 import org.artifactory.search.SearcherBase;
@@ -77,7 +75,7 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
         pathBuilder.append(artifactId).append("/");
 
         /**
-         * If a version is given, it needs special handeling. A node path cannot begin with a number (can be escaped
+         * If a version is given, it needs special handling. A node path cannot begin with a number (can be escaped
          * With the class - ISO9075. This method is not used, because after encoding the digits, we cannot use wildcards
          * On it. Meanwhile using the jcr:like function.
          */
@@ -87,8 +85,13 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
         pathBuilder.append("[jcr:like(@").append(JcrHelper.PROP_ARTIFACTORY_NAME).append(",'")
                 .append("%-").append(classifier).append(".%").append("')] ");
         String path = pathBuilder.toString();
-        String queryStr = "/jcr:root" + JcrPath.get().getRepoJcrRootPath() + "/*/" + path + "order by @" +
-                JcrHelper.PROP_ARTIFACTORY_NAME + " ascending";
+
+        StringBuilder queryBuilder = getPathQueryBuilder(controls);
+        if (!controls.isSpecificRepoSearch()) {
+            queryBuilder.append("*/");
+        }
+        queryBuilder.append(path).append(" order by @").append(JcrHelper.PROP_ARTIFACTORY_NAME).append(" ascending");
+        String queryStr = queryBuilder.toString();
 
         QueryResult queryResult = getJcrService().executeXpathQuery(queryStr);
         List<GavcSearchResult> results = new ArrayList<GavcSearchResult>();
@@ -98,14 +101,7 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
         while (nodes.hasNext() && (!controls.isLimitSearchResults() || (results.size() < getMaxResults()))) {
             Node artifactNode = nodes.nextNode();
             RepoPath repoPath = JcrPath.get().getRepoPath(artifactNode.getPath());
-            LocalRepo localRepo = getRepoService().localOrCachedRepositoryByKey(repoPath.getRepoKey());
-            if (localRepo == null) {
-                // Some left over in JCR of non configured repo
-                continue;
-            }
-
-            if (NamingUtils.isChecksum(repoPath.getPath())) {
-                // don't show checksum files
+            if (!isResultRepoPathValid(repoPath)) {
                 continue;
             }
 
@@ -196,7 +192,7 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
             }
         }
         if (wrap) {
-            input = wrap(input);
+            input = wrap(input, exactMatch);
         }
 
         return input;
@@ -208,7 +204,11 @@ public class GavcSearcher extends SearcherBase<GavcSearchControls, GavcSearchRes
      * @param userInput Search form input
      * @return String - Wrapped input.
      */
-    private String wrap(String userInput) {
-        return "element(*)[jcr:like(@" + JcrHelper.PROP_ARTIFACTORY_NAME + ",'" + userInput + "')]";
+    private String wrap(String userInput, boolean exactMatch) {
+        if (!exactMatch) {
+            return "element(*)[jcr:like(@" + JcrHelper.PROP_ARTIFACTORY_NAME + ",'" + userInput + "')]";
+        } else {
+            return "element(*)[@" + JcrHelper.PROP_ARTIFACTORY_NAME + "='" + userInput + "']";
+        }
     }
 }

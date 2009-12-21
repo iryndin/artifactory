@@ -19,6 +19,7 @@ package org.artifactory.webapp.wicket.panel.tabbed;
 
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.artifactory.common.wicket.behavior.RenderJavaScript;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,14 @@ public abstract class TabbedPanel extends Panel {
         super(id);
         List<ITab> tabs = new ArrayList<ITab>();
         addTabs(tabs);
-        add(newTabbedPanel(tabs));
+        final StyledTabbedPanel tabPanel = newTabbedPanel(tabs);
+        tabPanel.add(new RenderJavaScript("Browser.fixTabPanel();"));
+        add(tabPanel);
     }
 
-    protected abstract StyledTabbedPanel newTabbedPanel(List<ITab> tabs);
+    protected StyledTabbedPanel newTabbedPanel(List<ITab> tabs) {
+        return new PersistentTabbedPanel("tabs", tabs);
+    }
 
     protected abstract void addTabs(List<ITab> tabs);
 }

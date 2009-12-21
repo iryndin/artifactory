@@ -30,6 +30,7 @@ public class AnnotatePermissionOcmConverter implements ConfigurationConverter<Se
 
     public void convert(Session session) {
         try {
+            log.info("Starting AnnotatePermissionOcmConverter");
             Node aclsNode = (Node) session.getItem("/configuration/acls/");
             NodeIterator acls = aclsNode.getNodes();
 
@@ -60,8 +61,9 @@ public class AnnotatePermissionOcmConverter implements ConfigurationConverter<Se
              * been initialized
              */
             aclManager.reloadAcls();
+            log.info("Finished AnnotatePermissionOcmConverter");
         } catch (RepositoryException e) {
-            log.error("An error occured during the annontate permission OCM conversion", e);
+            log.error("An error occurred during the annontate permission OCM conversion", e);
         }
     }
 }

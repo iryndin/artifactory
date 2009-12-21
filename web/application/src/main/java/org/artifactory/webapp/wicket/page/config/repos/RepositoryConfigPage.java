@@ -30,17 +30,22 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.config.CentralConfigService;
+import org.artifactory.api.repo.ArtifactCount;
+import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.wicket.ajax.CancelDefaultDecorator;
-import org.artifactory.common.wicket.ajax.ConfirmationAjaxCallDecorator;
 import org.artifactory.common.wicket.behavior.CssClass;
+import org.artifactory.common.wicket.component.confirm.AjaxConfirm;
+import org.artifactory.common.wicket.component.confirm.ConfirmDialog;
 import org.artifactory.common.wicket.component.links.TitledAjaxLink;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.common.wicket.component.modal.links.ModalShowLink;
 import org.artifactory.common.wicket.component.modal.panel.BaseModalPanel;
 import org.artifactory.common.wicket.component.panel.sortedlist.OrderedListPanel;
+import org.artifactory.common.wicket.util.AjaxUtils;
 import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.HttpRepoDescriptor;
+import org.artifactory.descriptor.repo.LocalCacheRepoDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
@@ -73,6 +78,9 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     @SpringBean
     private CentralConfigService centralConfigService;
 
+    @SpringBean
+    private RepositoryService repositoryService;
+
     private MutableCentralConfigDescriptor mutableDescriptor;
     private WebMarkupContainer reposListContainer;
 
@@ -88,7 +96,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         addVirtualReposList();
     }
 
-    private MutableCentralConfigDescriptor refreshDescriptor() {
+    protected MutableCentralConfigDescriptor refreshDescriptor() {
         return centralConfigService.getMutableDescriptor();
     }
 
@@ -98,14 +106,14 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     }
 
     private void addLocalReposList() {
-        IModel repoListModel = new RepoListModel<LocalRepoDescriptor>() {
+        final IModel repoListModel = new RepoListModel<LocalRepoDescriptor>() {
             @Override
             protected Collection<LocalRepoDescriptor> getRepos() {
                 return mutableDescriptor.getLocalRepositoriesMap().values();
             }
 
             @Override
-            protected void saveRepos(List<LocalRepoDescriptor> repos) {
+            protected void reOrderReposList(List<LocalRepoDescriptor> repos) {
                 OrderedMap<String, LocalRepoDescriptor> currentLocalReposMap =
                         mutableDescriptor.getLocalRepositoriesMap();
                 assertLegalReorderedList(repos, currentLocalReposMap.values());
@@ -116,11 +124,25 @@ public class RepositoryConfigPage extends AuthenticatedPage {
                     localReposMap.put(localRepo.getKey(), localRepo);
                 }
                 mutableDescriptor.setLocalRepositoriesMap(localReposMap);
-                centralConfigService.saveEditedDescriptorAndReload(mutableDescriptor);
             }
         };
 
         reposListContainer.add(new RepoListPanel<LocalRepoDescriptor>("localRepos", repoListModel) {
+            @Override
+            protected void saveRepos(AjaxRequestTarget target) {
+                saveReposOrder(target);
+            }
+
+            @Override
+            protected void resetListOrder(AjaxRequestTarget target) {
+
+                MutableCentralConfigDescriptor configDescriptor = refreshDescriptor();
+                List<LocalRepoDescriptor> repoDescriptorList =
+                        new ArrayList<LocalRepoDescriptor>(configDescriptor.getLocalRepositoriesMap().values());
+                repoListModel.setObject(repoDescriptorList);
+                ((RepositoryConfigPage) getPage()).refresh(target);
+            }
+
             @Override
             protected String getItemDisplayValue(LocalRepoDescriptor itemObject) {
                 return itemObject.getKey();
@@ -166,14 +188,14 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     }
 
     private void addRemoteReposList() {
-        IModel repoListModel = new RepoListModel<RemoteRepoDescriptor>() {
+        final IModel repoListModel = new RepoListModel<RemoteRepoDescriptor>() {
             @Override
             protected Collection<RemoteRepoDescriptor> getRepos() {
                 return mutableDescriptor.getRemoteRepositoriesMap().values();
             }
 
             @Override
-            protected void saveRepos(List<RemoteRepoDescriptor> repos) {
+            protected void reOrderReposList(List<RemoteRepoDescriptor> repos) {
                 OrderedMap<String, RemoteRepoDescriptor> currentReposMap =
                         mutableDescriptor.getRemoteRepositoriesMap();
                 assertLegalReorderedList(repos, currentReposMap.values());
@@ -184,11 +206,24 @@ public class RepositoryConfigPage extends AuthenticatedPage {
                     remoteReposMap.put(remoteRepo.getKey(), remoteRepo);
                 }
                 mutableDescriptor.setRemoteRepositoriesMap(remoteReposMap);
-                centralConfigService.saveEditedDescriptorAndReload(mutableDescriptor);
             }
         };
 
         reposListContainer.add(new RepoListPanel<RemoteRepoDescriptor>("remoteRepos", repoListModel) {
+            @Override
+            protected void saveRepos(AjaxRequestTarget target) {
+                saveReposOrder(target);
+            }
+
+            @Override
+            protected void resetListOrder(AjaxRequestTarget target) {
+                MutableCentralConfigDescriptor configDescriptor = refreshDescriptor();
+                List<RemoteRepoDescriptor> remoteRepoDescriptors =
+                        new ArrayList<RemoteRepoDescriptor>(configDescriptor.getRemoteRepositoriesMap().values());
+                repoListModel.setObject(remoteRepoDescriptors);
+                ((RepositoryConfigPage) getPage()).refresh(target);
+            }
+
             @Override
             protected String getItemDisplayValue(RemoteRepoDescriptor itemObject) {
                 return itemObject.getKey();
@@ -222,14 +257,14 @@ public class RepositoryConfigPage extends AuthenticatedPage {
     }
 
     private void addVirtualReposList() {
-        IModel repoListModel = new RepoListModel<VirtualRepoDescriptor>() {
+        final IModel repoListModel = new RepoListModel<VirtualRepoDescriptor>() {
             @Override
             protected Collection<VirtualRepoDescriptor> getRepos() {
                 return mutableDescriptor.getVirtualRepositoriesMap().values();
             }
 
             @Override
-            protected void saveRepos(List<VirtualRepoDescriptor> repos) {
+            protected void reOrderReposList(List<VirtualRepoDescriptor> repos) {
                 OrderedMap<String, VirtualRepoDescriptor> currentReposMap =
                         mutableDescriptor.getVirtualRepositoriesMap();
                 assertLegalReorderedList(repos, currentReposMap.values());
@@ -240,11 +275,25 @@ public class RepositoryConfigPage extends AuthenticatedPage {
                     virtualReposMap.put(virtualRepo.getKey(), virtualRepo);
                 }
                 mutableDescriptor.setVirtualRepositoriesMap(virtualReposMap);
-                centralConfigService.saveEditedDescriptorAndReload(mutableDescriptor);
             }
         };
 
         reposListContainer.add(new RepoListPanel<VirtualRepoDescriptor>("virtualRepos", repoListModel) {
+            @Override
+            protected void saveRepos(AjaxRequestTarget target) {
+                saveReposOrder(target);
+            }
+
+
+            @Override
+            protected void resetListOrder(AjaxRequestTarget target) {
+                MutableCentralConfigDescriptor configDescriptor = refreshDescriptor();
+                ArrayList<VirtualRepoDescriptor> virtualRepoDescriptors =
+                        new ArrayList<VirtualRepoDescriptor>(configDescriptor.getVirtualRepositoriesMap().values());
+                repoListModel.setObject(virtualRepoDescriptors);
+                ((RepositoryConfigPage) getPage()).refresh(target);
+            }
+
             @Override
             protected String getItemDisplayValue(VirtualRepoDescriptor itemObject) {
                 return itemObject.getKey();
@@ -267,6 +316,17 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         });
     }
 
+
+    protected void saveReposOrder(AjaxRequestTarget target) {
+        try {
+            centralConfigService.saveEditedDescriptorAndReload(mutableDescriptor);
+            info("Repositories order was successfully saved.");
+        } catch (Exception e) {
+            error("Could not save repositories order: " + e.getMessage());
+        }
+        AjaxUtils.refreshFeedback(target);
+    }
+
     private SchemaHelpModel getHelpModel(String property) {
         return new SchemaHelpModel(mutableDescriptor, property);
     }
@@ -285,18 +345,62 @@ public class RepositoryConfigPage extends AuthenticatedPage {
         }
 
         public void onClick(AjaxRequestTarget target) {
-            mutableDescriptor.removeRepository(repoDescriptor.getKey());
+            AjaxConfirm.get().confirm(new ConfirmDialog() {
+                public String getMessage() {
+                    return getDeleteConfirmMessage();
+                }
+
+                public void onConfirm(boolean approved, AjaxRequestTarget target) {
+                    if (approved) {
+                        deleteRepo(target);
+                    }
+                }
+            });
+        }
+
+        private void deleteRepo(AjaxRequestTarget target) {
+            String repoKey = repoDescriptor.getKey();
+            mutableDescriptor.removeRepository(repoKey);
             centralConfigService.saveEditedDescriptorAndReload(mutableDescriptor);
             // reload the whole page to refresh all components (and to use the new descriptors)
             ((RepositoryConfigPage) getPage()).refresh(target);
         }
 
-        @Override
-        protected IAjaxCallDecorator getAjaxCallDecorator() {
-            return new ConfirmationAjaxCallDecorator("Are you sure you wish to delete the repository "
-                    + repoDescriptor.getKey() + "?");
+        private String getDeleteConfirmMessage() {
+            String key = repoDescriptor.getKey();
+            ArtifactCount count = null;
+            boolean hasCacheItems = false;
+            if (repoDescriptor instanceof RemoteRepoDescriptor) {
+                RepoDescriptor cacheRepoDescriptor = findRemoteCacheDescriptor();
+                if (cacheRepoDescriptor != null) {
+                    count = repositoryService.getArtifactCount(cacheRepoDescriptor.getKey());
+                    hasCacheItems = true;
+                }
+            } else {
+                count = repositoryService.getArtifactCount(key);
+            }
+            //if remote repo has no cash
+            int totalCount = count != null ? count.getTotalCount() : 0;
+            StringBuilder builder = new StringBuilder("Are you sure you wish to delete the repository ");
+            builder.append(key).append(" ").append("?\n").append("The repository ").append(key)
+                    .append(" contains ").append(totalCount).append(" artifacts");
+            builder.append(hasCacheItems ? " in cache repo" : "");
+            builder.append(" which will be permanently deleted!");
+            return builder.toString();
+        }
+
+        private LocalCacheRepoDescriptor findRemoteCacheDescriptor() {
+            List<LocalCacheRepoDescriptor> cachRepoDescriptorList = repositoryService.getCachedRepoDescriptors();
+            for (LocalCacheRepoDescriptor descriptor : cachRepoDescriptorList) {
+                RemoteRepoDescriptor remoteRepoDescriptor = descriptor.getRemoteRepo();
+                if (remoteRepoDescriptor.equals(repoDescriptor)) {
+                    return descriptor;
+                }
+            }
+            return null;
         }
     }
+
 
     private abstract static class EditLink extends ModalShowLink {
         private EditLink(String linkId) {
@@ -360,7 +464,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
 
         @SuppressWarnings({"unchecked"})
         public void setObject(Object object) {
-            saveRepos((List<T>) object);
+            reOrderReposList((List<T>) object);
         }
 
         public void detach() {
@@ -368,7 +472,7 @@ public class RepositoryConfigPage extends AuthenticatedPage {
 
         protected abstract Collection<T> getRepos();
 
-        protected abstract void saveRepos(List<T> repos);
+        protected abstract void reOrderReposList(List<T> repos);
 
         protected void assertLegalReorderedList(List<? extends RepoDescriptor> newList,
                 Collection<? extends RepoDescriptor> original) {

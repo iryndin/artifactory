@@ -9,6 +9,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.api.fs.FileInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.common.wicket.component.TextContentPanel;
 import org.artifactory.common.wicket.component.border.fieldset.FieldSetBorder;
 import org.artifactory.common.wicket.component.border.titled.TitledBorder;
@@ -29,6 +30,7 @@ public class XmlViewTabPanel extends Panel {
 
     public XmlViewTabPanel(String id, FileActionable repoItem, XmlTypes xmlType) {
         super(id);
+        add(new CssClass("veiw-tab"));
         if (xmlType.equals(XmlTypes.IVY_XML)) {
             addDependencySection(repoItem);
         } else {

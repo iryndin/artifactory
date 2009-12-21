@@ -27,7 +27,9 @@ import org.artifactory.common.wicket.model.sitemap.MenuNode;
  */
 public interface HttpSsoAddon extends AddonFactory {
 
-    public static final String DEFAULT_REQUEST_VARIABLE = "REMOTE_USER";
+    String DEFAULT_REQUEST_VARIABLE = "REMOTE_USER";
+
+    String REALM = "http-sso";
 
     /**
      * Returns the HTTP SSO site map builder menu node

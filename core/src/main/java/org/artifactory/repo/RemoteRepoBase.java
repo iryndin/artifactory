@@ -239,12 +239,14 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
         try {
             remoteResource = retrieveInfo(path);
             if (remoteResource.isFound()) {
-                //Create the parent folder eagerly so that we don't have to do it as part of the retrieval
-                String parentPath = PathUtils.getParent(path);
-                RepoPath parentRepoPath = new RepoPath(localCacheRepo.getKey(), parentPath);
-                LockingHelper.releaseReadLock(parentRepoPath);
-                JcrFolder parentFolder = localCacheRepo.getLockedJcrFolder(parentRepoPath, true);
-                parentFolder.mkdirs();
+                if (isStoreArtifactsLocally()) {
+                    //Create the parent folder eagerly so that we don't have to do it as part of the retrieval
+                    String parentPath = PathUtils.getParent(path);
+                    RepoPath parentRepoPath = new RepoPath(localCacheRepo.getKey(), parentPath);
+                    LockingHelper.releaseReadLock(parentRepoPath);
+                    JcrFolder parentFolder = localCacheRepo.getLockedJcrFolder(parentRepoPath, true);
+                    parentFolder.mkdirs();
+                }
             } else {
                 if (!foundExpiredInCache) {
                     //Update the non-found cache for a miss
@@ -392,8 +394,15 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
                 log.debug("Failed to retrieve remote checksum file {}: {}", path, e.getMessage());
             }
             ChecksumInfo info = new ChecksumInfo(checksumType);
-            info.setOriginal(checksum);
             checksums.add(info);
+            if (StringUtils.isNotBlank(checksum)) {
+                // set the remote checksum only if it is a valid string for that checksum
+                if (checksumType.isValid(checksum)) {
+                    info.setOriginal(checksum);
+                } else {
+                    log.debug("Invalid remote checksum for type {}: '{}'", checksumType, checksum);
+                }
+            }
         }
         return checksums;
     }
@@ -506,8 +515,9 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
      *
      * @param inputStream Input stream of checksum file
      * @return Extracted checksum value
-     * @throws IOException
+     * @throws IOException If failed to read from the input stream
      */
+    @SuppressWarnings({"unchecked"})
     private String readAndFormatChecksum(InputStream inputStream) throws IOException {
         List<String> lineList = IOUtils.readLines(inputStream, "utf-8");
         for (String line : lineList) {
@@ -526,7 +536,6 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
                 return checksum;
             }
         }
-
         return "";
     }
 

@@ -25,12 +25,22 @@ import org.slf4j.Logger;
  */
 public final class LoggerFactory {
 
+    private static boolean selectorUsed = System.getProperty("logback.ContextSelector") != null;
+
     public static Logger getLogger(String name) {
-        return org.slf4j.LoggerFactory.getLogger(name);
+        if (selectorUsed) {
+            return new WrappingLogger(name);
+        } else {
+            return org.slf4j.LoggerFactory.getLogger(name);
+        }
     }
 
     public static Logger getLogger(Class clazz) {
-        return org.slf4j.LoggerFactory.getLogger(clazz);
+        if (selectorUsed) {
+            return new WrappingLogger(clazz);
+        } else {
+            return org.slf4j.LoggerFactory.getLogger(clazz);
+        }
     }
 
     public static ILoggerFactory getILoggerFactory() {

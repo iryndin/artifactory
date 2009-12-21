@@ -17,6 +17,7 @@
 
 package org.artifactory.api.maven;
 
+import org.apache.commons.lang.StringUtils;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.log.LoggerFactory;
@@ -36,6 +37,9 @@ public class MavenArtifactInfo extends MavenUnitInfo {
 
     private String classifier;
     private String type;
+
+    private String path;
+    private boolean autoCalculate = true;
 
     /**
      * String representation of the pom.xml The maven Model class is not used because it isn't Serializable.
@@ -93,12 +97,33 @@ public class MavenArtifactInfo extends MavenUnitInfo {
 
     @Override
     public boolean isValid() {
+        if (!isAutoCalculate()) {
+            return !StringUtils.isEmpty(path);
+        }
         return super.isValid() && hasVersion();
     }
 
     @Override
     public String getPath() {
-        return addPath(new StringBuilder()).toString();
+        if (autoCalculate) {
+            return getMavenPath();
+        } else {
+            if (path == null) {
+                path = getMavenPath();
+            }
+            return path;
+        }
+    }
+
+    public void setPath(String path) {
+        if (!autoCalculate) {
+            this.path = path;
+        }
+    }
+
+    private String getMavenPath() {
+        String mavenPath = addPath(new StringBuilder()).toString();
+        return mavenPath;
     }
 
     @Override
@@ -231,5 +256,20 @@ public class MavenArtifactInfo extends MavenUnitInfo {
             path.append(".").append(type);
         }
         return path;
+    }
+
+
+    public boolean isAutoCalculate() {
+        return autoCalculate;
+    }
+
+    public void setAutoCalculate(boolean autoCalculate) {
+        this.autoCalculate = autoCalculate;
+        if (!autoCalculate) {
+            //Initialize path with the latest version.
+            // Set dummy path to be valid
+            path = "unknown";
+            path = getMavenPath();
+        }
     }
 }

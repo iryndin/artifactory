@@ -73,7 +73,7 @@ public class JcrMinimalArtifactInfoIndexCreator extends MinimalArtifactInfoIndex
         //Test whether the indexer needs to be stopped or paused
         //Check if we need to stop/suspend
         TaskService taskService = InternalContextHelper.get().getTaskService();
-        boolean stop = taskService.blockIfPausedAndShouldBreak();
+        boolean stop = taskService.pauseOrBreak();
         if (stop) {
             return;
         }

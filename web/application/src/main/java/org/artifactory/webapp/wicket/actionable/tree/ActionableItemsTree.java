@@ -70,7 +70,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener, Com
      * @param compactAllowed Is folder nodes compacting allowed
      */
     public ActionableItemsTree(String id, ActionableItemsProvider itemsProvider, RepoPath repoPath,
-                               boolean compactAllowed) {
+            boolean compactAllowed) {
         super(id);
         this.itemsProvider = itemsProvider;
         setOutputMarkupId(true);
@@ -319,11 +319,11 @@ public class ActionableItemsTree extends Tree implements ItemActionListener, Com
                 itemNode.removeFromParent();
             }
 
-            expendNode(e.getTarget(), parentNode);
+            expandNode(e.getTarget(), parentNode);
         }
     }
 
-    private void expendNode(AjaxRequestTarget target, ActionableItemTreeNode node) {
+    private void expandNode(AjaxRequestTarget target, ActionableItemTreeNode node) {
         getTreeState().expandNode(node);
         target.addComponent(this);
         adjustLayout(target);
@@ -350,7 +350,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener, Com
             ActionableItemTreeNode parent = node.getParent();
             node.removeFromParent();
             if (AjaxRequestTarget.get() != null) {
-                expendNode(AjaxRequestTarget.get(), parent);
+                expandNode(AjaxRequestTarget.get(), parent);
             }
 
         }
@@ -367,7 +367,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener, Com
             ActionableItemTreeNode parent = node.getParent();
             getTreeState().collapseNode(node);
             if (AjaxRequestTarget.get() != null) {
-                expendNode(AjaxRequestTarget.get(), parent);
+                expandNode(AjaxRequestTarget.get(), parent);
             }
         }
     }
@@ -503,7 +503,7 @@ public class ActionableItemsTree extends Tree implements ItemActionListener, Com
     }
 
     private static void setChildren(ActionableItemTreeNode node,
-                                    List<? extends ActionableItem> children) {
+            List<? extends ActionableItem> children) {
         node.removeAllChildren();
         for (ActionableItem child : children) {
             ActionableItemTreeNode newChildNode = new ActionableItemTreeNode(child);

@@ -17,19 +17,17 @@
 
 package org.artifactory.addon.wicket.disabledaddon;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.list.Loop;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.artifactory.addon.wicket.Addon;
-import org.artifactory.webapp.wicket.panel.tabbed.tab.BaseTab;
+import org.artifactory.webapp.wicket.panel.tabbed.tab.DisabledBaseTab;
 
 /**
- * Tab which is disabled by default
+ * Tab which is disabled by default and displays the given addon's promo
  *
  * @author Noam Tenne
  */
-public class DisabledAddonTab extends BaseTab {
+public class DisabledAddonTab extends DisabledBaseTab {
     private Addon addon;
 
     public DisabledAddonTab(IModel title, Addon addon) {
@@ -38,24 +36,8 @@ public class DisabledAddonTab extends BaseTab {
     }
 
     @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
     public void onNewTabItem(Loop.LoopItem item) {
         super.onNewTabItem(item);
         item.add(new DisabledAddonBehavior(addon));
-    }
-
-    @Override
-    public void onNewTabLink(Component link) {
-        super.onNewTabLink(link);
-        link.add(new DisableLinkBehavior());
-    }
-
-    @Override
-    public Panel getPanel(String panelId) {
-        return null;
     }
 }

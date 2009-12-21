@@ -201,4 +201,10 @@ public interface MutableCentralConfigDescriptor extends CentralConfigDescriptor 
     void setUrlBase(String baseUrl);
 
     void setAddons(AddonSettings addonSettings);
+
+    String getLogo();
+
+    String getFooter();
+
+    void setLogo(String logo);
 }

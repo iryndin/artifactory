@@ -32,9 +32,11 @@ import java.util.Date;
 public interface SecurityService extends ImportableExportable {
     String FILE_NAME = "security.xml";
 
-    String USER_DEFAULT_ADMIN = "admin";
+    String DEFAULT_ADMIN_USER = "admin";
 
     String DEFAULT_ADMIN_PASSWORD = "password";
+
+    String DEFAULT_REALM = "artifactory";
 
     String USER_SYSTEM = "_system_";
 

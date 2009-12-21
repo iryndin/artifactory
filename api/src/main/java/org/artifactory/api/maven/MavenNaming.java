@@ -17,6 +17,7 @@
 
 package org.artifactory.api.maven;
 
+import org.apache.commons.io.FilenameUtils;
 import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.util.Pair;
@@ -202,6 +203,15 @@ public class MavenNaming {
     public static boolean isPom(String path) {
         ContentType ct = NamingUtils.getContentType(path);
         return ct.isPom();
+    }
+
+    public static boolean isClientOrServerPom(String path) {
+        return isPom(path) || isClientPom(path);
+    }
+
+    public static boolean isClientPom(String path) {
+        String name = FilenameUtils.getName(path);
+        return "pom.xml".equalsIgnoreCase(name);
     }
 
     /**

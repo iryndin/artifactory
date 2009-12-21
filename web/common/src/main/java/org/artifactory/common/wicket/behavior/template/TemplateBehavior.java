@@ -30,10 +30,30 @@ import org.artifactory.common.wicket.contributor.ResourcePackage;
  * @author Yoav Aharoni
  */
 public class TemplateBehavior extends AbstractBehavior {
-    private transient ResourcePackage resourcePackage = newResourcePackage();
-    private BaseTemplateStrategy templateStrategy = new CachedInterpolatedTemplateStrategy();
+    private transient ResourcePackage resourcePackage;
+    private BaseTemplateStrategy templateStrategy;
+
+    private Class<? extends TemplateBehavior> resourceClass;
 
     private Component component;
+
+    public TemplateBehavior() {
+        init(getClass());
+    }
+
+    public TemplateBehavior(Class<? extends TemplateBehavior> resourceClass) {
+        init(resourceClass);
+    }
+
+    private void init(Class<? extends TemplateBehavior> resourceClass) {
+        this.resourceClass = resourceClass;
+        resourcePackage = newResourcePackage();
+        templateStrategy = new CachedInterpolatedTemplateStrategy();
+    }
+
+    public Class<? extends TemplateBehavior> getResourceClass() {
+        return resourceClass;
+    }
 
     @Override
     public void bind(Component component) {
@@ -56,7 +76,7 @@ public class TemplateBehavior extends AbstractBehavior {
     }
 
     protected ResourcePackage newResourcePackage() {
-        return new ResourcePackage(getClass());
+        return new ResourcePackage(getResourceClass());
     }
 
     public ResourcePackage getResourcePackage() {

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 /**
  * @author yoavl
@@ -59,7 +60,7 @@ public class ExecUtils {
     }
 
     public static boolean isWindows() {
-        String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         return osName.indexOf("windows") != -1;
     }
 }

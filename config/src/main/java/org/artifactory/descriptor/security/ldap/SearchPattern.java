@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * @author yossis
+ * @author Yossi Shaul
  */
 @XmlType(name = "SearchType",
         propOrder = {"searchFilter", "searchBase", "searchSubTree", "managerDn", "managerPassword"},

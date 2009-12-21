@@ -171,14 +171,24 @@ public class RestClient {
     }
 
     public static byte[] put(String uri, InputStream input, String username, String password) throws Exception {
-        return put(uri, input, null, HttpStatus.SC_OK, null, false, -1,
-                getCredentials(username, password));
+        return put(uri, input, null, HttpStatus.SC_OK, null, false, -1, getCredentials(username, password));
+    }
+
+    public static byte[] put(String uri, RequestEntity requestEntity, String username, String password)
+            throws Exception {
+        return put(uri, requestEntity, HttpStatus.SC_OK, null, false, -1, getCredentials(username, password));
     }
 
     public static byte[] put(String uri, InputStream input, final String inputType, int expectedStatus,
             String expectedResultType, boolean printStream, int timeout, Credentials credentials) throws Exception {
+        return put(uri, new InputStreamRequestEntity(input, inputType), expectedStatus, expectedResultType,
+                printStream, timeout, credentials);
+    }
+
+    public static byte[] put(String uri, RequestEntity requestEntity, int expectedStatus,
+            String expectedResultType, boolean printStream, int timeout, Credentials credentials) throws Exception {
         PutMethod method = new PutMethod(uri);
-        method.setRequestEntity(new InputStreamRequestEntity(input, inputType));
+        method.setRequestEntity(requestEntity);
         return executeMethod(uri, method, expectedStatus, expectedResultType, timeout, credentials, printStream);
     }
 
@@ -304,6 +314,9 @@ public class RestClient {
      */
     private static byte[] analyzeResponse(HttpMethod method, boolean printStream) throws IOException {
         InputStream is = method.getResponseBodyAsStream();
+        if (is == null) {
+            return null;
+        }
         byte[] buffer = new byte[1024];
         int r;
         try {

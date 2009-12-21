@@ -26,12 +26,12 @@ import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.LocalCacheRepo;
 import org.artifactory.spring.InternalContextHelper;
+import org.artifactory.spring.Reloadable;
 import org.artifactory.spring.ReloadableBean;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +42,7 @@ import java.util.Set;
  * @date Oct 12, 2008
  */
 @Service
+@Reloadable(beanClass = InternalCacheService.class, initAfter = InternalCentralConfigService.class)
 public class CacheServiceImpl implements InternalCacheService {
     private static final Logger log = LoggerFactory.getLogger(CacheServiceImpl.class);
 
@@ -55,11 +56,6 @@ public class CacheServiceImpl implements InternalCacheService {
      */
     private final Map<String, Map<ArtifactoryCache, Map>> repoCaches =
             new HashMap<String, Map<ArtifactoryCache, Map>>(11);
-
-    @PostConstruct
-    private void register() {
-        InternalContextHelper.get().addReloadableBean(InternalCacheService.class);
-    }
 
     public void init() {
         log.debug("Creating Artifactory caches");

@@ -22,86 +22,40 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.IAjaxLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.model.IModel;
 import org.artifactory.common.wicket.util.AjaxUtils;
 
 /**
  * @author Yoav Aharoni
  */
-public abstract class TitledAjaxSubmitLink extends BaseTitledLink implements IAjaxLink, IFormSubmittingComponent {
-    private Form form;
-
+public abstract class TitledAjaxSubmitLink extends TitledSubmitLink implements IAjaxLink {
     protected TitledAjaxSubmitLink(String id) {
-        this(id, (Form) null);
+        super(id);
     }
 
     protected TitledAjaxSubmitLink(String id, IModel titleModel) {
-        this(id, titleModel, null);
+        super(id, titleModel);
     }
 
-
     protected TitledAjaxSubmitLink(String id, String title) {
-        this(id, title, null);
+        super(id, title);
     }
 
     protected TitledAjaxSubmitLink(String id, Form form) {
-        super(id);
-        this.form = form;
-        init();
+        super(id, form);
     }
 
     protected TitledAjaxSubmitLink(String id, IModel titleModel, Form form) {
-        super(id, titleModel);
-        this.form = form;
-        init();
+        super(id, titleModel, form);
     }
 
     protected TitledAjaxSubmitLink(String id, String title, Form form) {
-        super(id, title);
-        this.form = form;
-        init();
+        super(id, title, form);
     }
 
-    protected abstract void onSubmit(AjaxRequestTarget target, Form form);
-
-    protected void onError(AjaxRequestTarget target) {
-        AjaxUtils.refreshFeedback(target);
-    }
-
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return null;
-    }
-
-    public boolean getDefaultFormProcessing() {
-        return true;
-    }
-
-    public final Form getForm() {
-        if (form == null) {
-            // try to find form in the hierarchy of owning component
-            form = (Form) this.findParent(Form.class);
-            if (form == null) {
-                throw new IllegalStateException(
-                        "form was not specified in the constructor and cannot be found in the hierarchy of the TitledAjaxSubmitLink");
-            }
-        }
-        return form;
-    }
-
-    public final String getInputName() {
-        return getId();
-    }
-
-    public final void onSubmit() {
-    }
-
-    public final void onClick(AjaxRequestTarget target) {
-        onSubmit(target, getForm());
-    }
-
-    private void init() {
+    {
         add(new AjaxFormSubmitBehavior(form, "onclick") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
@@ -119,5 +73,30 @@ public abstract class TitledAjaxSubmitLink extends BaseTitledLink implements IAj
                 return new CancelEventIfNoAjaxDecorator(TitledAjaxSubmitLink.this.getAjaxCallDecorator());
             }
         });
+    }
+
+    @Override
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
+        if ("input".equalsIgnoreCase(tag.getName()) || "button".equalsIgnoreCase(tag.getName())) {
+            tag.put("type", "submit");
+        }
+    }
+
+    protected abstract void onSubmit(AjaxRequestTarget target, Form form);
+
+    protected void onError(AjaxRequestTarget target) {
+        AjaxUtils.refreshFeedback(target);
+    }
+
+    protected IAjaxCallDecorator getAjaxCallDecorator() {
+        return null;
+    }
+
+    public final void onSubmit() {
+    }
+
+    public final void onClick(AjaxRequestTarget target) {
+        onSubmit(target, getForm());
     }
 }

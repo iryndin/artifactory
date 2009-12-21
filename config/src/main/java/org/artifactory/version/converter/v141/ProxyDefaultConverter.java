@@ -25,32 +25,40 @@ public class ProxyDefaultConverter implements XmlConverter {
             return;
         }
         List proxies = proxiesElement.getChildren();
+
         Element repositoriesElement = root.getChild("remoteRepositories", ns);
         List remoteRepos = repositoriesElement.getChildren();
-        if (remoteRepos != null) {
-            Element defaultCandidate = null;
-            for (Object remoteRepoObj : remoteRepos) {
-                Element repoteRepo = (Element) remoteRepoObj;
-                Element remoteRepoProxy = repoteRepo.getChild("proxyRef", ns);
-                if (remoteRepoProxy == null) {
-                    //If the remote repository does not have a proxy, we can stop right here.
-                    return;
-                }
-                if (defaultCandidate != null && !remoteRepoProxy.getText().equals(defaultCandidate.getText())) {
-                    return;
-                }
-                if (defaultCandidate == null) {
-                    defaultCandidate = remoteRepoProxy;
-                }
+        if (remoteRepos == null || remoteRepos.size() == 0) {
+            log.debug("No remote repos found");
+            return;
+        }
+
+        Element defaultCandidate = null;
+        for (Object remoteRepoObj : remoteRepos) {
+            Element remoteRepo = (Element) remoteRepoObj;
+            Element remoteRepoProxy = remoteRepo.getChild("proxyRef", ns);
+            if (remoteRepoProxy == null) {
+                //If the remote repository does not have a proxy, we can stop right here.
+                return;
             }
-            for (Object proxyObj : proxies) {
-                Element proxy = (Element) proxyObj;
-                Element proxyKey = proxy.getChild("key", ns);
-                if (proxyKey.getText().equals(defaultCandidate.getText())) {
+            if (defaultCandidate != null && !remoteRepoProxy.getText().equals(defaultCandidate.getText())) {
+                return;
+            }
+            if (defaultCandidate == null) {
+                defaultCandidate = remoteRepoProxy;
+            }
+        }
+
+        for (Object proxyObj : proxies) {
+            Element proxy = (Element) proxyObj;
+            Element proxyKey = proxy.getChild("key", ns);
+            if (proxyKey.getText().equals(defaultCandidate.getText())) {
+                if (proxy.getChild("defaultProxy", ns) == null) {   // RTFACT-2450
                     Element element = new Element("defaultProxy", ns);
                     element.setText("true");
                     proxy.addContent(element);
                 }
+                break;
             }
         }
     }

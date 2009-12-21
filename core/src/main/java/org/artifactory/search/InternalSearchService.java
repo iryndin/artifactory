@@ -54,6 +54,6 @@ public interface InternalSearchService extends SearchService, ReloadableBean {
      * @return QueryResult - Search results
      * @throws javax.jcr.RepositoryException
      */
-    @Lock(transactional = true, readOnly = true)
+    @Lock(transactional = true)
     QueryResult searchPomInPath(RepoPath repoPath) throws RepositoryException;
 }

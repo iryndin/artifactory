@@ -17,20 +17,14 @@
 
 package org.artifactory.api.repo.exception.maven;
 
+import java.io.IOException;
+
 /**
  * @author yoavl
  */
-public class BadPomException extends Exception {
+public class BadPomException extends IOException {
 
     public BadPomException(String message) {
         super(message);
-    }
-
-    public BadPomException(Throwable cause) {
-        super(cause);
-    }
-
-    public BadPomException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

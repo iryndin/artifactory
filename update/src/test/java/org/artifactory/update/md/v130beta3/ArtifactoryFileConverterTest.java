@@ -17,6 +17,7 @@
 
 package org.artifactory.update.md.v130beta3;
 
+import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.update.md.MetadataConverterTest;
 import org.artifactory.version.XmlConverterUtils;
@@ -25,6 +26,8 @@ import org.jdom.Element;
 import org.slf4j.Logger;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -35,6 +38,16 @@ import org.testng.annotations.Test;
 @Test
 public class ArtifactoryFileConverterTest extends MetadataConverterTest {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryFileConverterTest.class);
+
+    @BeforeMethod
+    public void bindProperties() {
+        ArtifactorySystemProperties.bind(new ArtifactorySystemProperties());
+    }
+
+    @AfterMethod
+    public void unbindProperties() {
+        ArtifactorySystemProperties.unbind();
+    }
 
     public void convertValidFile() throws Exception {
         String fileMetadata = "/metadata/v130beta3/artifactory.file.xml";

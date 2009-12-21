@@ -18,14 +18,14 @@
 package org.artifactory.webapp.servlet;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.artifactory.addon.servlet.ArtifactoryAuthenticationFilter;
-import org.artifactory.addon.servlet.ArtifactoryAuthenticationFilterChain;
 import org.artifactory.api.cache.ArtifactoryCache;
 import org.artifactory.api.cache.CacheService;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.security.UserInfo;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.security.HttpAuthenticationDetailsSource;
+import org.artifactory.webapp.servlet.authentication.ArtifactoryAuthenticationFilter;
+import org.artifactory.webapp.servlet.authentication.ArtifactoryAuthenticationFilterChain;
 import org.slf4j.Logger;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationManager;

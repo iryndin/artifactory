@@ -21,14 +21,16 @@ package org.artifactory.api.mime;
  * Created by IntelliJ IDEA. User: yoavl
  */
 public enum ChecksumType {
-    sha1("SHA-1", ".sha1"), md5("MD5", ".md5");
+    sha1("SHA-1", ".sha1", 40), md5("MD5", ".md5", 32);
 
     private final String alg;
     private final String ext;
+    private final int length;    // length of the hexadecimal string representation of the checksum
 
-    ChecksumType(String alg, String ext) {
+    ChecksumType(String alg, String ext, int length) {
         this.alg = alg;
         this.ext = ext;
+        this.length = length;
     }
 
     public String alg() {
@@ -37,6 +39,17 @@ public enum ChecksumType {
 
     public String ext() {
         return ext;
+    }
+
+    /**
+     * @param candidate Checksum candidate
+     * @return True if this string is a checksum value for this type
+     */
+    public boolean isValid(String candidate) {
+        if (candidate == null || candidate.length() != length) {
+            return false;
+        }
+        return candidate.matches("[a-fA-F0-9]{" + length + "}");
     }
 
     /**

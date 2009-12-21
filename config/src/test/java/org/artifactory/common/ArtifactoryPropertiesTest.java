@@ -22,14 +22,15 @@ import org.artifactory.log.LoggerFactory;
 import org.artifactory.test.TestUtils;
 import org.slf4j.Logger;
 import org.testng.Assert;
-import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import static java.lang.Integer.parseInt;
 import java.net.URISyntaxException;
+
+import static java.lang.Integer.parseInt;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author freds
@@ -69,8 +70,8 @@ public class ArtifactoryPropertiesTest {
         File file = TestUtils.getResourceAsFile("/config/system/artifactory.system.1.properties");
         ArtifactorySystemProperties.get().loadArtifactorySystemProperties(file, null);
         assertEquals(ConstantValues.logsViewRefreshRateSecs.getInt(), 1000);
-        assertEquals(ConstantValues.lockTimeoutSecs.getInt(),
-                parseInt(ConstantValues.lockTimeoutSecs.getDefValue()));
+        assertEquals(ConstantValues.locksTimeoutSecs.getInt(),
+                parseInt(ConstantValues.locksTimeoutSecs.getDefValue()));
         assertEquals(ConstantValues.securityAuthenticationCacheIdleTimeSecs.getInt(), 50);
         assertEquals(ConstantValues.jcrFixConsistency.getBoolean(), true);
         assertEquals(ConstantValues.searchMaxResults.getInt(),
@@ -84,7 +85,7 @@ public class ArtifactoryPropertiesTest {
 
         ArtifactorySystemProperties.get().loadArtifactorySystemProperties(file, null);
         assertEquals(ConstantValues.logsViewRefreshRateSecs.getInt(), 1000);
-        assertEquals(ConstantValues.lockTimeoutSecs.getInt(), 120);
+        assertEquals(ConstantValues.locksTimeoutSecs.getInt(), 120);
         assertEquals(ConstantValues.securityAuthenticationCacheIdleTimeSecs.getInt(), 800);
         assertEquals(ConstantValues.jcrFixConsistency.getBoolean(), true);
         assertEquals(ConstantValues.searchMaxResults.getInt(),

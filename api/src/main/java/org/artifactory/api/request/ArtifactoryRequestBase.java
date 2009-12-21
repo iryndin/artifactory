@@ -27,6 +27,9 @@ import org.artifactory.log.LoggerFactory;
 import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryRequestBase.class);
 
@@ -190,6 +193,12 @@ public abstract class ArtifactoryRequestBase implements ArtifactoryRequest {
             if (equals > 0) {
                 String key = param.substring(0, equals);
                 String value = param.substring(equals + 1);
+                // url-decode the value
+                try {
+                    value = URLDecoder.decode(value, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    log.warn("Encoding not supported: {}. Using original value", e.getMessage());
+                }
                 getMatrixParams().put(key, value);
             } else if (equals == 0) {
                 //No key declared, ignore

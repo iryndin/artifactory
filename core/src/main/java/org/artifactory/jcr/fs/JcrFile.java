@@ -34,7 +34,6 @@ import org.artifactory.api.mime.ContentType;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.exception.RepositoryRuntimeException;
-import org.artifactory.api.repo.exception.maven.BadPomException;
 import org.artifactory.api.stat.StatsInfo;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
@@ -129,7 +128,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
     /**
      * fill the data file from stream
      */
-    public void fillData(InputStream in) {
+    public void fillData(InputStream in) throws IOException {
         fillData(System.currentTimeMillis(), in);
     }
 
@@ -143,12 +142,14 @@ public class JcrFile extends JcrFsItem<FileInfo> {
      * @throws org.artifactory.concurrent.LockingException
      *                                    if the JCrFile is immutable or not locked for this thread
      */
-    public void fillData(long lastModified, InputStream is) {
+    public void fillData(long lastModified, InputStream is) throws IOException {
         checkMutable("fillData");
         try {
             createOrGetFileNode(getParentNode(), getName());
             setModifiedInfoFields(lastModified, System.currentTimeMillis());
             setResourceNode(is);
+        } catch (IOException e) {
+            throw e;    // rethrow ioexceptions
         } catch (Exception e) {
             throw new RepositoryRuntimeException(
                     "Could not create file node resource at '" + getAbsolutePath() + "'.", e);
@@ -257,10 +258,6 @@ public class JcrFile extends JcrFsItem<FileInfo> {
 
     public long getLastModified() {
         return getInfo().getLastModified();
-    }
-
-    public String getMimeType() {
-        return getInfo().getMimeType();
     }
 
     public String getChecksum(ChecksumType checksumType) {
@@ -376,6 +373,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 writeChecksums(targetFile.getParentFile(), getInfo().getChecksumsInfo(), targetFile.getName(),
                         getLastModified());
             }
+            //If a file export fails, we collect the error but not fail the whole export
         } catch (FileNotFoundException e) {
             status.setError("Failed to export " + getAbsolutePath() + " since it was deleted.", log);
         } catch (Exception e) {
@@ -547,11 +545,7 @@ public class JcrFile extends JcrFsItem<FileInfo> {
                 }
                 suppressPomConsistencyChecks = descriptor.isSuppressPomConsistencyChecks();
             }
-            try {
-                MavenModelUtils.validatePomTargetPath(in, getRelativePath(), suppressPomConsistencyChecks);
-            } catch (BadPomException e) {
-                throw new RepositoryException("Could not store POM file.", e);
-            }
+            MavenModelUtils.validatePomTargetPath(in, getRelativePath(), suppressPomConsistencyChecks);
             in.reset();
         }
         Node xmlNode = getJcrRepoService().getOrCreateUnstructuredNode(node, JcrService.NODE_ARTIFACTORY_XML);

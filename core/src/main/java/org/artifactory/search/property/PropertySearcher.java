@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.artifactory.api.fs.ItemInfo;
+import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.search.SearchResults;
 import org.artifactory.api.search.property.PropertySearchControls;
 import org.artifactory.api.search.property.PropertySearchResult;
@@ -55,14 +56,13 @@ public class PropertySearcher extends SearcherBase<PropertySearchControls, Prope
     private String PROPERTY_NODE_PATH = "/jcr:root" + JcrPath.get().getRepoJcrRootPath() + "//" +
             JcrService.NODE_ARTIFACTORY_METADATA + "/properties/" + JcrService.NODE_ARTIFACTORY_PROPERTIES;
 
-    //The xpath result ordering command
-    private String QUERY_ORDERING = "order by jcr:score decending";
-
     @Override
     public SearchResults<PropertySearchResult> doSearch(PropertySearchControls controls) throws RepositoryException {
         this.controls = controls;
-
-        //Get all open property keys and search through them
+        String queryPath = getPathQueryBuilder(controls).toString();
+        PROPERTY_NODE_PATH = queryPath + "/" +
+                JcrService.NODE_ARTIFACTORY_METADATA + "/properties/" + JcrService.NODE_ARTIFACTORY_PROPERTIES;
+        ////Get all open property keys and search through them
         Set<String> openPropertyKeys = controls.getPropertyKeysByOpenness(PropertySearchControls.OPEN);
         executeOpenPropSearch(openPropertyKeys);
 
@@ -88,15 +88,16 @@ public class PropertySearcher extends SearcherBase<PropertySearchControls, Prope
 
                 StringBuilder queryBuilder = new StringBuilder();
                 queryBuilder.append(PROPERTY_NODE_PATH);
-                queryBuilder.append("[jcr:like(").append(key).append(",'%");
+                queryBuilder.append("[jcr:contains(").append("@").append(key).append(",'*");
 
                 //If no value is specified, search for all artifacts with the current key
                 if (StringUtils.isNotBlank(value)) {
-                    queryBuilder.append(value).append("%");
+                    queryBuilder.append(value).append("*");
                 }
-                queryBuilder.append("')] ").append(QUERY_ORDERING);
+                queryBuilder.append("')] ");
 
                 QueryResult queryResult = getJcrService().executeXpathQuery(queryBuilder.toString());
+                //*[jcr:contains(@myapp:title, 'JSR 170')]
                 processResults(queryResult);
             }
         }
@@ -141,7 +142,7 @@ public class PropertySearcher extends SearcherBase<PropertySearchControls, Prope
         String propertiesQuery = StringUtils.removeEnd(propertiesBuilder.toString(), " and ");
         propertiesQuery = propertiesQuery.trim();
 
-        String queryStr = PROPERTY_NODE_PATH + "[" + propertiesQuery + "] " + QUERY_ORDERING;
+        String queryStr = PROPERTY_NODE_PATH + "[" + propertiesQuery + "]";
 
         QueryResult queryResult = getJcrService().executeXpathQuery(queryStr);
         processResults(queryResult);
@@ -174,6 +175,10 @@ public class PropertySearcher extends SearcherBase<PropertySearchControls, Prope
             String path = row.getValue(JcrConstants.JCR_PATH).getString();
             String artifactPath = path.substring(0, path.lastIndexOf("/" + JcrService.NODE_ARTIFACTORY_METADATA));
             Node artifactNode = (Node) getJcrService().getManagedSession().getItem(artifactPath);
+            RepoPath repoPath = JcrPath.get().getRepoPath(artifactNode.getPath());
+            if (!isResultRepoPathValid(repoPath)) {
+                continue;
+            }
 
             ItemInfo itemInfo = getProxyItemInfo(artifactNode);
             boolean canRead = getAuthService().canRead(itemInfo.getRepoPath());

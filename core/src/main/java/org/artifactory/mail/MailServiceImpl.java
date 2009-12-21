@@ -41,7 +41,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.security.Security;
 import java.util.Properties;
 
 /**
@@ -80,6 +79,9 @@ public class MailServiceImpl implements MailService {
      */
     public void sendMail(String[] recipients, String subject, String body, final MailServerConfiguration config)
             throws EmailException {
+
+        verifyParameters(recipients, config);
+
         boolean debugEnabled = log.isDebugEnabled();
 
         Properties properties = new Properties();
@@ -100,7 +102,6 @@ public class MailServiceImpl implements MailService {
         //Enable SSL if set
         boolean useSsl = config.isUseSsl();
         if (useSsl) {
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
             properties.put("mail.smtp.socketFactory.port", config.getPort());
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             properties.put("mail.smtp.socketFactory.fallback", "false");
@@ -164,7 +165,7 @@ public class MailServiceImpl implements MailService {
         } catch (MessagingException e) {
             String em = e.getMessage();
             throw new EmailException(
-                    "An error has occured while sending an e-mail" + (em != null ? ": " + em.trim() : "") + ".\n", e);
+                    "An error has occurred while sending an e-mail" + (em != null ? ": " + em.trim() : "") + ".\n", e);
         }
     }
 
@@ -183,5 +184,15 @@ public class MailServiceImpl implements MailService {
         MailServerConfiguration mailServerConfiguration = new MailServerConfiguration(mailServer);
 
         return mailServerConfiguration;
+    }
+
+    private void verifyParameters(String[] recipients, MailServerConfiguration config) {
+        if (recipients == null) {
+            throw new EmailException("Recipient list cannot be null.");
+        }
+
+        if (config == null) {
+            throw new EmailException("Mail server configuration cannot be null.");
+        }
     }
 }

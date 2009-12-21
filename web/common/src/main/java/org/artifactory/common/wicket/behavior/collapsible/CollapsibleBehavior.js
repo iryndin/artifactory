@@ -16,7 +16,7 @@
  */
 
 var Collapsible = {
-    collapseExpand: function(link, resize) {
+    collapseExpand: function(link, resize, callback) {
         var container = link.parentNode;
         var expanded = container.className.indexOf('expanded') >= 0;
         if (expanded) {
@@ -27,6 +27,9 @@ var Collapsible = {
         if (resize) {
             ModalHandler.resizeCurrent();
             ModalHandler.centerCurrent();
+        }
+        if (callback) {
+            callback(!expanded);
         }
         return false;
     }

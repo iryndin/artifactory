@@ -28,10 +28,14 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.wicket.BuildAddon;
 import org.artifactory.api.fs.DeployableUnit;
 import org.artifactory.api.maven.MavenUnitInfo;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.common.wicket.component.confirm.AjaxConfirm;
+import org.artifactory.common.wicket.component.confirm.ConfirmDialog;
 import org.artifactory.common.wicket.component.links.TitledAjaxSubmitLink;
 import org.artifactory.common.wicket.component.modal.ModalHandler;
 import org.artifactory.common.wicket.component.modal.links.ModalCloseLink;
@@ -40,6 +44,7 @@ import org.artifactory.common.wicket.component.table.columns.checkbox.SelectAllC
 import org.artifactory.common.wicket.util.AjaxUtils;
 import org.artifactory.common.wicket.util.ListPropertySorter;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
+import org.artifactory.webapp.actionable.model.FolderActionableItem;
 import org.artifactory.webapp.wicket.actionable.tree.ActionableItemTreeNode;
 import org.artifactory.webapp.wicket.actionable.tree.ActionableItemsTree;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.TreeBrowsePanel;
@@ -59,8 +64,10 @@ public class DeleteVersionsPanel extends Panel {
     private DeployableUnitsDataProvider dataProvider;
 
     @SpringBean
-    private RepositoryService repoService;
+    private AddonsManager addonsManager;
 
+    @SpringBean
+    private RepositoryService repoService;
 
     public DeleteVersionsPanel(String id, List<DeployableUnit> deployableUnits, TreeBrowsePanel browseRepoPanel,
             RepoAwareActionableItem source) {
@@ -114,31 +121,46 @@ public class DeleteVersionsPanel extends Panel {
         TitledAjaxSubmitLink submit = new TitledAjaxSubmitLink("submit", "Delete Selected", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                List<RepoPath> selectedRepoPaths = dataProvider.getSelectedRepoPaths();
+                final List<RepoPath> selectedRepoPaths = dataProvider.getSelectedRepoPaths();
                 if (selectedRepoPaths.isEmpty()) {
                     error("No version selected for deletion");
                     return; // keep popup open
                 }
+                AjaxConfirm.get().confirm(new ConfirmDialog() {
+                    public String getMessage() {
+                        BuildAddon buildAddon = addonsManager.addonByType(BuildAddon.class);
+                        return buildAddon.getDeleteVersionsWarningMessage(selectedRepoPaths,
+                                "Are you sure you wish to delete the selected versions?");
+                    }
 
-                repoService.undeployPaths(selectedRepoPaths);
+                    public void onConfirm(boolean approved, AjaxRequestTarget target) {
+                        if (approved) {
+                            repoService.undeployPaths(selectedRepoPaths);
 
-                getPage().info("Selected versions deleted successfully");
-                AjaxUtils.refreshFeedback(target);
-                browseRepoPanel.removeNodePanel(target);
-                ActionableItemsTree tree = browseRepoPanel.getTree();
+                            getPage().info("Selected versions deleted successfully");
+                            AjaxUtils.refreshFeedback(target);
+                            browseRepoPanel.removeNodePanel(target);
+                            ActionableItemsTree tree = browseRepoPanel.getTree();
 
-                ActionableItemTreeNode itemNode = tree.searchForNodeByItem(source);
-                if (repoService.exists(source.getRepoPath())) {
+                            ActionableItemTreeNode itemNode = tree.searchForNodeByItem(source);
+                            RepoPath path = source.getRepoPath();
+                            if (source instanceof FolderActionableItem) {
+                                path = ((FolderActionableItem) source).getCanonicalPath();
+                            }
+                            ActionableItemTreeNode parent = itemNode.getParent();
+                            if (repoService.exists(path)) {
+                                tree.getTreeState().collapseNode(itemNode);
+                            } else {
+                                itemNode.removeFromParent();
+                                tree.getTreeState().collapseNode(parent);
+                            }
 
-                    tree.getTreeState().collapseNode(itemNode);
-                } else {
-                    ActionableItemTreeNode parent = itemNode.getParent();
-                    tree.getTreeState().collapseNode(parent);
-                }
-
-                target.addComponent(tree);
-                tree.adjustLayout(target);
-                ModalHandler.closeCurrent(target);
+                            target.addComponent(tree);
+                            tree.adjustLayout(target);
+                            ModalHandler.closeCurrent(target);
+                        }
+                    }
+                });
             }
         };
         return submit;

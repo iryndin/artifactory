@@ -23,7 +23,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "RepoType", propOrder = {"key", "description", "type"}, namespace = Descriptor.NS)
+@XmlType(name = "RepoType", propOrder = {"key", "description", "type", "includesPattern", "excludesPattern"},
+        namespace = Descriptor.NS)
 public abstract class RepoBaseDescriptor implements RepoDescriptor {
 
     @XmlID
@@ -35,6 +36,12 @@ public abstract class RepoBaseDescriptor implements RepoDescriptor {
 
     @XmlElement(defaultValue = "maven2", required = false)
     private RepoType type = RepoType.maven2;
+
+    @XmlElement(defaultValue = "**/*", required = false)
+    private String includesPattern = "**/*";
+
+    @XmlElement(defaultValue = "", required = false)
+    private String excludesPattern;
 
     public String getKey() {
         return key;
@@ -58,6 +65,22 @@ public abstract class RepoBaseDescriptor implements RepoDescriptor {
 
     public void setType(RepoType type) {
         this.type = type;
+    }
+
+    public String getIncludesPattern() {
+        return includesPattern;
+    }
+
+    public void setIncludesPattern(String includesPattern) {
+        this.includesPattern = includesPattern;
+    }
+
+    public String getExcludesPattern() {
+        return excludesPattern;
+    }
+
+    public void setExcludesPattern(String excludesPattern) {
+        this.excludesPattern = excludesPattern;
     }
 
     @Override

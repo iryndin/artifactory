@@ -19,43 +19,25 @@ package org.artifactory.repo;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.artifactory.api.common.StatusHolder;
-import org.artifactory.api.fs.ItemInfo;
 import org.artifactory.api.maven.MavenNaming;
 import org.artifactory.api.mime.NamingUtils;
 import org.artifactory.api.repo.RepoPath;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
 import org.artifactory.log.LoggerFactory;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.util.PathMatcher;
-import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
-import org.springframework.util.StringUtils;
-
-import java.util.List;
 
 
 public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBase<T> implements RealRepo<T> {
     private static final Logger log = LoggerFactory.getLogger(RealRepoBase.class);
 
-    private List<String> includes;
-    private List<String> excludes;
-
     protected RealRepoBase(InternalRepositoryService repositoryService) {
         super(repositoryService);
-        this.excludes = PathMatcher.getDefaultExcludes();
     }
 
     public RealRepoBase(InternalRepositoryService repositoryService, T descriptor) {
         this(repositoryService);
         setDescriptor(descriptor);
-    }
-
-    @Override
-    public void setDescriptor(T descriptor) {
-        super.setDescriptor(descriptor);
-        this.includes = PathUtils.delimitedListToStringList(descriptor.getIncludesPattern(), ",", "\r\n\f ");
-        this.excludes = PathUtils.delimitedListToStringList(descriptor.getExcludesPattern(), ",", "\r\n\f ");
-        excludes.addAll(PathMatcher.getDefaultExcludes());
     }
 
     @Override
@@ -71,14 +53,6 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         return getDescriptor().isHandleSnapshots();
     }
 
-    public String getIncludesPattern() {
-        return getDescriptor().getIncludesPattern();
-    }
-
-    public String getExcludesPattern() {
-        return getDescriptor().getExcludesPattern();
-    }
-
     public boolean isBlackedOut() {
         return getDescriptor().isBlackedOut();
     }
@@ -87,22 +61,6 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
         return getDescriptor().getMaxUniqueSnapshots();
     }
 
-    public boolean accepts(String path) {
-        // TODO: Refactor this using RepoPath
-        if (NamingUtils.isSystem(path)) {
-            // includes/excludes should not affect system paths
-            return true;
-        }
-
-        String toCheck = path;
-        //For artifactory metadata the pattern apply to the object it represents
-        if (path.endsWith(ItemInfo.METADATA_FOLDER)) {
-            toCheck = path.substring(0, path.length() - ItemInfo.METADATA_FOLDER.length() - 1);
-        } else if (NamingUtils.isMetadata(path)) {
-            toCheck = NamingUtils.getMetadataParentPath(path);
-        }
-        return !StringUtils.hasLength(toCheck) || PathMatcher.matches(toCheck, includes, excludes);
-    }
 
     public boolean handles(String path) {
         // TODO: Refactor this using RepoPath
@@ -139,7 +97,7 @@ public abstract class RealRepoBase<T extends RealRepoDescriptor> extends RepoBas
             statusHolder.setError("The repository '" + this.getKey() + "' rejected the artifact '" + repoPath +
                     "' due to its snapshot/release handling policy.",
                     HttpStatus.SC_FORBIDDEN, log);
-        } else if (!accepts(repoPath.getPath())) {
+        } else if (!accepts(repoPath)) {
             statusHolder.setError("The repository '" + this.getKey() + "' rejected the artifact '" + repoPath +
                     "' due to its include/exclude patterns settings.",
                     HttpStatus.SC_FORBIDDEN, log);

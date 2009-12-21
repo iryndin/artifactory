@@ -30,7 +30,7 @@ import java.util.List;
  * @author Yossi Shaul
  */
 public class PersistentTabbedPanel extends StyledTabbedPanel {
-    private final String COOKIE_NAME = "browse-last-tab";
+    private static final String COOKIE_NAME = "browse-last-tab";
     private static final int UNSET = -1;
 
     private int lastTabIndex;
@@ -84,9 +84,5 @@ public class PersistentTabbedPanel extends StyledTabbedPanel {
         // store last tab name in a cookie
         ITab tab = (ITab) getTabs().get(getSelectedTab());
         CookieUtils.setCookie(COOKIE_NAME, tab.getTitle().getObject().toString());
-        if (target != null) {
-            target.appendJavascript("Browser.fixTabPanel()");
-        }
     }
-
 }

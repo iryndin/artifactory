@@ -20,13 +20,16 @@ package org.artifactory.addon.wicket;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.artifactory.addon.AddonFactory;
 import org.artifactory.common.wicket.component.help.HelpBubble;
-import org.artifactory.common.wicket.component.links.TitledAjaxSubmitLink;
+import org.artifactory.common.wicket.component.panel.fieldset.FieldSetPanel;
 import org.artifactory.common.wicket.model.sitemap.MenuNode;
+import org.artifactory.webapp.actionable.ActionableItem;
 import org.artifactory.webapp.wicket.page.base.BasePage;
+import org.artifactory.webapp.wicket.page.config.general.CustomizingPanel;
 
 import java.util.Map;
 
@@ -41,7 +44,7 @@ public interface WebApplicationAddon extends AddonFactory {
      * @param wicketId The link's wicket id
      * @return An link to an external authentication page.
      */
-    TitledAjaxSubmitLink getLoginLink(String wicketId, Form form);
+    IFormSubmittingComponent getLoginLink(String wicketId, Form form);
 
     AbstractLink getLogoutLink(String wicketId);
 
@@ -57,6 +60,12 @@ public interface WebApplicationAddon extends AddonFactory {
      */
     String resetPassword(String userName, String remoteAddress, String resetPageUrl);
 
+    /**
+     * Gets the home link image
+     *
+     * @param wicketId
+     * @return The web markup container for the image (either the default one or the user defined one).
+     */
     WebMarkupContainer getHomeLink(String wicketId);
 
     /**
@@ -183,4 +192,14 @@ public interface WebApplicationAddon extends AddonFactory {
      * @return Web markup container
      */
     WebMarkupContainer getAddonsInfoPanel(String panelId);
+
+    /**
+     * Returns the Export search result panel for artifactory users and a dummy visable false for aol users
+     *
+     * @param panelId
+     * @return FieldSetPanel
+     */
+    FieldSetPanel getExportResultPanel(String panelId, ActionableItem actionableItem);
+
+    CustomizingPanel getCustomizingPanel(String panelId);
 }

@@ -17,9 +17,14 @@
 
 package org.artifactory.webapp.actionable.action;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.wicket.BuildAddon;
+import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepoPath;
-import org.artifactory.webapp.actionable.ActionableItem;
+import org.artifactory.common.wicket.component.confirm.AjaxConfirm;
+import org.artifactory.common.wicket.component.confirm.ConfirmDialog;
 import org.artifactory.webapp.actionable.event.ItemEvent;
 import org.artifactory.webapp.actionable.event.RepoAwareItemEvent;
 import org.artifactory.webapp.wicket.page.browse.treebrowser.TreeBrowsePanel;
@@ -35,15 +40,38 @@ public class DeleteAction extends RepoAwareItemAction {
     }
 
     @Override
-    public String getConfirmationMessage(ActionableItem actionableItem) {
-        return "Are you sure you wish to delete " + actionableItem.getDisplayName() + " ?";
+    public void onAction(final RepoAwareItemEvent e) {
+        AjaxConfirm.get().confirm(new ConfirmDialog() {
+            public String getMessage() {
+                return getDeleteConfirmMessage(e);
+            }
+
+            public void onConfirm(boolean approved, AjaxRequestTarget target) {
+                if (approved) {
+                    deleteItem(e);
+                }
+            }
+        });
     }
 
-    @Override
-    public void onAction(RepoAwareItemEvent e) {
+    protected void deleteItem(RepoAwareItemEvent e) {
         RepoPath repoPath = e.getRepoPath();
         getRepoService().undeploy(repoPath);
         removeNodePanel(e);
+        notifyListeners(e);
+    }
+
+    @Override
+    public boolean isNotifyingListeners() {
+        return false;
+    }
+
+    protected String getDeleteConfirmMessage(RepoAwareItemEvent e) {
+        String defaultMessage = new StringBuilder().append("Are you sure you wish to delete ").
+                append(e.getSource().getDisplayName()).append("?").toString();
+        AddonsManager addonsManager = ContextHelper.get().beanForType(AddonsManager.class);
+        BuildAddon buildAddon = addonsManager.addonByType(BuildAddon.class);
+        return buildAddon.getDeleteItemWarningMessage(e.getSource().getItemInfo(), defaultMessage);
     }
 
     private void removeNodePanel(ItemEvent event) {

@@ -17,18 +17,42 @@
 
 package org.artifactory.webapp.wicket.components.container;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.artifactory.api.config.CentralConfigService;
+import org.artifactory.api.context.ContextHelper;
+import org.artifactory.common.wicket.util.WicketUtils;
+
+import java.io.File;
 
 /**
- * @author Eli Givoni
+ * @author Tomer Cohen
  */
 public class LogoLinkContainer extends Panel {
+
+    @SpringBean
+    private CentralConfigService centralConfigService;
+
     public LogoLinkContainer(String id) {
         super(id);
-        setOutputMarkupId(true);
-        add(new BookmarkablePageLink("logoLink", getApplication().getHomePage()));
+        String logoPath = centralConfigService.getMutableDescriptor().getLogo();
+        if (StringUtils.isBlank(logoPath)) {
+            if (new File(ContextHelper.get().getArtifactoryHome().getLogoDir(), "logo").exists()) {
+                logoPath = WicketUtils.getWicketAppPath() + "logo";
+            }
+        }
+        BookmarkablePageLink homeLink = new BookmarkablePageLink("homeLink", getApplication().getHomePage());
+        add(homeLink);
+        LogoDisplayContainer logoDisplayContainer =
+                new LogoDisplayContainer("logoLink", getApplication().getHomePage(), logoPath);
+        add(logoDisplayContainer);
+        if (StringUtils.isBlank(logoPath)) {
+            logoDisplayContainer.setVisible(false);
+        } else {
+            homeLink.setVisible(false);
+        }
     }
-
-
 }
+

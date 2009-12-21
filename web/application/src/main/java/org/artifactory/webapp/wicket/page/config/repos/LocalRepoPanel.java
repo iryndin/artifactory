@@ -52,7 +52,6 @@ public class LocalRepoPanel extends RepoConfigCreateUpdatePanel<LocalRepoDescrip
 
         TitledBorder localRepoFields = new TitledBorder("localRepoFields");
         form.add(localRepoFields);
-
         localRepoFields.add(new StyledCheckbox("handleReleases"));
         localRepoFields.add(new SchemaHelpBubble("handleReleases.help"));
 

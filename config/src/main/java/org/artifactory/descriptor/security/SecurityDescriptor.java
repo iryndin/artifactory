@@ -31,8 +31,9 @@ import java.util.List;
 /**
  * @author Yossi Shaul
  */
-@XmlType(name = "SecurityType", propOrder = {"anonAccessEnabled", "passwordSettings", "ldapSettings",
-        "httpSsoSettings"}, namespace = Descriptor.NS)
+@XmlType(name = "SecurityType",
+        propOrder = {"anonAccessEnabled", "passwordSettings", "ldapSettings", "httpSsoSettings"},
+        namespace = Descriptor.NS)
 public class SecurityDescriptor implements Descriptor {
 
     @XmlElement(defaultValue = "true")
@@ -41,6 +42,7 @@ public class SecurityDescriptor implements Descriptor {
     @XmlElementWrapper(name = "ldapSettings")
     @XmlElement(name = "ldapSetting", required = false)
     private List<LdapSetting> ldapSettings;
+
 
     @XmlElement(name = "passwordSettings", required = false)
     private PasswordSettings passwordSettings = new PasswordSettings();
@@ -76,7 +78,7 @@ public class SecurityDescriptor implements Descriptor {
     }
 
     public LdapSetting removeLdap(String ldapKey) {
-        LdapSetting ldapSetting = getLdap(ldapKey);
+        LdapSetting ldapSetting = getLdapSettings(ldapKey);
         if (ldapSetting == null) {
             return null;
         }
@@ -91,7 +93,7 @@ public class SecurityDescriptor implements Descriptor {
         return ldapSetting;
     }
 
-    private LdapSetting getLdap(String ldapKey) {
+    private LdapSetting getLdapSettings(String ldapKey) {
         if (ldapSettings != null) {
             for (LdapSetting ldap : ldapSettings) {
                 if (ldap.getKey().equals(ldapKey)) {
@@ -103,7 +105,22 @@ public class SecurityDescriptor implements Descriptor {
     }
 
     public boolean isLdapExists(String key) {
-        return getLdap(key) != null;
+        return getLdapSettings(key) != null;
+    }
+
+    public LdapSetting getEnabledLdapSettings() {
+        if (ldapSettings != null) {
+            for (LdapSetting ldap : ldapSettings) {
+                if (ldap.isEnabled()) {
+                    return ldap;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isLdapEnabled() {
+        return getEnabledLdapSettings() != null;
     }
 
     public PasswordSettings getPasswordSettings() {

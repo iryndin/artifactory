@@ -32,11 +32,11 @@ public class JcrPath {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPath.class);
 
-
     protected static final String REPOS_FOLDER = "repositories";
     protected static final String CONFIGURATION_FOLDER = "configuration";
     protected static final String TRASH_FOLDER = "trash";
     protected static final String LOGS_FOLDER = "logs";
+    protected static final String BUILDS_FOLDER = "builds";
 
     /**
      * Strange stuff of a child class overidable singleton
@@ -70,6 +70,10 @@ public class JcrPath {
         return "/" + LOGS_FOLDER;
     }
 
+    public String getBuildsJcrRootPath() {
+        return "/" + BUILDS_FOLDER;
+    }
+
     public String getLogJcrPath(String logKey) {
         return new StringBuilder("/").append(LOGS_FOLDER).append("/").append(logKey).toString();
     }
@@ -80,6 +84,10 @@ public class JcrPath {
 
     public String getConfigJcrPath(String configKey) {
         return new StringBuilder("/").append(CONFIGURATION_FOLDER).append("/").append(configKey).toString();
+    }
+
+    public String getBuildsJcrPath(String buildsKey) {
+        return new StringBuilder("/").append(BUILDS_FOLDER).append("/").append(buildsKey).toString();
     }
 
     /**

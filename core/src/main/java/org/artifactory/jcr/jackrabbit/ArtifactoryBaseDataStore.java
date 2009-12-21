@@ -493,6 +493,17 @@ public abstract class ArtifactoryBaseDataStore implements GenericDbDataStore {
      * {@inheritDoc}
      */
     public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
+        DataRecord record = getRecordIfStored(identifier);
+        if (record == null) {
+            throw new DataStoreException("Record not found: " + identifier);
+        }
+        return record;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DataRecord getRecordIfStored(DataIdentifier identifier) throws DataStoreException {
         String id = identifier.toString();
         ArtifactoryDbDataRecord record = getFromAllEntries(id);
         if (record != null && record.setInUse()) {
@@ -507,7 +518,7 @@ public abstract class ArtifactoryBaseDataStore implements GenericDbDataStore {
             PreparedStatement prep = conn.executeStmt(selectMetaSQL, new Object[]{id});
             rs = prep.getResultSet();
             if (!rs.next()) {
-                throw new DataStoreRecordNotFoundException("Record not found: " + identifier);
+                return null;
             }
             long length = rs.getLong(1);
             long lastModified = rs.getLong(2);
