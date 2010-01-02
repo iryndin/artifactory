@@ -350,7 +350,7 @@ public class MultiIndex {
                     "              INITIALIZING OR RECREATING FULL REPOSITORY INDEX\n" +
                     " This is normal with a first-run of a new or upgraded installation or\n" +
                     " when the $ARTIFACTORY_HOME/data/index folder no longer exists.\n" +
-                    " This one-time initialization may take some time, depending on the current" +
+                    " This one-time initialization may take some time, depending on the current\n" +
                     " size of your repository.\n" +
                     "###########################################################################");
             try {
@@ -358,9 +358,11 @@ public class MultiIndex {
                 // traverse and index workspace
                 executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
                 NodeState rootState = (NodeState) stateMgr.getItemState(rootId);
+                long start = System.currentTimeMillis();
                 count = createIndex(rootState, rootPath, stateMgr, count);
                 executeAndLog(new Commit(getTransactionId()));
-                log.info("Created initial index for {} nodes.", count);
+                long time = (int) ((System.currentTimeMillis() - start) / 1000f);
+                log.info("Created initial index for {} nodes in {} sec.", count, time);
                 releaseMultiReader();
                 scheduleFlushTask();
             } catch (Exception e) {
