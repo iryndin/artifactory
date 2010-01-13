@@ -27,11 +27,11 @@ import org.apache.jackrabbit.commons.AbstractRepository;
 import org.apache.jackrabbit.core.cluster.ClusterContext;
 import org.apache.jackrabbit.core.cluster.ClusterException;
 import org.apache.jackrabbit.core.cluster.ClusterNode;
-import org.apache.jackrabbit.core.cluster.WorkspaceEventChannel;
-import org.apache.jackrabbit.core.cluster.WorkspaceListener;
 import org.apache.jackrabbit.core.cluster.LockEventChannel;
 import org.apache.jackrabbit.core.cluster.UpdateEventChannel;
 import org.apache.jackrabbit.core.cluster.UpdateEventListener;
+import org.apache.jackrabbit.core.cluster.WorkspaceEventChannel;
+import org.apache.jackrabbit.core.cluster.WorkspaceListener;
 import org.apache.jackrabbit.core.config.ClusterConfig;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -53,6 +53,8 @@ import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.retention.RetentionRegistry;
+import org.apache.jackrabbit.core.retention.RetentionRegistryImpl;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.security.simple.SimpleSecurityManager;
@@ -68,11 +70,10 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.version.VersionManager;
 import org.apache.jackrabbit.core.version.VersionManagerImpl;
 import org.apache.jackrabbit.core.xml.ClonedInputSource;
-import org.apache.jackrabbit.core.retention.RetentionRegistry;
-import org.apache.jackrabbit.core.retention.RetentionRegistryImpl;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
+import org.artifactory.jcr.JcrTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -112,7 +113,8 @@ import java.util.Set;
  * A <code>RepositoryImpl</code> ...
  */
 public class RepositoryImpl extends AbstractRepository
-        implements org.apache.jackrabbit.api.jsr283.Repository, JackrabbitRepository, SessionListener, EventListener, WorkspaceListener {
+        implements org.apache.jackrabbit.api.jsr283.Repository, JackrabbitRepository, SessionListener, EventListener,
+        WorkspaceListener {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
 
@@ -137,8 +139,7 @@ public class RepositoryImpl extends AbstractRepository
     public static final NodeId NODETYPES_NODE_ID = NodeId.valueOf("deadbeef-cafe-cafe-cafe-babecafebabe");
 
     /**
-     * the name of the file system resource containing the properties of the
-     * repository.
+     * the name of the file system resource containing the properties of the repository.
      */
     private static final String PROPERTIES_RESOURCE = "rep.properties";
 
@@ -164,8 +165,7 @@ public class RepositoryImpl extends AbstractRepository
     private JackrabbitSecurityManager securityMgr;
 
     /**
-     * Search manager for the jcr:system tree. May be <code>null</code> if
-     * none is configured.
+     * Search manager for the jcr:system tree. May be <code>null</code> if none is configured.
      */
     private SearchManager systemSearchMgr;
 
@@ -218,13 +218,10 @@ public class RepositoryImpl extends AbstractRepository
     private ClusterNode clusterNode;
 
     /**
-     * Shutdown lock for guaranteeing that no new sessions are started during
-     * repository shutdown and that a repository shutdown is not initiated
-     * during a login. Each session login acquires a read lock while the
-     * repository shutdown requires a write lock. This guarantees that there
-     * can be multiple concurrent logins when the repository is not shutting
-     * down, but that only a single shutdown and no concurrent logins can
-     * happen simultaneously.
+     * Shutdown lock for guaranteeing that no new sessions are started during repository shutdown and that a repository
+     * shutdown is not initiated during a login. Each session login acquires a read lock while the repository shutdown
+     * requires a write lock. This guarantees that there can be multiple concurrent logins when the repository is not
+     * shutting down, but that only a single shutdown and no concurrent logins can happen simultaneously.
      */
     private final ReadWriteLock shutdownLock = new WriterPreferenceReadWriteLock();
 
@@ -247,9 +244,8 @@ public class RepositoryImpl extends AbstractRepository
      * Protected constructor.
      *
      * @param repConfig the repository configuration.
-     * @throws RepositoryException if there is already another repository
-     *                             instance running on the given configuration
-     *                             or another error occurs.
+     * @throws RepositoryException if there is already another repository instance running on the given configuration or
+     *                             another error occurs.
      */
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
 
@@ -310,7 +306,7 @@ public class RepositoryImpl extends AbstractRepository
                 clusterNode = createClusterNode();
                 nsReg.setEventChannel(clusterNode);
                 ntReg.setEventChannel(clusterNode);
-                
+
                 createWorkspaceEventChannel = clusterNode;
                 clusterNode.setListener(this);
             }
@@ -380,8 +376,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Get the cache manager of this repository, useful
-     * for setting its memory parameters.
+     * Get the cache manager of this repository, useful for setting its memory parameters.
      *
      * @return the cache manager
      * @since 1.3
@@ -400,8 +395,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Get the cluster node. Returns <code>null</code> if this repository
-     * is not running clustered.
+     * Get the cluster node. Returns <code>null</code> if this repository is not running clustered.
      *
      * @return cluster node
      */
@@ -410,8 +404,8 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Returns the {@link org.apache.jackrabbit.core.security.JackrabbitSecurityManager SecurityManager}
-     * of this <code>Repository</code>
+     * Returns the {@link org.apache.jackrabbit.core.security.JackrabbitSecurityManager SecurityManager} of this
+     * <code>Repository</code>
      *
      * @return the security manager
      * @throws RepositoryException if an error occurs.
@@ -431,7 +425,8 @@ public class RepositoryImpl extends AbstractRepository
             onSessionCreated(securitySession);
 
             if (smc == null) {
-                log.debug("No configuration entry for SecurityManager. Using org.apache.jackrabbit.core.security.simple.SimpleSecurityManager");
+                log.debug(
+                        "No configuration entry for SecurityManager. Using org.apache.jackrabbit.core.security.simple.SimpleSecurityManager");
                 securityMgr = new SimpleSecurityManager();
             } else {
                 securityMgr = (JackrabbitSecurityManager) smc.newInstance();
@@ -451,7 +446,7 @@ public class RepositoryImpl extends AbstractRepository
      * @throws RepositoryException if an error occurs
      */
     protected VersionManagerImpl createVersionManager(VersioningConfig vConfig,
-                                                      DelegatingObservationDispatcher delegatingDispatcher)
+            DelegatingObservationDispatcher delegatingDispatcher)
             throws RepositoryException {
 
 
@@ -472,9 +467,8 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Initialize startup workspaces. Base implementation will initialize the
-     * default workspace. Derived classes may initialize their own startup
-     * workspaces <b>after</b> having called the base implementation.
+     * Initialize startup workspaces. Base implementation will initialize the default workspace. Derived classes may
+     * initialize their own startup workspaces <b>after</b> having called the base implementation.
      *
      * @throws RepositoryException if an error occurs
      */
@@ -483,7 +477,7 @@ public class RepositoryImpl extends AbstractRepository
         String secWspName = null;
         SecurityManagerConfig smc = repConfig.getSecurityConfig().getSecurityManagerConfig();
         if (smc != null) {
-           secWspName = smc.getWorkspaceName();
+            secWspName = smc.getWorkspaceName();
         }
         try {
             ((WorkspaceInfo) wspInfos.get(wspName)).initialize();
@@ -502,6 +496,7 @@ public class RepositoryImpl extends AbstractRepository
 
     /**
      * Returns the root node uuid.
+     *
      * @param fs
      * @return
      * @throws RepositoryException
@@ -513,20 +508,20 @@ public class RepositoryImpl extends AbstractRepository
                 try {
                     // load uuid of the repository's root node
                     InputStream in = uuidFile.getInputStream();
-/*
-                   // uuid is stored in binary format (16 bytes)
-                   byte[] bytes = new byte[16];
-                   try {
-                       in.read(bytes);
-                   } finally {
-                       try {
-                           in.close();
-                       } catch (IOException ioe) {
-                           // ignore
-                       }
-                   }
-                   rootNodeUUID = new UUID(bytes).toString();            // uuid is stored in binary format (16 bytes)
-*/
+                    /*
+                                       // uuid is stored in binary format (16 bytes)
+                                       byte[] bytes = new byte[16];
+                                       try {
+                                           in.read(bytes);
+                                       } finally {
+                                           try {
+                                               in.close();
+                                           } catch (IOException ioe) {
+                                               // ignore
+                                           }
+                                       }
+                                       rootNodeUUID = new UUID(bytes).toString();            // uuid is stored in binary format (16 bytes)
+                    */
                     // uuid is stored in text format (36 characters) for better readability
                     char[] chars = new char[36];
                     InputStreamReader reader = new InputStreamReader(in);
@@ -543,10 +538,10 @@ public class RepositoryImpl extends AbstractRepository
                 }
             } else {
                 // create new uuid
-/*
-                UUID rootUUID = UUID.randomUUID();     // version 4 uuid
-                rootNodeUUID = rootUUID.toString();
-*/
+                /*
+                                UUID rootUUID = UUID.randomUUID();     // version 4 uuid
+                                rootNodeUUID = rootUUID.toString();
+                */
                 /**
                  * use hard-coded uuid for root node rather than generating
                  * a different uuid per repository instance; using a
@@ -556,18 +551,18 @@ public class RepositoryImpl extends AbstractRepository
                 try {
                     // persist uuid of the repository's root node
                     OutputStream out = uuidFile.getOutputStream();
-/*
-                    // store uuid in binary format
-                    try {
-                        out.write(rootUUID.getBytes());
-                    } finally {
-                        try {
-                            out.close();
-                        } catch (IOException ioe) {
-                            // ignore
-                        }
-                    }
-*/
+                    /*
+                                        // store uuid in binary format
+                                        try {
+                                            out.write(rootUUID.getBytes());
+                                        } finally {
+                                            try {
+                                                out.close();
+                                            } catch (IOException ioe) {
+                                                // ignore
+                                            }
+                                        }
+                    */
                     // store uuid in text format for better readability
                     OutputStreamWriter writer = new OutputStreamWriter(out);
                     try {
@@ -598,7 +593,18 @@ public class RepositoryImpl extends AbstractRepository
      */
     protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs)
             throws RepositoryException {
-        return new NamespaceRegistryImpl(fs);
+        NamespaceRegistryImpl namespaceRegistry = new NamespaceRegistryImpl(fs);
+
+        //Register the artifactory namespaces if not registered already
+        List<String> nsPrefixes = Arrays.asList(namespaceRegistry.getPrefixes());
+        if (!nsPrefixes.contains(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX, JcrTypes.ARTIFACTORY_NAMESPACE);
+        }
+        if (!nsPrefixes.contains(JcrTypes.OCM_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.OCM_NAMESPACE_PREFIX, JcrTypes.OCM_NAMESPACE);
+        }
+
+        return namespaceRegistry;
     }
 
     /**
@@ -609,7 +615,7 @@ public class RepositoryImpl extends AbstractRepository
      * @throws RepositoryException
      */
     protected NodeTypeRegistry createNodeTypeRegistry(NamespaceRegistry nsReg,
-                                                      FileSystem fs)
+            FileSystem fs)
             throws RepositoryException {
         return NodeTypeRegistry.create(nsReg, fs);
     }
@@ -630,8 +636,8 @@ public class RepositoryImpl extends AbstractRepository
     /**
      * Performs a sanity check on this repository instance.
      *
-     * @throws RepositoryException if this repository has been rendered
-     *             invalid for some reason (e.g. if it has been shut down)
+     * @throws RepositoryException if this repository has been rendered invalid for some reason (e.g. if it has been
+     *                             shut down)
      */
     protected void sanityCheck() throws RepositoryException {
         // check repository status
@@ -642,8 +648,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Returns the system search manager or <code>null</code> if none is
-     * configured.
+     * Returns the system search manager or <code>null</code> if none is configured.
      */
     private SearchManager getSystemSearchManager(String wspName)
             throws RepositoryException {
@@ -711,12 +716,11 @@ public class RepositoryImpl extends AbstractRepository
     /**
      * Returns the {@link WorkspaceInfo} for the named workspace.
      *
-     * @param workspaceName The name of the workspace whose {@link WorkspaceInfo}
-     *                      is to be returned. This must not be <code>null</code>.
-     * @return The {@link WorkspaceInfo} for the named workspace. This will
-     *         never be <code>null</code>.
+     * @param workspaceName The name of the workspace whose {@link WorkspaceInfo} is to be returned. This must not be
+     *                      <code>null</code>.
+     * @return The {@link WorkspaceInfo} for the named workspace. This will never be <code>null</code>.
      * @throws NoSuchWorkspaceException If the named workspace does not exist.
-     * @throws RepositoryException If this repository has been shut down.
+     * @throws RepositoryException      If this repository has been shut down.
      */
     protected WorkspaceInfo getWorkspaceInfo(String workspaceName)
             throws NoSuchWorkspaceException, RepositoryException {
@@ -744,8 +748,7 @@ public class RepositoryImpl extends AbstractRepository
      * Creates a workspace with the given name.
      *
      * @param workspaceName name of the new workspace
-     * @throws RepositoryException if a workspace with the given name
-     *                             already exists or if another error occurs
+     * @throws RepositoryException if a workspace with the given name already exists or if another error occurs
      * @see SessionImpl#createWorkspace(String)
      */
     protected void createWorkspace(String workspaceName)
@@ -779,22 +782,18 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Creates a workspace with the given name and given workspace configuration
-     * template.
-     * 
-     * The difference between this method and {@link #createWorkspace(String, InputSource)}
-     * is that the later notifies the other cluster node that workspace has been created
-     * whereas this method only creates the workspace.
+     * Creates a workspace with the given name and given workspace configuration template.
+     * <p/>
+     * The difference between this method and {@link #createWorkspace(String, InputSource)} is that the later notifies
+     * the other cluster node that workspace has been created whereas this method only creates the workspace.
      *
      * @param workspaceName  name of the new workspace
-     * @param configTemplate the workspace configuration template of the new
-     *                       workspace
-     * @throws RepositoryException if a workspace with the given name already
-     *                             exists or if another error occurs
+     * @param configTemplate the workspace configuration template of the new workspace
+     * @throws RepositoryException if a workspace with the given name already exists or if another error occurs
      * @see SessionImpl#createWorkspace(String,InputSource)
      */
     private void createWorkspaceInternal(String workspaceName,
-                                   InputSource configTemplate)
+            InputSource configTemplate)
             throws RepositoryException {
         synchronized (wspInfos) {
             if (wspInfos.containsKey(workspaceName)) {
@@ -808,27 +807,23 @@ public class RepositoryImpl extends AbstractRepository
             wspInfos.put(workspaceName, info);
         }
     }
-    
+
     /**
-     * Creates a workspace with the given name and given workspace configuration
-     * template.
+     * Creates a workspace with the given name and given workspace configuration template.
      *
      * @param workspaceName  name of the new workspace
-     * @param configTemplate the workspace configuration template of the new
-     *                       workspace
-     * @throws RepositoryException if a workspace with the given name already
-     *                             exists or if another error occurs
+     * @param configTemplate the workspace configuration template of the new workspace
+     * @throws RepositoryException if a workspace with the given name already exists or if another error occurs
      * @see SessionImpl#createWorkspace(String,InputSource)
      */
     protected void createWorkspace(String workspaceName,
-                                   InputSource configTemplate)
+            InputSource configTemplate)
             throws RepositoryException {
 
         if (createWorkspaceEventChannel == null) {
             createWorkspaceInternal(workspaceName, configTemplate);
-        }
-        else {
-        
+        } else {
+
             ClonedInputSource template = new ClonedInputSource(configTemplate);
             createWorkspaceInternal(workspaceName, template.cloneInputSource());
             createWorkspaceEventChannel.workspaceCreated(workspaceName, template);
@@ -844,16 +839,14 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Enables or disables referential integrity checking for given workspace.
-     * Disabling referential integrity checks can result in a corrupted
-     * workspace, and thus this feature is only available to customized
-     * implementations that subclass RepositoryImpl.
+     * Enables or disables referential integrity checking for given workspace. Disabling referential integrity checks
+     * can result in a corrupted workspace, and thus this feature is only available to customized implementations that
+     * subclass RepositoryImpl.
      *
-     * @see <a href="https://issues.apache.org/jira/browse/JCR-954">Issue JCR-954</a>
      * @param workspace name of the workspace
-     * @param enabled <code>true</code> to enable integrity checking (default),
-     *                <code>false</code> to disable it
+     * @param enabled   <code>true</code> to enable integrity checking (default), <code>false</code> to disable it
      * @throws RepositoryException if an error occurs
+     * @see <a href="https://issues.apache.org/jira/browse/JCR-954">Issue JCR-954</a>
      */
     protected void setReferentialIntegrityChecking(
             String workspace, boolean enabled) throws RepositoryException {
@@ -870,17 +863,13 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Returns the {@link SearchManager} for the workspace with name
-     * <code>workspaceName</code>.
+     * Returns the {@link SearchManager} for the workspace with name <code>workspaceName</code>.
      *
      * @param workspaceName the name of the workspace.
-     * @return the <code>SearchManager</code> for the workspace, or
-     *         <code>null</code> if the workspace does not have a
+     * @return the <code>SearchManager</code> for the workspace, or <code>null</code> if the workspace does not have a
      *         <code>SearchManager</code> configured.
-     * @throws NoSuchWorkspaceException if there is no workspace with name
-     *                                  <code>workspaceName</code>.
-     * @throws RepositoryException      if an error occurs while opening the
-     *                                  search index.
+     * @throws NoSuchWorkspaceException if there is no workspace with name <code>workspaceName</code>.
+     * @throws RepositoryException      if an error occurs while opening the search index.
      */
     SearchManager getSearchManager(String workspaceName)
             throws NoSuchWorkspaceException, RepositoryException {
@@ -891,8 +880,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Returns the {@link LockManager} for the workspace with name
-     * <code>workspaceName</code>
+     * Returns the {@link LockManager} for the workspace with name <code>workspaceName</code>
      *
      * @param workspaceName workspace name
      * @return <code>LockManager</code> for the workspace
@@ -923,8 +911,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Returns the {@link SystemSession} for the workspace with name
-     * <code>workspaceName</code>
+     * Returns the {@link SystemSession} for the workspace with name <code>workspaceName</code>
      *
      * @param workspaceName workspace name
      * @return system session of the specified workspace
@@ -940,24 +927,22 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Creates a new repository session on the specified workspace for the
-     * <b><i>authenticated</i></b> subject of the given login context and
-     * adds it to the <i>active</i> sessions.
+     * Creates a new repository session on the specified workspace for the <b><i>authenticated</i></b> subject of the
+     * given login context and adds it to the <i>active</i> sessions.
      * <p/>
-     * Calls {@link #createSessionInstance(AuthContext, WorkspaceConfig)} to
-     * create the actual <code>SessionImpl</code> instance.
+     * Calls {@link #createSessionInstance(AuthContext, WorkspaceConfig)} to create the actual <code>SessionImpl</code>
+     * instance.
      *
-    * @param loginContext  login context with authenticated subject
+     * @param loginContext  login context with authenticated subject
      * @param workspaceName workspace name
      * @return a new session
      * @throws NoSuchWorkspaceException if the specified workspace does not exist
-     * @throws AccessDeniedException    if the subject of the given login context
-     *                                  is not granted access to the specified
+     * @throws AccessDeniedException    if the subject of the given login context is not granted access to the specified
      *                                  workspace
      * @throws RepositoryException      if another error occurs
      */
     protected final SessionImpl createSession(AuthContext loginContext,
-                                              String workspaceName)
+            String workspaceName)
             throws NoSuchWorkspaceException, AccessDeniedException,
             RepositoryException {
         WorkspaceInfo wspInfo = getWorkspaceInfo(workspaceName);
@@ -969,24 +954,22 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Creates a new repository session on the specified workspace for the given
-     * <b><i>authenticated</i></b> subject and adds it to the <i>active</i>
-     * sessions.
+     * Creates a new repository session on the specified workspace for the given <b><i>authenticated</i></b> subject and
+     * adds it to the <i>active</i> sessions.
      * <p/>
-     * Calls {@link #createSessionInstance(Subject, WorkspaceConfig)} to
-     * create the actual <code>SessionImpl</code> instance.
+     * Calls {@link #createSessionInstance(Subject, WorkspaceConfig)} to create the actual <code>SessionImpl</code>
+     * instance.
      *
      * @param subject       authenticated subject
      * @param workspaceName workspace name
      * @return a new session
      * @throws NoSuchWorkspaceException if the specified workspace does not exist
-     * @throws AccessDeniedException    if the subject of the given login context
-     *                                  is not granted access to the specified
+     * @throws AccessDeniedException    if the subject of the given login context is not granted access to the specified
      *                                  workspace
      * @throws RepositoryException      if another error occurs
      */
     protected final SessionImpl createSession(Subject subject,
-                                              String workspaceName)
+            String workspaceName)
             throws NoSuchWorkspaceException, AccessDeniedException,
             RepositoryException {
         WorkspaceInfo wspInfo = getWorkspaceInfo(workspaceName);
@@ -998,8 +981,7 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Adds the given session to the list of active sessions and registers this
-     * repository as listener.
+     * Adds the given session to the list of active sessions and registers this repository as listener.
      *
      * @param session the session to register
      */
@@ -1011,15 +993,11 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Tries to add Principals to a given subject:
-     * First Access the Subject from the current AccessControlContext,
-     * If Subject is found the LoginContext is evoked for it, in order
-     * to possibly allow for extension of preauthenticated Subject.<br>
-     * In contrast to a login with Credentials, a Session is created, even if the
-     * Authentication failed.<br>
-     * If the {@link Subject} is marked to be unmodificable or if the
-     * authentication of the the Subject failed Session is build for unchanged
-     * Subject.
+     * Tries to add Principals to a given subject: First Access the Subject from the current AccessControlContext, If
+     * Subject is found the LoginContext is evoked for it, in order to possibly allow for extension of preauthenticated
+     * Subject.<br> In contrast to a login with Credentials, a Session is created, even if the Authentication
+     * failed.<br> If the {@link Subject} is marked to be unmodificable or if the authentication of the the Subject
+     * failed Session is build for unchanged Subject.
      *
      * @param workspaceName must not be null
      * @return if a Subject is exsting null else
@@ -1064,8 +1042,8 @@ public class RepositoryImpl extends AbstractRepository
     //-------------------------------------------------< JackrabbitRepository >
 
     /**
-     * Shuts down this repository. The shutdown is guarded by a shutdown lock
-     * that prevents any new sessions from being started simultaneously.
+     * Shuts down this repository. The shutdown is guarded by a shutdown lock that prevents any new sessions from being
+     * started simultaneously.
      */
     public void shutdown() {
         try {
@@ -1086,8 +1064,8 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Private method that performs the actual shutdown after the shutdown
-     * lock has been acquired by the {@link #shutdown()} method.
+     * Private method that performs the actual shutdown after the shutdown lock has been acquired by the {@link
+     * #shutdown()} method.
      */
     private synchronized void doShutdown() {
         log.info("Shutting down repository...");
@@ -1148,7 +1126,7 @@ public class RepositoryImpl extends AbstractRepository
                 log.error("failed to persist repository properties", e);
             }
         }
-        
+
         if (dataStore != null) {
             try {
                 // close the datastore
@@ -1179,7 +1157,7 @@ public class RepositoryImpl extends AbstractRepository
                 repLock.release();
             } catch (RepositoryException e) {
                 log.error("failed to release the repository lock", e);
-            }            
+            }
         }
 
         log.info("Repository has been shutdown");
@@ -1187,6 +1165,7 @@ public class RepositoryImpl extends AbstractRepository
 
     /**
      * Returns the configuration of this repository.
+     *
      * @return repository configuration
      */
     public RepositoryConfig getConfig() {
@@ -1195,6 +1174,7 @@ public class RepositoryImpl extends AbstractRepository
 
     /**
      * Returns the repository file system.
+     *
      * @return repository file system
      */
     protected FileSystem getFileSystem() {
@@ -1204,13 +1184,10 @@ public class RepositoryImpl extends AbstractRepository
     /**
      * Sets the default properties of the repository.
      * <p/>
-     * This method loads the <code>Properties</code> from the
-     * <code>org/apache/jackrabbit/core/repository.properties</code> resource
-     * found in the class path and (re)sets the statistics properties, if not
-     * present.
+     * This method loads the <code>Properties</code> from the <code>org/apache/jackrabbit/core/repository.properties</code>
+     * resource found in the class path and (re)sets the statistics properties, if not present.
      *
      * @param props the properties object to load
-     *
      * @throws RepositoryException if the properties can not be loaded
      */
     protected void setDefaultRepositoryProperties(Properties props)
@@ -1235,19 +1212,13 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Loads the repository properties by executing the following steps:
-     * <ul>
-     * <li> if the {@link #PROPERTIES_RESOURCE} exists in the meta data store,
-     * the properties are loaded from that resource.</li>
-     * <li> {@link #setDefaultRepositoryProperties(Properties)} is called
-     * afterwards in order to initialize/update the repository properties
-     * since some default properties might have changed and need updating.</li>
-     * <li> finally {@link #storeRepProps(Properties)} is called in order to
-     * persist the newly generated properties.</li>
-     * </ul>
+     * Loads the repository properties by executing the following steps: <ul> <li> if the {@link #PROPERTIES_RESOURCE}
+     * exists in the meta data store, the properties are loaded from that resource.</li> <li> {@link
+     * #setDefaultRepositoryProperties(Properties)} is called afterwards in order to initialize/update the repository
+     * properties since some default properties might have changed and need updating.</li> <li> finally {@link
+     * #storeRepProps(Properties)} is called in order to persist the newly generated properties.</li> </ul>
      *
      * @return the newly loaded/initialized repository properties
-     *
      * @throws RepositoryException
      */
     protected Properties loadRepProps() throws RepositoryException {
@@ -1301,23 +1272,20 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * Creates a workspace persistence manager based on the given
-     * configuration. The persistence manager is instantiated using
-     * information in the given persistence manager configuration and
-     * initialized with a persistence manager context containing the other
-     * arguments.
+     * Creates a workspace persistence manager based on the given configuration. The persistence manager is instantiated
+     * using information in the given persistence manager configuration and initialized with a persistence manager
+     * context containing the other arguments.
      *
      * @return the created workspace persistence manager
-     * @throws RepositoryException if the persistence manager could
-     *                             not be instantiated/initialized
+     * @throws RepositoryException if the persistence manager could not be instantiated/initialized
      */
     private static PersistenceManager createPersistenceManager(File homeDir,
-                                                               FileSystem fs,
-                                                               PersistenceManagerConfig pmConfig,
-                                                               NodeId rootNodeId,
-                                                               NamespaceRegistry nsReg,
-                                                               NodeTypeRegistry ntReg,
-                                                               DataStore dataStore)
+            FileSystem fs,
+            PersistenceManagerConfig pmConfig,
+            NodeId rootNodeId,
+            NamespaceRegistry nsReg,
+            NodeTypeRegistry ntReg,
+            DataStore dataStore)
             throws RepositoryException {
         try {
             PersistenceManager pm = (PersistenceManager) pmConfig.newInstance();
@@ -1335,19 +1303,18 @@ public class RepositoryImpl extends AbstractRepository
      * @param persistMgr     persistence manager
      * @param rootNodeId     root node id
      * @param ntReg          node type registry
-     * @param usesReferences <code>true</code> if the item state manager should use
-     *                       node references to verify integrity of its reference properties;
-     *                       <code>false</code> otherwise
+     * @param usesReferences <code>true</code> if the item state manager should use node references to verify integrity
+     *                       of its reference properties; <code>false</code> otherwise
      * @param cacheFactory   cache factory
      * @return item state manager
      * @throws ItemStateException if an error occurs
      */
     protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr,
-                                                            NodeId rootNodeId,
-                                                            NodeTypeRegistry ntReg,
-                                                            boolean usesReferences,
-                                                            ItemStateCacheFactory cacheFactory,
-                                                            ISMLocking locking)
+            NodeId rootNodeId,
+            NodeTypeRegistry ntReg,
+            boolean usesReferences,
+            ItemStateCacheFactory cacheFactory,
+            ISMLocking locking)
             throws ItemStateException {
 
         return new SharedItemStateManager(persistMgr, rootNodeId, ntReg, true, cacheFactory, locking);
@@ -1500,44 +1467,37 @@ public class RepositoryImpl extends AbstractRepository
 
     //------------------------------------------< overridable factory methods >
     /**
-     * Creates an instance of the {@link SessionImpl} class representing a
-     * user authenticated by the <code>loginContext</code> instance attached
-     * to the workspace configured by the <code>wspConfig</code>.
+     * Creates an instance of the {@link SessionImpl} class representing a user authenticated by the
+     * <code>loginContext</code> instance attached to the workspace configured by the <code>wspConfig</code>.
      *
-     * @throws AccessDeniedException if the subject of the given login context
-     *                               is not granted access to the specified
+     * @throws AccessDeniedException if the subject of the given login context is not granted access to the specified
      *                               workspace
-     * @throws RepositoryException   If any other error occurs creating the
-     *                               session.
+     * @throws RepositoryException   If any other error occurs creating the session.
      */
     protected SessionImpl createSessionInstance(AuthContext loginContext,
-                                                WorkspaceConfig wspConfig)
+            WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
 
         return new XASessionImpl(this, loginContext, wspConfig);
     }
 
     /**
-     * Creates an instance of the {@link SessionImpl} class representing a
-     * user represented by the <code>subject</code> instance attached
-     * to the workspace configured by the <code>wspConfig</code>.
+     * Creates an instance of the {@link SessionImpl} class representing a user represented by the <code>subject</code>
+     * instance attached to the workspace configured by the <code>wspConfig</code>.
      *
-     * @throws AccessDeniedException if the subject of the given login context
-     *                               is not granted access to the specified
+     * @throws AccessDeniedException if the subject of the given login context is not granted access to the specified
      *                               workspace
-     * @throws RepositoryException   If any other error occurs creating the
-     *                               session.
+     * @throws RepositoryException   If any other error occurs creating the session.
      */
     protected SessionImpl createSessionInstance(Subject subject,
-                                                WorkspaceConfig wspConfig)
+            WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
 
         return new XASessionImpl(this, subject, wspConfig);
     }
 
     /**
-     * Creates a new {@link RepositoryImpl.WorkspaceInfo} instance for
-     * <code>wspConfig</code>.
+     * Creates a new {@link RepositoryImpl.WorkspaceInfo} instance for <code>wspConfig</code>.
      *
      * @param wspConfig the workspace configuration.
      * @return a new <code>WorkspaceInfo</code> instance.
@@ -1548,10 +1508,8 @@ public class RepositoryImpl extends AbstractRepository
 
     //--------------------------------------------------------< inner classes >
     /**
-     * <code>WorkspaceInfo</code> holds the objects that are shared
-     * among multiple per-session <code>WorkspaceImpl</code> instances
-     * representing the same named workspace, i.e. the same physical
-     * storage.
+     * <code>WorkspaceInfo</code> holds the objects that are shared among multiple per-session
+     * <code>WorkspaceImpl</code> instances representing the same named workspace, i.e. the same physical storage.
      */
     protected class WorkspaceInfo implements UpdateEventListener {
 
@@ -1596,8 +1554,7 @@ public class RepositoryImpl extends AbstractRepository
         private LockManagerImpl lockMgr;
 
         /**
-         * internal manager for evaluation of effective retention policies
-         * and holds
+         * internal manager for evaluation of effective retention policies and holds
          */
         private RetentionRegistryImpl retentionReg;
 
@@ -1633,8 +1590,7 @@ public class RepositoryImpl extends AbstractRepository
         private LockEventChannel lockChannel;
 
         /**
-         * Creates a new <code>WorkspaceInfo</code> based on the given
-         * <code>config</code>.
+         * Creates a new <code>WorkspaceInfo</code> based on the given <code>config</code>.
          *
          * @param config workspace configuration
          */
@@ -1663,20 +1619,17 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Returns the timestamp when the workspace has become idle or zero
-         * if the workspace is currently not idle.
+         * Returns the timestamp when the workspace has become idle or zero if the workspace is currently not idle.
          *
-         * @return the timestamp when the workspace has become idle or zero if
-         *         the workspace is not idle.
+         * @return the timestamp when the workspace has become idle or zero if the workspace is not idle.
          */
         final long getIdleTimestamp() {
             return idleTimestamp;
         }
 
         /**
-         * Sets the timestamp when the workspace has become idle. if
-         * <code>ts == 0</code> the workspace is marked as being currently
-         * active.
+         * Sets the timestamp when the workspace has become idle. if <code>ts == 0</code> the workspace is marked as
+         * being currently active.
          *
          * @param ts timestamp when workspace has become idle.
          */
@@ -1685,8 +1638,7 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Returns <code>true</code> if this workspace info is initialized,
-         * otherwise returns <code>false</code>.
+         * Returns <code>true</code> if this workspace info is initialized, otherwise returns <code>false</code>.
          *
          * @return <code>true</code> if this workspace info is initialized.
          */
@@ -1722,8 +1674,7 @@ public class RepositoryImpl extends AbstractRepository
          * Returns the workspace persistence manager.
          *
          * @return the workspace persistence manager
-         * @throws RepositoryException if the persistence manager could not be
-         * instantiated/initialized
+         * @throws RepositoryException if the persistence manager could not be instantiated/initialized
          */
         protected PersistenceManager getPersistenceManager()
                 throws RepositoryException {
@@ -1739,8 +1690,7 @@ public class RepositoryImpl extends AbstractRepository
          * Returns the workspace item state provider
          *
          * @return the workspace item state provider
-         * @throws RepositoryException if the workspace item state provider
-         *                             could not be created
+         * @throws RepositoryException if the workspace item state provider could not be created
          */
         protected SharedItemStateManager getItemStateProvider()
                 throws RepositoryException {
@@ -1769,8 +1719,7 @@ public class RepositoryImpl extends AbstractRepository
         /**
          * Returns the search manager for this workspace.
          *
-         * @return the search manager for this workspace, or <code>null</code>
-         *         if no <code>SearchManager</code>
+         * @return the search manager for this workspace, or <code>null</code> if no <code>SearchManager</code>
          * @throws RepositoryException if the search manager could not be created
          */
         protected SearchManager getSearchManager() throws RepositoryException {
@@ -1868,24 +1817,14 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Initializes this workspace info. The following components are
-         * initialized immediately:
-         * <ul>
-         * <li>file system</li>
-         * <li>persistence manager</li>
-         * <li>shared item state manager</li>
-         * <li>observation manager factory</li>
-         * </ul>
-         * The following components are initialized lazily (i.e. on demand)
-         * in order to save resources and to avoid 'chicken & egg' bootstrap
-         * problems:
-         * <ul>
-         * <li>system session</li>
-         * <li>lock manager</li>
-         * <li>search manager</li>
-         * </ul>
-         * @return <code>true</code> if this instance has been successfully
-         *         initialized, <code>false</code> if it is already initialized.
+         * Initializes this workspace info. The following components are initialized immediately: <ul> <li>file
+         * system</li> <li>persistence manager</li> <li>shared item state manager</li> <li>observation manager
+         * factory</li> </ul> The following components are initialized lazily (i.e. on demand) in order to save
+         * resources and to avoid 'chicken & egg' bootstrap problems: <ul> <li>system session</li> <li>lock manager</li>
+         * <li>search manager</li> </ul>
+         *
+         * @return <code>true</code> if this instance has been successfully initialized, <code>false</code> if it is
+         *         already initialized.
          * @throws RepositoryException if an error occurred during the initialization
          */
         final boolean initialize() throws RepositoryException {
@@ -1928,6 +1867,7 @@ public class RepositoryImpl extends AbstractRepository
 
         /**
          * Does the actual initialization work. assumes holding write lock.
+         *
          * @throws RepositoryException if an error occurs.
          */
         protected void doInitialize() throws RepositoryException {
@@ -1973,9 +1913,8 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Initializes the search manager of this workspace info. This method
-         * is called while still holding the write lock on this workspace
-         * info, but {@link #initialized} is already set to <code>true</code>.
+         * Initializes the search manager of this workspace info. This method is called while still holding the write
+         * lock on this workspace info, but {@link #initialized} is already set to <code>true</code>.
          *
          * @throws RepositoryException if the search manager could not be created
          */
@@ -2001,7 +1940,7 @@ public class RepositoryImpl extends AbstractRepository
             // register the repository as event listener for keeping repository statistics
             wsp.getObservationManager().addEventListener(RepositoryImpl.this,
                     Event.NODE_ADDED | Event.NODE_REMOVED
-                    | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
+                            | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
                     "/", true, null, null, false);
 
             // register SearchManager as event listener
@@ -2016,11 +1955,10 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Disposes this <code>WorkspaceInfo</code> if it has been idle for more
-         * than <code>maxIdleTime</code> milliseconds.
+         * Disposes this <code>WorkspaceInfo</code> if it has been idle for more than <code>maxIdleTime</code>
+         * milliseconds.
          *
-         * @param maxIdleTime amount of time in mmilliseconds before an idle
-         *                    workspace is automatically shutdown.
+         * @param maxIdleTime amount of time in mmilliseconds before an idle workspace is automatically shutdown.
          */
         final void disposeIfIdle(long maxIdleTime) {
             try {
@@ -2150,9 +2088,8 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Locks this workspace info. This is used (and only should be) by
-         * the {@link XASessionImpl} in order to lock all internal resources
-         * during a commit.
+         * Locks this workspace info. This is used (and only should be) by the {@link XASessionImpl} in order to lock
+         * all internal resources during a commit.
          *
          * @throws TransactionException
          */
@@ -2166,9 +2103,8 @@ public class RepositoryImpl extends AbstractRepository
         }
 
         /**
-         * Unlocks this workspace info. This is used (and only should be) by
-         * the {@link XASessionImpl} in order to lock all internal resources
-         * during a commit.
+         * Unlocks this workspace info. This is used (and only should be) by the {@link XASessionImpl} in order to lock
+         * all internal resources during a commit.
          */
         void lockRelease() {
             xaLock.release();
@@ -2180,9 +2116,9 @@ public class RepositoryImpl extends AbstractRepository
          * {@inheritDoc}
          */
         public void externalUpdate(ChangeLog external,
-                                   List events,
-                                   long timestamp,
-                                   String userData) throws RepositoryException {
+                List events,
+                long timestamp,
+                String userData) throws RepositoryException {
             try {
                 EventStateCollection esc = new EventStateCollection(
                         getObservationDispatcher(), null, null);
@@ -2200,14 +2136,12 @@ public class RepositoryImpl extends AbstractRepository
     }
 
     /**
-     * The workspace janitor thread that will shutdown workspaces that have
-     * been idle for a certain amount of time.
+     * The workspace janitor thread that will shutdown workspaces that have been idle for a certain amount of time.
      */
     private class WorkspaceJanitor implements Runnable {
 
         /**
-         * amount of time in milliseconds before an idle workspace is
-         * automatically shutdown.
+         * amount of time in milliseconds before an idle workspace is automatically shutdown.
          */
         private long maxIdleTime;
 
@@ -2217,11 +2151,9 @@ public class RepositoryImpl extends AbstractRepository
         private long checkInterval;
 
         /**
-         * Creates a new <code>WorkspaceJanitor</code> instance responsible for
-         * shutting down idle workspaces.
+         * Creates a new <code>WorkspaceJanitor</code> instance responsible for shutting down idle workspaces.
          *
-         * @param maxIdleTime amount of time in milliseconds before an idle
-         *                    workspace is automatically shutdown.
+         * @param maxIdleTime amount of time in milliseconds before an idle workspace is automatically shutdown.
          */
         WorkspaceJanitor(long maxIdleTime) {
             this.maxIdleTime = maxIdleTime;
@@ -2232,14 +2164,10 @@ public class RepositoryImpl extends AbstractRepository
         /**
          * {@inheritDoc}
          * <p/>
-         * Performs the following tasks in a <code>while (true)</code> loop:
-         * <ol>
-         * <li>wait for <code>checkInterval</code> milliseconds</li>
-         * <li>build list of initialized but currently inactive workspaces
-         *     (excluding the default workspace)</li>
-         * <li>shutdown those workspaces that have been idle for at least
-         *     <code>maxIdleTime</code> milliseconds</li>
-         * </ol>
+         * Performs the following tasks in a <code>while (true)</code> loop: <ol> <li>wait for
+         * <code>checkInterval</code> milliseconds</li> <li>build list of initialized but currently inactive workspaces
+         * (excluding the default workspace)</li> <li>shutdown those workspaces that have been idle for at least
+         * <code>maxIdleTime</code> milliseconds</li> </ol>
          */
         public void run() {
             while (true) {
