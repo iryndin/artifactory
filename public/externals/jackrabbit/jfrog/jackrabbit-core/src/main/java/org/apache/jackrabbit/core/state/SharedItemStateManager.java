@@ -16,18 +16,6 @@
  */
 package org.apache.jackrabbit.core.state;
 
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.PropertyType;
-import javax.jcr.ReferentialIntegrityException;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
@@ -52,66 +40,56 @@ import org.apache.jackrabbit.uuid.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.PropertyType;
+import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 /**
- * Shared <code>ItemStateManager</code> (SISM). Caches objects returned from a
- * <code>PersistenceManager</code>. Objects returned by this item state
- * manager are shared among all sessions.
+ * Shared <code>ItemStateManager</code> (SISM). Caches objects returned from a <code>PersistenceManager</code>. Objects
+ * returned by this item state manager are shared among all sessions.
  * <p/>
- * A shared item state manager operates on a <code>PersistenceManager</code>
- * (PM) that is used to load and store the item states. Additionally, a SISM can
- * have <code>VirtualItemStateProvider</code>s (VISP) that are used to provide
- * additional, non-persistent, read-only states. Examples of VISP are the
- * content representation of the NodeTypes (/jcr:system/jcr:nodeTypes) and the
- * version store (/jcr:system/jcr:versionStore). those 2 VISP are added to the
- * SISM during initialization of a workspace. i.e. they are 'mounted' to all
- * workspaces. we assume, that VISP cannot be added dynamically, neither during
- * runtime nor by configuration.
+ * A shared item state manager operates on a <code>PersistenceManager</code> (PM) that is used to load and store the
+ * item states. Additionally, a SISM can have <code>VirtualItemStateProvider</code>s (VISP) that are used to provide
+ * additional, non-persistent, read-only states. Examples of VISP are the content representation of the NodeTypes
+ * (/jcr:system/jcr:nodeTypes) and the version store (/jcr:system/jcr:versionStore). those 2 VISP are added to the SISM
+ * during initialization of a workspace. i.e. they are 'mounted' to all workspaces. we assume, that VISP cannot be added
+ * dynamically, neither during runtime nor by configuration.
  * <p/>
- * The states from the VISP are read-only. by the exception for node references.
- * remember that the referrers are stored in a {@link NodeReferences} state,
- * having the ID of the target state.
- * <br/>
- * there are 5 types of referential relations to be distinguished:
- * <ol>
- * <li> normal --> normal (references from 'normal' states to 'normal' states)
- *      this is the normal case and will be handled by the SISM.
- *
- * <li> normal --> virtual (references from 'normal' states to 'virtual' states)
- *      those references should be handled by the VISP rather by the SISM.
- *
- * <li> virtual --> normal (references from 'virtual' states to 'normal' states)
- *      such references are not supported. eg. references of versioned nodes do
- *      not impose any constraints on the referenced nodes.
- *
- * <li> virtual --> virtual (references from 'virtual' states to 'virtual'
- *      states of the same VISP).
- *      intra-virtual references are handled by the item state manager of the VISP.
- *
- * <li> virtual --> virtual' (references from 'virtual' states to 'virtual'
- *      states of different VISP).
- *      those do currently not occur and are therefore not supported.
- * </ol>
+ * The states from the VISP are read-only. by the exception for node references. remember that the referrers are stored
+ * in a {@link NodeReferences} state, having the ID of the target state. <br/> there are 5 types of referential
+ * relations to be distinguished: <ol> <li> normal --> normal (references from 'normal' states to 'normal' states) this
+ * is the normal case and will be handled by the SISM.
  * <p/>
- * if VISP are not dynamic, there is not risk that NV-type references can dangle
- * (since a VISP cannot be 'unmounted', leaving eventual references dangling).
- * although multi-workspace-referrers are not explicitly supported, the
- * architecture of <code>NodeReferences</code> support multiple referrers with
- * the same PropertyId. So the number of references can be tracked (an example
- * of multi-workspace-referrers is a version referenced by the jcr:baseVersion
- * of several (corresponding) nodes in multiple workspaces).
- * <br/>
- * As mentioned, VN-type references should not impose any constraints on the
- * referrers (e.g. a normal node referenced by a versioned reference property).
- * In case of the version store, the VN-type references are not stored at
- * all, but reinforced as NN-type references in the normal states in case of a
- * checkout operation.
- * <br/>
- * VV-type references should be handled by the respective VISP. they look as
- * NN-type references in the scope if the VISP anyway...so no special treatment
- * should be necessary.
- * <br/>
- * VV'-type references are currently not possible, since the version store and
- * virtual node type representation don't allow such references.
+ * <li> normal --> virtual (references from 'normal' states to 'virtual' states) those references should be handled by
+ * the VISP rather by the SISM.
+ * <p/>
+ * <li> virtual --> normal (references from 'virtual' states to 'normal' states) such references are not supported. eg.
+ * references of versioned nodes do not impose any constraints on the referenced nodes.
+ * <p/>
+ * <li> virtual --> virtual (references from 'virtual' states to 'virtual' states of the same VISP). intra-virtual
+ * references are handled by the item state manager of the VISP.
+ * <p/>
+ * <li> virtual --> virtual' (references from 'virtual' states to 'virtual' states of different VISP). those do
+ * currently not occur and are therefore not supported. </ol>
+ * <p/>
+ * if VISP are not dynamic, there is not risk that NV-type references can dangle (since a VISP cannot be 'unmounted',
+ * leaving eventual references dangling). although multi-workspace-referrers are not explicitly supported, the
+ * architecture of <code>NodeReferences</code> support multiple referrers with the same PropertyId. So the number of
+ * references can be tracked (an example of multi-workspace-referrers is a version referenced by the jcr:baseVersion of
+ * several (corresponding) nodes in multiple workspaces). <br/> As mentioned, VN-type references should not impose any
+ * constraints on the referrers (e.g. a normal node referenced by a versioned reference property). In case of the
+ * version store, the VN-type references are not stored at all, but reinforced as NN-type references in the normal
+ * states in case of a checkout operation. <br/> VV-type references should be handled by the respective VISP. they look
+ * as NN-type references in the scope if the VISP anyway...so no special treatment should be necessary. <br/> VV'-type
+ * references are currently not possible, since the version store and virtual node type representation don't allow such
+ * references.
  */
 public class SharedItemStateManager
         implements ItemStateManager, ItemStateListener, Dumpable {
@@ -122,8 +100,7 @@ public class SharedItemStateManager
     private static Logger log = LoggerFactory.getLogger(SharedItemStateManager.class);
 
     /**
-     * cache of weak references to ItemState objects issued by this
-     * ItemStateManager
+     * cache of weak references to ItemState objects issued by this ItemStateManager
      */
     private final ItemStateCache cache;
 
@@ -138,16 +115,15 @@ public class SharedItemStateManager
     private final NodeTypeRegistry ntReg;
 
     /**
-     * Flag indicating whether this item state manager uses node references to
-     * verify integrity of its reference properties.
+     * Flag indicating whether this item state manager uses node references to verify integrity of its reference
+     * properties.
      */
     private final boolean usesReferences;
 
     /**
-     * Flag indicating whether this item state manager is checking referential
-     * integrity when storing modifications. The default is to to check
-     * for referential integrity.
-     * Should be changed very carefully by experienced developers only.
+     * Flag indicating whether this item state manager is checking referential integrity when storing modifications. The
+     * default is to to check for referential integrity. Should be changed very carefully by experienced developers
+     * only.
      *
      * @see https://issues.apache.org/jira/browse/JCR-954
      */
@@ -187,11 +163,11 @@ public class SharedItemStateManager
      * @param ntReg
      */
     public SharedItemStateManager(PersistenceManager persistMgr,
-                                  NodeId rootNodeId,
-                                  NodeTypeRegistry ntReg,
-                                  boolean usesReferences,
-                                  ItemStateCacheFactory cacheFactory,
-                                  ISMLocking locking)
+            NodeId rootNodeId,
+            NodeTypeRegistry ntReg,
+            boolean usesReferences,
+            ItemStateCacheFactory cacheFactory,
+            ISMLocking locking)
             throws ItemStateException {
         cache = new ItemStateReferenceCache(cacheFactory);
         this.persistMgr = persistMgr;
@@ -206,11 +182,11 @@ public class SharedItemStateManager
     }
 
     /**
-     * Enables or disables the referential integrity checking, this
-     * should be used very carefully by experienced developers only.
+     * Enables or disables the referential integrity checking, this should be used very carefully by experienced
+     * developers only.
      *
-     * @see https://issues.apache.org/jira/browse/JCR-954
      * @param checkReferences whether to do referential integrity checks
+     * @see https://issues.apache.org/jira/browse/JCR-954
      */
     public void setCheckReferences(boolean checkReferences) {
         this.checkReferences = checkReferences;
@@ -238,6 +214,7 @@ public class SharedItemStateManager
     }
 
     //-----------------------------------------------------< ItemStateManager >
+
     /**
      * {@inheritDoc}
      */
@@ -379,8 +356,8 @@ public class SharedItemStateManager
     /**
      * {@inheritDoc}
      * <p/>
-     * Notifications are received for items that this manager created itself or items that are
-     * managed by one of the virtual providers.
+     * Notifications are received for items that this manager created itself or items that are managed by one of the
+     * virtual providers.
      */
     public void stateCreated(ItemState created) {
         if (created.getContainer() == this) {
@@ -393,8 +370,8 @@ public class SharedItemStateManager
     /**
      * {@inheritDoc}
      * <p/>
-     * Notifications are received for items that this manager created itself or items that are
-     * managed by one of the virtual providers.
+     * Notifications are received for items that this manager created itself or items that are managed by one of the
+     * virtual providers.
      */
     public void stateModified(ItemState modified) {
         dispatcher.notifyStateModified(modified);
@@ -403,8 +380,8 @@ public class SharedItemStateManager
     /**
      * {@inheritDoc}
      * <p/>
-     * Notifications are received for items that this manager created itself or items that are
-     * managed by one of the virtual providers.
+     * Notifications are received for items that this manager created itself or items that are managed by one of the
+     * virtual providers.
      */
     public void stateDestroyed(ItemState destroyed) {
         if (destroyed.getContainer() == this) {
@@ -417,8 +394,8 @@ public class SharedItemStateManager
     /**
      * {@inheritDoc}
      * <p/>
-     * Notifications are received for items that this manager created itself or items that are
-     * managed by one of the virtual providers.
+     * Notifications are received for items that this manager created itself or items that are managed by one of the
+     * virtual providers.
      */
     public void stateDiscarded(ItemState discarded) {
         if (discarded.getContainer() == this) {
@@ -429,6 +406,7 @@ public class SharedItemStateManager
     }
 
     //-------------------------------------------------------------< Dumpable >
+
     /**
      * {@inheritDoc}
      */
@@ -442,6 +420,7 @@ public class SharedItemStateManager
     }
 
     //-------------------------------------------------< misc. public methods >
+
     /**
      * Disposes this <code>SharedItemStateManager</code> and frees resources.
      */
@@ -457,11 +436,9 @@ public class SharedItemStateManager
     }
 
     /**
-     * Adds a new virtual item state provider.<p/>
-     * NOTE: This method is not synchronized, because it is called right after
-     * creation only by the same thread and therefore concurrency issues
-     * do not occur. Should this ever change, the synchronization status
-     * has to be re-examined.
+     * Adds a new virtual item state provider.<p/> NOTE: This method is not synchronized, because it is called right
+     * after creation only by the same thread and therefore concurrency issues do not occur. Should this ever change,
+     * the synchronization status has to be re-examined.
      *
      * @param prov
      */
@@ -491,8 +468,7 @@ public class SharedItemStateManager
         private final EventStateCollectionFactory factory;
 
         /**
-         * Virtual provider containing references to be left out when updating
-         * references.
+         * Virtual provider containing references to be left out when updating references.
          */
         private final VirtualItemStateProvider virtualProvider;
 
@@ -512,8 +488,7 @@ public class SharedItemStateManager
         private EventStateCollection events;
 
         /**
-         * The write lock we currently hold or <code>null</code> if none is
-         * hold.
+         * The write lock we currently hold or <code>null</code> if none is hold.
          */
         private ISMLocking.WriteLock writeLock;
 
@@ -531,18 +506,16 @@ public class SharedItemStateManager
          * Create a new instance of this class.
          */
         public Update(ChangeLog local, EventStateCollectionFactory factory,
-                      VirtualItemStateProvider virtualProvider) {
+                VirtualItemStateProvider virtualProvider) {
             this.local = local;
             this.factory = factory;
             this.virtualProvider = virtualProvider;
         }
 
         /**
-         * Begin update operation. Prepares everything upto the point where
-         * the persistence manager's <code>store</code> method may be invoked.
-         * If this method succeeds, a write lock will have been acquired on the
-         * item state manager and either {@link #end()} or {@link #cancel()} has
-         * to be called in order to release it.
+         * Begin update operation. Prepares everything upto the point where the persistence manager's <code>store</code>
+         * method may be invoked. If this method succeeds, a write lock will have been acquired on the item state
+         * manager and either {@link #end()} or {@link #cancel()} has to be called in order to release it.
          */
         public void begin() throws ItemStateException, ReferentialIntegrityException {
             shared = new ChangeLog();
@@ -640,9 +613,9 @@ public class SharedItemStateManager
                             merged = NodeStateMerger.merge((NodeState) state, context);
                         }
                         if (!merged) {
-                            String msg = state.getId() + " has been modified externally";
-                            log.debug(msg);
-                            throw new StaleItemStateException(msg);
+                            StaleItemStateException staleEx = new StaleItemStateException(state);
+                            log.debug(staleEx.getMessage());
+                            throw staleEx;
                         }
                         // merge succeeded, fall through
                     }
@@ -656,9 +629,9 @@ public class SharedItemStateManager
                     ItemState state = (ItemState) iter.next();
                     state.connect(getItemState(state.getId()));
                     if (state.isStale()) {
-                        String msg = state.getId() + " has been modified externally";
-                        log.debug(msg);
-                        throw new StaleItemStateException(msg);
+                        StaleItemStateException staleEx = new StaleItemStateException(state);
+                        log.debug(staleEx.getMessage());
+                        throw staleEx;
                     }
                     shared.deleted(state.getOverlayedState());
                 }
@@ -714,10 +687,9 @@ public class SharedItemStateManager
         }
 
         /**
-         * End update operation. This will store the changes to the associated
-         * <code>PersistenceManager</code>. At the end of this operation, an
-         * eventual read or write lock on the item state manager will have
-         * been released.
+         * End update operation. This will store the changes to the associated <code>PersistenceManager</code>. At the
+         * end of this operation, an eventual read or write lock on the item state manager will have been released.
+         *
          * @throws ItemStateException if some error occurs
          */
         public void end() throws ItemStateException {
@@ -779,8 +751,8 @@ public class SharedItemStateManager
         }
 
         /**
-         * Cancel update operation. At the end of this operation, the write lock
-         * on the item state manager will have been released.
+         * Cancel update operation. At the end of this operation, the write lock on the item state manager will have
+         * been released.
          */
         public void cancel() {
             try {
@@ -865,13 +837,11 @@ public class SharedItemStateManager
         }
 
         /**
-         * Updates the target node references collections based on the
-         * modifications in the change log (i.e. added/removed/modified
-         * <code>REFERENCE</code> properties).
-         * <p>
-         * <b>Important node:</b> For consistency reasons this method must
-         * only be called <i>once</i> per change log and the change log
-         * should not be modified anymore afterwards.
+         * Updates the target node references collections based on the modifications in the change log (i.e.
+         * added/removed/modified <code>REFERENCE</code> properties).
+         * <p/>
+         * <b>Important node:</b> For consistency reasons this method must only be called <i>once</i> per change log and
+         * the change log should not be modified anymore afterwards.
          *
          * @throws ItemStateException if an error occurs
          */
@@ -972,16 +942,11 @@ public class SharedItemStateManager
         }
 
         /**
-         * Verifies that
-         * <ul>
-         * <li>no referenceable nodes are deleted if they are still being referenced</li>
-         * <li>targets of modified node references exist</li>
-         * </ul>
+         * Verifies that <ul> <li>no referenceable nodes are deleted if they are still being referenced</li> <li>targets
+         * of modified node references exist</li> </ul>
          *
-         * @throws ReferentialIntegrityException if a new or modified REFERENCE
-         *                                       property refers to a non-existent
-         *                                       target or if a removed node is still
-         *                                       being referenced
+         * @throws ReferentialIntegrityException if a new or modified REFERENCE property refers to a non-existent target
+         *                                       or if a removed node is still being referenced
          * @throws ItemStateException            if another error occurs
          */
         private void checkReferentialIntegrity()
@@ -1035,9 +1000,8 @@ public class SharedItemStateManager
         }
 
         /**
-         * Determines whether the specified node is <i>referenceable</i>, i.e.
-         * whether the mixin type <code>mix:referenceable</code> is either
-         * directly assigned or indirectly inherited.
+         * Determines whether the specified node is <i>referenceable</i>, i.e. whether the mixin type
+         * <code>mix:referenceable</code> is either directly assigned or indirectly inherited.
          *
          * @param state node state to check
          * @return true if the specified node is <i>referenceable</i>, false otherwise.
@@ -1073,13 +1037,12 @@ public class SharedItemStateManager
     }
 
     /**
-     * Begin update operation. This will return an object that can itself be
-     * ended/canceled.
+     * Begin update operation. This will return an object that can itself be ended/canceled.
      */
     public Update beginUpdate(ChangeLog local, EventStateCollectionFactory factory,
-                              VirtualItemStateProvider virtualProvider)
+            VirtualItemStateProvider virtualProvider)
             throws ReferentialIntegrityException, StaleItemStateException,
-                   ItemStateException {
+            ItemStateException {
 
         Update update = new Update(local, factory, virtualProvider);
         update.begin();
@@ -1087,30 +1050,23 @@ public class SharedItemStateManager
     }
 
     /**
-     * Store modifications registered in a <code>ChangeLog</code>. The items
-     * contained in the <tt>ChangeLog</tt> are not states returned by this
-     * item state manager but rather must be reconnected to items provided
-     * by this state manager.<p/>
-     * After successfully storing the states the observation manager is informed
-     * about the changes, if an observation manager is passed to this method.<p/>
-     * NOTE: This method is not synchronized, because all methods it invokes
-     * on instance members (such as {@link PersistenceManager#store} are
-     * considered to be thread-safe. Should this ever change, the
-     * synchronization status has to be re-examined.
+     * Store modifications registered in a <code>ChangeLog</code>. The items contained in the <tt>ChangeLog</tt> are not
+     * states returned by this item state manager but rather must be reconnected to items provided by this state
+     * manager.<p/> After successfully storing the states the observation manager is informed about the changes, if an
+     * observation manager is passed to this method.<p/> NOTE: This method is not synchronized, because all methods it
+     * invokes on instance members (such as {@link PersistenceManager#store} are considered to be thread-safe. Should
+     * this ever change, the synchronization status has to be re-examined.
      *
      * @param local   change log containing local items
      * @param factory event state collection factory
-     * @throws ReferentialIntegrityException if a new or modified REFERENCE
-     *                                       property refers to a non-existent
-     *                                       target or if a removed node is still
-     *                                       being referenced
-     * @throws StaleItemStateException       if at least one of the affected item
-     *                                       states has become stale
+     * @throws ReferentialIntegrityException if a new or modified REFERENCE property refers to a non-existent target or
+     *                                       if a removed node is still being referenced
+     * @throws StaleItemStateException       if at least one of the affected item states has become stale
      * @throws ItemStateException            if another error occurs
      */
     public void update(ChangeLog local, EventStateCollectionFactory factory)
             throws ReferentialIntegrityException, StaleItemStateException,
-                   ItemStateException {
+            ItemStateException {
 
         beginUpdate(local, factory, null).end();
     }
@@ -1119,7 +1075,7 @@ public class SharedItemStateManager
      * Handle an external update.
      *
      * @param external external change containing only node and property ids.
-     * @param events events to deliver
+     * @param events   events to deliver
      */
     public void externalUpdate(ChangeLog external, EventStateCollection events) {
         boolean holdingWriteLock = false;
@@ -1160,8 +1116,7 @@ public class SharedItemStateManager
     }
 
     /**
-     * Perform the external update. While executing this method, the
-     * <code>writeLock</code> on this manager is held.
+     * Perform the external update. While executing this method, the <code>writeLock</code> on this manager is held.
      *
      * @param external external change containing only node and property ids.
      */
@@ -1211,6 +1166,7 @@ public class SharedItemStateManager
 
     /**
      * Add an <code>ItemStateListener</code>
+     *
      * @param listener the new listener to be informed on modifications
      */
     public void addListener(ItemStateListener listener) {
@@ -1219,6 +1175,7 @@ public class SharedItemStateManager
 
     /**
      * Remove an <code>ItemStateListener</code>
+     *
      * @param listener an existing listener
      */
     public void removeListener(ItemStateListener listener) {
@@ -1230,13 +1187,13 @@ public class SharedItemStateManager
     /**
      * Create a new node state instance
      *
-     * @param id         uuid
+     * @param id           uuid
      * @param nodeTypeName node type name
-     * @param parentId   parent UUID
+     * @param parentId     parent UUID
      * @return new node state instance
      */
     private NodeState createInstance(NodeId id, Name nodeTypeName,
-                                     NodeId parentId) {
+            NodeId parentId) {
 
         NodeState state = persistMgr.createNew(id);
         state.setNodeTypeName(nodeTypeName);
@@ -1251,16 +1208,17 @@ public class SharedItemStateManager
      * Create root node state
      *
      * @param rootNodeId root node id
-     * @param ntReg        node type registry
+     * @param ntReg      node type registry
      * @return root node state
      * @throws ItemStateException if an error occurs
      */
     private NodeState createRootNodeState(NodeId rootNodeId,
-                                          NodeTypeRegistry ntReg)
+            NodeTypeRegistry ntReg)
             throws ItemStateException {
 
         NodeState rootState = createInstance(rootNodeId, NameConstants.REP_ROOT, null);
-        NodeState jcrSystemState = createInstance(RepositoryImpl.SYSTEM_ROOT_NODE_ID, NameConstants.REP_SYSTEM, rootNodeId);
+        NodeState jcrSystemState =
+                createInstance(RepositoryImpl.SYSTEM_ROOT_NODE_ID, NameConstants.REP_SYSTEM, rootNodeId);
 
         // FIXME need to manually setup root node by creating mandatory jcr:primaryType property
         // @todo delegate setup of root node to NodeTypeInstanceHandler
@@ -1276,7 +1234,8 @@ public class SharedItemStateManager
             EffectiveNodeType ent = ntReg.getEffectiveNodeType(NameConstants.REP_ROOT);
             propDef = ent.getApplicablePropertyDef(NameConstants.JCR_PRIMARYTYPE,
                     PropertyType.NAME, false);
-            jcrSystemDefId = ent.getApplicableChildNodeDef(NameConstants.JCR_SYSTEM, NameConstants.REP_SYSTEM, ntReg).getId();
+            jcrSystemDefId =
+                    ent.getApplicableChildNodeDef(NameConstants.JCR_SYSTEM, NameConstants.REP_SYSTEM, ntReg).getId();
         } catch (NoSuchNodeTypeException nsnte) {
             String msg = "internal error: failed to create root node";
             log.error(msg, nsnte);
@@ -1330,8 +1289,7 @@ public class SharedItemStateManager
     }
 
     /**
-     * Returns the item state for the given id without considering virtual
-     * item state providers.
+     * Returns the item state for the given id without considering virtual item state providers.
      */
     private ItemState getNonVirtualItemState(ItemId id)
             throws NoSuchItemStateException, ItemStateException {
@@ -1353,8 +1311,7 @@ public class SharedItemStateManager
     }
 
     /**
-     * Checks if this item state manager has the given item state without
-     * considering the virtual item state managers.
+     * Checks if this item state manager has the given item state without considering the virtual item state managers.
      */
     protected boolean hasNonVirtualItemState(ItemId id) {
         if (cache.isCached(id)) {
@@ -1391,7 +1348,7 @@ public class SharedItemStateManager
     /**
      * Create a new property state instance
      *
-     * @param propName   property name
+     * @param propName property name
      * @param parentId parent Id
      * @return new property state instance
      */

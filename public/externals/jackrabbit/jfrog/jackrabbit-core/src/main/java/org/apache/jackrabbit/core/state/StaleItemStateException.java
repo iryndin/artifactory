@@ -16,33 +16,45 @@
  */
 package org.apache.jackrabbit.core.state;
 
+import org.apache.jackrabbit.core.NodeId;
+
 /**
- * Signals that an item has been modified externally and that the item state
- * representing it has thus become stale.
+ * Signals that an item has been modified externally and that the item state representing it has thus become stale.
  */
 public class StaleItemStateException extends ItemStateException {
 
+    private String parentUuid = null;
+
+    public StaleItemStateException(ItemState state) {
+        super(state.getId() + " has been modified externally");
+        NodeId parentId = state.getParentId();
+        if (parentId != null) {
+            parentUuid = parentId.getUUID().toString();
+        }
+    }
+
     /**
-     * Constructs a new instance of this class with the specified detail
-     * message.
+     * Constructs a new instance of this class with the specified detail message.
      *
-     * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
+     *                method.
      */
     public StaleItemStateException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new instance of this class with the specified detail
-     * message and root cause.
+     * Constructs a new instance of this class with the specified detail message and root cause.
      *
-     * @param message   the detail message. The detail message is saved for
-     *                  later retrieval by the {@link #getMessage()} method.
+     * @param message   the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
+     *                  method.
      * @param rootCause root failure cause
      */
     public StaleItemStateException(String message, Throwable rootCause) {
         super(message, rootCause);
     }
 
+    public String getParentUuid() {
+        return parentUuid;
+    }
 }
