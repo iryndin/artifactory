@@ -198,8 +198,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core-jfrog</artifactId>
-            <version>2.4.1</version>
+            <artifactId>lucene-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
