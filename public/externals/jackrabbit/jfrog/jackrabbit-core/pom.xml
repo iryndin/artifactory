@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+   This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -30,7 +32,7 @@
         <version>1.6.0</version>
     </parent>
     <artifactId>jackrabbit-core-jfrog</artifactId>
-    <version>1.6.0g</version>
+    <version>1.6.0h</version>
     <name>Jackrabbit Core</name>
     <description>Jackrabbit content repository implementation</description>
 
