@@ -30,7 +30,7 @@
     <groupId>org.apache.lucene</groupId>
     <artifactId>lucene-core-jfrog</artifactId>
     <name>Lucene Core</name>
-    <version>2.4.1a</version>
+    <version>2.4.1b</version>
     <description>Apache Lucene Java Core</description>
     <packaging>jar</packaging>
 

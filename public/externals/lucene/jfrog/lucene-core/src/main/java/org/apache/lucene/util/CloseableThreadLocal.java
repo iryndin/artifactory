@@ -19,46 +19,42 @@ package org.apache.lucene.util;
  * limitations under the License.
  */
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentHashMap;
-
-/** Java's builtin ThreadLocal has a serious flaw:
- *  it can take an arbitrarily long amount of time to
- *  dereference the things you had stored in it, even once the
- *  ThreadLocal instance itself is no longer referenced.
- *  This is because there is single, master map stored for
- *  each thread, which all ThreadLocals share, and that
- *  master map only periodically purges "stale" entries.
- *
- *  While not technically a memory leak, because eventually
- *  the memory will be reclaimed, it can take a long time
- *  and you can easily hit OutOfMemoryError because from the
- *  GC's standpoint the stale entries are not reclaimaible.
- * 
- *  This class works around that, by only enrolling
- *  WeakReference values into the ThreadLocal, and
- *  separately holding a hard reference to each stored
- *  value.  When you call {@link #close}, these hard
- *  references are cleared and then GC is freely able to
- *  reclaim space by objects stored in it. */
+/**
+ * Java's builtin ThreadLocal has a serious flaw: it can take an arbitrarily long amount of time to dereference the
+ * things you had stored in it, even once the ThreadLocal instance itself is no longer referenced. This is because there
+ * is single, master map stored for each thread, which all ThreadLocals share, and that master map only periodically
+ * purges "stale" entries.
+ * <p/>
+ * While not technically a memory leak, because eventually the memory will be reclaimed, it can take a long time and you
+ * can easily hit OutOfMemoryError because from the GC's standpoint the stale entries are not reclaimaible.
+ * <p/>
+ * This class works around that, by only enrolling WeakReference values into the ThreadLocal, and separately holding a
+ * hard reference to each stored value.  When you call {@link #close}, these hard references are cleared and then GC is
+ * freely able to reclaim space by objects stored in it.
+ */
 
 public class CloseableThreadLocal {
 
-  private ThreadLocal t = new ThreadLocal();
+    private ThreadLocal t = new ThreadLocal();
 
-  public Object get() {
-    return t.get();
-  }
+    public Object get() {
+        return t.get();
+    }
 
-  public void set(Object object) {
-    t.set(object);
-  }
+    public void set(Object object) {
+        t.set(object);
+    }
 
-  public void close() {
-    if (t != null) t.remove();
-    t = null;
-  }
+    public void close() {
+        if (t != null) {
+            t.remove();
+        }
+        t = null;
+    }
+
+    public void closeThreadLocals() {
+        if (t != null) {
+            t.remove();
+        }
+    }
 }
