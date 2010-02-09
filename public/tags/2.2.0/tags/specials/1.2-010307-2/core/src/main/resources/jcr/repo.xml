@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--<!DOCTYPE Repository SYSTEM "config.dtd">-->
+
+<Repository>
+    <!--
+        virtual file system where the repository stores global state
+        (e.g. registered namespaces, custom node types, etc.)
+    -->
+    <FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+        <param name="url" value="jdbc:derby:${rep.home}/db;create=true"/>
+        <param name="schemaObjectPrefix" value="rep_"/>
+        <param name="shutdownOnClose" value="false"/>
+    </FileSystem>
+
+    <!--
+        security configuration
+    -->
+    <Security appName="Jackrabbit">
+        <!--
+            access manager:
+            class: FQN of class implementing the AccessManager interface
+        -->
+        <AccessManager class="org.apache.jackrabbit.core.security.SimpleAccessManager">
+            <!-- <param name="config" value="${rep.home}/access.xml"/> -->
+        </AccessManager>
+
+        <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
+            <!-- anonymous user name ('anonymous' is the default value) -->
+            <param name="anonymousId" value="anonymous"/>
+            <!--
+              default user name to be used instead of the anonymous user
+              when no login credentials are provided (unset by default)
+           -->
+            <param name="defaultUserId" value="superuser"/>
+        </LoginModule>
+    </Security>
+
+    <!--
+        location of workspaces root directory and name of default workspace
+    -->
+    <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
+    <!--
+        workspace configuration template:
+        used to create the initial workspace if there's no workspace yet
+    -->
+    <Workspace name="${wsp.name}">
+        <!--
+            virtual file system of the workspace:
+            class: FQN of class implementing the FileSystem interface
+        -->
+        <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+            <param name="path" value="${wsp.home}"/>
+        </FileSystem>
+        <!--
+            persistence manager of the workspace:
+            class: FQN of class implementing the PersistenceManager interface
+        -->
+        <!--
+        <PersistenceManager class="org.apache.jackrabbit.core.state.xml.XMLPersistenceManager"/>
+        -->
+        <!--
+        <PersistenceManager class="org.apache.jackrabbit.core.state.mem.InMemPersistenceManager">
+            <param name="initialCapacity" value="100000"/>
+            <param name="loadFactor" value="0.3"/>
+            <param name="persistent" value="true"/>
+        </PersistenceManager>
+        -->
+        <PersistenceManager
+                class="org.apache.jackrabbit.core.persistence.db.DerbyPersistenceManager">
+            <!--<param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>-->
+            <param name="url" value="jdbc:derby:${rep.home}/db;create=true"/>
+            <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+            <param name="shutdownOnClose" value="false"/>
+        </PersistenceManager>
+
+        <!--<PersistenceManager class="org.apache.jackrabbit.core.state.obj.ObjectPersistenceManager"/>-->
+        <!--
+            Search index and the file system it uses.
+        -->
+        <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+            <param name="useCompoundFile" value="true"/>
+            <param name="minMergeDocs" value="1000"/>
+            <param name="maxMergeDocs" value="10000"/>
+            <param name="mergeFactor" value="10"/>
+
+            <param name="path" value="${wsp.home}/index"/>
+            <param name="respectDocumentOrder" value="false"/>
+
+            <!--<FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+                <param name="url" value="jdbc:derby:${rep.home}/db;create=true"/>
+                <param name="schemaObjectPrefix" value="idx_${wsp.name}_"/>
+            </FileSystem>-->
+        </SearchIndex>
+    </Workspace>
+
+    <!--
+        Configures the versioning
+    -->
+    <Versioning rootPath="${rep.home}/version">
+        <!--
+            Configures the filesystem to use for versioning for the respective
+            persistence manager
+        -->
+        <FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+            <param name="url" value="jdbc:derby:${rep.home}/db;create=true"/>
+            <param name="schemaObjectPrefix" value="ver_fs_"/>
+            <param name="shutdownOnClose" value="false"/>
+        </FileSystem>
+
+        <!--
+            Configures the persistence manager to be used for persisting version state.
+            Please note that the current versioning implementation is based on
+            a 'normal' persistence manager, but this could change in future
+            implementations.
+        -->
+        <PersistenceManager
+                class="org.apache.jackrabbit.core.persistence.db.DerbyPersistenceManager">
+            <param name="url" value="jdbc:derby:${rep.home}/db;create=true"/>
+            <param name="schemaObjectPrefix" value="ver_"/>
+            <param name="shutdownOnClose" value="false"/>
+        </PersistenceManager>
+    </Versioning>
+</Repository>
+
+        <!-- http://localhost:8080/artifactory/repos/ant/ant-antlr/1.6.5/ant-antlr-1.6.5.jar -->

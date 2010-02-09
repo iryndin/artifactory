@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>How to Upgrade Help</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Standalone and Tomcat">
+            <p>The newer version of Artifactory contains again a full installation zip.</p>
+            <p>To upgrade without using any security settings closely follow these steps:</p>
+            <ol>
+                <li>Export all your existing repositories using the UI.</li>
+                <li>Shutdown Artifactory.</li>
+                <li>Remove/move aside the $ARTIFACTORY_HOME/data/jcr folder.</li>
+                <li>Make a copy of your $ARTIFACTORY_HOME/etc/artifactory.config.xml file.</li>
+                <li>Unzip the new verson and copy it over to $ARTIFACTORY_HOME.</li>
+                <li>Replace the exiting $ARTIFACTORY_HOME/etc/artifactory.config.xml with the
+                    artifactory.config.xml copy you made earlier.
+                </li>
+                <li>Restart Artifactory.</li>
+                <li>Reimport all your repositories using the UI.</li>
+            </ol>
+            <p>On Unix you may wish to reisntall the artifactoryctl script.</p>
+        </section>
+        <section name="Updating the deployed war file on Tomcat">
+            <p>
+                While Tomcat is down, copy the new $ARTIFACTORY_HOME/webapps/artifactory.war file to
+                Tomcat's webapps folder.
+                <br/>
+                <b>ATTENTION:</b>
+                Avoid hot-deploy and make sure to delete the extracted artifactory
+                folder under Tomcats' webapps folder before replacing the artifactory.war.
+            </p>
+        </section>
+    </body>
+</document>

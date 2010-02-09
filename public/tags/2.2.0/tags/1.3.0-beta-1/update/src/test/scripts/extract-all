@@ -1,0 +1,605 @@
+#!/bin/sh
+
+scriptsDir=`dirname $0`
+scriptsDir=`cd $scriptsDir && pwd`
+
+functionList=(checkEnv extractConf extractRun cleanConf cleanFiles runServer testServer stopServer
+ autoTestServer testAllServers getAllIt cleanArtUpd exportDB exportAllServers printRev runDiff allConf);
+functionDesc=(
+"Check that test root folder and all sub folder are OK"
+"Extract conf files form all zip files in zip folder to conf folder"
+"Extract all zip files in zip folder to run folder"
+"Delete conf destination folder conf"
+"Clean non conf files for all versions in conf folder"
+"Run Artifactory in [run folder]/artifactory-[version passed]"
+"Run tests of Artifactory in [tags folder]/[version passed]/core/src/it against server in [run folder]/artifactory-[version passed]"
+"Stop Artifactory in [run folder]/artifactory-[version passed]"
+"Runs startServer, testServer, stopServer in sequence for the version given"
+"Runs getAllIt then autoTestServer for ALL versions between optional params [from version name] until [to version name included]"
+"Get all integration tests code from subversion"
+"Clean the install dir of Artifactory update manager"
+"Export the DB of the version passed"
+"Export the DB of ALL versions between optional params [from version name] until [to version name included]"
+"Printing the revision on all versions in [conf folder]"
+"Running the diff on conf files for all versions in [conf folder]"
+"Do extractConf, cleanFiles, printRev, runDiff in sequence"
+);
+nbFunctions=${#functionList[@]}
+if [ $nbFunctions != ${#functionDesc[@]} ]; then
+echo ERROR: Number of function descriptions does not match the declared functions
+exit -1
+fi
+
+versions=( "1.2.2-rc0" "1.2.2-rc1" "1.2.2-rc2" "1.2.2" "1.2.5-rc0" "1.2.5-rc1" "1.2.5-rc2" "1.2.5-rc3" "1.2.5-rc4" "1.2.5-rc5" "1.2.5-rc6" "1.2.5" "1.2.5u1" )
+nbVersions=${#versions[@]}
+
+currentVersion="1.3.0-SNAPSHOT"
+
+# 2 means unchecked
+someError=2
+
+function checkEnv() {
+if [ $someError != 2 ]; then
+	#return the previous checked value
+	return $someError
+fi
+
+displayAction checkEnv
+
+someError=0
+if [ -z "${TEST_ROOT}" ] || [ ! -d "$TEST_ROOT" ]; then
+	echo "ERROR: the TEST_ROOT env value is mandatory"
+	echo "TEST_ROOT should point to a folder that has the following subdirs:"
+	echo "zip:  all zip files from sourceforge"
+	echo
+	someError=1
+else
+	TEST_ROOT=`cd $TEST_ROOT && pwd`
+	echo "INFO: TEST_ROOT=$TEST_ROOT"
+	echo
+fi
+if [ -z "${TEST_OUT}" ] || [ ! -d "$TEST_OUT" ]; then
+	echo "ERROR: the TEST_OUT env value is mandatory"
+	echo "This script will create if needed under TEST_ROOT:"
+	echo "conf: all extracted configuration files per versions"
+	echo "run:  all executable Artifactory versions"
+	echo "tags: all the svn checkout of tags versions will be created from svn"
+	echo "out:  all output files"
+	echo
+	someError=1
+else
+	TEST_OUT=`cd $TEST_OUT && pwd`
+	echo "INFO: TEST_OUT=$TEST_OUT"
+	echo
+fi
+
+if [ $someError == 1 ]; then
+	echo
+	return 1
+fi
+
+zipFolder=${TEST_ROOT}/zip
+checkFolder $zipFolder
+
+tagsFolder=${TEST_OUT}/tags
+checkFolder $tagsFolder create
+confOutFolder=${TEST_OUT}/conf
+checkFolder $confOutFolder create
+runOutFolder=${TEST_OUT}/run
+checkFolder $runOutFolder create
+logOutFolder=${TEST_OUT}/out
+checkFolder $logOutFolder create
+
+if [ $someError == 1 ]; then
+	echo
+	echo "ERROR: An Error occured during the environment check look above for message"
+	echo
+	return 1
+fi
+return 0
+}
+
+function extractConf() {
+displayAction extractConf
+
+extractFromWar="WEB-INF/applicationContext.xml WEB-INF/scheduling.xml WEB-INF/security.xml"
+extractFromCore="META-INF/artifactory.properties jcr/artifactory_nodetypes.xml jcr/derby.ddl jcr/repo.xml jcr/config.dtd"
+
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+    local ver=${versions[$index]}
+    local workFolder=${confOutFolder}/${ver}
+    mkdir -p $workFolder
+    cd $workFolder
+    unzip -j ${zipFolder}/artifactory-${ver}.zip artifactory-${ver}/webapps/artifactory.war artifactory-${ver}/etc/artifactory.config.xml
+    unzip -j artifactory.war ${extractFromWar} WEB-INF/lib/artifactory-core-${ver}.jar
+    unzip -j artifactory-core-${ver}.jar ${extractFromCore}
+    let "index = $index + 1"
+done
+}
+
+function extractRun() {
+displayAction extractRun
+
+cd $runOutFolder
+if [ "$1" == "$currentVersion" ]; then
+    unzip ${zipFolder}/artifactory-$1.zip
+    return 0
+fi
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+	local ver=${versions[$index]}
+    unzip ${zipFolder}/artifactory-${ver}.zip
+    let "index = $index + 1"
+done
+}
+
+function cleanConf() {
+displayAction cleanConf
+rm -rf $confOutFolder
+}
+
+function cleanFiles() {
+displayAction cleanFiles
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+    ver=${versions[$index]}
+    workFolder=${confOutFolder}/${ver}
+    rm $workFolder/artifactory.war $workFolder/artifactory-core-${ver}.jar
+    let "index = $index + 1"
+done
+}
+
+function runServer() {
+displayAction runServer
+privateServer $1 run
+}
+
+function stopServer() {
+displayAction stopServer
+privateServer $1 stop
+}
+
+function checkVersion() {
+foundVersionNb=
+if [ -z "$1" ]; then
+	echo "ERROR: trying to find version number without version name!"
+	return 1
+fi
+if [ "$1" == "$currentVersion" ]; then
+    #Leave version number empty but return ok
+    return 0
+fi
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+	if [ "$1" == "${versions[$index]}" ]; then
+		foundVersionNb=$index
+		return 0
+	fi
+    let "index = $index + 1"
+done
+return 1
+}
+
+function privateServer() {
+if ! checkVersion $1; then
+	echo "ERROR: Version $1 does not exists"
+	echo
+	return 1
+fi
+
+local action=$2
+
+local artifactoryRunFolder=$runOutFolder/artifactory-$1
+if ! checkFolder $artifactoryRunFolder; then
+	echo "ERROR: Run folder for version $1: $artifactoryRunFolder does not exists"
+	echo
+	return 1
+fi
+local artifactoryOutFolder=$logOutFolder/$1
+checkFolder $artifactoryOutFolder create
+if [ $someError != 0 ]; then
+	echo "ERROR: Log out dir for version $1: $artifactoryOutFolder cannot be created"
+	echo
+	return 1
+fi
+
+echo "INFO: $action Artifactory from $artifactoryRunFolder"
+local logFile=$artifactoryOutFolder/output.log
+local pidFile=$artifactoryOutFolder/artifactory.pid
+if [ -a "$pidFile" ]; then
+	# Check if still running
+	local pidValue=`cat $pidFile`
+	local stillRun=`ps -p $pidValue | grep $pidValue`
+	if [ -n "$stillRun" ]; then
+		if [ "$action" == "run" ]; then
+			echo "ERROR: Artifactory version $1 still running as PID $pidValue. Cannot Start."
+			return 1
+		else
+			if ! kill $pidValue; then
+				echo "ERROR: Cannot send kill signal to Artifactory version $1 still running as PID $pidValue. Cannot Stop."
+				return 1
+			fi
+		fi
+	else
+		# Just delete the file
+		echo "WARN: PID file $pidFile was not deleted after stop!"
+		rm $pidFile
+	fi
+else
+	if [ "$action" == "stop" ]; then
+		echo "ERROR: Cannot stop Artifactory version $1 the PID file $pidFile does not exist. Cannot Stop."
+		return 1
+	fi
+fi
+
+if [ "$action" == "stop" ]; then
+	# Wait for shutdown
+	local stopped=false
+	local nbSeconds=0
+	while [ $stopped == false ] && [ $nbSeconds -lt 15 ]; do
+		sleep 1
+	    let "nbSeconds = $nbSeconds + 1"
+		stillRun=`ps -p $pidValue | grep $pidValue`
+		hasShutdownMessage=`grep "Shutdown hook complete" $logFile`
+		if [ -z "$stillRun" ]; then
+			stopped=true
+		fi
+	done
+
+	if [ $stopped == false ]; then
+		# TODO: May be send a -9 signal?
+		echo "ERROR: Jetty server of $artifactoryRunFolder did not stop in 15 seconds"
+		return 1
+	fi
+	rm $pidFile
+	if [ -z "$hasShutdownMessage" ]; then
+		echo "WARN: Jetty server of $artifactoryRunFolder did not contain the shutdown hook complete message in log $logFile"
+	fi
+	echo "INFO: Artifactory version $1 stopped succesfully. Log file at $logFile"
+	return 0
+fi
+
+# Move existing log file to backup
+if [ -a "$logFile" ]; then
+	cat $logFile >> ${logFile}.backup
+	if ! rm $logFile; then
+		echo"ERROR: Cannot delete log file $logFile of Artifactory version $1. May be still running?"
+		return 1
+	fi
+fi
+
+cd $artifactoryRunFolder
+./bin/artifactory.sh > $logFile 2>&1 &
+echo $! > $pidFile
+echo "INFO: Artifactory Runing on PID `cat $pidFile`"
+echo "INFO: Waiting for the started message..."
+# Waiting for no exception, the Backup message last in Artifactory and the listener message
+local started=false
+local nbSeconds=1
+# Just wait 2 seconds anyway
+sleep 1
+while [ $started == false ] && [ $nbSeconds -lt 30 ]; do
+	sleep 1
+    let "nbSeconds = $nbSeconds + 1"
+	local hasException=`grep Exception $logFile`
+	local hasBackupMessage=`grep Backup $logFile`
+	local hasStarted=`grep "Started SelectChannelConnector@0.0.0.0:8081" $logFile`
+	if [ -n "$hasStarted" ]; then
+		started=true
+	fi
+done
+
+if [ $started == false ]; then
+	echo "ERROR: Jetty server of $artifactoryRunFolder did not start in 30 seconds"
+	return 1
+fi
+if [ -n "$hasException" ]; then
+	echo "WARN: Artifactory $artifactoryRunFolder generated Exception messages"
+	#return 1
+fi
+if [ -z "$hasBackupMessage" ]; then
+	echo "ERROR: Artifactory $artifactoryRunFolder did not have the Backup message"
+	return 1
+fi
+echo "INFO: Artifactory version $1 started succesfully. Log file at $logFile"
+return 0
+}
+
+function getAllIt() {
+displayAction getAllIt
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+	checkOutIt "${versions[$index]}" 
+    let "index = $index + 1"
+done
+return 1
+}
+
+function checkOutIt() {
+if ! checkVersion $1; then
+	echo "ERROR: Version $1 does not exists"
+	echo
+	return 1
+fi
+
+itSources=$tagsFolder/$1/core/src
+if ! checkFolder $itSources create; then
+	echo "ERROR: Cannot create folder of Integration test sources $itSources"
+	return 1
+fi
+local svnTagUrl="https://artifactory.svn.sourceforge.net/svnroot/artifactory/tags"
+if svn co $svnTagUrl/$1/core/src/it $itSources/it; then
+	return 0
+fi
+# clean up and return
+echo "ERROR: Integration test sources $itSources check out failed"
+rm -rf $2/it
+return 1
+}
+
+function testServer() {
+displayAction testServer
+if ! checkOutIt $1; then
+	return 1
+fi
+itSources=$itSources/it
+local itOut=$logOutFolder/$1/it
+if ! checkFolder $itOut create; then
+	echo "ERROR: Cannot create out folder $itOut for integration test of version $1"
+	return 1
+fi
+$scriptsDir/allMvnIt.sh $itSources $itOut
+}
+
+function autoTestServer() {
+displayAction autoTestServer
+
+if runServer $1 && testServer $1 && stopServer $1; then
+	return 0;
+fi
+return 1;
+}
+
+function testAllServers() {
+displayAction testAllServers
+
+local from=0
+local to=$nbVersions
+if [ -n "$1" ]; then
+	if ! checkVersion $1; then
+		echo "ERROR: From version $1 does not exists"
+		echo
+		return 1
+	fi
+	from=$foundVersionNb
+fi
+if [ -n "$2" ]; then
+	if ! checkVersion $2; then
+		echo "ERROR: To version $2 does not exists"
+		echo
+		return 1
+	fi
+	let "to = $foundVersionNb + 1"
+fi
+local index=$from
+while [ "$index" -lt "$to" ]; do
+	local ver=${versions[$index]}
+	if ! autoTestServer $ver; then
+		echo "ERROR: Stopping full test as soon as one error occurs!"
+		return 1
+	fi
+    let "index = $index + 1"
+done
+}
+
+function cleanArtUpd() {
+displayAction cleanArtUpd
+
+local artUpdateFile=artifactory-update-${currentVersion}
+if [ -d "$runOutFolder/${artUpdateFile}" ]; then
+	rm -rf "$runOutFolder/${artUpdateFile}"
+fi
+}
+
+function exportDB() {
+displayAction exportDB
+if ! checkVersion $1; then
+	echo "ERROR: Version $1 does not exists"
+	echo
+	return 1
+fi
+
+#Check there is DB for this version
+local artifactoryRunFolder=$runOutFolder/artifactory-$1
+if [ ! -d "$artifactoryRunFolder/data" ]; then
+	echo "ERROR: Server version $1 was never executed at location $artifactoryRunFolder"
+	return 1
+fi
+
+local artUpdateFile=artifactory-update-${currentVersion}
+local artUpdateZip=${zipFolder}/${artUpdateFile}.zip
+if [ ! -f "${artUpdateZip}" ]; then
+	echo "ERROR: Update zip distribution should be in ${artUpdateZip}"
+	return 1
+fi
+if [ ! -d "$runOutFolder/${artUpdateFile}" ]; then
+	cd $runOutFolder
+	unzip "${artUpdateZip}"
+fi
+local artUpdateExe=${runOutFolder}/${artUpdateFile}/bin/artifactoryExport.sh
+if [ ! -x "$artUpdateExe" ]; then
+	echo "ERROR: After unzip executable $artUpdateExe not found"
+	return 1
+fi
+
+local runArtUpdate=$runOutFolder/update-$1
+if ! checkFolder "$runArtUpdate" create; then
+	return 1
+fi
+local artifactoryOutFolder=$logOutFolder/$1
+local logFile=$artifactoryOutFolder/update.log
+# Move existing log file to backup
+if [ -a "$logFile" ]; then
+	cat $logFile >> ${logFile}.backup
+	if ! rm $logFile; then
+		echo"ERROR: Cannot delete log file $logFile of Artifactory Update version $1. May be still running?"
+		return 1
+	fi
+fi
+cd $runArtUpdate
+$artUpdateExe $artifactoryRunFolder 2>&1 | tee $logFile
+}
+
+function exportAllServers() {
+displayAction exportAllServers
+
+local from=0
+local to=$nbVersions
+if [ -n "$1" ]; then
+	if ! checkVersion $1; then
+		echo "ERROR: From version $1 does not exists"
+		echo
+		return 1
+	fi
+	from=$foundVersionNb
+fi
+if [ -n "$2" ]; then
+	if ! checkVersion $2; then
+		echo "ERROR: To version $2 does not exists"
+		echo
+		return 1
+	fi
+	let "to = $foundVersionNb + 1"
+fi
+local index=$from
+while [ "$index" -lt "$to" ]; do
+	local ver=${versions[$index]}
+	if ! exportDB $ver; then
+		echo "ERROR: Export of $ver failed!"
+	fi
+    let "index = $index + 1"
+done
+}
+
+function printRev() {
+displayAction printRev
+local index=0
+while [ "$index" -lt "$nbVersions" ]; do
+    ver=${versions[$index]}
+    version=`sed -ne "s/artifactory\.version\=\(.\)/\1/p;" ${confOutFolder}/$ver/artifactory.properties`
+    rev=`sed -ne "s/artifactory\.revision\=\(.\)/\1/p;" ${confOutFolder}/$ver/artifactory.properties`
+    echo \"$version\",$rev
+    let "index = $index + 1"
+done
+}
+
+function runDiff() {
+
+displayAction runDiff
+local prevIndex=0
+local index=1
+while [ "$index" -lt "$nbVersions" ]; do
+    preVer=${versions[$prevIndex]}
+    ver=${versions[$index]}
+    echo doing a diff of $preVer and $ver
+    diff -Ewq --exclude=artifactory.properties ${confOutFolder}/$preVer ${confOutFolder}/$ver
+    let "index = $index + 1"
+    let "prevIndex = $prevIndex + 1"
+done
+}
+
+function allConf() {
+displayAction allConf
+
+extractConf
+cleanFiles
+printRev
+runDiff
+
+}
+
+# Can check for func exists display func description
+function funcAction() {
+local action=$1
+local funcName=$2
+if [ -z "$funcName" ] || [ -z "$action" ]; then
+	echo ERROR: funcAction takes 2 params: action funcName
+	return 1;
+fi
+local index=0
+local found=1
+while [ "$index" -lt "$nbFunctions" ] && [ $found == 1 ]; do
+	if [ "${functionList[$index]}" == "$funcName" ]; then
+		found=0;
+		if [ "$action" == "desc" ]; then
+			echo ${functionDesc[$index]}
+		fi
+	fi
+    let "index = $index + 1"
+done
+# displaying a description of non function is an error
+if [ $found == 1 ] && [ "$action" == "desc" ]; then
+	echo ERROR: Trying to display description of unexisting function $funcName
+fi
+return $found;
+}
+
+function displayAction() {
+echo "\nINFO: Executing function: \c"
+funcAction desc $1
+echo
+}
+
+function usage() {
+local index=0
+echo Here is the list of available functions:
+while [ "$index" -lt "$nbFunctions" ]; do
+	echo "${functionList[$index]}: ${functionDesc[$index]}"
+	let "index = $index + 1"
+done
+}
+
+function checkFolder() {
+local folder=$1
+local create="no"
+if [ -n "$2" ]; then create=$2; fi
+if [ -z "$folder" ]; then
+	echo "ERROR: Cannot verify empty folder name"
+	someError=1
+	return 1
+fi
+if [ ! -d "$folder" ]; then
+	if [ "$create" == "create" ]; then
+		if mkdir -p $folder; then
+			echo "INFO: Folder $folder created"
+		else
+			echo "ERROR: Folder $folder cannot be created"
+			someError=1
+			return 1
+		fi
+	else
+		echo "ERROR: Folder $folder does not exists"
+		someError=1
+		return 1
+	fi
+fi
+echo "INFO: Folder $folder checked..."
+return 0
+}
+
+if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+	usage
+else
+	funcToCall=$1
+	if funcAction exists $funcToCall; then
+		shift
+		if ! checkEnv; then
+			exit $someError;
+		fi
+		$funcToCall $@
+	else
+		echo Function $funcToCall does not exists
+		usage
+	fi
+fi

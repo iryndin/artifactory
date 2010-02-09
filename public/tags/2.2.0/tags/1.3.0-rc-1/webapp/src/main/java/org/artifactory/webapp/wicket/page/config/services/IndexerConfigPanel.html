@@ -1,0 +1,27 @@
+<wicket:extend>
+    <div wicket:id="border">
+        <div class="field">
+            <label>
+                Cron Expression
+                <span wicket:id="cronExp.help"/>
+            </label>
+
+            <div class="value">
+                <input wicket:id="cronExp" type="text" class="text"/>
+                <button wicket:id="calculate" class="buttons"/>
+                <span wicket:id="cronExpNextRun"/>
+            </div>
+        </div>
+
+        <div class="field field-sep">
+            <label>
+                Excluded Repositories
+                <span wicket:id="excludedRepositories.help"/>
+            </label>
+
+            <div class="value">
+                <select wicket:id="excludedRepositories" class="medium"/>
+            </div>
+        </div>
+    </div>
+</wicket:extend>

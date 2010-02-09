@@ -1,0 +1,93 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+        dojo.require("dojo.widget.Menu2");
+        dojo.require("dojo.widget.Checkbox");
+    </script>
+    <script type="text/javascript">
+        function cancel() {
+            var callbackUrl = dojo.byId("cancel").getAttribute("callbackUrl");
+            wicketAjaxPost(callbackUrl);
+            return true;
+        }
+    </script>
+
+</wicket:head>
+
+<body>
+<wicket:extend>
+    <form wicket:id="uploadForm">
+        <h3>Upload Artifact:</h3>
+
+        <p class="noticeMessage">
+            Upload a deployable artifact file, edit the artifact details and then deploy it.
+        </p>
+        <label>Artifact File:</label>
+        <input wicket:id="fileInput" type="file"/>
+        <input class="button" type="submit" value="Upload!"/>
+        <span wicket:id="progress">[[ajax upload progressbar]]</span>
+    </form>
+    <div>
+        <span wicket:id="uploadFeedback"/>
+    </div>
+
+    <form wicket:id="artifactForm">
+        <h3>Artifact Properties:</h3>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="form_label">GroupId</td>
+                <td>
+                    <input wicket:id="group" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">ArtifactId</td>
+                <td>
+                    <input wicket:id="artifact" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Version</td>
+                <td>
+                    <input wicket:id="version" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Classifier</td>
+                <td>
+                    <input wicket:id="classifier" type="text" class="medium dojoValidateValid"
+                           dojoType="TextBox"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Packaging</td>
+                <td>
+                    <input wicket:id="packaging" type="text" class="medium"
+                           dojoType="ValidationTextBox" required="true"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Use Jar POM/Generate default POM
+                </td>
+                <td>
+                    <input wicket:id="deployPom" type="checkbox" widgetId="deployPom"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Target local repository</td>
+                <td>
+                    <select wicket:id="targetRepo"/>
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel" id="cancel" value="Cancel"/>
+        <input class="button" type="button" wicket:id="artifactSubmit" value="Deploy"/>
+    </form>
+</wicket:extend>
+</body>
+</html>

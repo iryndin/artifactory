@@ -1,0 +1,54 @@
+<wicket:head>
+    <script type="text/javascript">
+        var ArtifactoryLog = {
+            log: function(logDivId, message, clean) {
+                var logDiv = document.getElementById(logDivId);
+                if (clean == 'true') {
+                    while (logDiv.firstChild) {
+                        logDiv.removeChild(logDiv.firstChild);
+                    }
+                }
+                if (message == '') {
+                    return;
+                }
+                var shouldScroll = logDiv.scrollTop + logDiv.offsetHeight >=
+                                   logDiv.scrollHeight - 10;
+                var newLog = document.createElement('span');
+                newLog.innerHTML = message;
+                logDiv.appendChild(newLog);
+                if (shouldScroll) {
+                    logDiv.scrollTop = logDiv.scrollHeight;
+                }
+            }
+        };
+    </script>
+</wicket:head>
+
+<wicket:panel>
+    <p>
+        <select wicket:id="logs">
+            <option>log 1</option>
+            <option>log 2</option>
+        </select>
+    </p>
+    <p>
+        <span wicket:id="systemLogsPath"/>
+        <span wicket:id="systemLogsSize"/>
+        <span wicket:id="dashLabel"/>
+        <a wicket:id="systemLogsLink"><span wicket:id="linkLabel"/></a>
+    </p>
+
+    <p>
+        <span wicket:id="lastUpdate"/>
+    </p>
+
+    <div wicket:id="systemLogsContent" class="log"></div>
+    <script wicket:id="initScript" type="text/javascript">
+        (function() {
+            setTimeout(function() {
+                var logDiv = document.getElementById('${logDivId}');
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }, 100);
+        })();
+    </script>
+</wicket:panel>

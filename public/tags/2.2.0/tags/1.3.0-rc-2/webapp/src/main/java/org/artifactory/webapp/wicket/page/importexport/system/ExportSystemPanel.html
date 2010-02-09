@@ -1,0 +1,25 @@
+<wicket:extend>
+    <form wicket:id="exportForm" class="import-export-system">
+
+        <div class="field">
+            <label>Target export dir</label>
+
+            <div class="value">
+                <input wicket:id="exportToPath" type="text" class="path_field"/>
+                <span wicket:id="fileBrowser"></span>
+            </div>
+        </div>
+
+        <div class="field field-sep">
+            <input wicket:id="m2Compatible" type="checkbox"/>
+        </div>
+        <div class="field field-sep">
+            <input wicket:id="createArchive" type="checkbox"/>
+        </div>
+
+        <div class="buttons">
+            <button wicket:id="export"/>
+        </div>
+        <!--<td><b>Status:</b> <span wicket:id="status">status</span></td>-->
+    </form>
+</wicket:extend>

@@ -1,0 +1,73 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.artifactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * Created by IntelliJ IDEA. User: yoavl
+ */
+public abstract class ArtifactoryConstants {
+
+    static final String SYS_PROP_JCR_FORCE_ATOMIC_TX = "artifactory.jcr.forceAtomicTx";
+    static final String SYS_PROP_JCR_MAX_NODE_LOCK_RETRIES = "artifactory.jcr.maxNodeLockRetries";
+    static final String SYS_PROP_JCR_FIX_CONSISTENCY = "artifactory.jcr.fixConsistency";
+    static final String SYS_PROP_SEARCH_MAX_RESULTS = "artifactory.search.maxResults";
+    static final String SYS_PROP_MAVEN_SUPPRESS_POM_CONSISTENCY_CHECKS =
+            "artifactory.maven.suppressPomConsistencyChecks";
+    public static final String SYS_PROP_PREFIX_REPO_KEY_SUBST = "artifactory.repo.key.subst.";
+
+    public static final boolean forceAtomicTransacions = Boolean.parseBoolean(System.getProperty(
+            SYS_PROP_JCR_FORCE_ATOMIC_TX, Boolean.FALSE.toString()));
+
+    public static final boolean fixConsistency = Boolean.parseBoolean(System.getProperty(
+            SYS_PROP_JCR_FIX_CONSISTENCY, Boolean.FALSE.toString()));
+
+    public static final int maxNodeLockRetries = Integer.parseInt(System.getProperty(
+            SYS_PROP_JCR_MAX_NODE_LOCK_RETRIES, "60"));
+
+    public static final boolean suppressPomConsistencyChecks =
+            Boolean.parseBoolean(System.getProperty(
+                    SYS_PROP_MAVEN_SUPPRESS_POM_CONSISTENCY_CHECKS, Boolean.FALSE.toString()));
+
+    public static final int searchMaxResults = Integer.parseInt(System.getProperty(
+            SYS_PROP_SEARCH_MAX_RESULTS, "500"));
+
+    /**
+     * A map of substitue repo keys (oldKey:newKey) for supporting old repository keys (that are
+     * invalid xml ids).
+     */
+    public static final Map<String, String> substituteRepoKeys = new HashMap<String, String>();
+
+    static {
+        fillRepoKeySubstitute();
+    }
+
+    public static void fillRepoKeySubstitute() {
+        Properties props = System.getProperties();
+        for (Object o : props.keySet()) {
+            String key = (String) o;
+            if (key.startsWith(SYS_PROP_PREFIX_REPO_KEY_SUBST)) {
+                String oldRepoKey = key.substring(SYS_PROP_PREFIX_REPO_KEY_SUBST.length());
+                String newRepoKey = (String) props.get(key);
+                substituteRepoKeys.put(oldRepoKey, newRepoKey);
+            }
+        }
+    }
+}

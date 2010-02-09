@@ -1,0 +1,215 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+<script type="text/javascript">
+    dojo.require("dojo.lang.*");
+    dojo.require("dojo.widget.Tree");
+    dojo.require("dojo.widget.TreeRPCController");
+    dojo.require("dojo.widget.TreeSelector");
+    dojo.require("dojo.widget.TreeNode");
+    dojo.require("dojo.widget.TreeContextMenu");
+    dojo.require("dojo.widget.Tooltip");
+    dojo.require("dojo.json");
+</script>
+<script type="text/javascript">
+dojo.addOnLoad(function() {
+    dojo.event.topic.subscribe('treeContextMenuRemove/engage',
+            function (menuItem) {
+                removeClicked(menuItem.getTreeNode(), 'treeController', menuItem.getTreeNode().expandIcon);
+            });
+    dojo.event.topic.subscribe('treeContextMenuViewContent/engage',
+            function (menuItem) {
+                viewClicked(menuItem.getTreeNode());
+            });
+    dojo.event.topic.subscribe('treeContextMenuDownload/engage',
+            function (menuItem) {
+                downloadClicked(menuItem.getTreeNode(), 'treeController');
+            });
+    dojo.event.topic.subscribe('treeContextMenuZap/engage',
+            function (menuItem) {
+                zapClicked(menuItem.getTreeNode(), 'treeController');
+            });
+    dojo.event.topic.subscribe("tree/createDOMNode",
+            function (event) {
+                nodeAdded(event.source);
+            });
+});
+
+function nodeAdded(child) {
+    var span = firstChildByName(child.domNode, "SPAN");
+    span.id = child.widgetId;
+    var ttProps = {widgetId: child.widgetId + "_tooltip", connectId: span.id, toggle: "fade",
+        showDelay: "1000"};
+    var tt = dojo.widget.createWidget('Tooltip', ttProps);
+    tt.setContent(child.tooltip);
+    tt.hide();
+    dojo.body().appendChild(tt.domNode);
+    return true;
+}
+
+function viewClicked(selectedNode) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    var callbackUrl = dojo.byId("contentViewer1").getAttribute("callbackUrl");
+    wicketAjaxPost(callbackUrl + "&nodeId=" + selectedNode.objectId
+            + "&title=" + selectedNode.title);
+    return true;
+}
+
+function removeClicked(selectedNode, controllerId, icon) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    if (selectedNode.actionIsDisabled(selectedNode.actions.REMOVE)) {
+        return false;
+    }
+    this.selectedNodeParent = selectedNode.parent;
+    //dojo.debug("parent " + this.selectedNodeParent);
+    this.icon = icon;
+    this.oldIconSrc = icon.src;
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    this.icon.src = 'images/loading.jpg';
+    var res = false;
+    if (confirm("Are you sure you wish to delete '" + selectedNode.title +
+                (selectedNode.isFolder ?
+                 "' and all its children?" : "' and its siblings?"))) {
+        res = this.controller.removeNode(selectedNode, this,
+                dojo.lang.hitch(this, updateChildren));
+    }
+    // local checks failed
+    if (!res) {
+        restoreIconSrc.apply(this);
+    }
+    return true;
+}
+
+function downloadClicked(selectedNode, controllerId) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    //Mimic an rpc request through the controller
+    var res = this.controller.runRPC({
+        url: this.controller.getRPCUrl('download'),
+        sync: true,
+        load: function(response) {
+            if (response.url) {
+                document.location = response.url;
+            }
+        },
+        params: {node: controller.getInfo(selectedNode)},
+        lock: [selectedNode]
+    });
+    return true;
+}
+
+function zapClicked(selectedNode, controllerId) {
+    if (!selectedNode) {
+        alert('No node selected');
+        return false;
+    }
+    this.controller = dojo.widget.manager.getWidgetById(controllerId);
+    //Mimic an rpc request through the controller
+    var res = this.controller.runRPC({
+        url: this.controller.getRPCUrl('zap'),
+        sync: true,
+        load: function(response) {
+            if (response) {
+                selectedNode.state = selectedNode.loadStates.UNCHECKED;
+            }
+        },
+        params: {node: controller.getInfo(selectedNode)},
+        lock: [selectedNode]
+    });
+    return true;
+}
+
+function updateChildren() {
+    if (this.selectedNodeParent == null || typeof this.selectedNodeParent != "undefined") {
+        this.selectedNodeParent.state = this.selectedNodeParent.loadStates.UNCHECKED;
+        this.selectedNodeParent.destroyChildren();
+        this.controller.expandToLevel(this.selectedNodeParent, 1);
+        restoreIconSrc.apply(this);
+    }
+}
+
+function restoreIconSrc() {
+    // icon was changed during the action => no need to move it back
+    //alert("Restore "+this.icon.src.substr(-18))
+    if (this.icon.src.substr(-18) !=
+        'images/loading.jpg') { // check if icon.src is loading icon
+        return;
+    }
+    this.icon.src = this.oldIconSrc;
+    this.selectedNodeParent = null;
+}
+
+function getTreeNodeTitlePath(node) {
+    var res;
+    while (node.parent != null) {
+        res = "/" + parent.title + res;
+        node = node.parent;
+    }
+    return res;
+}
+
+function firstChildByName(domNode, name) {
+    var children = domNode.childNodes;
+    for (var x = 0; x < children.length; x++) {
+        var child = children.item(x);
+        //if (child.nodeName.match("/" + name + "/ig")) {
+        if (child.nodeName == name) {
+            return child;
+        }
+    }
+    return null;
+}
+
+</script>
+</wicket:head>
+
+<body>
+
+<wicket:extend>
+    <h2 class="pageSubContentTitle">Repository Browser</h2>
+
+    <div wicket:id="controller" dojoType="TreeRPCController" RPCUrl="local"
+         widgetId="treeController"></div>
+
+    <div dojoType="TreeSelector" widgetId="treeSelector"></div>
+
+    <div dojoType="TreeContextMenu" toggle="explode" contextMenuForWindow="false"
+         widgetId="treeContextMenu">
+        <div dojoType="TreeMenuItem" treeActions="view" iconSrc="images/eye.png"
+             caption="View" widgetId="treeContextMenuViewContent"></div>
+        <div dojoType="TreeMenuItem" treeActions="remove" iconSrc="images/delete.png"
+             caption="Remove" widgetId="treeContextMenuRemove"></div>
+        <div dojoType="TreeMenuItem" treeActions="download" iconSrc="images/disk.png"
+             caption="Download" widgetId="treeContextMenuDownload"></div>
+        <div dojoType="TreeMenuItem" treeActions="zap" iconSrc="images/lightning.png"
+             caption="Zap cache" widgetId="treeContextMenuZap"></div>
+    </div>
+
+    <div dojoType="Tree" menu="treeContextMenu" selector="treeSelector" widgetId="tree"
+         toggler="fade" controller="treeController">
+        <div dojoType="TreeNode" objectId="/" title="Repositories"
+             actionsDisabled="all" isFolder="true" childIconSrc="images/root.png"
+             expandLevel="1">
+            <div wicket:id="repositories">
+                <div wicket:id="repository" dojoType="TreeNode" objectId="/" title="Repository"
+                     actionsDisabled="all" isFolder="true"
+                     childIconSrc="images/repository.png" expandLevel="1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span wicket:id="contentViewer" id="contentViewer"/>
+</wicket:extend>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#Adjust the following
+if [ -n $MAVEN_HOME ]; then
+  M2_HOME=$MAVEN_HOME
+fi
+if [ -z $M2_HOME ]; then
+  M2_HOME=/usr/local/apache-maven/2.0.9
+fi
+
+IT_HOME=`dirname "$0"`
+IT_HOME=`cd $IT_HOME && pwd`
+
+if [ -f $IT_HOME/m2repo/org/artifactory/deploy-test ] ; then
+  rm $IT_HOME/m2repo/org/artifactory/deploy-test
+fi
+
+mkdir $IT_HOME/m2repo
+echo REPO=$IT_HOME/m2repo
+
+export MAVEN_OPTS="-Xmx512m"
+#export MAVEN_OPTS="-Xmx512m -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+
+echo "$M2_HOME"
+exec $M2_HOME/bin/mvn -Dorg.apache.maven.user-settings=$IT_HOME/settings.xml -Dmaven.repo.local=$IT_HOME/m2repo "$@"

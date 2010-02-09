@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+    </script>
+</wicket:head>
+
+<body>
+<wicket:panel>
+    <div>
+        <span wicket:id="feedback"/>
+    </div>
+    <form wicket:id="userForm">
+        <div wicket:id="userFormHeader" class="formHeader">User Details</div>
+        <table class="formBody" style="width: 100%;">
+            <tr>
+                <td class="formLabel">Username</td>
+                <td width="100%">
+                    <input wicket:id="username" type="text" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel">Password</td>
+                <td width="100%">
+                    <input wicket:id="password" type="password " class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel">Retype password</td>
+                <td width="100%">
+                    <input wicket:id="retypedPassword" type="password" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="formLabel">Admin</td>
+                <td width="100%">
+                    <input wicket:id="admin" type="checkbox"/>
+                </td>
+            </tr>
+            <tr align="center">
+                <td colspan="2"/>
+                <td align="right">
+                    <input type="button" wicket:id="cancel"/>
+                </td>
+                <td align="left">
+                    <input type="button" wicket:id="submit"/>
+                </td>
+            </tr>
+
+
+        </table>
+    </form>
+</wicket:panel>
+</body>
+</html>

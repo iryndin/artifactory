@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Features</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Features">
+            <p>
+                Below is an incomplete list of the main features of Artifactory:
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Runs out of the box</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Can be run in a matter of minutes out of the box (with default configuration)
+                                by simply unpacking the downloadable archive and running the embedded Jetty container
+                            </li>
+                            <li>Can be deployed as a regular web application to any standard servlet container</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Easy configuration</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Configured using a single XML file backed up by a well defined schema</li>
+                            <li>Security related configuration via web UI.</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Multiple local repositories support</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Easy separation of 3rd parties/in-house artifacts, or snapshots/releases/plugins
+                                artifacts
+                            </li>
+                            <li>Import/Export for each local repository to the file system (via web UI)</li>
+                            <li>Scheduled backups of local repositories</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Import/Export and Backup to standard Maven 2 file-based repositories</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Each repository declared in Artifactory (Local and Cache of remote) can be
+                                "dumped", "loaded" and backup to a standard maven2 repository file
+                                layout.
+                            </li>
+                            <li>This removes your long-term dependency on Artifactory (all your artifacts
+                                inside Artifactory Derby DB only), since you can stop using Artifactory
+                                and use the backup or "dumped" folders as standard maven2 repository.
+                            </li>
+                            <li>The "dump", "restore" enables Artifactory upgrades even when the DB
+                                schema changes.
+                            </li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Security</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Fully authenticated access (web based and through Maven)</li>
+                            <li>Advanced repository/repository paths based permissions for admins,
+                                deployers and viewers
+                            </li>
+                            <li>Auditing for the last deployer of an artifact</li>
+                            <li>Allow/disallow anonymous read (and anonymous artifact downloads)</li>
+                            <li>System-wide admins</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Deploy-time checks</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Check for correct artifact paths</li>
+                            <li>Check for artifacts compliance with the target repository's policies</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Web UI</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Ajax-based web UI using the excellent Wicket and Dojo frameworks</li>
+                            <li>Lazy loading explorer-like navigation for all groups and artifacts
+                                in local, caches and remote repositories
+                            </li>
+                            <li>Search artifacts in all repositories</li>
+                            <li>Display POM with a snippet for inclusion as a POM dependency</li>
+                            <li>Download artifacts directly from the web interface</li>
+                            <li>Contextual menu for viewing POMs, removing artifacts, or zapping the caches</li>
+                            <li>Artifact deployment via a web page, including ability to specify classifier</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Fine tuned control for remote and local repositories</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Blackout a repository</li>
+                            <li>Include/exclude patterns for allowed artifacts</li>
+                            <li>Network timeouts</li>
+                            <li>Fine grained cache expiry control for missed artifact, communication errors and regular
+                                retrievals
+                            </li>
+                            <li>Go through HTTP proxies (including NTLM-based proxies)</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Distributed Artifactory mesh support</b>
+                    </td>
+                    <td>
+                        <ol>
+                            <li>Setup a group of Artifactory instances treating one another as remote repositories</li>
+                            <li>Support for distributed, multi time zone enterprise development environments</li>
+                        </ol>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>

@@ -1,0 +1,63 @@
+<wicket:extend>
+    <div wicket:id="basicSettings">
+        <div wicket:id="generalSettings"></div>
+
+        <div class="field field-sep clear">
+            <label>Repositories</label>
+            <span wicket:id="repositories.help"></span>
+
+            <div class="value">
+                <div wicket:id="repositories"></div>
+            </div>
+        </div>
+
+        <div class="field field-sep">
+            <label>Resolved Repositories</label>
+            <span wicket:id="resolvedRepo.help"></span>
+
+            <div wicket:id="resolvedRepoWrapper" class="value list">
+                <div wicket:id="resolvedRepo">
+                    <span wicket:id="key"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="advancedSettings">
+        <div class="field">
+            <input wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts" type="checkbox" class="text"/>
+            <span wicket:id="artifactoryRequestsCanRetrieveRemoteArtifacts.help"></span>
+        </div>
+
+        <div class="field field-sep field-100">
+            <label>Cleanup Repository References in POMs</label>
+            <span wicket:id="pomRepositoryReferencesCleanupPolicy.help"></span>
+
+            <div class="value">
+                <select wicket:id="pomRepositoryReferencesCleanupPolicy"></select>
+            </div>
+        </div>
+
+        <div class="line-sep" wicket:id="keyPairContainer">
+            <div class="field field-sep field-100">
+                <label>Key-Pair</label>
+                <span wicket:id="keyPair.help"></span>
+
+                <div wicket:id="keyPairMessage"></div>
+
+                <div class="value">
+                    <select wicket:id="keyPair"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="field field-sep field-100">
+            <label>Notes</label>
+            <span wicket:id="notes.help"></span>
+
+            <div class="value">
+                <textarea wicket:id="notes"></textarea>
+            </div>
+        </div>
+    </div>
+</wicket:extend>

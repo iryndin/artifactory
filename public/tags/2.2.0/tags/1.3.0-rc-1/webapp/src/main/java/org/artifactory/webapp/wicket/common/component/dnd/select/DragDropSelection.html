@@ -1,0 +1,23 @@
+<wicket:panel>
+    <div class="selection-list source-list">
+        <div wicket:id="sourceTitle" class="title"></div>
+        <ul wicket:id="sourceList"/>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="selection-list target-list">
+        <div wicket:id="targetTitle" class="title"></div>
+        <ul wicket:id="targetList"/>
+    </div>
+    <div class="clear"/>
+
+    <div class="info">
+        <wicket:message key="DragDropSelection.hint"/>
+    </div>
+
+    <input wicket:id="selection" type="hidden"/>
+    <script wicket:id="initScript" type="text/javascript">
+        DragDropSelection.init('${panelId}', '${targetListId}', '${textFieldId}');
+    </script>
+</wicket:panel>

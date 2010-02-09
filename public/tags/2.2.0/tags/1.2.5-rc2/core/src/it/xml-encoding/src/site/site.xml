@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Maven">
+  <body>
+    <links>
+      <item name="umlauts" href="http://www.üüü.com/" />
+    </links>
+  </body>
+</project>

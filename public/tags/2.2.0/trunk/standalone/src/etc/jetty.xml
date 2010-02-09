@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!--
+  ~ Artifactory is a binaries repository manager.
+  ~ Copyright (C) 2010 JFrog Ltd.
+  ~
+  ~ Artifactory is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Artifactory is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN"
+        "http://jetty.mortbay.org/configure.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server                                      -->
+<!-- =============================================================== -->
+<Configure id="Server" class="org.mortbay.jetty.Server">
+
+    <!-- =========================================================== -->
+    <!-- Server Thread Pool                                          -->
+    <!-- =========================================================== -->
+    <Set name="ThreadPool">
+        <!-- Using the jetty jetty-7.0.0.RC6 new version of QueuedThreadPool -->
+        <New class="org.mortbay.thread.QueuedThreadPool">
+            <Set name="minThreads">10</Set>
+            <Set name="maxThreads">100</Set>
+        </New>
+    </Set>
+
+    <!-- ==============po============================================= -->
+    <!-- Set connectors                                              -->
+    <!-- =========================================================== -->
+    <!-- One of each type!                                           -->
+    <!-- =========================================================== -->
+    <Set name="connectors">
+        <Array type="org.mortbay.jetty.Connector">
+
+            <!-- Use this connector for many frequently idle connections
+                 and for threadless continuations.
+            -->
+            <Item>
+                <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+                    <Set name="port">8080</Set>
+                    <Set name="maxIdleTime">30000</Set>
+                    <Set name="lowResourceMaxIdleTime">3000</Set>
+                    <Set name="Acceptors">1</Set>
+                </New>
+            </Item>
+        </Array>
+    </Set>
+
+    <!-- AJP13 Connector configuration -->
+    <!--<Call name="addConnector">
+        <Arg>
+            <New class="org.mortbay.jetty.ajp.Ajp13SocketConnector">
+                <Set name="port">8010</Set>
+            </New>
+        </Arg>
+    </Call>-->
+
+    <!-- ======================================================= -->
+    <!-- Configure a Context                                     -->
+    <!-- ======================================================= -->
+    <New class="org.mortbay.jetty.webapp.WebAppContext" id="artifactory">
+        <Call name="setContextPath">
+            <Arg>/artifactory</Arg>
+        </Call>
+        <Call name="setWar">
+            <!-- Careful not to reformat the following line - may break jetty -->
+            <Arg><SystemProperty name="jetty.home" default="."/>./open/web/war/src/main/webapp
+            </Arg>
+        </Call>
+    </New>
+
+    <!-- =========================================================== -->
+    <!-- Set handler Collection Structure                            -->
+    <!-- =========================================================== -->
+    <Set name="handler">
+        <New id="handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+            <Set name="handlers">
+                <Array type="org.mortbay.jetty.Handler">
+                    <Item>
+                        <New id="contexts"
+                             class="org.mortbay.jetty.handler.ContextHandlerCollection">
+                            <Call name="addHandler">
+                                <Arg>
+                                    <Ref id="artifactory"/>
+                                </Arg>
+                            </Call>
+                        </New>
+                    </Item>
+                    <Item>
+                        <New id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+                    </Item>
+                    <Item>
+                        <New id="requestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/>
+                    </Item>
+                </Array>
+            </Set>
+        </New>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Configure Realms                                            -->
+    <!-- =========================================================== -->
+    <!--<Set name="UserRealms">
+        <Array type="org.mortbay.jetty.security.UserRealm">
+            <Item>
+                <New class="org.mortbay.jetty.security.HashUserRealm">
+                    <Set name="name">Test Realm</Set>
+                    <Set name="config">
+                        <SystemProperty name="jetty.home" default="."/>
+                        /etc/realm.properties
+                    </Set>
+                </New>
+            </Item>
+        </Array>
+    </Set>-->
+
+
+    <!-- =========================================================== -->
+    <!-- Configure Request Log                                       -->
+    <!-- =========================================================== -->
+    <Ref id="requestLog">
+        <Set name="requestLog">
+            <New id="requestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
+                <Arg>
+                    <SystemProperty name="jetty.home" default="."/>./open/standalone/src/logs/yyyy_mm_dd.request.log
+                </Arg>
+                <Set name="retainDays">90</Set>
+                <Set name="append">true</Set>
+                <Set name="extended">false</Set>
+                <Set name="LogTimeZone">GMT</Set>
+            </New>
+        </Set>
+    </Ref>
+
+    <!-- =========================================================== -->
+    <!-- extra options                                               -->
+    <!-- =========================================================== -->
+    <Set name="stopAtShutdown">true</Set>
+    <!-- ensure/prevent Server: header being sent to browsers        -->
+    <Set name="sendServerVersion">true</Set>
+
+</Configure>

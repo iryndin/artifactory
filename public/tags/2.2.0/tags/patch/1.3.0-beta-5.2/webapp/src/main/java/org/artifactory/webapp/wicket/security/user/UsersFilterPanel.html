@@ -1,0 +1,15 @@
+<wicket:extend>
+    <form wicket:id="usersFilterForm">
+        <table cellpadding="0" cellspacing="5">
+            <tr>
+                <td class="form_label">Username:</td>
+                <td><input type="text" wicket:id="usernameFilter"></td>
+                <td class="form_label">Group:</td>
+                <td><select wicket:id="groupFilter"/></td>
+                <td>
+                    <button class="button" type="submit" wicket:id="filter"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</wicket:extend>

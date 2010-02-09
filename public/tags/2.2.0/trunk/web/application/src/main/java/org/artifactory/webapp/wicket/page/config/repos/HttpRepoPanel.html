@@ -1,0 +1,194 @@
+<wicket:extend>
+    <div wicket:id="basicSettings">
+        <div wicket:id="generalSettings"></div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Type</label>
+                <span wicket:id="type.help"></span>
+
+                <div class="value">
+                    <select wicket:id="type"></select>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Proxy</label>
+                <span wicket:id="proxy.help"></span>
+
+                <div class="value">
+                    <select wicket:id="proxy"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row field-sep">
+            <div class="field">
+                <label>Checksum Policy</label>
+                <span wicket:id="checksumPolicyType.help"></span>
+
+                <div class="value">
+                    <select wicket:id="checksumPolicyType"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row checkbox-row line-sep">
+            <div class="field">
+                <input wicket:id="handleReleases" type="checkbox"/>
+                <span wicket:id="handleReleases.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="handleSnapshots" type="checkbox"/>
+                <span wicket:id="handleSnapshots.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="blackedOut" type="checkbox"/>
+                <span wicket:id="blackedOut.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="offline" type="checkbox"/>
+                <span wicket:id="offline.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="shareConfiguration" type="checkbox"/>
+                <span wicket:id="shareConfiguration.help"></span>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="advancedSettings">
+        <div class="field">
+            <input wicket:id="unusedArtifactsCleanupEnabled" type="checkbox"/>
+            <input wicket:id="unusedArtifactsCleanupPeriodHours" type="text" class="text"/>
+            <label>Hours</label>
+            <span wicket:id="unusedArtifactsCleanupPeriodHours.help"></span>
+        </div>
+
+        <div class="form-sep"></div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Max Unique Snapshots</label>
+                <span wicket:id="maxUniqueSnapshots.help"></span>
+
+                <div class="value">
+                    <input wicket:id="maxUniqueSnapshots" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Local Address</label>
+                <span wicket:id="localAddress.help"></span>
+
+                <div class="value">
+                    <input wicket:id="localAddress" type="text" class="text"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Username</label>
+                <span wicket:id="username.help"></span>
+
+                <div class="value">
+                    <input wicket:id="username" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Password</label>
+                <span wicket:id="password.help"></span>
+
+                <div class="value">
+                    <input wicket:id="password" type="password" class="text"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Socket Timeout</label>
+                <span wicket:id="socketTimeoutMillis.help"></span>
+
+                <div class="value">
+                    <input wicket:id="socketTimeoutMillis" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Retrieval Cache Period</label>
+                <span wicket:id="retrievalCachePeriodSecs.help"></span>
+
+                <div class="value">
+                    <input wicket:id="retrievalCachePeriodSecs" type="text" class="text"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Failed Retrieval Cache Period</label>
+                <span wicket:id="failedRetrievalCachePeriodSecs.help"></span>
+
+                <div class="value">
+                    <input wicket:id="failedRetrievalCachePeriodSecs" type="text" class="text"/>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Missed Retrieval Cache Period</label>
+                <span wicket:id="missedRetrievalCachePeriodSecs.help"></span>
+
+                <div class="value">
+                    <input wicket:id="missedRetrievalCachePeriodSecs" type="text" class="text"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row checkbox-row line-sep">
+            <div class="field">
+                <input wicket:id="fetchJarsEagerly" type="checkbox"/>
+                <span wicket:id="fetchJarsEagerly.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="fetchSourcesEagerly" type="checkbox"/>
+                <span wicket:id="fetchSourcesEagerly.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="hardFail" type="checkbox"/>
+                <span wicket:id="hardFail.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="storeArtifactsLocally" type="checkbox"/>
+                <span wicket:id="storeArtifactsLocally.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="suppressPomConsistencyChecks" type="checkbox"/>
+                <span wicket:id="suppressPomConsistencyChecks.help"></span>
+            </div>
+        </div>
+
+        <div class="field field-sep field-100">
+            <label>Notes</label>
+            <span wicket:id="notes.help"></span>
+
+            <div class="value">
+                <textarea wicket:id="notes"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="propertySetsBorder">
+        <div wicket:id="propertySets"></div>
+    </div>
+</wicket:extend>

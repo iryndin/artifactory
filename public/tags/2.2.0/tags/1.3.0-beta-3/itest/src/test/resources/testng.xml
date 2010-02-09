@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Concurrent Suite" thread-count="5" verbose="1" parallel="false">
+    <test name="engine" parallel="methods">
+        <classes>
+            <class name="org.artifactory.test.SimpleArtifactoryTest"/>
+        </classes>
+    </test>
+    <test name="loadagainstlocalhost" parallel="methods">
+        <classes>
+            <class name="org.artifactory.test.LocalHostRemoteRepoTest"/>
+        </classes>
+    </test>
+</suite>

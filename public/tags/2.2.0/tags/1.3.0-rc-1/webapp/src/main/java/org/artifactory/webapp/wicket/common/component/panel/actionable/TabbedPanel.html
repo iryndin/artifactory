@@ -1,0 +1,18 @@
+<wicket:head>
+    <script type="text/javascript">
+        Browser.fixTabPanel = function() {
+            var tabPanels = dojo.query('.tab-panel');
+            if (tabPanels.length) {
+                var newHeight = Math.max(50, document.documentElement.offsetHeight - 300);
+                tabPanels[0].style.height = newHeight + 'px';
+            }
+        }
+    </script>
+</wicket:head>
+
+<wicket:panel>
+    <div wicket:id="tabs"></div>
+    <script type="text/javascript">
+        Browser.fixTabPanel();
+    </script>
+</wicket:panel>

@@ -1,0 +1,152 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.artifactory.webapp.wicket;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.apache.wicket.Application;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.authentication.AuthenticatedWebApplication;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
+import org.apache.wicket.extensions.ajax.markup.html.form.upload.UploadWebRequest;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.settings.ISecuritySettings;
+import org.apache.wicket.util.time.Duration;
+import org.artifactory.common.ArtifactoryHome;
+import org.artifactory.webapp.spring.ArtifactorySpringComponentInjector;
+import org.artifactory.webapp.wicket.browse.SimpleRepoBrowserPage;
+import org.artifactory.webapp.wicket.error.SessionExpiredPage;
+import org.artifactory.webapp.wicket.home.HomePage;
+import org.artifactory.webapp.wicket.security.login.LoginPage;
+import org.artifactory.webapp.wicket.utils.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * Created by IntelliJ IDEA. User: yoavl
+ */
+public class ArtifactoryApp extends AuthenticatedWebApplication {
+    @SuppressWarnings({"UnusedDeclaration"})
+    private final static Logger LOGGER = Logger.getLogger(ArtifactoryApp.class);
+    private MarkupIdInjector testMakupIdInjector;
+
+    @Override
+    protected void init() {
+        super.init();
+        //Add the spring injector
+        addComponentInstantiationListener(new ArtifactorySpringComponentInjector(this));
+        //DISABLE THE MARKUP ID COSTOMIZATION TEMPORARILY!!!!!
+        if (getConfigurationType().equals(Application.DEVELOPMENT + "xxxx")) {
+            //Add the makup id injector
+            testMakupIdInjector = new MarkupIdInjector();
+            addComponentOnBeforeRenderListener(testMakupIdInjector);
+        }
+        IResourceSettings resourceSettings = getResourceSettings();
+        //Look for pages at the root of the web-app
+        resourceSettings.addResourceFolder("");
+        //Delete the upload folder (in case we were not shut down cleanly)
+        deleteUploadsFolder();
+        //Extend the request timeout to support long running transactions
+        getRequestCycleSettings().setTimeout(Duration.hours(5));
+        getApplicationSettings().setPageExpiredErrorPage(SessionExpiredPage.class);
+        mountBookmarkablePage(SimpleRepoBrowserPage.PATH, SimpleRepoBrowserPage.class);
+        //Wrap the unauthorizedComponentInstantiation listener so that we can discard repoPath
+        //attributes from the request when needing to login
+        ISecuritySettings securitySettings = getSecuritySettings();
+        IUnauthorizedComponentInstantiationListener orig =
+                securitySettings.getUnauthorizedComponentInstantiationListener();
+        securitySettings.setUnauthorizedComponentInstantiationListener(
+                new RepoBrowsingAwareUnauthorizedComponentInstantiationListener(orig));
+    }
+
+
+    @Override
+    protected Class<? extends AuthenticatedWebSession> getWebSessionClass() {
+        return ArtifactoryWebSession.class;
+    }
+
+    @Override
+    protected Class<? extends WebPage> getSignInPageClass() {
+        return LoginPage.class;
+    }
+
+    @Override
+    protected void onDestroy() {
+        deleteUploadsFolder();
+        super.onDestroy();
+    }
+
+    @Override
+    public Class getHomePage() {
+        return HomePage.class;
+    }
+
+    @Override
+    protected WebRequest newWebRequest(HttpServletRequest servletRequest) {
+        return new UploadWebRequest(servletRequest);
+    }
+
+    @Override
+    public AjaxRequestTarget newAjaxRequestTarget(Page page) {
+        if (testMakupIdInjector != null) {
+            testMakupIdInjector.setInAjaxRequest();
+        }
+        return super.newAjaxRequestTarget(page);
+    }
+
+    @Override
+    public RequestCycle newRequestCycle(final Request request, final Response response) {
+        return new ArtifactoryRequestCycle(this, (WebRequest) request, response);
+    }
+
+    private static void deleteUploadsFolder() {
+        final File tmpUploadsDir = ArtifactoryHome.getTmpUploadsDir();
+        if (tmpUploadsDir.exists()) {
+            try {
+                FileUtils.cleanDirectory(tmpUploadsDir);
+            } catch (IOException e) {
+                LOGGER.warn("Failed to delete the upload directory.");
+            }
+        }
+    }
+
+    private static class RepoBrowsingAwareUnauthorizedComponentInstantiationListener
+            implements IUnauthorizedComponentInstantiationListener {
+        private IUnauthorizedComponentInstantiationListener delegate;
+
+        private RepoBrowsingAwareUnauthorizedComponentInstantiationListener(
+                IUnauthorizedComponentInstantiationListener delegate) {
+            this.delegate = delegate;
+        }
+
+        public void onUnauthorizedInstantiation(Component component) {
+            WebRequest webRequest = (WebRequest) component.getRequest();
+            WebUtils.removeRepoPath(webRequest, true);
+            delegate.onUnauthorizedInstantiation(component);
+        }
+    }
+}

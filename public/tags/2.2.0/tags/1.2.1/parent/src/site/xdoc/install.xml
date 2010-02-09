@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Installation Help</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Basic Information">
+            <p>
+                Artifactory system requirements:
+                <ol>
+                    <li>A valid
+                        <b>JDK 1.5+</b>
+                        installed on the server.
+                    </li>
+                    <li>At least 400m of Java heap size, for good management of the binary files.</li>
+                </ol>
+            </p>
+            <p>
+                <i>
+                    The downloadable artifactory zip install file contains an embedded Jetty container
+                    with a with default Artifactory configuration for ultra easy startup.
+                    After unzipping it, run the appropriate Windows or Linux script under the bin
+                    directory.
+                </i>
+            </p>
+            <p>The bin folder also contains an install script for making artifactory
+                a Linux service using chkconfig (RedHat and Suse).
+            </p>
+            <p>You can read the
+                <a href="configuration.html">Configuration</a>
+                page for a description of artifactory folders.
+            </p>
+            <p>After installation the default admin user is username=admin and password=password</p>
+        </section>
+        <section name="Windows">
+            <p>
+                The file "artifactory.bat" under the bin folder, will look for java and run
+                the main class.
+            </p>
+        </section>
+        <section name="Linux">
+            <p>The main dependency needed before running artifactory is to have a valid JDK 1.5+ on the machine.
+                Before running scripts directly the JAVA_HOME should be set to a JDK 1.5+.
+            </p>
+            <p>The best to check the validity of your environment is to run "artifactoryctl check"
+                under the bin folder. This script is a modification of jetty init script and is quite well
+                documented.
+            </p>
+            <p>You can run artifactory with "artifactory.sh" directly to see its behavior.
+                The console will be locked on artifactory process and you can stop it clean with CTRL+C.
+            </p>
+            <p>You can also try run directly "artifactoryctl check|start|stop" to run directly
+                artifactory as a daemon process using the environment variable of the shell you are in.
+            </p>
+            <p>There is also under bin a script called "install.sh" that will run a bunch of
+                unix commands to setup artifactory correctly as a Linux service.
+            </p>
+            <p>The install script is documented and you should look at it before running it.
+                Anyway, here are the notes and informations about what this script is doing:
+            </p>
+            <table>
+                <tr>
+                    <td>NOTE</td>
+                    <td>This script should be run as root</td>
+                </tr>
+                <tr>
+                    <td>NOTE</td>
+                    <td>It uses chkconfig which is part of RedHat and Suse but not debian (as I know it)</td>
+                </tr>
+                <tr>
+                    <td>User creation</td>
+                    <td>It creates a user named "jetty" (JETTY_USER) by default.
+                        The install script accept the username as it first and only parameter.
+                    </td>
+                </tr>
+                <tr>
+                    <td>etc config</td>
+                    <td>It creates the folder /etc/artifactory copy the configuration files there and
+                        creates a soft link in $ARTIFACTORY_HOME/etc
+                    </td>
+                </tr>
+                <tr>
+                    <td>etc default</td>
+                    <td>It creates the file /etc/artifactory/default that contains the main environment
+                        variables needed for artifactory to run: JAVA_HOME, JETTY_USER,
+                        ARTIFACTORY_HOME, JAVA_OPTIONS,
+                        ...
+                        <br/>
+                        The /etc/artifactory/default is included at the beginning of artifactoryctl
+                        and so can include
+                        whatever you wish.
+                        <br/>
+                        <b>Becareful: The default max memory is 1G</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>init.d</td>
+                    <td>It copy the file artifactoryctl to /etc/init.d/artifactory</td>
+                </tr>
+                <tr>
+                    <td>Logs folder</td>
+                    <td>It creates /var/log/artifactory make it writable for the user JETTY_USER
+                        and creates a soft link $ARTIFACTORY_HOME/logs.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Backup folder</td>
+                    <td>This script will create the folder ARTIFACTORY/backup directly, so you
+                        need to create a link if you want this folder to be somewhere else
+                        (like /var/backup/artifactory for example).
+                        The script make $ARTIFACTORY_HOME/backup it writable for the user JETTY_USER.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Repos folder</td>
+                    <td>This script will create the folder ARTIFACTORY/repos directly, so you
+                        need to create a link if you want this folder to be somewhere else.
+                        The script will make it writable for the user JETTY_USER.
+                    </td>
+                </tr>
+                <tr>
+                    <td>chkconfig call</td>
+                    <td>The script call add, list (you can see the output), then activate (on), the artifactory
+                        service
+                    </td>
+                </tr>
+            </table>
+            <p>After running the script successfully you can test the installation by running:
+                "service artifactory check" or "/etc/init.d/artifactory check"
+            </p>
+            <p>And if everything OK start artifactory with:
+                "service artifactory start" or "/etc/init.d/artifactory start"
+            </p>
+            <p>And then check the log with:
+                "tail -f $ARTIFACTORY_HOME/logs/consoleout.log"
+            </p>
+            <p>Enjoy...</p>
+        </section>
+        <section name="WAR File">
+            <p>
+                Configure a standard Servlet container VM with
+                -Dartifactory.home=$ARTIFACTORY_HOME,
+                pointing to the location of your Artifactory home folder. (If you do not specify
+                this property it will default to the user.dir system property).
+                <br/>
+                Artifactory will try to create the folder if it does not exist.
+            </p>
+            <p>
+                Copy the configuration file to $ARTIFACTORY_HOME/etc/artifactory.config.xml.
+            </p>
+            <p>
+                Deploy the artifactory.war file into the container.
+            </p>
+        </section>
+    </body>
+</document>

@@ -1,0 +1,44 @@
+<wicket:extend>
+    <form wicket:id="form">
+        <table class="formBody">
+            <tr>
+                <td class="form_label">Name</td>
+                <td colspan="2">
+                    <input wicket:id="name" type="text" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Repository</td>
+                <td colspan="2">
+                    <select wicket:id="repoKey"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Include patterns<span wicket:id="includesHelp"/>
+
+                    <div><select wicket:id="includesSuggest" class="small-font"/></div>
+                </td>
+                <td>
+                    <textarea wicket:id="includesPattern" class="medium" rows="4"
+                              cols="20">input</textarea>
+                </td>
+                <td rowspan="2" style="width: 100%; padding-left: 20px;">
+                    <div wicket:id="recipients"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Exclude patterns<span wicket:id="excludesHelp"/>
+
+                    <div><select wicket:id="excludesSuggest" class="small-font"/></div>
+                </td>
+                <td>
+                    <textarea wicket:id="excludesPattern" class="medium" rows="4"
+                              cols="20">input</textarea>
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="submit" wicket:id="submit"/>
+    </form>
+
+</wicket:extend>

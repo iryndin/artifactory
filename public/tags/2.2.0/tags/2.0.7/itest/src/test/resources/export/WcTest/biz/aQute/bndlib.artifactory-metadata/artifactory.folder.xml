@@ -1,0 +1,6 @@
+<artifactory.folder>
+    <repoKey>libs-releases-local</repoKey>
+    <relPath>biz/aQute/bndlib</relPath>
+    <created>1220183113614</created>
+    <modifiedBy>admin</modifiedBy>
+</artifactory.folder>

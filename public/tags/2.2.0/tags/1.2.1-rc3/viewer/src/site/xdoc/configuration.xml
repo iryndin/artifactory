@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+    <properties>
+        <title>Configuration Help</title>
+        <author email="drorbr@gmail.com">Dror Bereznitsky</author>
+    </properties>
+
+    <body>
+        <section name="Configuration Files">
+            <subsection name="Artifactory Dependency Viewer configuration files">
+                <table>
+                    <tr>
+                        <th>
+                            <b>File Name</b>
+                        </th>
+                        <th>
+                            <b>Description</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>viewer.properties</td>
+                        <td>Artifactory Dependency Viewer configuration file</td>
+                    </tr>
+                    <tr>
+                        <td>log4j.properties</td>
+                        <td>The standard log4j configuration file</td>
+                    </tr>
+                </table>
+            </subsection>
+            <subsection name="Artifactory Dependency Viewer configuration file">
+                <p>
+                    The Dependency Viewer will lookup the file in the following order:
+                </p>
+                <ol>
+                    <li>The full path (including file name) defined by the
+                        <i>config.file.path</i>
+                        system property
+                    </li>
+                    <li>Search for the resource from the classpath</li>
+                    <li>If no configuration file is found - default configuration values are used</li>
+                </ol>
+                <p>
+                    The startup scripts found in the
+                    <i>bin</i>
+                    folder will set the
+                    <i>config.file.path</i>
+                    system property to:
+                    installation folder/config/viewer.properties.
+                </p>
+                <br/>
+                <br/>
+                <p>
+                    The Artifactory Dependency Viewer configuration file may include the following configuration
+                    properties:
+                </p>
+                <br/>
+                <br/>
+                <table>
+                    <tr>
+                        <th>
+                            <b>Property name</b>
+                        </th>
+                        <th>
+                            <b>Description</b>
+                        </th>
+                        <th>
+                            <b>Default value</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>maven.home</td>
+                        <td>The path to the local installation of maven</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>maven.remote.repo.central</td>
+                        <td>The central remote repo</td>
+                        <td>http://repo1.maven.org/maven2/</td>
+                    </tr>
+                    <tr>
+                        <td>maven.repo.local</td>
+                        <td>The path to the local repository, if not defined or not found by maven will be set to
+                            default value
+                        </td>
+                        <td>user.home/.m2/repository/</td>
+                    </tr>
+                    <tr>
+                        <td>org.apache.maven.user-settings</td>
+                        <td>A path to an alternative maven settings.xml file for the viewer</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offline</td>
+                        <td>Work in offline mode</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>transitive.depth</td>
+                        <td>To what depth transitive dependencies should be resolved</td>
+                        <td>3</td>
+                    </tr>
+                </table>
+            </subsection>
+        </section>
+        <section name="Artifactory Dependency Viewer folders">
+            <br/>
+            <p>
+                Inside the Artifactory Dependency Viewer home you will find the following subfolders:
+            </p>
+            <br/>
+            <br/>
+            <table>
+                <tr>
+                    <th>
+                        <b>Folder Name</b>
+                    </th>
+                    <th>
+                        <b>Description</b>
+                    </th>
+                </tr>
+                <tr>
+                    <td>bin</td>
+                    <td>All scripts for running and installing Artifactory Dependency Viewer</td>
+                </tr>
+                <tr>
+                    <td>lib</td>
+                    <td>All third party libraries required for running Maven2 Dependency Viewer</td>
+                </tr>
+                <tr>
+                    <td>config</td>
+                    <td>Configuration files</td>
+                </tr>
+                <tr>
+                    <td>dependency-viewer.jar</td>
+                    <td>The Maven2 Dependency Viewer jar</td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>

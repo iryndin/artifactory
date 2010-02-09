@@ -1,0 +1,24 @@
+<settings xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <!-- -Dorg.apache.maven.user-settings=settings.xml -Dmaven.repo.local=c:/m2repo-->
+    <!-- -Dorg.apache.maven.user-settings=C:\java\maven2\artifactory\core\src\it\settings.xml -->
+    <servers>
+        <server>
+            <id>central</id>
+            <username>admin</username>
+            <password>password</password>
+        </server>
+        <server>
+            <id>snapshots</id>
+            <username>admin</username>
+            <password>password</password>
+        </server>
+        <server>
+            <id>libs-snapshots</id>
+            <username>admin</username>
+            <password>password</password>
+        </server>
+    </servers>
+</settings>

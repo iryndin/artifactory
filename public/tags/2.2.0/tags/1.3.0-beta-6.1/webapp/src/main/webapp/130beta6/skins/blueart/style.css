@@ -1,0 +1,317 @@
+/*-- common classes ----------------------------------------------*/
+
+.center {
+    text-align: center;
+}
+
+input.textfield, input.dojoValidateValid, input.dojoValidateEmpty {
+    border: solid 1px #666699;
+    padding: 1px 3px;
+}
+
+input.chekbox {
+
+}
+
+wrapper
+
+input.dojoValidateEmpty {
+    background-color: #ff9999;
+}
+
+input.dojoValidateValid {
+}
+
+.path_field {
+    width: 40em;
+}
+
+.wicket-aa {
+    border: solid 1px #DADADA;
+    border-bottom: none;
+    background-color: white;
+    font-size: 11px;
+    overflow-x: auto;
+    white-space: nowrap;
+    z-index: 30001 !important;
+}
+
+.wicket-aa ul {
+    border-bottom: solid 1px #DADADA;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.wicket-aa li {
+    border-bottom: 1px solid #DADADA;
+    color: #636563;
+    cursor: pointer;
+    height: 18px;
+    list-style: none;
+    margin: 0;
+    padding: 0 3px;
+}
+
+.wicket-aa .selected {
+    background-color: #c4f8ff;
+    color: #000000;
+}
+
+/*-- ContentDialogPanel --------------------------------------------*/
+
+.popup_top {
+    background: url( "images/popup_top.jpg" ) repeat-x top;
+    margin: 0 40px;
+    height: 65px;
+}
+
+.popup_bottom {
+    background: url( "images/popup_bottom.gif" ) repeat-x bottom;
+    margin: 0 40px;
+    height: 40px;
+}
+
+.popup_middle {
+    background-color: #ffffff;
+}
+
+.popup_left {
+    background: #ffffff url( "images/popup_left.gif" ) repeat-y left;
+}
+
+.popup_right {
+    background: url( "images/popup_right.gif" ) repeat-y right;
+}
+
+.popup_topleft {
+    background: url( "images/popup_topleft.gif" ) no-repeat top left;
+    float: left;
+    position: relative;
+    left: -40px;
+    width: 40px;
+    height: 65px;
+}
+
+.popup_topright {
+    background: url( "images/popup_topright.gif" ) no-repeat top right;
+    float: right;
+    position: relative;
+    left: 40px;
+    width: 40px;
+    height: 65px;
+}
+
+.popup_bottomleft {
+    background: url( "images/popup_bottomleft.gif" ) no-repeat top left;
+    float: left;
+    position: relative;
+    left: -40px;
+    width: 40px;
+    height: 40px;
+}
+
+.popup_bottomright {
+    background: url( "images/popup_bottomright.gif" ) no-repeat top right;
+    float: right;
+    position: relative;
+    left: 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.popup .button {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.btn_close {
+    display: block;
+    background: url( "images/btn_close.gif" ) no-repeat;
+    cursor: pointer;
+    margin: 10px 0 0 10px;
+}
+
+/* FF fix */
+html>/**/body .btn_close {
+    width: 16px;
+    height: 17px;
+}
+
+/* IE fix */
+.btn_close img {
+    width: 16px;
+    height: 17px;
+    visibility: hidden;
+}
+
+.popup_body {
+    position: absolute;
+    top: -5px;
+    left: 5px;
+}
+
+.popup textarea {
+    margin-top: 10px;
+    padding: 10px 15px 0 15px;
+    border: none;
+    background: none;
+    overflow: auto;
+}
+
+/*-- ArtifactoryPage --------------------------*/
+
+.profileLink {
+    margin-left: 4px;
+}
+
+span.topBarLink {
+    display: inline;
+    color: #666666;
+}
+
+.cellItemLink {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+.cellItemLink:hover {
+    text-decoration: underline;
+    color: #ff0000;
+}
+
+/*-- DeployArtifactPage --------------------------------------*/
+
+div.wupb-uploadStatus {
+    margin: 5px;
+    color: #aaa;
+}
+
+div.wupb-progressBar {
+    margin: 5px;
+}
+
+div.wupb-progressBar .wupb-border {
+    background: #eee url( "images/progress-remainder.gif" ) repeat-x;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    width: 100%;
+}
+
+div.wupb-progressBar .wupb-background {
+    background: #507090 url( "images/progress-bar.gif" ) repeat-x;
+    height: 18px;
+    width: 0;
+}
+
+/*-- AclsPage -------------------------------------------*/
+
+.win_security h3 {
+    margin: 13px 0 0 0;
+}
+
+.recipients_table .label {
+    padding-left: 30px;
+}
+
+.recipients_table {
+    margin-bottom: 10px;
+}
+
+.UserColumn .deletable {
+    position: relative;
+    top: 2px;
+}
+
+.collapsible-wrapper {
+    display: inline-block;
+    display: -moz-inline-block;
+    position: relative;
+}
+
+.collapsible-wrapper .collapse-link {
+    position: absolute;
+    right: 0;
+    top: 16px;
+}
+
+.collapsible-wrapper a.collapse-link span {
+    display: none;
+}
+
+.collapsible-wrapper a.collapse-link {
+    width: 8px;
+    height: 8px;
+}
+
+.collapsed a.collapse-link {
+    background: url( "images/menu_expand.gif" ) no-repeat right;
+}
+
+.expanded a.collapse-link {
+    background: url( "images/menu_collapse.gif" ) no-repeat right;
+}
+
+.collapsed .collapsible {
+    display: none;
+}
+
+.collapsed a.collapse-link {
+    right: 10px;
+}
+
+select.small-font {
+    font-size: 10px;
+}
+
+td.CheckboxColumn {
+    width: 1px;
+    white-space: nowrap;
+}
+
+span.group, td.group span, span.user, td.user span, span.admin, td.admin span, span.deployer, td.deployer span {
+    padding-left: 20px;
+}
+
+span.group, td.group span {
+    background: url( "images/user/group.png" ) no-repeat center left;
+}
+
+span.user, td.user span {
+    background: url( "images/user/user.png" ) no-repeat center left;
+}
+
+td.DeleteColumn {
+    text-align: right;
+    padding-right: 5px !important;
+    width: 16px;
+}
+
+/*-- IE fix --*/
+td.nowrap span {
+    float: left;
+}
+
+.actions ul {
+    padding: 0;
+    margin: 0;
+}
+
+.actions li {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.actions a {
+    text-decoration: none;
+}
+
+.actions em {
+    opacity: 0.5;
+    filter: alpha( opacity = 50 );
+}
+
+.parent {
+    background-image: url( "images/icons/parent.png" );
+}

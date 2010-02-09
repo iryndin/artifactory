@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+    <properties>
+        <title>Introduction</title>
+        <author email="drorbr@gmail.com">Dror Bereznitsky</author>
+    </properties>
+
+    <body>
+        <section name="Introduction">
+            <div>
+                <p>
+                    Artifactory Dependency Viewer is a utility for graphically visualizing Maven2 artifacts dependency
+                    graphs.
+                    <br/>
+                    It is using Maven embedder for resolving dependencies and based the Java Universal Network/Graph
+                    Framework (Jung) for creating and visualizing the dependency graph.
+                    Spring rich client is used for building the GUI.
+                </p>
+                <p>Artifactory Dependency Viewer features:</p>
+                <ol>
+                    <li>Visually display Maven2 atifacts dependency graphs.</li>
+                    <li>Filter the displayed dependencies by dependency scope: compile, runtime, test, provided and
+                        system.
+                    </li>
+                    <li>Save the dependency graph as PNG or JPEG.</li>
+                    <li>Supports 5 types of dependencies graph layouts.</li>
+                    <li>Configure to what depth transitive dependencies should be resolved.</li>
+                    <li>Can use Maven2 settings.xml to configure repositories.</li>
+                </ol>
+            </div>
+        </section>
+        <section name="Building From Source">
+            <br/>
+            <p>Artifactory Dependency Viewer build is based on
+                <a href="http://maven.apache.org/">Maven2</a>
+                . In order to build the viewer from source you will need Maven2 to be installed on your machine.
+            </p>
+            <br/>
+            <p>To build the viewer from source using Maven2, simply checkout the source and run "mvn clean install".</p>
+        </section>
+    </body>
+</document>

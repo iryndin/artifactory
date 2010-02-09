@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-init-method="init"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tool="http://www.springframework.org/schema/tool"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+           http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-2.0.xsd">
+
+    <!-- Causes system propeties to be used -->
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" ref="resourceLocation"/>
+        <!-- Default is SYSTEM_PROPERTIES_MODE_FALLBACK -->
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <!-- Do not search (non-java) env vars -->
+        <property name="searchSystemEnvironment" value="false"/>
+        <!-- Don't try to resolve placeholders that are themseleves placeholders (scm.revision) -->
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <bean id="resourceLocation" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="META-INF/artifactory.properties"/>
+    </bean>
+
+    <bean id="centralConfig" class="org.artifactory.config.CentralConfigFactoryBean"/>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+        <property name="url" value="jdbc:derby:${artifactory.home}/data/appdb;create=true"/>
+    </bean>
+
+    <bean id="maven" class="org.artifactory.maven.Maven">
+        <constructor-arg ref="centralConfig"/>
+    </bean>
+
+    <bean id="keyVal" class="org.artifactory.keyval.KeyVals">
+        <constructor-arg ref="dataSource"/>
+        <property name="version" value="${artifactory.version}"/>
+        <property name="revision" value="${artifactory.revision}"/>
+    </bean>
+
+    <import resource="scheduling.xml"/>
+    <import resource="security.xml"/>
+</beans>

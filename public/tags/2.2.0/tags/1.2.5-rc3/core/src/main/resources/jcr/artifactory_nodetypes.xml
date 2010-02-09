@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<nodeTypes
+        xmlns:rep="internal"
+        xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+        xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+        xmlns:jcr="http://www.jcp.org/jcr/1.0"
+        xmlns:artifactory="http://artifactory.jfrog.org/1.0">
+
+    <!-- NOTE: This file requires forward declarations of types -->
+
+    <nodeType name="artifactory:repoAware" isMixin="true" hasOrderableChildNodes="false">
+        <propertyDefinition name="artifactory:repoKey" requiredType="String" autoCreated="false"
+                            mandatory="true" onParentVersion="COPY" protected="false"
+                            multiple="false"/>
+    </nodeType>
+
+    <nodeType name="artifactory:cacheable" isMixin="true" hasOrderableChildNodes="false">
+        <propertyDefinition name="artifactory:lastUpdated" requiredType="Date" autoCreated="false"
+                            mandatory="true" onParentVersion="INITIALIZE"
+                            protected="false" multiple="false"/>
+    </nodeType>
+
+    <nodeType name="artifactory:auditable" isMixin="true" hasOrderableChildNodes="false">
+        <propertyDefinition name="artifactory:modifiedBy" requiredType="String" autoCreated="false"
+                            mandatory="true" onParentVersion="COPY" protected="false"
+                            multiple="false"/>
+    </nodeType>
+
+    <nodeType name="artifactory:statsAware" isMixin="true" hasOrderableChildNodes="false">
+        <propertyDefinition name="artifactory:downloadCount" requiredType="Long" autoCreated="true"
+                            mandatory="true" onParentVersion="INITIALIZE"
+                            protected="false" multiple="false">
+            <defaultValues>
+                <defaultValue>0</defaultValue>
+            </defaultValues>
+        </propertyDefinition>
+    </nodeType>
+
+    <nodeType name="artifactory:folder" isMixin="false"
+              hasOrderableChildNodes="false" primaryItemName="jcr:content">
+        <supertypes>
+            <supertype>nt:folder</supertype>
+            <supertype>mix:lockable</supertype>
+            <supertype>artifactory:repoAware</supertype>
+            <supertype>artifactory:auditable</supertype>
+        </supertypes>
+    </nodeType>
+
+    <nodeType name="artifactory:file" isMixin="false"
+              hasOrderableChildNodes="false" primaryItemName="jcr:content">
+        <supertypes>
+            <supertype>nt:file</supertype>
+            <supertype>mix:lockable</supertype>
+            <supertype>mix:referenceable</supertype>
+            <supertype>artifactory:repoAware</supertype>
+            <supertype>artifactory:cacheable</supertype>
+            <supertype>artifactory:auditable</supertype>
+            <supertype>artifactory:statsAware</supertype>
+        </supertypes>
+        <propertyDefinition name="artifactory:name" requiredType="String" autoCreated="false"
+                            mandatory="true" onParentVersion="COPY" protected="false"
+                            multiple="false"/>
+        <propertyDefinition name="artifactory:links" requiredType="Reference" autoCreated="false"
+                            mandatory="false" onParentVersion="ABORT" protected="true"
+                            multiple="true">
+            <valueConstraints>
+                <valueConstraint>artifactory:file</valueConstraint>
+            </valueConstraints>
+        </propertyDefinition>
+    </nodeType>
+
+    <nodeType name="artifactory:jar" isMixin="false"
+              hasOrderableChildNodes="false" primaryItemName="jcr:content">
+        <supertypes>
+            <supertype>artifactory:file</supertype>
+        </supertypes>
+        <propertyDefinition name="artifactory:jarEntry" requiredType="String" autoCreated="false"
+                            mandatory="false" onParentVersion="COPY" protected="false"
+                            multiple="true"/>
+    </nodeType>
+
+    <nodeType name="artifactory:xmlcontent" isMixin="false"
+              hasOrderableChildNodes="false" primaryItemName="jcr:content">
+        <supertypes>
+            <supertype>nt:unstructured</supertype>
+        </supertypes>
+        <!--<childNodeDefinition name="*" defaultPrimaryType="nt:unstructured" autoCreated="false" mandatory="false" onParentVersion="VERSION" protected="false" sameNameSiblings="true">
+            <requiredPrimaryTypes>
+                <requiredPrimaryType>nt:base</requiredPrimaryType>
+            </requiredPrimaryTypes>
+        </childNodeDefinition>-->
+    </nodeType>
+
+    <nodeType name="artifactory:xmlAware" isMixin="true"
+              hasOrderableChildNodes="false" primaryItemName="jcr:content">
+        <childNodeDefinition name="artifactory:xml" defaultPrimaryType="" autoCreated="false"
+                             mandatory="true" onParentVersion="COPY" protected="false"
+                             sameNameSiblings="false">
+            <requiredPrimaryTypes>
+                <requiredPrimaryType>artifactory:xmlcontent</requiredPrimaryType>
+            </requiredPrimaryTypes>
+        </childNodeDefinition>
+    </nodeType>
+
+    <nodeType name="artifactory:pomAware" isMixin="true" hasOrderableChildNodes="false">
+        <propertyDefinition name="artifactory:pom" requiredType="Reference" autoCreated="false"
+                            mandatory="true" onParentVersion="IGNORE" protected="true"
+                            multiple="false">
+            <valueConstraints>
+                <valueConstraint>artifactory:xmlAware</valueConstraint>
+            </valueConstraints>
+        </propertyDefinition>
+    </nodeType>
+
+</nodeTypes>

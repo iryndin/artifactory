@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dojo.widget.Button");
+    </script>
+</wicket:head>
+
+<body>
+<wicket:panel>
+    <div wicket:id="feedback"/>
+    <form wicket:id="groupRecipientsForm">
+        <h3 wicket:id="groupRecipientsFormHeader">Group Permissions</h3>
+        <table class="recipients_table">
+            <tr>
+                <td class="form_label">Admins</td>
+                <td>
+                    <select wicket:id="admins"/>
+                </td>
+                <td class="form_label">Deployers</td>
+                <td>
+                    <select wicket:id="deployers"/>
+                </td>
+                <td class="form_label">Readers</td>
+                <td>
+                    <select wicket:id="readers"/>
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="button" wicket:id="submit"/>
+    </form>
+</wicket:panel>
+</body>
+</html>
