@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+
+<wicket:extend>
+    <table cellspacing="0" class="dataview">
+        <tr>
+            <th wicket:id="orderByName" style="padding-bottom:5px"><b>Name</b></th>
+            <th style="padding-bottom:5px"><b>Repositories</b></th>
+        </tr>
+        <tr wicket:id="items">
+            <td style="width:auto;padding-right:80px">
+                <img wicket:id="icon"/>
+                <!-- Leave this as '..' as it is rendered as default label for the link to the
+                virtual repositories list (from the top most artifacts folder)
+                -->
+                <a wicket:id="link">..</a>
+            </td>
+            <td style="width:auto;">
+                <span wicket:id="repositoriesList">
+                    <a wicket:id="repoKey">[key]</a>&nbsp;
+                </span>
+            </td>
+        </tr>
+    </table>
+</wicket:extend>
+
+</body>
+</html>

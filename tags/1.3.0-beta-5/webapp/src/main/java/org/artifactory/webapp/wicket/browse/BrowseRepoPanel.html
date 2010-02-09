@@ -1,0 +1,72 @@
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dijit.Menu");
+
+        var Browser = {};
+        Browser.fixBrowseTree = function() {
+            var browseTree = document.getElementById('browseTree');
+            if (!browseTree) {
+                return;
+            }
+
+            var newHeight = Math.max(300, document.documentElement.offsetHeight - 170);
+            browseTree.style.height = newHeight + 'px'
+            if (Browser.fixTabPanel) {
+                Browser.fixTabPanel();
+            }
+        }
+        window.onresize = Browser.fixBrowseTree;
+
+        function initSplitter() {
+            var browseTree = dojo.byId('browseTree');
+            var spliterClazz = dojo.isIE ? "dijit.layout.SplitContainer" : "dijit.layout.BorderContainer";
+
+            dojo.require("dijit.layout.ContentPane");
+            dojo.require(spliterClazz);
+
+            browseTree.setAttribute('dojoType', spliterClazz);
+
+            var nodes = new Array();
+            nodes.push(browseTree);
+            nodes.push(dojo.byId('treeContentPane'));
+            nodes.push(dojo.byId('tabsContentPane'));
+            dojo.parser.instantiate(nodes);
+        }
+
+        function cEvent(e) {
+            window.lastTarget = e.srcElement;
+            window.lastEvent = e;
+            return false;
+        }
+    </script>
+</wicket:head>
+
+<wicket:extend>
+
+    <div id="browseTree" dojoType="dijit.layout.BorderContainer"
+         liveSplitters="false"
+         orientation="horizontal"
+         sizerWidth="7"
+         persist="false"
+         activeSizing="false"
+         style=" width: 100%; height: 300px;">
+
+        <div id="treeContentPane" dojoType="dijit.layout.ContentPane" sizeShare="35" region="left" splitter="true">
+            <span wicket:id="tree"></span>
+        </div>
+
+        <div id="tabsContentPane" dojoType="dijit.layout.ContentPane" sizeShare="65" region="center">
+            <span wicket:id="nodaPanelContainer">
+                <span wicket:id="nodePanel"/>
+            </span>
+        </div>
+    </div>
+
+    <div wicket:id="contextMenu"></div>
+
+    <script type="text/javascript">
+        Browser.fixBrowseTree();
+        initSplitter();
+    </script>
+    <span wicket:id="contentDialog"/>
+</wicket:extend>

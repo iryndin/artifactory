@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<web-app
+        xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+        version="2.4">
+    <display-name>artifactory-webapp</display-name>
+
+    <distributable/>
+
+    <context-param>
+        <description>Absolute file URL (e.g. "file:C:/log4j.properties) of the Log4J config file.</description>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>file:${artifactory.home}/etc/log4j.properties</param-value>
+    </context-param>
+
+    <context-param>
+        <description>Interval between config file refresh checks, in milliseconds. If not specified,
+            no refresh checks will happen, which avoids starting Log4J's watchdog thread.
+        </description>
+        <param-name>log4jRefreshInterval</param-name>
+        <param-value>5000</param-value>
+    </context-param>
+
+    <context-param>
+        <description>Whether the web app root system property should be exposed, allowing for log
+            file paths relative to the web application root directory. Default is "true". Since we
+            do not require to run exploded, always set this to "false".
+        </description>
+        <param-name>log4jExposeWebAppRoot</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>AccessFilter</filter-name>
+        <filter-class>org.artifactory.webapp.servlet.AccessFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>RepoFilter</filter-name>
+        <filter-class>org.artifactory.webapp.servlet.RepoFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>WicketFilter</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <!--<filter-class>org.artifactory.webapp.servlet.ArtifactoryReloadingFilter</filter-class>-->
+        <init-param>
+            <description>Wicket run mode</description>
+            <param-name>configuration</param-name>
+            <!--<param-value>development</param-value>-->
+            <param-value>deployment</param-value>
+        </init-param>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.artifactory.webapp.wicket.ArtifactoryApp</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AccessFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>RepoFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>WicketFilter</filter-name>
+        <url-pattern>/webapp/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.artifactory.webapp.servlet.ArtifactoryHomeConfigurer</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.artifactory.webapp.servlet.Log4jConfigListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.artifactory.webapp.servlet.ArtifactoryContextConfigurer</listener-class>
+    </listener>
+
+    <session-config>
+        <!-- 1 hour -->
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+</web-app>

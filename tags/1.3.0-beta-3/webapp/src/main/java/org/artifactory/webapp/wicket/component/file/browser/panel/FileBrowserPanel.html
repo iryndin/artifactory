@@ -1,0 +1,26 @@
+<wicket:panel>
+    <div class="lookIn">
+        <span><wicket:message key="file.browser.breadCrumbs"/>:</span>
+        <select wicket:id="breadcrumbs"/>
+        <input class="gotoParentButton" type="button" wicket:id="gotoParentButton" value=""/>
+    </div>
+    <div class="files">
+        <ul>
+            <li wicket:id="filesList">
+                <a wicket:id="fileNameLabel"></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="buttons">
+        <input type="button" wicket:id="ok" value="Ok"/>
+        <input type="button" wicket:id="cancel" value="Cancel"/>
+    </div>
+
+    <div class="selectedFile">
+        <span><wicket:message key="file.browser.name"/>:</span>
+        <input type="text" wicket:id="fileAutocomplete"/>
+    </div>
+
+    <script wicket:id="initScript" type="text/javascript"></script>
+</wicket:panel>

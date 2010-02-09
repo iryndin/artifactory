@@ -1,0 +1,61 @@
+<assembly xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/assembly-1.0.0.xsd">
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <!-- dependency-viewer.jar -->
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>dependency-viewer.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-sources.jar</exclude>
+            </excludes>
+        </fileSet>
+        <!-- configuration files -->
+        <fileSet>
+            <directory>src/main/install/config</directory>
+            <outputDirectory>config</outputDirectory>
+        </fileSet>
+        <!-- start scripts windows/unix -->
+        <fileSet>
+            <directory>src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*.bat</include>
+            </includes>
+            <lineEnding>dos</lineEnding>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*.sh</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <!-- license -->
+        <fileSet>
+            <directory>src/main/install</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>concurrent:concurrent</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

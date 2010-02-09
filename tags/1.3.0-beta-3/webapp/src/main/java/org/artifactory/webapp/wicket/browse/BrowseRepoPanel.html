@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<wicket:head>
+    <script type="text/javascript">
+        dojo.require("dijit.Menu");
+        var lastWidth, lastHeight,lastTop;
+
+        function hideDisplayPanel() {
+            var nodePanel = document.getElementById('nodePanel');
+            nodePanel.style.display = 'none';
+        }
+
+        function fixDisplayPanel() {
+
+            var nodePanel = document.getElementById('nodePanel');
+            var treePanel = document.getElementById('treePanel');
+            var treeTd = document.getElementById('treeTd');
+            var newTop = Math.max(document.body.scrollTop - 100, 0);
+            var newWidth = Math.max(treePanel.offsetWidth - treeTd.offsetWidth - 80, 300);
+            var newHeight = Math.max(document.documentElement.clientHeight - 220, 100);
+            nodePanel.style.display = '';
+
+            if (!lastHeight) {
+                lastHeight = newHeight;
+                lastWidth = newWidth;
+                lastTop = newTop;
+                dojo.query('.tab-panel')[0].style.height = newHeight + 'px';
+                nodePanel.style.width = newWidth + 'px';
+                nodePanel.style.top = newTop + 'px';
+                return;
+            }
+
+            dojo.animateProperty({
+                node: dojo.query('.tab-panel')[0],
+                duration: 200,
+                properties: {
+                    height: {start: lastHeight,end: newHeight}
+                }
+            }).play();
+
+            dojo.animateProperty({
+                node: nodePanel,
+                duration: 200,
+                properties: {
+                    top: {start:lastTop, end: newTop },
+                    width: {start: lastWidth,end: newWidth}
+                }
+            }).play();
+
+            lastHeight = newHeight;
+            lastWidth = newWidth;
+            lastTop = newTop;
+
+        }
+
+        window.onscroll = fixDisplayPanel;
+        window.onresize = fixDisplayPanel;
+    </script>
+    <style type="text/css">
+        #nodePanel {
+            position: relative;
+            top: 0;
+        }
+    </style>
+</wicket:head>
+
+<body>
+
+<wicket:extend>
+    <table class="tree">
+        <tbody>
+            <tr>
+                <td id="treeTd" valign="top"><span wicket:id="tree"></span></td>
+                <td valign="top">
+                    <div id="nodePanel">
+                        <span wicket:id="nodePanel"/>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <span wicket:id="contentDialog"/>
+</wicket:extend>
+
+</body>
+</html>

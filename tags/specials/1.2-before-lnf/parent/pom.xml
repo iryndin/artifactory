@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory</groupId>
+    <artifactId>artifactory-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.2-SNAPSHOT</version>
+    <name>Artifactory Parent POM</name>
+
+    <scm>
+        <connection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://artifactory.svn.sourceforge.net/svnroot/artifactory/trunk
+        </developerConnection>
+        <url>http://artifactory.svn.sourceforge.net/viewvc/artifactory/</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>ylandman</id>
+            <name>Yoav Landman</name>
+            <email>ylandman@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <description>
+        Exotic dependencies:
+        wicket: http://svn.apache.org/repos/asf/incubator/wicket/branches/wicket-1.x rev#510929
+        jackrabbit: repo@http://people.apache.org/repo/m2-ibiblio-rsync-repository, or
+        http://svn.apache.org/repos/asf/jackrabbit/tags/1.2.2 rev#508509
+        spring: repo@http://ndeloof.free.fr/maven2 (for mavenized spring submodules)
+        collections-generic: download@http://sourceforge.net/project/showfiles.php?group_id=139125
+    </description>
+
+    <modules>
+        <module>../wagon</module>
+        <module>../core</module>
+        <module>../webapp</module>
+        <module>../standalone</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>2.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty</artifactId>
+                <version>6.1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>collections-generic</groupId>
+                <artifactId>collections-generic</artifactId>
+                <version>4.01</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1-beta1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-embedder</artifactId>
+                <version>2.0.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>2.0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact-manager</artifactId>
+                <version>2.0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-project</artifactId>
+                <version>2.0.5</version>
+            </dependency>
+
+            <!-- Core jaxb classes -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.0</version>
+            </dependency>
+
+            <!-- Core jaxb classes -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.jackrabbit</groupId>
+                <artifactId>jackrabbit-core</artifactId>
+                <version>1.2.2</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jcr</groupId>
+                <artifactId>jcr</artifactId>
+                <version>1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+
+            <!-- required for scheduling -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-support</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.script.groovy</groupId>
+                <artifactId>groovy-engine</artifactId>
+                <version>1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>1.0-jsr-06</version>
+            </dependency>
+
+            <dependency>
+                <groupId>quartz</groupId>
+                <artifactId>quartz</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.acegisecurity</groupId>
+                <artifactId>acegi-security</artifactId>
+                <version>1.0.3</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-webmvc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-remoting</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-support</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>ext</id>
+            <repositories>
+                <repository>
+                    <id>jfrog-3rdp-releases</id>
+                    <name>The jfrog repository for Third Parties Releases</name>
+                    <url>http://www.jfrog.org/artifactory/3rdp-releases@repo</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>jfrog-3rdp-snapshots</id>
+                    <name>The jfrog repository for Third Parties Snapshots</name>
+                    <url>http://www.jfrog.org/artifactory/3rdp-snapshots@repo</url>
+                </repository>
+                <repository>
+                    <id>ndeloof.free.fr</id>
+                    <url>http://ndeloof.free.fr/maven2</url>
+                    <name>Spring Framework</name>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <!--<repository>
+                    <id>apache.org</id>
+                    <name>Apache snapshot repository</name>
+                    <url>http://svn.apache.org/maven-snapshot-repository</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>org.mortbay.releases</id>
+                    <url>http://www.mortbay.org/maven2/release</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>mortbay-snapshot-repo</id>
+                    <url>http://jetty.mortbay.org/maven2/snapshot</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </repository>-->
+                <!--
+                <repository>
+                    <id>acegisecurity.sourceforge.net</id>
+                    <url>http://acegisecurity.sourceforge.net/repository/releases</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>org.openwfe.prereleases</id>
+                    <url>http://maven.openwfe.org/snapshots</url>
+                </repository>
+                -->
+            </repositories>
+        </profile>
+        <profile>
+            <id>jfrog</id>
+            <distributionManagement>
+                <site>
+                    <id>jfrog-server</id>
+                    <name>jfrog-sites</name>
+                    <url>scp://tadpole.jfrog.org/srv/www/html/sites/artifactory/${version}</url>
+                </site>
+                <repository>
+                    <id>jfrog-artifactory</id>
+                    <name>jfrog-libs-dist</name>
+                    <url>https://www.jfrog.org/artifactory/libs-releases@repo</url>
+                </repository>
+                <snapshotRepository>
+                    <id>jfrog-artifactory</id>
+                    <name>jfrog-libs-snapshots</name>
+                    <url>https://www.jfrog.org/artifactory/libs-snapshots@repo</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,5 @@
+JFrog Artifactory
+Copyright 2008 JFrog Ltd
+
+This product includes software developed at
+JFrog Ltd (http://www.jfrog.org)

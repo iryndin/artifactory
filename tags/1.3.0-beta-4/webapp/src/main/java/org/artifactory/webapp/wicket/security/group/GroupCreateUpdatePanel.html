@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+<wicket:extend>
+    <form wicket:id="form">
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="form_label">Group name</td>
+                <td>
+                    <input wicket:id="groupName" type="text" class="medium"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_label">Description</td>
+                <td>
+                    <textarea rows="2" cols="80" wicket:id="description">
+                    </textarea>
+                </td>
+            </tr>
+        </table>
+        <input class="button" type="button" wicket:id="cancel"/>
+        <input class="button" type="submit" wicket:id="submit"/>
+    </form>
+
+</wicket:extend>
+</body>
+</html>

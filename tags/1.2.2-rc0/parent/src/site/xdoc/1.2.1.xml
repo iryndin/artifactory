@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>How to Upgrade Help</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Unzipping a new Version">
+            <p>The newer version of Artifactory contains again the whole installation zip/tgz.<br/>
+                So, when unzipping a new verson, you need to keep the important
+                subfolders of your Artifactory home:</p>
+            <table>
+                <tr>
+                    <td>
+                        <b>Folder Name</b>
+                    </td>
+                    <td>
+                        <b>Description</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>etc</td>
+                    <td>You need to keep your configuration files.<br/>
+                        The best way on Unix is to have a sym link for this folder (created by the
+                        default installation).
+                    </td>
+                </tr>
+                <tr>
+                    <td>logs</td>
+                    <td>Keep or delete, your choice.
+                    </td>
+                </tr>
+                <tr>
+                    <td>repos</td>
+                    <td>You need to export your repositories and reimport them using the UI. After
+                        you imported your repositories you can safely delete this folder as it no
+                        longer exists in newer Artifactory releases.
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup</td>
+                    <td>Better keep.
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section name="Changing just the war file on Tomcat">
+            <p>
+                Most minor Artifactory updates can be done by changing the artifactory.war file.<br/>
+                <b>ATTENTION:</b> Avoid hot-deploy and make sure to delete the extracted artifactory
+                folder under webapps/ before replacing the war.
+            </p>
+        </section>
+    </body>
+</document>

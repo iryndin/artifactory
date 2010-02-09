@@ -1,0 +1,43 @@
+<wicket:extend>
+    <div wicket:id="welcomeBorder" class="welcome-border">
+
+        <wicket:enclosure>
+            <div class="artifacts-count info">
+                <span>Artifactory is happily serving</span>
+                <span class="value" wicket:id="artifactsCount"/>
+                <span>artifacts.</span>
+            </div>
+        </wicket:enclosure>
+
+        <wicket:enclosure child="logoutLink">
+            <div class="info">
+                <div>
+                    <span>You are logged in as</span>
+                    <a wicket:id="profileLink"/>
+                    (<a wicket:id="logoutLink"/>).
+                </div>
+            </div>
+        </wicket:enclosure>
+
+        <wicket:enclosure child="loginLink">
+            <div class="notice">
+                You are currently not logged-in.<br/>
+                You may <a wicket:id="browseLink">browse</a> Artifactory anonymously.<br/>
+                Please <a wicket:id="loginLink">log in</a> for more functionality.
+            </div>
+        </wicket:enclosure>
+
+        <wicket:enclosure>
+            <div class="info">
+                Uptime is <span wicket:id="uptime"/>.
+            </div>
+        </wicket:enclosure>
+
+        <wicket:enclosure child="latestLabel">
+            <div class="info">
+                You are running Artifactory version
+                <span class="value" wicket:id="currentLabel"/>&nbsp;(latest release is <span wicket:id="latestLabel"/>).
+            </div>
+        </wicket:enclosure>
+    </div>
+</wicket:extend>

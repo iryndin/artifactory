@@ -1,0 +1,10 @@
+<artifactory.file>
+    <repoKey>libs-releases-local</repoKey>
+    <relPath>biz/aQute/bndlib/0.0.227/bndlib-0.0.227.pom</relPath>
+    <created>1220183113723</created>
+    <modifiedBy></modifiedBy>
+    <lastUpdated>1218409202811</lastUpdated>
+    <lastModified>1216224940944</lastModified>
+    <size>864</size>
+    <md5>d078810221127bc9236eb61916b10fbe</md5>
+</artifactory.file>

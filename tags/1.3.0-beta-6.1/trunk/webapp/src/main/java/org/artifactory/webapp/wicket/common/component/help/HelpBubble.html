@@ -1,0 +1,11 @@
+<button tabindex="-1" id="${id}_button" class="help-link" type="button" onclick="return false;" hidefocus="true"></button>
+<span id="${id}_bubble" dojoType="dijit.Tooltip" connectId="${id}_button" showDelay="0" toggle="fade"
+      toggleDuration="200"
+      style="display: none;">
+    ${message}
+</span>
+<script type="text/javascript">
+    if (!dijit.byId('${id}_bubble')) {
+        dojo.parser.parse(dojo.byId('${id}'));
+    }
+</script>

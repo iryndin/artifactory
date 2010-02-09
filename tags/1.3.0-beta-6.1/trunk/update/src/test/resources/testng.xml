@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Artifactory Dump Suite" thread-count="1" verbose="1" parallel="false">
+    <test name="version" parallel="methods">
+        <classes>
+            <class name="org.artifactory.update.test.TestArtifactoryVersion"/>
+        </classes>
+    </test>
+    <test name="fileIO" parallel="methods">
+        <classes>
+            <class name="org.artifactory.update.test.TestFileIO"/>
+        </classes>
+    </test>
+    <!-- TODO: Find a way to pass artifactory.test.home system property to this test
+    <test name="securityExport" parallel="methods">
+        <classes>
+            <class name="org.artifactory.update.test.TestSecurityExport"/>
+        </classes>
+    </test>
+    -->
+</suite>

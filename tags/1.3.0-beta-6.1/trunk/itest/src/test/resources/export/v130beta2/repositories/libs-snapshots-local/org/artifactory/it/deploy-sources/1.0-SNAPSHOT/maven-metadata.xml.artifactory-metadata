@@ -1,0 +1,11 @@
+<file>
+    <repoKey>libs-snapshots-local</repoKey>
+    <relPath>org/artifactory/it/deploy-sources/1.0-SNAPSHOT/maven-metadata.xml</relPath>
+    <artifactoryName>maven-metadata.xml</artifactoryName>
+    <created>1216044525046</created>
+    <modifiedBy>admin</modifiedBy>
+    <lastUpdated>1216044525047</lastUpdated>
+    <lastModified>1216044525045</lastModified>
+    <downloadCount>1</downloadCount>
+    <xmlAware>true</xmlAware>
+</file>

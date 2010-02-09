@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:config xmlns:ns2="http://artifactory.jfrog.org/xsd/1.3.0">
+    <ns2:adminCredential>test</ns2:adminCredential>
+    <!--<localRepositoriesDir>repos</localRepositoriesDir>
+    <localRepositories>
+        <localRepository>
+            <key>local-repo</key>
+            <description>local repoitory</description>
+        </localRepository>
+    </localRepositories>
+
+    <remoteRepositories>
+        <remoteRepository>
+            <key>ibiblio</key>
+            <url>http://www.ibiblio.org/maven2</url>
+        </remoteRepository>
+        <remoteRepository>
+            <key>codehaus</key>
+            <url>http://dist.codehaus.org</url>
+        </remoteRepository>
+    </remoteRepositories>-->
+</ns2:config>

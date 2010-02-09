@@ -1,0 +1,23 @@
+<wicket:panel>
+    <h2 class="fieldset-border-title" wicket:id="title"/>
+
+    <div wicket:id="border">
+        <form wicket:id="groupManagementForm">
+            <div class="field float-left">
+                <label>Group:</label>
+
+                <div class="value">
+                    <select wicket:id="groupManagement" class="medium"/>
+                </div>
+            </div>
+
+            <div class="field field-sep submit-user-field">
+                <button type="submit" wicket:id="addToGroup"/>
+            </div>
+
+            <div class="field field-sep submit-user-field">
+                <button type="submit" wicket:id="removeFromGroup"/>
+            </div>
+        </form>
+    </div>
+</wicket:panel>

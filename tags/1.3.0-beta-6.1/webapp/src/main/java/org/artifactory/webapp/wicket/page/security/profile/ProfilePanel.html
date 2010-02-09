@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+<wicket:extend>
+    <form wicket:id="userForm" class="user-profile-form">
+        <div class="field">
+            <label class="float-left">Current Password</label>
+
+            <div class="value">
+                <input wicket:id="currentPassword" autocomplete="off" type="password" class="text"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <label class="float-left">New Password</label>
+
+            <div class="field">
+                <input wicket:id="newPassword" type="password" class="text"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <label class="float-left">Retype password</label>
+
+            <div class="field">
+                <input wicket:id="retypedPassword" type="password" class="text"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <label class="float-left">Email address</label>
+
+            <div class="field">
+                <input wicket:id="email" type="text" class="text"/>
+            </div>
+        </div>
+    </form>
+
+</wicket:extend>
+</body>
+</html>

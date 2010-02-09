@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Security Configuration</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, security, maven, proxy, enterprise, repository, corporate, maven 2,
+          maven2, mvn, manager, deployment"/>
+
+    <body>
+        <section name="Maven Authentication">
+            <p>
+                For authenticating via Maven, you need to have similar configuration in your
+                settings.xml:
+                <source><![CDATA[
+<servers>
+    <server>
+        <id>repository-name-used-in-the-pom-to-refer-to-artifactory</id>
+        <username>myUsername</username>
+        <password>myPassword</password>
+    </server>
+</servers>]]></source>
+            </p>
+        </section>
+        <section name="Repository and Path Permissions">
+            <span>
+                <p>
+                    Since version 1.2.1 of Artifactory, a new improved security model is used.
+                    The new model allows for setting permissions on targets that are a combination of a
+                    repository and a path prefix inside a repository.
+                </p>
+            </span>
+
+            <span>
+                <img src="images/permissions.jpg"/>
+            </span>
+            <span>
+                <p>
+                    The following permission-targets samples should make this concept clearer:
+                    <br/>
+                    <table>
+                        <tr>
+                            <td>
+                                <b>&lt;repo&gt;:&lt;path&gt;</b>
+                            </td>
+                            <td>
+                                <b>Description</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>lib-releases:org/apache</td>
+                            <td>refers to any artifact deployed under the "org/apache" path (including sub paths) inside the "lib-releases" repository</td>
+                        </tr>
+                        <tr>
+                            <td>ANY:org/apache</td>
+                            <td>refers to any artifact deployed under the "org/apache" path (including sub paths) inside any repository</td>
+                        </tr>
+                        <tr>
+                            <td>plugin-snapshots:ANY</td>
+                            <td>refers to any artifact deployed under any path inside the "plugin-snapshots" repository</td>
+                        </tr>
+                        <tr>
+                            <td>ANY:ANY</td>
+                            <td>refers to any artifact deployed under any path inside any repository (this is useful for allowing global read permission for authenticated users, where anonymous download is not enabled)</td>
+                        </tr>
+                    </table>
+                </p>
+                <p>
+                    The roles of admins, deployers and readers are still applicable for this new type of
+                    permission-targets.
+                    <br/>
+                    The admin role is fully functional for one is an admin of.
+                </p>
+                <p>
+                    For each permission-target you can assign users to 3 types of roles:
+                    <ol>
+                        <li>
+                            <b>Deployers</b>
+                            - can deploy/remove (undeploy) artifacts.
+                        </li>
+                        <li>
+                            <b>Viewers</b>
+                            - can download artifacts (simple browsing is still enabled for
+                            anyone), unless a repository has the
+                            <code>&lt;anonDownloadsAllowed&gt;</code>
+                            flag set to true (the default), then anyone can download regardless of
+                            whether or not he is a viewer.
+                        </li>
+                        <li>
+                            <b>Admins</b>
+                            - can set permissions to other users inside the permission-target.
+                        </li>
+                    </ol>
+                </p>
+            </span>
+
+        </section>
+        <section name="Global Admins">
+            <p>
+                A defined user can either be a simple user or an "admin" user (similar to a root
+                user). When a user is defined as an admin he automatically has all
+                3 roles for any repository or path.
+            </p>
+        </section>
+    </body>
+</document>

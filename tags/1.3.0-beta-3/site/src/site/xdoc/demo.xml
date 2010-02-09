@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Live Demo</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Live Demo">
+            <span>
+                <p>You can watch artifactory in action at:
+                    <br/>
+                    <a href="http://www.jfrog.org/artifactory/">http://www.jfrog.org/artifactory/</a>
+                </p>
+                <p>
+                    There is a guest account:
+                    <code>guest/guest</code>
+                </p>
+                <p>
+                    This account is of course
+                    limited, so in order to test drive the full thing just download and run it
+                    locally with the default configuration.
+                    <br/>
+                    It's a matter of unzipping then click and run.
+                    <br/>
+                </p>
+            </span>
+            <span>
+                <img src="images/browser-small.jpg"/>
+            </span>
+        </section>
+    </body>
+</document>

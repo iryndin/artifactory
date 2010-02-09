@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+
+<wicket:extend>
+
+    <form wicket:id="form">
+        <div class="formBody">
+            <label>Search for <span wicket:id="searchHelp"></span></label>
+            <input wicket:id="search" name="search" type="text"/>
+            <button wicket:id="submit" type="submit"/>
+        </div>
+    </form>
+
+    <div>
+        <table wicket:id="results" class="results" cellpadding="0" cellspacing="0"/>
+    </div>
+
+    <span wicket:id="contentDialog"/>
+</wicket:extend>
+
+</body>
+</html>

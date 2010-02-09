@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Setting Up Maven</title>
+    </properties>
+
+    <meta name="keyword"
+          content="artifactory, maven, proxy, enterprise, repository, corporate, maven 2, maven2,
+          mvn, manager, deployment"/>
+
+    <body>
+        <section name="Setting Up Maven">
+            <p>For setting up maven to use artifactory proxy,
+                just configure a maven repository with the following URL:
+                <br/>
+                <b>http://[your server name]:[port]/artifactory/repo</b>
+                <br/>
+                This URL will make artifactory look through all repositories (local and remote),
+                for any artifacts maven is fetching.
+                <br/>
+                <br/>
+            </p>
+            <p>But, you can also place the name of the local repository to limit artifactory
+                search to this local repository and all remote repositories.
+                <br/>
+                The maven repository URL should look like:
+                <br/>
+                <b>http://[your server name]:[port]/artifactory/[local repo name]</b>
+                <br/>
+                or the older deprecated format
+                <b>http://[your server name]:[port]/artifactory/[local repo name]@repo</b>
+                <br/>
+            </p>
+            <p>If your artifactory is configured correctly, you should override the built-in central
+                and snapshots repositories of Maven, so that no request will be sent directly to
+                them.
+                <br/>
+                Insert the following into your parent POM or settings.xml (under an active profile):
+                <source><![CDATA[
+<repositories>
+    <repository>
+        <id>central</id>
+        <url>http://[your server name]:[port]/artifactory/repo</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>snapshots</id>
+        <url>http://[your server name]:[port]/artifactory/repo</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>central</id>
+        <url>http://[your server name]:[port]/artifactory/plugins-releases</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+        <id>snapshots</id>
+        <url>http://[your server name]:[port]/artifactory/plugins-snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+    </pluginRepository>
+</pluginRepositories>]]></source>
+            </p>
+            <p>
+                With Maven 2.0.5 and above, you can use the new "mirror any" feature instead of the
+                above, and have Artifactory act as a redirecting proxy for any Maven repository,
+                including ones defined inside dependency POMs.
+                <br/>
+                Insert the following into your settings.xml:
+                <source><![CDATA[
+<mirrors>
+    <mirror>
+      <id>artifactory</id>
+      <mirrorOf>*</mirrorOf>
+      <url>http://<host>:<port>/artifactory/repo</url>
+      <name>Artifactory</name>
+    </mirror>
+</mirrors>
+]]></source>
+            </p>
+            <p>
+                <b>ATTENTION:</b>
+                There seem to be (yet unverified) artifact resolution issues with using
+                this technique under Maven 2.0.7. If you are using Maven 2.0.7, please prefer using
+                the first technique (overriding the built-in central and snapshots repositories of
+                Maven) which will work as expected.
+                <br/>
+            </p>
+        </section>
+    </body>
+</document>

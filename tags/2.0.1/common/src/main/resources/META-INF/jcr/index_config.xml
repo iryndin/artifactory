@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
+<configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+               xmlns:jcr="http://www.jcp.org/jcr/1.0"
+               xmlns:artifactory="http://artifactory.jfrog.org/1.0"
+               xmlns:ocm="http://jackrabbit.apache.org/ocm">
+
+    <index-rule nodeType="artifactory:file">
+        <property>artifactory:name</property>
+    </index-rule>
+
+    <!-- Only index xml content -->
+    <aggregate primaryType="artifactory:xmlAware">
+        <include primaryType="artifactory:xmlContent">artifactory:xml</include>
+    </aggregate>
+</configuration>

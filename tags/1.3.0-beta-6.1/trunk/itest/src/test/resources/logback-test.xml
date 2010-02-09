@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-15.15t] [%-5p] \(%F:%L\) - %m%n</pattern>
+        </layout>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <Append>false</Append>
+        <File>target/itest.log</File>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-15.15t] %d [%-5p] \(%-13F:%L{10}\) - %m%n</pattern>
+        </layout>
+    </appender>
+    <logger name="org.artifactory.api.common.StatusHolder">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.jcr.fs.JcrFolder">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.jcr.fs.JcrFile">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.jcr.lock.SessionLock">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.test.internal.SimpleArtifactoryTest">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.test.internal.DbVolumeSizeTest">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory.jcr.fs.JcrFsItem">
+        <level value="DEBUG"/>
+    </logger>
+    <logger name="org.artifactory">
+        <level value="INFO"/>
+    </logger>
+    <root>
+        <level value="WARN"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

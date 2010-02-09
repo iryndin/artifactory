@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">        
+<document>
+    <properties>
+        <title>Screeshots</title>
+    </properties>
+    <body>
+        <section name="screenshots">
+            <p>
+                <img src="images/screenshot01.jpg" alt="screenshot" align='middle'/>
+            </p>
+        </section>
+    </body>
+</document>

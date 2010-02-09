@@ -1,0 +1,101 @@
+div {
+    -moz-border-radius: 5px;
+}
+
+.formLabel {
+    font-size: 0.7em;
+    padding-right: 0.5em;
+}
+
+.pageSubContentTitle {
+    color: #8e8e8e;
+    font-size: 1em;
+    margin-bottom: 0.75em;
+}
+
+.formHeader {
+    background-color: #d0e3f5;
+    padding: 0.3em;
+    font-weight: 900;
+    font-size: 0.8em;
+    color: #5a5a5a;
+}
+
+.formBody {
+    background-color: #f5eede;
+    padding: 0.3em;
+    margin-bottom: 1em;
+    width: 100%;
+}
+
+.small {
+    width: 2.5em;
+}
+
+.medium {
+    width: 12em;
+}
+
+.long {
+    width: 20em;
+}
+
+span.invalid, span.missing {
+    display: inline;
+    margin-left: 1em;
+    font-weight: bold;
+    font-style: italic;
+    color: #f66;
+    font-size: 0.9em;
+}
+
+.noticeMessage {
+    display: block;
+    float: right;
+    font-weight: normal;
+    color: #663;
+    font-size: 0.9em;
+}
+
+/* group multiple buttons in a row */
+div .dojoButton {
+    float: left;
+    margin-left: 10px;
+}
+
+/* Button */
+.formButton {
+	padding: 0 0 0 0;
+	font-size: 8pt;
+	white-space: nowrap;
+	cursor: pointer;
+	font-family: Myriad, Tahoma, Verdana, sans-serif;
+}
+
+.formButton .formButtonContents {
+	padding: 2px 2px 2px 2px;
+	text-align: center;		/* if icon and label are split across two lines, center icon */
+	color: white;
+}
+
+.formButtonLeftPart .formButtonContents {
+	padding-right: 8px;
+}
+
+.formButtonContents img {
+	vertical-align: middle;	/* if icon and label are on same line, center them */
+}
+
+/* -------- colors ------------ */
+
+.formButton:hover .formButtonContents {
+}
+
+.formButton:active .formButtonContents {
+	color: #293a4b;
+}
+
+.formButtonDisabled .formButtonContents {
+	color: #aaa;
+}
+
