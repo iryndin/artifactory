@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Artifactory is a binaries repository manager.
+  ~ Copyright (C) 2010 JFrog Ltd.
+  ~
+  ~ Artifactory is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Artifactory is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<configuration debug="false">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%m%n</pattern>
+        </layout>
+    </appender>
+    <appender name="CONSOLENONEWLINE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%m</pattern>
+        </layout>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File>${artadmin.logs.dir}/artadmin.log</File>
+        <Append>true</Append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d [%-5p] \(%-13F:%L{10}\) - %m%n</pattern>
+        </layout>
+    </appender>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="org.artifactory.cli">
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="UrlBasedCommand">
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLENONEWLINE"/>
+    </logger>
+    <logger name="DumpStatusHolder">
+        <level value="DEBUG"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</configuration>
