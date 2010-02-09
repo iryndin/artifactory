@@ -1,0 +1,21 @@
+<wicket:extend>
+    <div class="notice" wicket:id="addonsDisabled"></div>
+    <div class="notice" wicket:id="noAddons"></div>
+    <div class="notice" wicket:id="requiresRestartValid"></div>
+    <div class="notice" wicket:id="requiresRestartInvalid"></div>
+    <div class="notice" wicket:id="noServerId"></div>
+
+    <table wicket:id="addonTable">
+        <tbody>
+        <tr wicket:id="addonItem" class="item-name">
+            <td class="image">
+                <div wicket:id="image"></div>
+            </td>
+            <td wicket:id="name" class="name"></td>
+            <td class="status">
+                <div wicket:id="status"></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</wicket:extend>

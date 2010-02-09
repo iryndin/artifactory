@@ -1,0 +1,63 @@
+<wicket:extend>
+    <div wicket:id="basicSettings">
+        <div wicket:id="generalSettings"></div>
+
+        <div class="field-row checkbox-row">
+            <div class="field">
+                <input wicket:id="handleReleases" type="checkbox"/>
+                <span wicket:id="handleReleases.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="handleSnapshots" type="checkbox"/>
+                <span wicket:id="handleSnapshots.help"></span>
+            </div>
+
+            <div class="field">
+                <input wicket:id="blackedOut" type="checkbox"/>
+                <span wicket:id="blackedOut.help"></span>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="advancedSettings">
+        <div class="field-row">
+            <div class="field">
+                <label>Snapshot Version Behavior</label>
+                <span wicket:id="snapshotVersionBehavior.help"></span>
+
+                <div class="value">
+                    <select wicket:id="snapshotVersionBehavior"></select>
+                </div>
+            </div>
+
+            <div class="field field-right">
+                <label>Max Unique Snapshots</label>
+                <span wicket:id="maxUniqueSnapshots.help"></span>
+
+                <div class="value">
+                    <input wicket:id="maxUniqueSnapshots" type="text" class="text"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row checkbox-row line-sep">
+            <div class="field">
+                <input wicket:id="suppressPomConsistencyChecks" type="checkbox"/>
+                <span wicket:id="suppressPomConsistencyChecks.help"></span>
+            </div>
+        </div>
+        <div class="field field-sep field-100">
+            <label>Notes</label>
+            <span wicket:id="notes.help"></span>
+
+            <div class="value">
+                <textarea wicket:id="notes"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div wicket:id="propertySetsBorder">
+        <div wicket:id="propertySets"></div>
+    </div>
+</wicket:extend>
