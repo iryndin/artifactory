@@ -32,7 +32,7 @@
         <version>1.6.0</version>
     </parent>
     <artifactId>jackrabbit-core-jfrog</artifactId>
-    <version>1.6.0i</version>
+    <version>1.6.0j</version>
     <name>Jackrabbit Core</name>
     <description>Jackrabbit content repository implementation</description>
 
