@@ -1,0 +1,20 @@
+group = 'web'
+dependencies {
+  compile group: 'commons-lang', name: 'commons-lang', version: '2.4'
+  compile group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
+  compile group: 'commons-io', name: 'commons-io', version: '1.4'
+  compile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
+  compile group: 'org.springframework', name: 'spring-beans', version: '3.0.0.RELEASE'
+  compile group: 'org.apache.wicket', name: 'wicket', version: '1.3.7'
+  compile group: 'org.apache.wicket', name: 'wicket-extensions', version: '1.3.7'
+  compile group: 'org.apache.wicket', name: 'wicket-auth-roles', version: '1.3.7'
+  compile group: 'org.apache.wicket', name: 'wicket-spring-annot', version: '1.3.7'
+  compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
+  compile group: 'org.springframework', name: 'spring-core', version: '3.0.0.RELEASE'
+  compile group: 'org.codehaus.jackson', name: 'jackson-core-asl', version: '1.5.0'
+
+  compile project(':open:log')
+  compile project(':open:api')
+  compile project(':open:config')
+  compile project(':open:common')
+}
