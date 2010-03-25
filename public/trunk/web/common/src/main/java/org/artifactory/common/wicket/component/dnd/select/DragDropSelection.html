@@ -1,0 +1,26 @@
+<wicket:panel xmlns:wicket="http://www.w3.org/1999/XSL/Transform">
+    <div class="selection-list source-list">
+        <div wicket:id="sourceTitle" class="title"></div>
+        <ul wicket:id="sourceList"></ul>
+    </div>
+
+    <div class="sep">
+        <button disabled="disabled" class="add-link-disabled" wicket:id="addLink" type="button"></button>
+        <button disabled="disabled" class="remove-link-disabled" wicket:id="removeLink" type="button"></button>
+    </div>
+
+    <div class="selection-list target-list">
+        <div wicket:id="targetTitle" class="title"></div>
+        <ul wicket:id="targetList"></ul>
+    </div>
+    <div class="clear"></div>
+
+    <div class="info">
+        <wicket:message key="DragDropSelection.hint"/>
+    </div>
+
+    <input wicket:id="selection" type="hidden"/>
+    <script wicket:id="initScript" type="text/javascript">
+        new ${widgetClassName}('${panelId}','${sourceListId}','${targetListId}','${addLinkId}','${removeLinkId}','${textFieldId}');
+    </script>
+</wicket:panel>
