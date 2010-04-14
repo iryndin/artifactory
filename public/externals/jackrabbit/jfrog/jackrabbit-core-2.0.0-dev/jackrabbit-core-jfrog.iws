@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="b821e342-e427-491a-95fe-6b3fbd982d48" name="Default" comment="" />
+    <list default="true" readonly="true" id="b821e342-e427-491a-95fe-6b3fbd982d48" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jackrabbit-core-jfrog.iws" afterPath="$PROJECT_DIR$/jackrabbit-core-jfrog.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jackrabbit-core-jfrog.ipr" afterPath="$PROJECT_DIR$/jackrabbit-core-jfrog.ipr" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jackrabbit-core-jfrog.iml" afterPath="$PROJECT_DIR$/jackrabbit-core-jfrog.iml" />
+    </list>
     <ignored path="jackrabbit-core-jfrog.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -60,10 +71,73 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="RepositoryImpl.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="RepositoryImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="649" column="61" selection-start="25766" selection-end="25766" vertical-scroll-proportion="0.43070653">
+            <state line="12" column="13" selection-start="581" selection-end="581" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NodeStateMerger.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="81" column="84" selection-start="3948" selection-end="3948" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SharedItemStateManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="667" column="73" selection-start="24676" selection-end="24676" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="226" column="33" selection-start="7858" selection-end="7858" vertical-scroll-proportion="0.45217392">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StaleItemStateException.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="59" column="5" selection-start="2250" selection-end="2250" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NodeId.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/id/NodeId.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="257" column="18" selection-start="8310" selection-end="8310" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DynamicPooledExecutor.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="35" selection-start="1896" selection-end="1896" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MultiIndex.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1325" column="17" selection-start="49105" selection-end="49105" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -71,10 +145,24 @@
       </file>
     </leaf>
   </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/RangeQuery.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/security/authentication/LocalAuthContext.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/config/BeanConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -255,6 +343,24 @@
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
     <supportedVersion>125</supportedVersion>
   </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="b821e342-e427-491a-95fe-6b3fbd982d48" name="Default" comment="" />
@@ -317,9 +423,79 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="35" selection-start="1896" selection-end="1896" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/RangeQuery.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="2" selection-start="2" selection-end="2" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1325" column="17" selection-start="49105" selection-end="49105" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/security/authentication/LocalAuthContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="2" selection-start="2" selection-end="2" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/config/BeanConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="163" column="26" selection-start="5661" selection-end="5661" vertical-scroll-proportion="0.23968042">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="649" column="61" selection-start="25766" selection-end="25766" vertical-scroll-proportion="0.43070653">
+        <state line="12" column="13" selection-start="581" selection-end="581" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="81" column="84" selection-start="3948" selection-end="3948" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/id/NodeId.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="257" column="18" selection-start="8310" selection-end="8310" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="5" selection-start="2250" selection-end="2250" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="667" column="73" selection-start="24676" selection-end="24676" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="226" column="33" selection-start="7858" selection-end="7858" vertical-scroll-proportion="0.45217392">
           <folding />
         </state>
       </provider>

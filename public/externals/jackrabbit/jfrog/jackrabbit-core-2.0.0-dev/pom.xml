@@ -227,8 +227,9 @@
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core-jfrog</artifactId>
+        <version>2.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
@@ -260,7 +261,7 @@
       <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- artifactory -->
     <dependency>
             <groupId>org.artifactory</groupId>
@@ -272,10 +273,10 @@
   <!--
     These profiles can be used to run the (integration) tests against different DB backends.
     For instance, if you want to run the integration tests against MySQL backend, do:
-    
+
       mvn clean integration-test -Pmysql,use-descriptor-overlay
-    
-    Note: the ${config.db.name} database is dropped and re-created in the clean phase. 
+
+    Note: the ${config.db.name} database is dropped and re-created in the clean phase.
   -->
   <profiles>
     <profile>
@@ -366,7 +367,7 @@
       <id>use-descriptor-overlay</id>
       <build>
       <plugins>
-        <!-- Drop/create the test database on clean -->        
+        <!-- Drop/create the test database on clean -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>sql-maven-plugin</artifactId>

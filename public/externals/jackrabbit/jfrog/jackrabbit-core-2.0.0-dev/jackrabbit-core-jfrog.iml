@@ -45,7 +45,7 @@
     <orderEntry type="library" exported="" name="Maven: asm:asm:3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.drewnoakes:metadata-extractor:2.4.0-beta-1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.slf4j:jcl-over-slf4j:1.5.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.apache.lucene:lucene-core:2.4.1" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.apache.lucene:lucene-core-jfrog:2.4.1-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.derby:derby:10.5.3.0_1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />

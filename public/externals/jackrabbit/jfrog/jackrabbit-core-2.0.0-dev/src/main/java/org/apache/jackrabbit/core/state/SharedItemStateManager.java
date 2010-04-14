@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -648,9 +650,9 @@ public class SharedItemStateManager
                             merged = NodeStateMerger.merge((NodeState) state, context);
                         }
                         if (!merged) {
-                            String msg = state.getId() + " has been modified externally";
-                            log.debug(msg);
-                            throw new StaleItemStateException(msg);
+                            StaleItemStateException staleEx = new StaleItemStateException(state);
+                            log.debug(staleEx.getMessage());
+                            throw staleEx;
                         }
                         // merge succeeded, fall through
                     }
@@ -663,9 +665,9 @@ public class SharedItemStateManager
                 for (ItemState state : local.deletedStates()) {
                     state.connect(getItemState(state.getId()));
                     if (state.isStale()) {
-                        String msg = state.getId() + " has been modified externally";
-                        log.debug(msg);
-                        throw new StaleItemStateException(msg);
+                        StaleItemStateException staleEx = new StaleItemStateException(state);
+                        log.debug(staleEx.getMessage());
+                        throw staleEx;
                     }
                     shared.deleted(state.getOverlayedState());
                 }

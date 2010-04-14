@@ -320,6 +320,9 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnBranchConfigurationManager">
+    <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
   <component name="SvnConfiguration" maxAnnotateRevisions="500">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
@@ -335,7 +338,7 @@
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="" />
+    <mapping directory="" vcs="svn" />
   </component>
   <component name="libraryTable">
     <library name="Maven: concurrent:concurrent:1.3.4">
@@ -679,17 +682,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/jcl-over-slf4j/1.5.8/jcl-over-slf4j-1.5.8-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.lucene:lucene-core:2.4.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.derby:derby:10.5.3.0_1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/derby/derby/10.5.3.0_1/derby-10.5.3.0_1.jar!/" />
@@ -765,6 +757,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/artifactory/artifactory-jcr-commons/1.1.0-SNAPSHOT/artifactory-jcr-commons-1.1.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.lucene:lucene-core-jfrog:2.4.1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core-jfrog/2.4.1-SNAPSHOT/lucene-core-jfrog-2.4.1-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core-jfrog/2.4.1-SNAPSHOT/lucene-core-jfrog-2.4.1-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core-jfrog/2.4.1-SNAPSHOT/lucene-core-jfrog-2.4.1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
   </component>
