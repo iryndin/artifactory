@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +20,7 @@ package org.apache.jackrabbit.core.query.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -78,10 +81,14 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortComparatorSource;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
@@ -110,7 +117,7 @@ public class SearchIndex extends AbstractQueryHandler {
                 // Supertypes
                 NameConstants.NT_BASE,
                 NameConstants.MIX_REFERENCEABLE));
-        
+
     /**
      * Default query node factory.
      */
@@ -207,7 +214,17 @@ public class SearchIndex extends AbstractQueryHandler {
     /**
      * The parser for extracting text content from binary properties.
      */
-    private final JackrabbitParser parser = new JackrabbitParser();
+    private final Parser parser = new Parser() {
+        public void parse(InputStream stream, ContentHandler handler, Metadata metadata, ParseContext context)
+                throws IOException, SAXException, TikaException {
+            //Do nothing - we currently have no need to extract any text from binary data
+        }
+
+        public void parse(InputStream stream, ContentHandler handler, Metadata metadata)
+                throws IOException, SAXException, TikaException {
+            parse(stream, handler, metadata, new ParseContext());
+        }
+    };
 
     /**
      * The namespace mappings used internally.
@@ -1841,10 +1858,10 @@ public class SearchIndex extends AbstractQueryHandler {
      * constructor.
      *
      * @param filterClasses comma separated list of class names
-     * @deprecated 
+     * @deprecated
      */
     public void setTextFilterClasses(String filterClasses) {
-        parser.setTextFilterClasses(filterClasses);
+        log.warn("Setting textFilterClasses for SearchIndex config is deprecated and no longer needed.");
     }
 
     /**
@@ -1852,7 +1869,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * currently in use. The names are comma separated.
      *
      * @return class names of the text filters in use.
-     * @deprecated 
+     * @deprecated
      */
     public String getTextFilterClasses() {
         return "deprectated";
