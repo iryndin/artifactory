@@ -59,25 +59,25 @@ public final class DbUtility {
      */
     public static void close(Connection con, Statement stmt, ResultSet rs) {
         try {
-            if (rs != null && !rs.isClosed()) {
+            if (rs != null) {
                 rs.close();
             }
         } catch (SQLException e) {
-            logException("failed to close ResultSet", e);
+            LOG.debug("failed to close ResultSet", e);
         } finally {
             try {
-                if (stmt != null && !stmt.isClosed()) {
+                if (stmt != null) {
                     stmt.close();
                 }
             } catch (SQLException e) {
-                logException("failed to close Statement", e);
+                LOG.debug("failed to close Statement", e);
             } finally {
                 try {
-                    if (con != null && !con.isClosed()) {
+                    if (con != null) {
                         con.close();
                     }
                 } catch (SQLException e) {
-                    logException("failed to close Connection", e);
+                    LOG.debug("failed to close Connection", e);
                 }
             }
         }
