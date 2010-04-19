@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -57,21 +59,21 @@ public final class DbUtility {
      */
     public static void close(Connection con, Statement stmt, ResultSet rs) {
         try {
-            if (rs != null) {
+            if (rs != null && !rs.isClosed()) {
                 rs.close();
             }
         } catch (SQLException e) {
             logException("failed to close ResultSet", e);
         } finally {
             try {
-                if (stmt != null) {
+                if (stmt != null && !stmt.isClosed()) {
                     stmt.close();
                 }
             } catch (SQLException e) {
                 logException("failed to close Statement", e);
             } finally {
                 try {
-                    if (con != null) {
+                    if (con != null && !con.isClosed()) {
                         con.close();
                     }
                 } catch (SQLException e) {
