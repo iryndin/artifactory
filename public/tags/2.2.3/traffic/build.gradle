@@ -1,0 +1,10 @@
+dependencies {
+  compile group: 'org.springframework', name: 'spring-tx', version: '3.0.0.RELEASE'
+  compile group: 'commons-io', name: 'commons-io', version: '1.4'
+  compile group: 'commons-lang', name: 'commons-lang', version: '2.4'
+  compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
+  compile project(':open:log')
+  compile project(':open:api')
+
+
+}
