@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,6 +112,7 @@ import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.artifactory.jcr.JcrTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -644,7 +647,18 @@ public class RepositoryImpl extends AbstractRepository
      */
     protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs)
             throws RepositoryException {
-        return new NamespaceRegistryImpl(fs);
+        NamespaceRegistryImpl namespaceRegistry = new NamespaceRegistryImpl(fs);
+
+        //Register the artifactory namespaces if not already registered
+        List<String> nsPrefixes = Arrays.asList(namespaceRegistry.getPrefixes());
+        if (!nsPrefixes.contains(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX, JcrTypes.ARTIFACTORY_NAMESPACE);
+        }
+        if (!nsPrefixes.contains(JcrTypes.OCM_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.OCM_NAMESPACE_PREFIX, JcrTypes.OCM_NAMESPACE);
+        }
+
+        return namespaceRegistry;
     }
 
     /**

@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +22,8 @@ import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +35,8 @@ import java.util.HashSet;
  * See http://issues.apache.org/jira/browse/JCR-584.
  */
 class NodeStateMerger {
+
+    private static final Logger log = LoggerFactory.getLogger(NodeStateMerger.class);
 
     /**
      * Tries to silently merge the given <code>state</code> with its
@@ -47,10 +53,35 @@ class NodeStateMerger {
      */
     static boolean merge(NodeState state, MergeContext context) {
 
+        //If we have no overlay to merge against, we may be after org.apache.jackrabbit.core.ItemImpl#save that
+        //persisted and disposed transient states, but before SessionItemStateManager.disposeTransientItemState removed
+        //the state from the sessions transient map - so we handle a merge event.
+        //In this case, if the state's status matches the expected status, merge against the transient state, to verify
+        //that merging does not conflict (no actual state will be persisted).
         NodeState overlayedState = (NodeState) state.getOverlayedState();
-        if (overlayedState == null
-                || state.getModCount() == overlayedState.getModCount()) {
-            return false;
+        int status = state.getStatus();
+        boolean overlayMissingOrSynced = false;
+        if (overlayedState == null) {
+            log.debug("Already disposed overlay merging required: overlayedState={} ({}) status={}.",
+                    new Object[]{overlayedState, state.getModCount(), status});
+            overlayMissingOrSynced = true;
+        } else if (state.getModCount() == overlayedState.getModCount()) {
+            log.debug("Mod count merging required: overlayedState={} ({}) status={}.",
+                    new Object[]{overlayedState, state.getModCount(), status});
+            overlayMissingOrSynced = true;
+        }
+        if (overlayMissingOrSynced) {
+            switch (status) {
+                case ItemState.STATUS_UNDEFINED:
+                case ItemState.STATUS_NEW:
+                case ItemState.STATUS_EXISTING_MODIFIED:
+                    overlayedState = state;
+                    break;
+                default:
+                    log.debug("Cannot merge - overlay conflict: overlayedState={} ({}) status={}.",
+                            new Object[]{overlayedState, state.getModCount(), status});
+                    return false;
+            }
         }
 
         synchronized (overlayedState) {
