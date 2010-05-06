@@ -457,7 +457,7 @@ public class ConnectionHelper {
             }
         }
         builder.append('.');
-        log.debug("Executing SQL: '{}'" + sql, builder.toString());
+        log.debug(builder.toString());
     }
 
     /**
