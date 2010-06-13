@@ -18,11 +18,16 @@ package org.apache.lucene.index;
  */
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.document.*;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.document.AbstractField;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldSelector;
+import org.apache.lucene.document.FieldSelectorResult;
+import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.BufferedIndexInput;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.util.CloseableThreadLocal;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +64,7 @@ final class FieldsReader {
   // file.  This will be 0 if we have our own private file.
   private int docStoreOffset;
 
-  private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
+  private CloseableThreadLocal<IndexInput> fieldsStreamTL = new CloseableThreadLocal<IndexInput>();
 
   FieldsReader(Directory d, String segment, FieldInfos fn) throws IOException {
     this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, -1, 0);
@@ -147,6 +152,7 @@ final class FieldsReader {
    */
   final void close() throws IOException {
     if (!closed) {
+      fieldsStreamTL.close();
       if (fieldsStream != null) {
         fieldsStream.close();
       }
@@ -156,7 +162,6 @@ final class FieldsReader {
       if (indexStream != null) {
         indexStream.close();
       }
-      fieldsStreamTL.close();
       closed = true;
     }
   }
@@ -439,7 +444,7 @@ final class FieldsReader {
     }
 
     private IndexInput getFieldStream() {
-      IndexInput localFieldsStream = (IndexInput) fieldsStreamTL.get();
+      IndexInput localFieldsStream = fieldsStreamTL.get();
       if (localFieldsStream == null) {
         localFieldsStream = (IndexInput) cloneableFieldsStream.clone();
         fieldsStreamTL.set(localFieldsStream);

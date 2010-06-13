@@ -24,7 +24,7 @@ import java.util.Set;
 
 /** Filters LetterTokenizer with LowerCaseFilter and StopFilter. */
 
-public final class StopAnalyzer extends Analyzer {
+public final class StopAnalyzer extends Analyzer<SavedStreams> {
   private Set stopWords;
 
   /** An array containing some common English words that are not usually useful
@@ -72,13 +72,8 @@ public final class StopAnalyzer extends Analyzer {
     return new StopFilter(new LowerCaseTokenizer(reader), stopWords);
   }
 
-  /** Filters LowerCaseTokenizer with StopFilter. */
-  private class SavedStreams {
-    Tokenizer source;
-    TokenStream result;
-  };
   public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
-    SavedStreams streams = (SavedStreams) getPreviousTokenStream();
+    SavedStreams streams = getPreviousTokenStream();
     if (streams == null) {
       streams = new SavedStreams();
       streams.source = new LowerCaseTokenizer(reader);
@@ -90,3 +85,8 @@ public final class StopAnalyzer extends Analyzer {
   }
 }
 
+/** Filters LowerCaseTokenizer with StopFilter. */
+class SavedStreams {
+  Tokenizer source;
+  TokenStream result;
+}

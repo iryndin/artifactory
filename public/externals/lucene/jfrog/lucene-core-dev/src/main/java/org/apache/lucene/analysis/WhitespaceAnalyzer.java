@@ -17,18 +17,18 @@ package org.apache.lucene.analysis;
  * limitations under the License.
  */
 
-import java.io.Reader;
 import java.io.IOException;
+import java.io.Reader;
 
 /** An Analyzer that uses WhitespaceTokenizer. */
 
-public final class WhitespaceAnalyzer extends Analyzer {
+public final class WhitespaceAnalyzer extends Analyzer<Tokenizer> {
   public TokenStream tokenStream(String fieldName, Reader reader) {
     return new WhitespaceTokenizer(reader);
   }
 
   public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
-    Tokenizer tokenizer = (Tokenizer) getPreviousTokenStream();
+    Tokenizer tokenizer = getPreviousTokenStream();
     if (tokenizer == null) {
       tokenizer = new WhitespaceTokenizer(reader);
       setPreviousTokenStream(tokenizer);

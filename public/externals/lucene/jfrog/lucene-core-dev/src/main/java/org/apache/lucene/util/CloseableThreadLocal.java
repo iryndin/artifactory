@@ -1,5 +1,10 @@
 package org.apache.lucene.util;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
  *
@@ -33,28 +38,67 @@ package org.apache.lucene.util;
  * freely able to reclaim space by objects stored in it.
  */
 
-public class CloseableThreadLocal {
+public class CloseableThreadLocal<T> {
+    private static boolean activateResourceMonitoring = false;
+    private static final AtomicInteger resourcesCounter = new AtomicInteger();
 
-    private ThreadLocal t = new ThreadLocal();
+    private static final ThreadLocal<Map<Integer,Object>> CLOSEABLE_THREAD_LOCALS = new ThreadLocal<Map<Integer,Object>>();
+    private final Integer id;
 
-    public Object get() {
-        return t.get();
+    public CloseableThreadLocal() {
+        id = hashCode();
     }
 
-    public void set(Object object) {
-        t.set(object);
+    public T get() {
+        Map<Integer, Object> map = CLOSEABLE_THREAD_LOCALS.get();
+        if (map != null) {
+            return (T)map.get(id);
+        }
+        return null;
+    }
+
+    public void set(T object) {
+        if (activateResourceMonitoring) {
+            resourcesCounter.incrementAndGet();
+        }
+        Map<Integer, Object> map = CLOSEABLE_THREAD_LOCALS.get();
+        if (map == null) {
+            map = new HashMap<Integer, Object>();
+            CLOSEABLE_THREAD_LOCALS.set(map);
+        }
+        map.put(id, object);
     }
 
     public void close() {
-        if (t != null) {
-            t.remove();
+        Map<Integer, Object> map = CLOSEABLE_THREAD_LOCALS.get();
+        if (activateResourceMonitoring) {
+            if (map != null && map.get(id) != null)
+                resourcesCounter.decrementAndGet();
         }
-        t = null;
+        if (map != null) {
+            map.remove(id);
+        }
     }
 
-    public void closeThreadLocals() {
-        if (t != null) {
-            t.remove();
+    public static void closeAllThreadLocal() {
+        if (activateResourceMonitoring) {
+            Map<Integer, Object> map = CLOSEABLE_THREAD_LOCALS.get();
+            if (map != null) {
+                Collection<Object> objects = map.values();
+                for (Object object : objects) {
+                    if (object != null)
+                        resourcesCounter.decrementAndGet();
+                }
+            }
         }
+        CLOSEABLE_THREAD_LOCALS.remove();
+    }
+
+    public static void setActivateResourceMonitoring(boolean activateResourceMonitoring) {
+        CloseableThreadLocal.activateResourceMonitoring = activateResourceMonitoring;
+    }
+
+    public static int getResourceCount() {
+        return resourcesCounter.get();
     }
 }
