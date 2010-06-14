@@ -442,6 +442,8 @@ public class RepositoryConfig
      */
     private final ConnectionFactory cf;
 
+    private int corePoolSize = Runtime.getRuntime().availableProcessors() * 2;
+
     /**
      * Creates a repository configuration object.
      *
@@ -1055,5 +1057,8 @@ public class RepositoryConfig
         return rlf.getRepositoryLockMechanism();
     }
 
+    public int getCorePoolSize() {
+        return corePoolSize;
+    }
 }
 
