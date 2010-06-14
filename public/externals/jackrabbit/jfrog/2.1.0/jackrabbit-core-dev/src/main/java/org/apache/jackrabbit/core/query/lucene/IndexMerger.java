@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +18,12 @@
  */
 package org.apache.jackrabbit.core.query.lucene;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.util.CloseableThreadLocal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,11 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Merges indexes in a separate daemon thread.
@@ -75,12 +78,13 @@ class IndexMerger implements IndexListener {
 
     /**
      * Flag that indicates that this index merger is shuting down and should
-     * quit. 
+     * quit.
      */
     private final AtomicBoolean quit = new AtomicBoolean(false);
 
     /**
      * Flag that indicates if this index merger has already been started.
+     *
      * @see #start()
      */
     private final AtomicBoolean isStarted = new AtomicBoolean(false);
@@ -127,7 +131,7 @@ class IndexMerger implements IndexListener {
     /**
      * Informs the index merger that an index was added / created.
      *
-     * @param name the name of the index.
+     * @param name    the name of the index.
      * @param numDocs the number of documents it contains.
      */
     void indexAdded(String name, int numDocs) {
@@ -342,7 +346,7 @@ class IndexMerger implements IndexListener {
         /**
          * Creates a new index struct.
          *
-         * @param name name of an index.
+         * @param name    name of an index.
          * @param numDocs number of documents it contains.
          */
         Index(String name, int numDocs) {
@@ -423,8 +427,8 @@ class IndexMerger implements IndexListener {
         /**
          * Creates a new <code>IndexBucket</code>. Limits are both inclusive.
          *
-         * @param lower document limit.
-         * @param upper document limit.
+         * @param lower      document limit.
+         * @param upper      document limit.
          * @param allowMerge if indexes in this bucket can be merged.
          */
         IndexBucket(long lower, long upper, boolean allowMerge) {
@@ -528,7 +532,8 @@ class IndexMerger implements IndexListener {
                             for (IndexReader reader : readers) {
                                 docCount += reader.numDocs();
                             }
-                            log.info("merged " + docCount + " documents in " + time + " ms into " + index.getName() + ".");
+                            log.info(
+                                    "merged " + docCount + " documents in " + time + " ms into " + index.getName() + ".");
                         } finally {
                             for (IndexReader reader : readers) {
                                 try {
@@ -576,6 +581,7 @@ class IndexMerger implements IndexListener {
                     busyMergers.remove(this);
                     busyMergers.notifyAll();
                 }
+                CloseableThreadLocal.closeAllThreadLocal();
                 log.debug("Worker finished");
             }
         }
