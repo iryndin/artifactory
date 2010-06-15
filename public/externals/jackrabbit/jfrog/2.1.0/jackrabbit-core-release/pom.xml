@@ -30,7 +30,7 @@
     <relativePath>../jackrabbit-parent/pom.xml</relativePath>
   </parent>
   <artifactId>jackrabbit-core-jfrog</artifactId>
-  <version>2.1.0-SNAPSHOT</version>
+  <version>2.1.0</version>
   <name>Jackrabbit Core</name>
   <description>Jackrabbit content repository implementation</description>
 
@@ -229,7 +229,7 @@
     <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-core-jfrog</artifactId>
-        <version>2.4.1-SNAPSHOT</version>
+        <version>2.4.1d</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
