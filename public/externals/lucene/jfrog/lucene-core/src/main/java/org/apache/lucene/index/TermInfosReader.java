@@ -35,7 +35,7 @@ final class TermInfosReader {
     private String segment;
     private FieldInfos fieldInfos;
 
-    private CloseableThreadLocal threadResources = new CloseableThreadLocal();
+    private CloseableThreadLocal<ThreadResources> threadResources = new CloseableThreadLocal<ThreadResources>();
     private SegmentTermEnum origEnum;
     private long size;
 
@@ -51,7 +51,7 @@ final class TermInfosReader {
     private final static int DEFAULT_CACHE_SIZE = 1024;
 
     public void closeThreadLocals() {
-        threadResources.closeThreadLocals();
+        threadResources.close();
     }
 
     /**
@@ -159,7 +159,7 @@ final class TermInfosReader {
     }
 
     private ThreadResources getThreadResources() {
-        ThreadResources resources = (ThreadResources) threadResources.get();
+        ThreadResources resources = threadResources.get();
         if (resources == null) {
             resources = new ThreadResources();
             resources.termEnum = terms();

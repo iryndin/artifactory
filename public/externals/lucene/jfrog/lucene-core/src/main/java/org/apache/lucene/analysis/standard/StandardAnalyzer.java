@@ -17,7 +17,12 @@ package org.apache.lucene.analysis.standard;
  * limitations under the License.
  */
 
-import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.WordlistLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +35,7 @@ import java.util.Set;
  *
  * @version $Id: StandardAnalyzer.java 692634 2008-09-06 10:58:33Z mikemccand $
  */
-public class StandardAnalyzer extends Analyzer {
+public class StandardAnalyzer extends Analyzer<SavedStreams> {
   private Set stopSet;
 
   /**
@@ -194,11 +199,6 @@ public class StandardAnalyzer extends Analyzer {
     return result;
   }
 
-  private static final class SavedStreams {
-    StandardTokenizer tokenStream;
-    TokenStream filteredTokenStream;
-  }
-
   /** Default maximum allowed token length */
   public static final int DEFAULT_MAX_TOKEN_LENGTH = 255;
 
@@ -222,7 +222,7 @@ public class StandardAnalyzer extends Analyzer {
   }
   
   public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
-    SavedStreams streams = (SavedStreams) getPreviousTokenStream();
+    SavedStreams streams = getPreviousTokenStream();
     if (streams == null) {
       streams = new SavedStreams();
       setPreviousTokenStream(streams);
@@ -262,3 +262,9 @@ public class StandardAnalyzer extends Analyzer {
     this.replaceInvalidAcronym = replaceInvalidAcronym;
   }
 }
+
+class SavedStreams {
+  StandardTokenizer tokenStream;
+  TokenStream filteredTokenStream;
+}
+
