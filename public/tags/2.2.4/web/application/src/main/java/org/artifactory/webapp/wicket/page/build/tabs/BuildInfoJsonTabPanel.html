@@ -1,0 +1,16 @@
+<wicket:head>
+    <script type="text/javascript">
+        Tab.onResize = function() {
+            var node = dojo.query('.lines')[0];
+            if (node) {
+                var docHeight = document.documentElement.offsetHeight;
+                node.style.maxHeight = Math.max(50, docHeight - 365) + 'px';
+            }
+        };
+    </script>
+</wicket:head>
+<wicket:panel>
+    <div wicket:id="jsonBorder" class="build-json">
+        <div wicket:id="jsonContent"></div>
+    </div>
+</wicket:panel>
