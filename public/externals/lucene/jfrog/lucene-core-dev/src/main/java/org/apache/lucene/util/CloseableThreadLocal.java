@@ -1,10 +1,5 @@
 package org.apache.lucene.util;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
  *
@@ -23,6 +18,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
 
 /**
  * Java's builtin ThreadLocal has a serious flaw: it can take an arbitrarily long amount of time to dereference the
