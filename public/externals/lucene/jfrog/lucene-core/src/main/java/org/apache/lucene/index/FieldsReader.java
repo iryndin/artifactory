@@ -1,6 +1,8 @@
 package org.apache.lucene.index;
 
 /**
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,16 +20,11 @@ package org.apache.lucene.index;
  */
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.document.AbstractField;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.FieldSelectorResult;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.store.AlreadyClosedException;
-import org.apache.lucene.store.BufferedIndexInput;
+import org.apache.lucene.document.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.AlreadyClosedException;
+import org.apache.lucene.store.BufferedIndexInput;
 import org.apache.lucene.util.CloseableThreadLocal;
 
 import java.io.ByteArrayOutputStream;
@@ -64,7 +61,7 @@ final class FieldsReader {
   // file.  This will be 0 if we have our own private file.
   private int docStoreOffset;
 
-  private CloseableThreadLocal<IndexInput> fieldsStreamTL = new CloseableThreadLocal<IndexInput>();
+  private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
 
   FieldsReader(Directory d, String segment, FieldInfos fn) throws IOException {
     this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, -1, 0);
@@ -444,7 +441,7 @@ final class FieldsReader {
     }
 
     private IndexInput getFieldStream() {
-      IndexInput localFieldsStream = fieldsStreamTL.get();
+      IndexInput localFieldsStream = (IndexInput) fieldsStreamTL.get();
       if (localFieldsStream == null) {
         localFieldsStream = (IndexInput) cloneableFieldsStream.clone();
         fieldsStreamTL.set(localFieldsStream);

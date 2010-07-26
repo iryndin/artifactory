@@ -1,6 +1,8 @@
 package org.apache.lucene.analysis;
 
 /**
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +26,7 @@ import java.util.Set;
 
 /** Filters LetterTokenizer with LowerCaseFilter and StopFilter. */
 
-public final class StopAnalyzer extends Analyzer<SavedStreams> {
+public final class StopAnalyzer extends Analyzer {
   private Set stopWords;
 
   /** An array containing some common English words that are not usually useful
@@ -73,7 +75,7 @@ public final class StopAnalyzer extends Analyzer<SavedStreams> {
   }
 
   public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
-    SavedStreams streams = getPreviousTokenStream();
+    SavedStreams streams = (SavedStreams) getPreviousTokenStream();
     if (streams == null) {
       streams = new SavedStreams();
       streams.source = new LowerCaseTokenizer(reader);

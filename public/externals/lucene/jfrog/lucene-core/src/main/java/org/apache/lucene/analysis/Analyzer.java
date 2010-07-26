@@ -17,11 +17,11 @@ package org.apache.lucene.analysis;
  * limitations under the License.
  */
 
-import org.apache.lucene.store.AlreadyClosedException;
-import org.apache.lucene.util.CloseableThreadLocal;
-
-import java.io.IOException;
 import java.io.Reader;
+import java.io.IOException;
+
+import org.apache.lucene.util.CloseableThreadLocal;
+import org.apache.lucene.store.AlreadyClosedException;
 
 /** An Analyzer builds TokenStreams, which analyze text.  It thus represents a
  *  policy for extracting index terms from text.
@@ -30,7 +30,7 @@ import java.io.Reader;
  *  characters from the Reader into raw Tokens.  One or more TokenFilters may
  *  then be applied to the output of the Tokenizer.
  */
-public abstract class Analyzer<T> {
+public abstract class Analyzer {
   /** Creates a TokenStream which tokenizes all the text in the provided
    * Reader.  Must be able to handle null field name for backward compatibility.
    */
@@ -47,12 +47,12 @@ public abstract class Analyzer<T> {
     return tokenStream(fieldName, reader);
   }
 
-  private CloseableThreadLocal<T> tokenStreams = new CloseableThreadLocal<T>();
+  private CloseableThreadLocal tokenStreams = new CloseableThreadLocal();
 
   /** Used by Analyzers that implement reusableTokenStream
    *  to retrieve previously saved TokenStreams for re-use
    *  by the same thread. */
-  protected T getPreviousTokenStream() {
+  protected Object getPreviousTokenStream() {
     try {
       return tokenStreams.get();
     } catch (NullPointerException npe) {
@@ -67,7 +67,7 @@ public abstract class Analyzer<T> {
   /** Used by Analyzers that implement reusableTokenStream
    *  to save a TokenStream for later re-use by the same
    *  thread. */
-  protected void setPreviousTokenStream(T obj) {
+  protected void setPreviousTokenStream(Object obj) {
     try {
       tokenStreams.set(obj);
     } catch (NullPointerException npe) {

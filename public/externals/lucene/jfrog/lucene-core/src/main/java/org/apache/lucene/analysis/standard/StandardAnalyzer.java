@@ -1,6 +1,8 @@
 package org.apache.lucene.analysis.standard;
 
 /**
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +19,7 @@ package org.apache.lucene.analysis.standard;
  * limitations under the License.
  */
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.StopAnalyzer;
-import org.apache.lucene.analysis.StopFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.WordlistLoader;
+import org.apache.lucene.analysis.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +32,7 @@ import java.util.Set;
  *
  * @version $Id: StandardAnalyzer.java 692634 2008-09-06 10:58:33Z mikemccand $
  */
-public class StandardAnalyzer extends Analyzer<SavedStreams> {
+public class StandardAnalyzer extends Analyzer {
   private Set stopSet;
 
   /**
@@ -222,7 +219,7 @@ public class StandardAnalyzer extends Analyzer<SavedStreams> {
   }
   
   public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
-    SavedStreams streams = getPreviousTokenStream();
+    SavedStreams streams = (SavedStreams) getPreviousTokenStream();
     if (streams == null) {
       streams = new SavedStreams();
       setPreviousTokenStream(streams);
