@@ -70,6 +70,7 @@ public interface JcrTypes {
     //build
     String PROP_BUILD_ARTIFACT_CHECKSUMS = ARTIFACTORY_PREFIX + "build.artifact.checksums";
     String PROP_BUILD_DEPENDENCY_CHECKSUMS = ARTIFACTORY_PREFIX + "build.dependency.checksums";
+    String PROP_BUILD_LATEST_START_TIME = ARTIFACTORY_PREFIX + "build.latest.startTime";
 
     //maven metadata
     String PROP_ARTIFACTORY_RECALC_MAVEN_METADATA = ARTIFACTORY_PREFIX + "recalcMavenMetadata";
