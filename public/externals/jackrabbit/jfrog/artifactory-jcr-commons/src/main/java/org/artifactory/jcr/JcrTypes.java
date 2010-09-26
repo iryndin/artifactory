@@ -77,6 +77,14 @@ public interface JcrTypes {
     //keystore
     String PROP_ARTIFACTORY_KEYSTORE_PASSWORD = ARTIFACTORY_PREFIX + "keyStorePassword";
 
+    //build
+    String PROP_BUILD_LATEST_NUMBER = JcrTypes.ARTIFACTORY_PREFIX + "build.latest.number";
+    String PROP_BUILD_LATEST_START_TIME = JcrTypes.ARTIFACTORY_PREFIX + "build.latest.startTime";
+
+    //licenses
+    String PROP_LICENSE_STATE = JcrTypes.ARTIFACTORY_PREFIX + "license.state";
+
+
     //JCR namespaces
     String ARTIFACTORY_NAMESPACE_PREFIX = "artifactory";
     String ARTIFACTORY_NAMESPACE = "http://artifactory.jfrog.org/1.0";
