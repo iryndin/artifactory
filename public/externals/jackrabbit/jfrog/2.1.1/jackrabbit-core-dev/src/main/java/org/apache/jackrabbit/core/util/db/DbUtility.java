@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -40,7 +42,7 @@ public final class DbUtility {
     /**
      * This is a utility method which closes the given resources without throwing exceptions. Any exceptions
      * encountered are logged instead.
-     * 
+     *
      * @param rs the {@link ResultSet} to close, may be null
      */
     public static void close(ResultSet rs) {
@@ -50,7 +52,7 @@ public final class DbUtility {
     /**
      * This is a utility method which closes the given resources without throwing exceptions. Any exceptions
      * encountered are logged instead.
-     * 
+     *
      * @param con the {@link Connection} to close, may be null
      * @param stmt the {@link Statement} to close, may be null
      * @param rs the {@link ResultSet} to close, may be null
@@ -61,21 +63,21 @@ public final class DbUtility {
                 rs.close();
             }
         } catch (SQLException e) {
-            logException("failed to close ResultSet", e);
+            LOG.debug("failed to close ResultSet", e);
         } finally {
             try {
                 if (stmt != null) {
                     stmt.close();
                 }
             } catch (SQLException e) {
-                logException("failed to close Statement", e);
+                LOG.debug("failed to close Statement", e);
             } finally {
                 try {
                     if (con != null) {
                         con.close();
                     }
                 } catch (SQLException e) {
-                    logException("failed to close Connection", e);
+                    LOG.debug("failed to close Connection", e);
                 }
             }
         }
@@ -83,7 +85,7 @@ public final class DbUtility {
 
     /**
      * Logs an SQL exception on error level, and debug level (more detail).
-     * 
+     *
      * @param message the message
      * @param se the exception
      */

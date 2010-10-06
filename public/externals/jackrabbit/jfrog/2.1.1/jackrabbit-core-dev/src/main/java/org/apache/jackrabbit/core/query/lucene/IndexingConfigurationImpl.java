@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -212,9 +214,14 @@ public class IndexingConfigurationImpl
      *         <code>false</code> otherwise.
      */
     public boolean isIndexed(NodeState state, Name propertyName) {
-        IndexingRule rule = getApplicableIndexingRule(state);
-        if (rule != null) {
-            return rule.isIndexed(propertyName);
+        List<IndexingRule> rules = getApplicableIndexingRules(state);
+        if (rules != null) {
+            for (IndexingRule rule : rules) {
+                if (rule.isIndexed(propertyName)) {
+                    return true;
+                }
+            }
+            return false;
         }
         // none of the configs matches -> index property
         return true;
@@ -361,7 +368,6 @@ public class IndexingConfigurationImpl
         configElements = nt2rules;
     }
 
-
     /**
      * Returns the first indexing rule that applies to the given node
      * <code>state</code>.
@@ -370,22 +376,7 @@ public class IndexingConfigurationImpl
      * @return the indexing rule or <code>null</code> if none applies.
      */
     private IndexingRule getApplicableIndexingRule(NodeState state) {
-        List<IndexingRule> rules = null;
-        List<IndexingRule> r = configElements.get(state.getNodeTypeName());
-        if (r != null) {
-            rules = new ArrayList<IndexingRule>();
-            rules.addAll(r);
-        }
-
-        for (Name name : state.getMixinTypeNames()) {
-            r = configElements.get(name);
-            if (r != null) {
-                if (rules == null) {
-                    rules = new ArrayList<IndexingRule>();
-                }
-                rules.addAll(r);
-            }
-        }
+        List<IndexingRule> rules = getApplicableIndexingRules(state);
 
         if (rules != null) {
             for (IndexingRule rule : rules) {
@@ -397,6 +388,33 @@ public class IndexingConfigurationImpl
 
         // no applicable rule
         return null;
+    }
+
+    /**
+     * Returns a list of indexing rules that apply to the given node
+     * <code>state</code>.
+     *
+     * @param state a node state.
+     * @return the indexing rules or <code>null</code> if none applies.
+     */
+    private List<IndexingRule> getApplicableIndexingRules(NodeState state) {
+        List<IndexingRule> rules = null;
+        List<IndexingRule> r = configElements.get(state.getNodeTypeName());
+        if (r != null) {
+            rules = new ArrayList<IndexingRule>(r);
+        }
+
+        for (Name name : state.getMixinTypeNames()) {
+            r = configElements.get(name);
+            if (r != null) {
+                if (rules == null) {
+                    rules = new ArrayList<IndexingRule>(r);
+                } else {
+                    rules.addAll(r);
+                }
+            }
+        }
+        return rules;
     }
 
     /**

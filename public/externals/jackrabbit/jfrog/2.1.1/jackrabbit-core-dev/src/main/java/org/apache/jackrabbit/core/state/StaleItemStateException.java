@@ -16,11 +16,23 @@
  */
 package org.apache.jackrabbit.core.state;
 
+import org.apache.jackrabbit.core.id.NodeId;
+
 /**
  * Signals that an item has been modified externally and that the item state
  * representing it has thus become stale.
  */
 public class StaleItemStateException extends ItemStateException {
+
+    private String parentUuid;
+
+    public StaleItemStateException(ItemState state) {
+        super(state.getId() + " has been modified externally");
+        NodeId parentId = state.getParentId();
+        if (parentId != null) {
+            parentUuid = parentId.toString();
+        }
+    }
 
     /**
      * Constructs a new instance of this class with the specified detail
@@ -45,4 +57,7 @@ public class StaleItemStateException extends ItemStateException {
         super(message, rootCause);
     }
 
+    public String getParentUuid() {
+        return parentUuid;
+    }
 }
