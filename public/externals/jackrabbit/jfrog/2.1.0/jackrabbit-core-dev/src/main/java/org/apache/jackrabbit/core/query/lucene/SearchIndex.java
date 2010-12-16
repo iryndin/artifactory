@@ -584,6 +584,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * This implementation forwards the call to
      * {@link MultiIndex#update(Collection, Collection)} and
      * transforms the two iterators to the required types.
+     * JFrog Fred: for RTFACT-3773 made sure no more than {@link cacheSize} nodes are updated at a time
      *
      * @param remove ids of nodes to remove.
      * @param add    NodeStates to add. Calls to <code>next()</code> on this
@@ -608,6 +609,7 @@ public class SearchIndex extends AbstractQueryHandler {
         }
 
         Collection<Document> addCollection = new ArrayList<Document>();
+        updateIndex(removeCollection, addCollection, false);
         while (add.hasNext()) {
             NodeState state = add.next();
             if (state != null) {
@@ -620,14 +622,14 @@ public class SearchIndex extends AbstractQueryHandler {
                     addCollection.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    updateIndex(removeCollection, addCollection, false);
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId() + ": " + e.toString());
                 }
             }
         }
-
-        index.update(removeCollection, addCollection);
+        updateIndex(removeCollection, addCollection, true);
 
         // remove any aggregateRoot nodes that are new
         // and therefore already up-to-date
@@ -646,13 +648,23 @@ public class SearchIndex extends AbstractQueryHandler {
                     modified.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    updateIndex(aggregateRoots.keySet(), modified, false);
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId(), e);
                 }
             }
+            updateIndex(aggregateRoots.keySet(), modified, true);
+        }
+    }
 
-            index.update(aggregateRoots.keySet(), modified);
+    private void updateIndex(Collection<NodeId> removeCollection, Collection<Document> addCollection,
+            boolean forceUpdate)
+            throws IOException {
+        if (forceUpdate || addCollection.size() > getCacheSize() || removeCollection.size() > getCacheSize()) {
+            index.update(removeCollection, addCollection);
+            removeCollection.clear();
+            addCollection.clear();
         }
     }
 
