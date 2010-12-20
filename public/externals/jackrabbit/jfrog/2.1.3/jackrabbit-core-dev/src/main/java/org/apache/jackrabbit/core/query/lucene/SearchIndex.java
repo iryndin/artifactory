@@ -653,7 +653,7 @@ public class SearchIndex extends AbstractQueryHandler {
                     modified.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
-                    if (addCollection.size() > getBufferSize()) {
+                    if (modified.size() > getBufferSize()) {
                         index.update(Collections.<NodeId>emptySet(), modified);
                         modified.clear();
                     }
