@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +20,7 @@ package org.apache.jackrabbit.core.query.lucene;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -67,6 +70,8 @@ class JackrabbitParser implements Parser {
      */
     private final AutoDetectParser parser;
 
+    private boolean inArtifactory;
+
     /**
      * Creates a parser using the default Jackrabbit-specific configuration
      * settings.
@@ -84,6 +89,16 @@ class JackrabbitParser implements Parser {
             // Should never happen
             throw new RuntimeException(
                     "Unable to load embedded Tika configuration", e);
+        }
+
+        //Test if we are running inside artifactory by examining the system props
+        Enumeration<?> propNames = System.getProperties().propertyNames();
+        while (propNames.hasMoreElements()) {
+            String prop = (String) propNames.nextElement();
+            if (prop.startsWith("artifactory.")) {
+                inArtifactory = true;
+                break;
+            }
         }
     }
 
@@ -127,7 +142,7 @@ class JackrabbitParser implements Parser {
             } else if (name.equals(
                     "org.apache.jackrabbit.extractor.MsTextExtractor")) {
                 Parser parser = new OfficeParser();
-                parsers.put("application/vnd.ms-word", parser); 
+                parsers.put("application/vnd.ms-word", parser);
                 parsers.put("application/msword", parser);
                 parsers.put("application/vnd.ms-powerpoint", parser);
                 parsers.put("application/mspowerpoint", parser);
@@ -186,7 +201,11 @@ class JackrabbitParser implements Parser {
             Metadata metadata, ParseContext context)
             throws IOException, SAXException, TikaException {
         waitIfBlocked();
-        parser.parse(stream, handler, metadata, context);
+        if (!inArtifactory) {
+            parser.parse(stream, handler, metadata, context);
+        } else {
+            //Do nothing - we currently have no need to extract any text from binary data
+        }
     }
 
     public void parse(

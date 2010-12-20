@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,6 +112,8 @@ import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.apache.lucene.util.CloseableThreadLocal;
+import org.artifactory.jcr.JcrTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -260,6 +264,22 @@ public class RepositoryImpl extends AbstractRepository
      */
     protected final ScheduledExecutorService executor;
 
+    public static class ThreadWrapper implements Runnable {
+        private final Runnable delegate;
+
+        public ThreadWrapper(Runnable delegate) {
+            this.delegate = delegate;
+        }
+
+        public void run() {
+            try {
+                delegate.run();
+            } finally {
+                CloseableThreadLocal.closeAllThreadLocal();
+            }
+        }
+    }
+
     /**
      * Protected constructor.
      *
@@ -273,7 +293,7 @@ public class RepositoryImpl extends AbstractRepository
         // from the pool
         final ClassLoader poolClassLoader = this.getClass().getClassLoader();
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() * 2,
+                repConfig.getCorePoolSize(),
                 new ThreadFactory() {
 
                     final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -282,7 +302,7 @@ public class RepositoryImpl extends AbstractRepository
                      * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
                      */
                     public Thread newThread(Runnable r) {
-                        final Thread t = new Thread(null, r,
+                        final Thread t = new Thread(null, new ThreadWrapper(r),
                                               "jackrabbit-pool-" + threadNumber.getAndIncrement(),
                                               0);
                         if (t.isDaemon())
@@ -644,7 +664,18 @@ public class RepositoryImpl extends AbstractRepository
      */
     protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs)
             throws RepositoryException {
-        return new NamespaceRegistryImpl(fs);
+        NamespaceRegistryImpl namespaceRegistry = new NamespaceRegistryImpl(fs);
+
+        //Register the artifactory namespaces if not already registered
+        List<String> nsPrefixes = Arrays.asList(namespaceRegistry.getPrefixes());
+        if (!nsPrefixes.contains(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX, JcrTypes.ARTIFACTORY_NAMESPACE);
+        }
+        if (!nsPrefixes.contains(JcrTypes.OCM_NAMESPACE_PREFIX)) {
+            namespaceRegistry.registerNamespace(JcrTypes.OCM_NAMESPACE_PREFIX, JcrTypes.OCM_NAMESPACE);
+        }
+
+        return namespaceRegistry;
     }
 
     /**

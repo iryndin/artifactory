@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -113,7 +115,7 @@ public class SearchIndex extends AbstractQueryHandler {
                 // Supertypes
                 NameConstants.NT_BASE,
                 NameConstants.MIX_REFERENCEABLE));
-        
+
     /**
      * Default query node factory.
      */
@@ -620,6 +622,11 @@ public class SearchIndex extends AbstractQueryHandler {
                     addCollection.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    if (addCollection.size() > getBufferSize()) {
+                        index.update(removeCollection, addCollection);
+                        addCollection.clear();
+                        removeCollection.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId() + ": " + e.toString());
@@ -646,6 +653,10 @@ public class SearchIndex extends AbstractQueryHandler {
                     modified.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    if (addCollection.size() > getBufferSize()) {
+                        index.update(Collections.<NodeId>emptySet(), modified);
+                        modified.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId(), e);
@@ -1393,7 +1404,8 @@ public class SearchIndex extends AbstractQueryHandler {
                     if (propStates != null) {
                         ruleMatched = true;
                         for (PropertyState propState : propStates) {
-                            String namePrefix = FieldNames.createNamedValue(getNamespaceMappings().translateName(propState.getName()), "");
+                            String namePrefix = FieldNames.createNamedValue(
+                                    getNamespaceMappings().translateName(propState.getName()), "");
                             NodeState parent = (NodeState) ism.getItemState(propState.getParentId());
                             Document aDoc = createDocument(parent, getNamespaceMappings(), ifv);
                             try {
@@ -1916,7 +1928,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * constructor.
      *
      * @param filterClasses comma separated list of class names
-     * @deprecated 
+     * @deprecated
      */
     public void setTextFilterClasses(String filterClasses) {
         parser.setTextFilterClasses(filterClasses);
@@ -1927,7 +1939,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * currently in use. The names are comma separated.
      *
      * @return class names of the text filters in use.
-     * @deprecated 
+     * @deprecated
      */
     public String getTextFilterClasses() {
         return "deprectated";

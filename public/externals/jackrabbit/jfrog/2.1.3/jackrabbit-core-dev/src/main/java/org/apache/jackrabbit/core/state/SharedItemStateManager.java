@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -658,9 +660,9 @@ public class SharedItemStateManager
                             merged = NodeStateMerger.merge((NodeState) state, context);
                         }
                         if (!merged) {
-                            String msg = state.getId() + " has been modified externally";
-                            log.debug(msg);
-                            throw new StaleItemStateException(msg);
+                            StaleItemStateException staleEx = new StaleItemStateException(state);
+                            log.debug(staleEx.getMessage());
+                            throw staleEx;
                         }
                         // merge succeeded, fall through
                     }
@@ -673,9 +675,9 @@ public class SharedItemStateManager
                 for (ItemState state : local.deletedStates()) {
                     state.connect(getItemState(state.getId()));
                     if (state.isStale()) {
-                        String msg = state.getId() + " has been modified externally";
-                        log.debug(msg);
-                        throw new StaleItemStateException(msg);
+                        StaleItemStateException staleEx = new StaleItemStateException(state);
+                        log.debug(staleEx.getMessage());
+                        throw staleEx;
                     }
                     shared.deleted(state.getOverlayedState());
                 }
@@ -1116,17 +1118,17 @@ public class SharedItemStateManager
         }
 
     }
-    
+
     /**
      * Validates the hierarchy consistency of the changes in the changelog.
-     * 
+     *
      * @param changeLog
      *            The local changelog the should be validated
      * @throws ItemStateException
      *             If the hierarchy changes are inconsistent.
      * @throws RepositoryException
      *             If the consistency could not be validated
-     * 
+     *
      */
     private void validateHierarchy(ChangeLog changeLog) throws ItemStateException, RepositoryException {
 
@@ -1142,7 +1144,7 @@ public class SharedItemStateManager
 
     /**
      * Checks the parents and children of all deleted node states in the changelog.
-     * 
+     *
      * @param changeLog
      *            The local changelog the should be validated
      * @throws ItemStateException
@@ -1212,7 +1214,7 @@ public class SharedItemStateManager
 
     /**
      * Checks the parents and children of all added node states in the changelog.
-     * 
+     *
      * @param changeLog
      *            The local changelog the should be validated
      * @throws ItemStateException
@@ -1264,7 +1266,7 @@ public class SharedItemStateManager
 
     /**
      * Checks the parents and children of all modified node states in the changelog.
-     * 
+     *
      * @param changeLog
      *            The local changelog the should be validated
      * @throws ItemStateException
@@ -1373,7 +1375,7 @@ public class SharedItemStateManager
 
     /**
      * Check the consistency of a parent/child relationship.
-     * 
+     *
      * @param changeLog
      *            The changelog to check
      * @param childState
@@ -1419,7 +1421,7 @@ public class SharedItemStateManager
     /**
      * Determines whether the specified node is <i>shareable</i>, i.e. whether the mixin type <code>mix:shareable</code>
      * is either directly assigned or indirectly inherited.
-     * 
+     *
      * @param state
      *            node state to check
      * @return true if the specified node is <i>shareable</i>, false otherwise.
@@ -1443,7 +1445,7 @@ public class SharedItemStateManager
             throw new RepositoryException(msg, ntce);
         }
     }
-    
+
     /**
      * Begin update operation. This will return an object that can itself be
      * ended/canceled.

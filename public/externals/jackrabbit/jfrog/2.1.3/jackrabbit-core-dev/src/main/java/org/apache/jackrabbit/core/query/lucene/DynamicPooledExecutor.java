@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,7 +51,7 @@ public class DynamicPooledExecutor {
      */
     public DynamicPooledExecutor() {
         executor = new PooledExecutor();
-        executor.setKeepAliveTime(500);
+        executor.setKeepAliveTime(60000);
         adjustPoolSize();
     }
 
