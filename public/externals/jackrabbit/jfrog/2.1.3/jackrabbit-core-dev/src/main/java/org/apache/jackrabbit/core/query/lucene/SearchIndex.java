@@ -1404,8 +1404,7 @@ public class SearchIndex extends AbstractQueryHandler {
                     if (propStates != null) {
                         ruleMatched = true;
                         for (PropertyState propState : propStates) {
-                            String namePrefix = FieldNames.createNamedValue(
-                                    getNamespaceMappings().translateName(propState.getName()), "");
+                            String namePrefix = FieldNames.createNamedValue(getNamespaceMappings().translateName(propState.getName()), "");
                             NodeState parent = (NodeState) ism.getItemState(propState.getParentId());
                             Document aDoc = createDocument(parent, getNamespaceMappings(), ifv);
                             try {
