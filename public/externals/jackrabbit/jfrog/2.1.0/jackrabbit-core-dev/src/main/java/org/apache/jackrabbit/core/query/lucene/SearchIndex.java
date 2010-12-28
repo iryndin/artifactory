@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -113,7 +115,7 @@ public class SearchIndex extends AbstractQueryHandler {
                 // Supertypes
                 NameConstants.NT_BASE,
                 NameConstants.MIX_REFERENCEABLE));
-        
+
     /**
      * Default query node factory.
      */
@@ -584,7 +586,6 @@ public class SearchIndex extends AbstractQueryHandler {
      * This implementation forwards the call to
      * {@link MultiIndex#update(Collection, Collection)} and
      * transforms the two iterators to the required types.
-     * JFrog Fred: for RTFACT-3773 made sure no more than {@link cacheSize} nodes are updated at a time
      *
      * @param remove ids of nodes to remove.
      * @param add    NodeStates to add. Calls to <code>next()</code> on this
@@ -609,7 +610,6 @@ public class SearchIndex extends AbstractQueryHandler {
         }
 
         Collection<Document> addCollection = new ArrayList<Document>();
-        updateIndex(removeCollection, addCollection, false);
         while (add.hasNext()) {
             NodeState state = add.next();
             if (state != null) {
@@ -622,14 +622,19 @@ public class SearchIndex extends AbstractQueryHandler {
                     addCollection.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
-                    updateIndex(removeCollection, addCollection, false);
+                    if (addCollection.size() > getBufferSize()) {
+                        index.update(removeCollection, addCollection);
+                        addCollection.clear();
+                        removeCollection.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId() + ": " + e.toString());
                 }
             }
         }
-        updateIndex(removeCollection, addCollection, true);
+
+        index.update(removeCollection, addCollection);
 
         // remove any aggregateRoot nodes that are new
         // and therefore already up-to-date
@@ -648,23 +653,17 @@ public class SearchIndex extends AbstractQueryHandler {
                     modified.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
-                    updateIndex(aggregateRoots.keySet(), modified, false);
+                    if (modified.size() > getBufferSize()) {
+                        index.update(Collections.<NodeId>emptySet(), modified);
+                        modified.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId(), e);
                 }
             }
-            updateIndex(aggregateRoots.keySet(), modified, true);
-        }
-    }
 
-    private void updateIndex(Collection<NodeId> removeCollection, Collection<Document> addCollection,
-            boolean forceUpdate)
-            throws IOException {
-        if (forceUpdate || addCollection.size() > getCacheSize() || removeCollection.size() > getCacheSize()) {
-            index.update(removeCollection, addCollection);
-            removeCollection.clear();
-            addCollection.clear();
+            index.update(aggregateRoots.keySet(), modified);
         }
     }
 
@@ -1928,7 +1927,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * constructor.
      *
      * @param filterClasses comma separated list of class names
-     * @deprecated 
+     * @deprecated
      */
     public void setTextFilterClasses(String filterClasses) {
         parser.setTextFilterClasses(filterClasses);
@@ -1939,7 +1938,7 @@ public class SearchIndex extends AbstractQueryHandler {
      * currently in use. The names are comma separated.
      *
      * @return class names of the text filters in use.
-     * @deprecated 
+     * @deprecated
      */
     public String getTextFilterClasses() {
         return "deprectated";
