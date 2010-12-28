@@ -1,5 +1,5 @@
 /*
- * This file has been changed for Artifactory by Jfrog Ltd. Copyright 2010, Jfrog Ltd.
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
  * 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
