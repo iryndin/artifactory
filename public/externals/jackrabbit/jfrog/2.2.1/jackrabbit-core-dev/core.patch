@@ -1,0 +1,480 @@
+Index: jackrabbit-core-jfrog.iml
+===================================================================
+0a1,58
+> <?xml version="1.0" encoding="UTF-8"?>
+> <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+>   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+>     <output url="file://$MODULE_DIR$/target/classes" />
+>     <output-test url="file://$MODULE_DIR$/target/test-classes" />
+>     <content url="file://$MODULE_DIR$">
+>       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+>       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
+>       <sourceFolder url="file://$MODULE_DIR$/src/main/resources-filtered" isTestSource="false" />
+>       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+>       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+>       <excludeFolder url="file://$MODULE_DIR$/target" />
+>     </content>
+>     <orderEntry type="inheritedJdk" />
+>     <orderEntry type="sourceFolder" forTests="false" />
+>     <orderEntry type="library" name="Maven: concurrent:concurrent:1.3.4" level="project" />
+>     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
+>     <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
+>     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.3" level="project" />
+>     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
+>     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jcr:jcr:2.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-api:2.1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-jcr-commons:2.1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-spi-commons:2.1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-spi:2.1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.5.8" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: org.apache.jackrabbit:jackrabbit-spi:tests:2.1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.tika:tika-parsers:0.6" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.tika:tika-core:0.6" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:1.0.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:1.0.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:1.0.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.6" level="project" />
+>     <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.poi:poi-scratchpad:3.6" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:3.6" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:3.6" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.xmlbeans:xmlbeans:2.3.0" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0.1" level="project" />
+>     <orderEntry type="library" name="Maven: dom4j:dom4j:1.6.1" level="project" />
+>     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
+>     <orderEntry type="library" name="Maven: org.ccil.cowan.tagsoup:tagsoup:1.2" level="project" />
+>     <orderEntry type="library" name="Maven: asm:asm:3.1" level="project" />
+>     <orderEntry type="library" name="Maven: com.drewnoakes:metadata-extractor:2.4.0-beta-1" level="project" />
+>     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.5.8" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core-jfrog:2.4.1-SNAPSHOT" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.derby:derby:10.5.3.0_1" level="project" />
+>     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.1.0" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: org.apache.jackrabbit:jackrabbit-jcr-benchmark:1.5.0" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-log4j12:1.5.8" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec:1.0.1" level="project" />
+>     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.2.121" level="project" />
+>     <orderEntry type="library" name="Maven: org.artifactory:artifactory-jcr-commons:1.1.1" level="project" />
+>   </component>
+> </module>
+> 
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+52c54
+<         executor.setKeepAliveTime(500);
+---
+>         executor.setKeepAliveTime(60000);
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/IndexingConfigurationImpl.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+215,217c217,224
+<         IndexingRule rule = getApplicableIndexingRule(state);
+<         if (rule != null) {
+<             return rule.isIndexed(propertyName);
+---
+>         List<IndexingRule> rules = getApplicableIndexingRules(state);
+>         if (rules != null) {
+>             for (IndexingRule rule : rules) {
+>                 if (rule.isIndexed(propertyName)) {
+>                     return true;
+>                 }
+>             }
+>             return false;
+364d370
+< 
+372a379,400
+>         List<IndexingRule> rules = getApplicableIndexingRules(state);
+> 
+>         if (rules != null) {
+>             for (IndexingRule rule : rules) {
+>                 if (rule.appliesTo(state)) {
+>                     return rule;
+>                 }
+>             }
+>         }
+> 
+>         // no applicable rule
+>         return null;
+>     }
+> 
+>     /**
+>      * Returns a list of indexing rules that apply to the given node
+>      * <code>state</code>.
+>      *
+>      * @param state a node state.
+>      * @return the indexing rules or <code>null</code> if none applies.
+>      */
+>     private List<IndexingRule> getApplicableIndexingRules(NodeState state) {
+376,377c404
+<             rules = new ArrayList<IndexingRule>();
+<             rules.addAll(r);
+---
+>             rules = new ArrayList<IndexingRule>(r);
+384,385c411,412
+<                     rules = new ArrayList<IndexingRule>();
+<                 }
+---
+>                     rules = new ArrayList<IndexingRule>(r);
+>                 } else {
+389,393d415
+< 
+<         if (rules != null) {
+<             for (IndexingRule rule : rules) {
+<                 if (rule.appliesTo(state)) {
+<                     return rule;
+395,399c417
+<             }
+<         }
+< 
+<         // no applicable rule
+<         return null;
+---
+>         return rules;
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/IndexMerger.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+32a35
+> import org.apache.lucene.util.CloseableThreadLocal;
+578a582
+>                 CloseableThreadLocal.closeAllThreadLocal();
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/SearchIndex.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+622a625,629
+>                     if (addCollection.size() > getBufferSize()) {
+>                         index.update(removeCollection, addCollection);
+>                         addCollection.clear();
+>                         removeCollection.clear();
+>                     }
+648a656,659
+>                     if (modified.size() > getBufferSize()) {
+>                         index.update(Collections.<NodeId>emptySet(), modified);
+>                         modified.clear();
+>                     }
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+394a397,403
+>             log.info("\n###########################################################################\n" +
+>                     "              INITIALIZING OR RECREATING FULL REPOSITORY INDEX\n" +
+>                     " This is normal with a first-run of a new or upgraded installation or\n" +
+>                     " when the $ARTIFACTORY_HOME/data/index folder no longer exists.\n" +
+>                     " This one-time initialization may take some time, depending on the current\n" +
+>                     " size of your repository.\n" +
+>                     "###########################################################################");
+399a409
+>                 long start = System.currentTimeMillis();
+402c412,413
+<                 log.info("Created initial index for {} nodes", count);
+---
+>                 long time = (int) ((System.currentTimeMillis() - start) / 1000f);
+>                 log.info("Created initial index for {} nodes in {} sec.", count, time);
+1206c1217,1220
+<         if (++count % 100 == 0) {
+---
+>         if (++count % 2500 == 0) {
+>             log.info("{} nodes indexed...", count);
+>         }
+>         if (log.isTraceEnabled()) {
+1209c1223
+<             log.info("indexing... {} ({})", resolver.getJCRPath(path), count);
+---
+>             log.trace("Indexed node #{}: {}.", count, resolver.getJCRPath(path));
+1246c1260
+<                         log.info("Unable to delete obsolete index: " + indexName);
+---
+>                         log.debug("Unable to delete obsolete index: " + indexName);
+Index: src/main/java/org/apache/jackrabbit/core/query/lucene/JackrabbitParser.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+20a23
+> import java.util.Enumeration;
+69a73,74
+>     private boolean inArtifactory;
+> 
+87a93,102
+> 
+>         //Test if we are running inside artifactory by examining the system props
+>         Enumeration<?> propNames = System.getProperties().propertyNames();
+>         while (propNames.hasMoreElements()) {
+>             String prop = (String) propNames.nextElement();
+>             if (prop.startsWith("artifactory.")) {
+>                 inArtifactory = true;
+>                 break;
+>             }
+>         }
+188a204
+>         if (!inArtifactory) {
+189a206,208
+>         } else {
+>             //Do nothing - we currently have no need to extract any text from binary data
+>         }
+Index: src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+649,651c651,653
+<                             String msg = state.getId() + " has been modified externally";
+<                             log.debug(msg);
+<                             throw new StaleItemStateException(msg);
+---
+>                             StaleItemStateException staleEx = new StaleItemStateException(state);
+>                             log.debug(staleEx.getMessage());
+>                             throw staleEx;
+664,666c666,668
+<                         String msg = state.getId() + " has been modified externally";
+<                         log.debug(msg);
+<                         throw new StaleItemStateException(msg);
+---
+>                         StaleItemStateException staleEx = new StaleItemStateException(state);
+>                         log.debug(staleEx.getMessage());
+>                         throw staleEx;
+Index: src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+22a25,26
+> import org.slf4j.Logger;
+> import org.slf4j.LoggerFactory;
+34a39,40
+>     private static final Logger log = LoggerFactory.getLogger(NodeStateMerger.class);
+> 
+49a56,60
+>         //If we have no overlay to merge against, we may be after org.apache.jackrabbit.core.ItemImpl#save that
+>         //persisted and disposed transient states, but before SessionItemStateManager.disposeTransientItemState removed
+>         //the state from the sessions transient map - so we handle a merge event.
+>         //In this case, if the state's status matches the expected status, merge against the transient state, to verify
+>         //that merging does not conflict (no actual state will be persisted).
+51,52c62,82
+<         if (overlayedState == null
+<                 || state.getModCount() == overlayedState.getModCount()) {
+---
+>         int status = state.getStatus();
+>         boolean overlayMissingOrSynced = false;
+>         if (overlayedState == null) {
+>             log.debug("Already disposed overlay merging required: overlayedState={} ({}) status={}.",
+>                     new Object[]{overlayedState, state.getModCount(), status});
+>             overlayMissingOrSynced = true;
+>         } else if (state.getModCount() == overlayedState.getModCount()) {
+>             log.debug("Mod count merging required: overlayedState={} ({}) status={}.",
+>                     new Object[]{overlayedState, state.getModCount(), status});
+>             overlayMissingOrSynced = true;
+>         }
+>         if (overlayMissingOrSynced) {
+>             switch (status) {
+>                 case ItemState.STATUS_UNDEFINED:
+>                 case ItemState.STATUS_NEW:
+>                 case ItemState.STATUS_EXISTING_MODIFIED:
+>                     overlayedState = state;
+>                     break;
+>                 default:
+>                     log.debug("Cannot merge - overlay conflict: overlayedState={} ({}) status={}.",
+>                             new Object[]{overlayedState, state.getModCount(), status});
+54a85
+>         }
+Index: src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+18a21,22
+> import org.apache.jackrabbit.core.id.NodeId;
+> 
+24a29,38
+>     private String parentUuid;
+> 
+>     public StaleItemStateException(ItemState state) {
+>         super(state.getId() + " has been modified externally");
+>         NodeId parentId = state.getParentId();
+>         if (parentId != null) {
+>             parentUuid = parentId.toString();
+>         }
+>     }
+> 
+47a62,64
+>     public String getParentUuid() {
+>         return parentUuid;
+>     }
+Index: src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+112a115,116
+> import org.apache.lucene.util.CloseableThreadLocal;
+> import org.artifactory.jcr.JcrTypes;
+262a267,282
+>     public static class ThreadWrapper implements Runnable {
+>         private final Runnable delegate;
+> 
+>         public ThreadWrapper(Runnable delegate) {
+>             this.delegate = delegate;
+>         }
+> 
+>         public void run() {
+>             try {
+>                 delegate.run();
+>             } finally {
+>                 CloseableThreadLocal.closeAllThreadLocal();
+>             }
+>         }
+>     }
+> 
+276c296
+<                 Runtime.getRuntime().availableProcessors() * 2,
+---
+>                 repConfig.getCorePoolSize(),
+285c305
+<                         final Thread t = new Thread(null, r,
+---
+>                         final Thread t = new Thread(null, new ThreadWrapper(r),
+647c667,678
+<         return new NamespaceRegistryImpl(fs);
+---
+>         NamespaceRegistryImpl namespaceRegistry = new NamespaceRegistryImpl(fs);
+> 
+>         //Register the artifactory namespaces if not already registered
+>         List<String> nsPrefixes = Arrays.asList(namespaceRegistry.getPrefixes());
+>         if (!nsPrefixes.contains(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX)) {
+>             namespaceRegistry.registerNamespace(JcrTypes.ARTIFACTORY_NAMESPACE_PREFIX, JcrTypes.ARTIFACTORY_NAMESPACE);
+>         }
+>         if (!nsPrefixes.contains(JcrTypes.OCM_NAMESPACE_PREFIX)) {
+>             namespaceRegistry.registerNamespace(JcrTypes.OCM_NAMESPACE_PREFIX, JcrTypes.OCM_NAMESPACE);
+>         }
+> 
+>         return namespaceRegistry;
+Index: src/main/java/org/apache/jackrabbit/core/nodetype/NodeTypeRegistry.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+759c761,768
+<             throw new RepositoryException(error, intde);
+---
+>             //Delete invalid custom node types and try to move on
+>             log.warn("Removing existing invalid custom node type definition in {}: {}",
+>                     customNodeTypesResource.getPath(), intde.getMessage());
+>             try {
+>                 ntStore.deleteFile(customNodeTypesResource.getPath());
+>             } catch (FileSystemException e) {
+>                 throw new RepositoryException("Could not remove invalid node type. " + error, intde);
+>             }
+Index: src/main/java/org/apache/jackrabbit/core/config/RepositoryConfig.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  * 
+444a447,448
+>     private int corePoolSize = Runtime.getRuntime().availableProcessors() * 2;
+> 
+1057a1062,1064
+>     public int getCorePoolSize() {
+>         return corePoolSize;
+>     }
+Index: src/main/java/org/apache/jackrabbit/core/util/db/ConnectionHelper.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+273a276,278
+>                 if (log.isDebugEnabled()) {
+>                     debugSql(sql, params);
+>                 }
+308a314,316
+>             if (log.isDebugEnabled()) {
+>                 debugSql(sql, params);
+>             }
+350a359,361
+>             if (log.isDebugEnabled()) {
+>                 debugSql(sql, params);
+>             }
+433a445,462
+>     private static void debugSql(String sql, Object[] params) {
+>         StringBuilder builder = new StringBuilder();
+>         builder.append("Executing SQL: '").append(sql).append("'");
+>         if (params != null && params.length > 0) {
+>             builder.append(" with params: ");
+>             for (int i = 0; i < params.length; i++) {
+>                 builder.append("'");
+>                 builder.append(params[i]);
+>                 builder.append("'");
+>                 if (i < params.length - 1) {
+>                     builder.append(',');
+>                 }
+>             }
+>         }
+>         builder.append('.');
+>         log.debug(builder.toString());
+>     }
+> 
+Index: src/main/java/org/apache/jackrabbit/core/util/db/DbUtility.java
+===================================================================
+1a2,3
+>  * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+>  *
+64c66
+<             logException("failed to close ResultSet", e);
+---
+>             LOG.debug("failed to close ResultSet", e);
+71c73
+<                 logException("failed to close Statement", e);
+---
+>                 LOG.debug("failed to close Statement", e);
+78c80
+<                     logException("failed to close Connection", e);
+---
+>                     LOG.debug("failed to close Connection", e);
+Index: pom.xml
+===================================================================
+29c29
+<     <version>2.1.0</version>
+---
+>     <version>2.1.0-SNAPSHOT</version>
+32c32,33
+<   <artifactId>jackrabbit-core</artifactId>
+---
+>   <artifactId>jackrabbit-core-jfrog</artifactId>
+>   <version>2.1.0-SNAPSHOT</version>
+165c166
+<       <version>1.2.2</version>
+---
+>       <version>1.3</version>
+190d190
+<       <classifier />
+231c231,232
+<       <artifactId>lucene-core</artifactId>
+---
+>         <artifactId>lucene-core-jfrog</artifactId>
+>         <version>2.4.1-SNAPSHOT</version>
+268a270,276
+> 
+>         <!-- artifactory -->
+>     <dependency>
+>         <groupId>org.artifactory</groupId>
+>         <artifactId>artifactory-jcr-commons</artifactId>
+>         <version>1.1.1</version>
+>     </dependency>
+
+Property changes on: .
+___________________________________________________________________
+Added: svn:ignore
+   + jackrabbit-core-jfrog.iml
+jackrabbit-core-jfrog.ipr
+
+
