@@ -467,6 +467,10 @@ public class RepositoryImpl extends AbstractRepository
         return context;
     }
 
+    public DataStore getDataStore() {
+        return context.getDataStore();
+    }
+
     /**
      * Get the cache manager of this repository, useful
      * for setting its memory parameters.

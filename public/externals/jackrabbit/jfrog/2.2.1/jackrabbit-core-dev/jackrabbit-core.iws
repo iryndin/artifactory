@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="475a1dbe-70b6-4198-9e64-c39db21bb877" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jackrabbit-core.iws" afterPath="$PROJECT_DIR$/jackrabbit-core.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" afterPath="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" />
     </list>
     <ignored path="jackrabbit-core.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -62,19 +62,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
+      <file leaf-file-name="RepositoryImpl.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="16" selection-start="1683" selection-end="1683" vertical-scroll-proportion="0.49655172">
+            <state line="472" column="5" selection-start="19383" selection-end="19383" vertical-scroll-proportion="0.73499435">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MultiIndex.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java">
+      <file leaf-file-name="RepositoryContext.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="2" selection-start="514" selection-end="514" vertical-scroll-proportion="0.0">
+            <state line="35" column="13" selection-start="1672" selection-end="1672" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -166,7 +166,6 @@
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/IndexMerger.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/JackrabbitParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/util/db/ConnectionHelper.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/nodetype/NodeTypeRegistry.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/IndexingConfigurationImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/MultiIndex.java" />
@@ -174,6 +173,7 @@
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/NodeStateMerger.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/state/StaleItemStateException.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java" />
       </list>
     </option>
   </component>
@@ -207,7 +207,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -225,109 +224,10 @@
               <option name="myItemId" value="jackrabbit-core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.2.1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-jcr-tests-2.2.1.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.2.1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-jcr-tests-2.2.1.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.2.1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-jcr-tests-2.2.1.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lock" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.2.1" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-jcr-tests-2.2.1.jar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jackrabbit-core-dev" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="Favorites" />
     </panes>
@@ -341,10 +241,10 @@
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="164" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="161" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="164" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="161" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth0" value="159" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth4" value="958" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth3" value="159" />
@@ -360,8 +260,8 @@
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
     <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RunManager">
@@ -523,7 +423,7 @@
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge changes (except IndexingConfigurationImpl which was added  with jfrog changes by  mistake)" />
+    <option name="LAST_COMMIT_MESSAGE" value="used wrong version by mistake" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -537,21 +437,12 @@
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="merge changes (except IndexingConfigurationImpl which was added  with jfrog changes by  mistake)" />
+    <MESSAGE value="used wrong version by mistake" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/nodetype/NodeTypeRegistry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="2" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="3" selection-start="93" selection-end="93" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/DynamicPooledExecutor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="25" selection-start="261" selection-end="261" vertical-scroll-proportion="0.0" />
@@ -569,7 +460,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/query/lucene/IndexingConfigurationImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="38" selection-start="3204" selection-end="3229" vertical-scroll-proportion="0.020385051">
+        <state line="73" column="38" selection-start="3204" selection-end="3229" vertical-scroll-proportion="0.020385051" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="13" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.020689655">
           <folding />
         </state>
       </provider>
@@ -619,9 +515,16 @@
         <state line="1" column="3" selection-start="6" selection-end="6" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="16" selection-start="1683" selection-end="1683" vertical-scroll-proportion="0.49655172">
+        <state line="35" column="13" selection-start="1672" selection-end="1672" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/apache/jackrabbit/core/RepositoryImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="472" column="5" selection-start="19383" selection-end="19383" vertical-scroll-proportion="0.73499435">
           <folding />
         </state>
       </provider>
