@@ -51,7 +51,7 @@
     <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
     <orderEntry type="library" name="Maven: edu.ucar:netcdf:4.2-min" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.5.11" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core-jfrog:2.4.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.derby:derby:10.5.3.0_1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jackrabbit:jackrabbit-jcr-tests:2.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
@@ -60,6 +60,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: ch.qos.logback:logback-core:0.9.20" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.2.121" level="project" />
+    <orderEntry type="library" name="Maven: org.artifactory:artifactory-jcr-commons:1.1.1" level="project" />
   </component>
 </module>
 

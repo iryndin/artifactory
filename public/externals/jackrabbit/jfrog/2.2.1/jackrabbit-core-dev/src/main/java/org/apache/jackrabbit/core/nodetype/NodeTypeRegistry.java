@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -757,7 +759,14 @@ public class NodeTypeRegistry implements NodeTypeEventListener {
                     "internal error: invalid custom node type definition stored in "
                     + customNodeTypesResource.getPath();
             log.debug(error);
-            throw new RepositoryException(error, intde);
+            //Delete invalid custom node types and try to move on
+            log.warn("Removing existing invalid custom node type definition in {}: {}",
+                    customNodeTypesResource.getPath(), intde.getMessage());
+            try {
+                fs.deleteFile(customNodeTypesResource.getPath());
+            } catch (FileSystemException e) {
+                throw new RepositoryException("Could not remove invalid node type. " + error, intde);
+            }
         }
     }
 
