@@ -189,6 +189,7 @@ public class FineGrainedISMLocking implements ISMLocking {
             }
             try {
                 activeWriter = null;
+                activeWriterId = null;
                 // only notify waiting readers since we still hold a down
                 // graded lock, which is kind of exclusiv with respect to
                 // other writers
