@@ -60,6 +60,10 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.2.121" level="project" />
     <orderEntry type="library" name="Maven: org.artifactory:artifactory-jcr-commons:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.artifactory:artifactory-profiler:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:3.0.5.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.0.5.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
   </component>
 </module>
 

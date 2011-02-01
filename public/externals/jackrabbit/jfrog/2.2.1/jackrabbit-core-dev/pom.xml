@@ -309,6 +309,11 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
         <artifactId>artifactory-jcr-commons</artifactId>
         <version>1.1.1</version>
     </dependency>
+    <dependency>
+        <groupId>org.artifactory</groupId>
+        <artifactId>artifactory-profiler</artifactId>
+        <version>1.0.2</version>
+    </dependency>
   </dependencies>
 
   <profiles>

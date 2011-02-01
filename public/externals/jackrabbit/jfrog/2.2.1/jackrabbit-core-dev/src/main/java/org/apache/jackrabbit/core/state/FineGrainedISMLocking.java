@@ -36,6 +36,7 @@ import EDU.oswego.cs.dl.util.concurrent.Latch;
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.Sync;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
+import org.artifactory.thread.ThreadDumpUtils;
 
 /**
  * <code>FineGrainedISMLocking</code>...
@@ -78,6 +79,8 @@ public class FineGrainedISMLocking implements ISMLocking {
      * of the blocked writer.
      */
     private List waitingWriters = new LinkedList();
+
+    private long writersWaitTimeout = 60000;
 
     /**
      * {@inheritDoc}
@@ -142,8 +145,22 @@ public class FineGrainedISMLocking implements ISMLocking {
             }
             // if we get here there is an active writer or there is a read
             // lock that conflicts with the change log
-            signal.acquire();
+            boolean gotLock = signal.attempt(writersWaitTimeout);
+            if (!gotLock) {
+                StringBuilder msg = new StringBuilder("Timeout acquiring jcr write lock. activeWriterId=").append(
+                        activeWriterId).append('.');
+                ThreadDumpUtils.dumpThreads(msg);
+                throw new InterruptedException(msg.toString());
+            }
         }
+    }
+
+    public long getWritersWaitTimeout() {
+        return writersWaitTimeout;
+    }
+
+    public void setWritersWaitTimeout(long writersWaitTimeout) {
+        this.writersWaitTimeout = writersWaitTimeout;
     }
 
     //----------------------------< internal >----------------------------------
