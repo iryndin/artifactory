@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+   This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -29,7 +31,8 @@
     <version>2.2.3</version>
     <relativePath>../jackrabbit-parent/pom.xml</relativePath>
   </parent>
-  <artifactId>jackrabbit-core</artifactId>
+  <artifactId>jackrabbit-core-jfrog</artifactId>
+  <version>2.2.3-SNAPSHOT</version>
   <name>Jackrabbit Core</name>
   <description>Jackrabbit content repository implementation</description>
 
@@ -259,8 +262,9 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core-jfrog</artifactId>
+        <version>2.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
@@ -298,6 +302,18 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
       <version>1.2.121</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- artifactory -->
+    <dependency>
+        <groupId>org.artifactory</groupId>
+        <artifactId>artifactory-jcr-commons</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.artifactory</groupId>
+        <artifactId>artifactory-profiler</artifactId>
+        <version>1.0.2</version>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -313,7 +329,7 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
 
         mvn clean integration-test -Pmysql,use-descriptor-overlay
 
-      Note: the ${config.db.name} database is dropped and re-created in the clean phase. 
+      Note: the ${config.db.name} database is dropped and re-created in the clean phase.
     -->
     <profile>
       <id>mysql</id>
@@ -396,7 +412,7 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
       <id>use-descriptor-overlay</id>
       <build>
       <plugins>
-        <!-- Drop/create the test database on clean -->        
+        <!-- Drop/create the test database on clean -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>sql-maven-plugin</artifactId>

@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,9 +34,9 @@ import org.slf4j.LoggerFactory;
  * This class provides convenience methods to execute SQL statements. They can be either executed in isolation
  * or within the context of a JDBC transaction; the so-called <i>batch mode</i> (use the {@link #startBatch()}
  * and {@link #endBatch(boolean)} methods for this).
- * 
+ *
  * <p/>
- * 
+ *
  * This class contains logic to retry execution of SQL statements. If this helper is <i>not</i> in batch mode
  * and if a statement fails due to an {@code SQLException}, then it is retried. If the {@code block} argument
  * of the constructor call was {@code false} then it is retried only once. Otherwise the statement is retried
@@ -46,14 +48,14 @@ import org.slf4j.LoggerFactory;
  * <li>{@link #update(String, Object[])}</li>
  * <li>{@link #exec(String, Object[], boolean, int)}</li>
  * </ul>
- * 
+ *
  * <p/>
- * 
+ *
  * This class is not thread-safe and if it is to be used by multiple threads then the clients must make sure
  * that access to this class is properly synchronized.
- * 
+ *
  * <p/>
- * 
+ *
  * <strong>Implementation note</strong>: The {@code Connection} that is retrieved from the {@code DataSource}
  * in {@link #getConnection()} may be broken. This is so because if an internal {@code DataSource} is used,
  * then this is a commons-dbcp {@code DataSource} with a <code>testWhileIdle</code> validation strategy (see
@@ -99,13 +101,13 @@ public class ConnectionHelper {
         checkTablesWithUserName = checkWithUserName;
         blockOnConnectionLoss = block;
     }
-    
+
     /**
      * A utility method that makes sure that <code>identifier</code> does only consist of characters that are
      * allowed in names on the target database. Illegal characters will be escaped as necessary.
-     * 
+     *
      * This method is not affected by the
-     * 
+     *
      * @param identifier the identifier to convert to a db specific identifier
      * @return the db-normalized form of the given identifier
      * @throws SQLException if an error occurs
@@ -132,7 +134,7 @@ public class ConnectionHelper {
     /**
      * Called from {@link #prepareDbIdentifier(String)}. Default implementation replaces the illegal
      * characters with their hexadecimal encoding.
-     * 
+     *
      * @param escaped the escaped db identifier
      * @param c the character to replace
      */
@@ -155,7 +157,7 @@ public class ConnectionHelper {
 
     /**
      * The default implementation returns the {@code extraNameCharacters} provided by the databases metadata.
-     * 
+     *
      * @return the additional characters for identifiers supported by the db
      * @throws SQLException on error
      */
@@ -171,7 +173,7 @@ public class ConnectionHelper {
 
     /**
      * Checks whether the given table exists in the database.
-     * 
+     *
      * @param tableName the name of the table
      * @return whether the given table exists
      * @throws SQLException on error
@@ -204,7 +206,7 @@ public class ConnectionHelper {
      * Starts the <i>batch mode</i>. If an {@link SQLException} is thrown, then the batch mode is not started. <p/>
      * <strong>Important:</strong> clients that call this method must make sure that
      * {@link #endBatch(boolean)} is called eventually.
-     * 
+     *
      * @throws SQLException on error
      */
     public final void startBatch() throws SQLException {
@@ -228,7 +230,7 @@ public class ConnectionHelper {
 
     /**
      * This method always ends the <i>batch mode</i>.
-     * 
+     *
      * @param commit whether the changes in the batch should be committed or rolled back
      * @throws SQLException if the commit or rollback of the underlying JDBC Connection threw an {@code
      *             SQLException}
@@ -251,7 +253,7 @@ public class ConnectionHelper {
 
     /**
      * Executes a general SQL statement and immediately closes all resources.
-     * 
+     *
      * Note: We use a Statement if there are no parameters to avoid a problem on
      * the Oracle 10g JDBC driver w.r.t. :NEW and :OLD keywords that triggers ORA-17041.
      *
@@ -267,10 +269,10 @@ public class ConnectionHelper {
                 reallyExec(sql, params);
                 return null;
             }
-            
+
         }.doTry();
     }
-    
+
     private void reallyExec(String sql, Object... params) throws SQLException {
         Connection con = null;
         Statement stmt = null;
@@ -278,6 +280,9 @@ public class ConnectionHelper {
             con = getConnection();
             if (params == null || params.length == 0) {
                 stmt = con.createStatement();
+                if (log.isDebugEnabled()) {
+                    debugSql(sql, params);
+                }
                 stmt.execute(sql);
             } else {
                 stmt = con.prepareStatement(sql);
@@ -290,7 +295,7 @@ public class ConnectionHelper {
 
     /**
      * Executes an update or delete statement and returns the update count.
-     * 
+     *
      * @param sql an SQL statement string
      * @param params the parameters for the SQL statement
      * @return the update count
@@ -303,7 +308,7 @@ public class ConnectionHelper {
             protected Integer call() throws SQLException {
                 return reallyUpdate(sql, params);
             }
-            
+
         }.doTry();
     }
 
@@ -313,6 +318,9 @@ public class ConnectionHelper {
         try {
             con = getConnection();
             stmt = con.prepareStatement(sql);
+            if (log.isDebugEnabled()) {
+                debugSql(sql, params);
+            }
             return execute(stmt, params).getUpdateCount();
         } finally {
             closeResources(con, stmt, null);
@@ -322,7 +330,7 @@ public class ConnectionHelper {
     /**
      * Executes a general SQL statement and returns the {@link ResultSet} of the executed statement. The
      * returned {@link ResultSet} should be closed by clients.
-     * 
+     *
      * @param sql an SQL statement string
      * @param params the parameters for the SQL statement
      * @param returnGeneratedKeys whether generated keys should be returned
@@ -338,10 +346,10 @@ public class ConnectionHelper {
             protected ResultSet call() throws SQLException {
                 return reallyExec(sql, params, returnGeneratedKeys, maxRows);
             }
-            
+
         }.doTry();
     }
-    
+
     private ResultSet reallyExec(String sql, Object[] params, boolean returnGeneratedKeys, int maxRows)
             throws SQLException {
         Connection con = null;
@@ -356,6 +364,9 @@ public class ConnectionHelper {
             }
             stmt.setMaxRows(maxRows);
             stmt.setFetchSize(10000);
+            if (log.isDebugEnabled()) {
+                debugSql(sql, params);
+            }
             execute(stmt, params);
             if (returnGeneratedKeys) {
                 rs = stmt.getGeneratedKeys();
@@ -381,7 +392,7 @@ public class ConnectionHelper {
      * Gets a connection based on the {@code batchMode} state of this helper. The connection should be closed
      * by a call to {@link #closeResources(Connection, Statement, ResultSet)} which also takes the {@code
      * batchMode} state into account.
-     * 
+     *
      * @return a {@code Connection} to use, based on the batch mode state
      * @throws SQLException on error
      */
@@ -400,7 +411,7 @@ public class ConnectionHelper {
 
     /**
      * Closes the given resources given the {@code batchMode} state.
-     * 
+     *
      * @param con the {@code Connection} obtained through the {@link #getConnection()} method
      * @param stmt a {@code Statement}
      * @param rs a {@code ResultSet}
@@ -418,7 +429,7 @@ public class ConnectionHelper {
      * implementation sets all parameters and unwraps {@link StreamWrapper} instances. Subclasses may override
      * this method to do something special with the parameters. E.g., the {@link Oracle10R1ConnectionHelper}
      * overrides it in order to add special blob handling.
-     * 
+     *
      * @param stmt the {@link PreparedStatement} to execute
      * @param params the parameters
      * @return the executed statement
@@ -438,10 +449,28 @@ public class ConnectionHelper {
         stmt.execute();
         return stmt;
     }
-    
+
+    private static void debugSql(String sql, Object[] params) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Executing SQL: '").append(sql).append("'");
+        if (params != null && params.length > 0) {
+            builder.append(" with params: ");
+            for (int i = 0; i < params.length; i++) {
+                builder.append("'");
+                builder.append(params[i]);
+                builder.append("'");
+                if (i < params.length - 1) {
+                    builder.append(',');
+                }
+            }
+        }
+        builder.append('.');
+        log.debug(builder.toString());
+    }
+
     /**
      * This class encapsulates the logic to retry a method invocation if it threw an SQLException.
-     * 
+     *
      * @param <T> the return type of the method which is retried if it failed
      */
     public abstract class RetryManager<T> {
@@ -475,7 +504,7 @@ public class ConnectionHelper {
                 throw lastException;
             }
         }
-        
+
         protected abstract T call() throws SQLException;
     }
 }

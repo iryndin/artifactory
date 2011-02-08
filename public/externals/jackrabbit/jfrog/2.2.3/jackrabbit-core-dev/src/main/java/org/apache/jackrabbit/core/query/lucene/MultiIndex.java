@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -387,14 +389,23 @@ public class MultiIndex {
         // only do an initial index if there are no indexes at all
         if (indexNames.size() == 0) {
             reindexing = true;
+            log.info("\n###########################################################################\n" +
+                    "              INITIALIZING OR RECREATING FULL REPOSITORY INDEX\n" +
+                    " This is normal with a first-run of a new or upgraded installation or\n" +
+                    " when the $ARTIFACTORY_HOME/data/index folder no longer exists.\n" +
+                    " This one-time initialization may take some time, depending on the current\n" +
+                    " size of your repository.\n" +
+                    "###########################################################################");
             try {
                 long count = 0;
                 // traverse and index workspace
                 executeAndLog(new Start(Action.INTERNAL_TRANSACTION));
                 NodeState rootState = (NodeState) stateMgr.getItemState(rootId);
+                long start = System.currentTimeMillis();
                 count = createIndex(rootState, rootPath, stateMgr, count);
                 executeAndLog(new Commit(getTransactionId()));
-                log.debug("Created initial index for {} nodes", count);
+                long time = (int) ((System.currentTimeMillis() - start) / 1000f);
+                log.info("Created initial index for {} nodes in {} sec.", count, time);
                 releaseMultiReader();
                 scheduleFlushTask();
             } catch (Exception e) {
@@ -1198,10 +1209,14 @@ public class MultiIndex {
             return count;
         }
         executeAndLog(new AddNode(getTransactionId(), id));
-        if (++count % 100 == 0) {
-            PathResolver resolver = new DefaultNamePathResolver(
-                    handler.getContext().getNamespaceRegistry());
-            log.info("indexing... {} ({})", resolver.getJCRPath(path), count);
+        if (++count % 2500 == 0) {
+            if (log.isDebugEnabled()) {
+                PathResolver resolver = new DefaultNamePathResolver(
+                        handler.getContext().getNamespaceRegistry());
+                log.debug("Indexed node #{}: {}.", count, resolver.getJCRPath(path));
+            } else {
+                log.info("{} nodes indexed...", count);
+            }
         }
         if (count % 10 == 0) {
             checkIndexingQueue(true);

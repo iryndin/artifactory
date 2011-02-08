@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -460,6 +462,8 @@ public class RepositoryConfig
      * The {@link ConnectionFactory}
      */
     private final ConnectionFactory cf;
+
+    private int corePoolSize = Runtime.getRuntime().availableProcessors() * 2;
 
     /**
      * Creates a repository configuration object.
@@ -1074,5 +1078,8 @@ public class RepositoryConfig
         return rlf.getRepositoryLockMechanism();
     }
 
+    public int getCorePoolSize() {
+        return corePoolSize;
+    }
 }
 
