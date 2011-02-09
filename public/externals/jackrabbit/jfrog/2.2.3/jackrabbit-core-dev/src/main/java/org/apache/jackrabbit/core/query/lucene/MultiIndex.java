@@ -51,6 +51,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.util.CloseableThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1301,6 +1302,7 @@ public class MultiIndex {
                             updateInProgress = false;
                             updateMonitor.notifyAll();
                             releaseMultiReader();
+                            CloseableThreadLocal.closeAllThreadLocal();
                         }
                     }
                 }
