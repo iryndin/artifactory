@@ -1,0 +1,25 @@
+initscript {
+  ${initscript.repo}
+}
+
+logger.debug("Applying Artifactory Gradle Settings")
+
+addListener(new ArtifactoryGradleSettings())
+class ArtifactoryGradleSettings extends BuildAdapter implements BuildListener {
+
+  def void projectsLoaded(Gradle gradle) {
+    Project root = gradle.getRootProject()
+    root.allprojects {
+
+      buildscript {
+        repositories {
+          ${plugins.repo}
+        }
+      }
+
+      repositories {
+        ${libs.repo}
+      }
+    }
+  }
+}
