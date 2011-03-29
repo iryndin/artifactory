@@ -1062,5 +1062,9 @@ public class RepositoryConfig
     public int getCorePoolSize() {
         return corePoolSize;
     }
+
+    public void setCorePoolSize(int corePoolSize) {
+        this.corePoolSize = corePoolSize;
+    }
 }
 
