@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -278,6 +280,9 @@ public class ConnectionHelper {
             con = getConnection();
             if (params == null || params.length == 0) {
                 stmt = con.createStatement();
+                if (log.isDebugEnabled()) {
+                    debugSql(sql, params);
+                }
                 stmt.execute(sql);
             } else {
                 stmt = con.prepareStatement(sql);
@@ -313,6 +318,9 @@ public class ConnectionHelper {
         try {
             con = getConnection();
             stmt = con.prepareStatement(sql);
+            if (log.isDebugEnabled()) {
+                debugSql(sql, params);
+            }
             return execute(stmt, params).getUpdateCount();
         } finally {
             closeResources(con, stmt, null);
@@ -356,6 +364,9 @@ public class ConnectionHelper {
             }
             stmt.setMaxRows(maxRows);
             stmt.setFetchSize(10000);
+            if (log.isDebugEnabled()) {
+                debugSql(sql, params);
+            }
             execute(stmt, params);
             if (returnGeneratedKeys) {
                 rs = stmt.getGeneratedKeys();
@@ -437,6 +448,24 @@ public class ConnectionHelper {
         }
         stmt.execute();
         return stmt;
+    }
+
+    private static void debugSql(String sql, Object[] params) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Executing SQL: '").append(sql).append("'");
+        if (params != null && params.length > 0) {
+            builder.append(" with params: ");
+            for (int i = 0; i < params.length; i++) {
+                builder.append("'");
+                builder.append(params[i]);
+                builder.append("'");
+                if (i < params.length - 1) {
+                    builder.append(',');
+                }
+            }
+        }
+        builder.append('.');
+        log.debug(builder.toString());
     }
 
     /**
