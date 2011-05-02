@@ -1,0 +1,14 @@
+/*
+  repositories {
+    add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+      name = '${plugins.resolver.name}'
+      m2compatible = ${plugins.resolver.m2Compatible}
+      url = '${plugins.repository.url}'
+      addArtifactPattern('${plugins.artifact.pattern}')
+      addIvyPattern('${plugins.ivy.pattern}')
+    }
+  }
+  dependencies {
+    classpath 'XXX'
+  }
+  */
