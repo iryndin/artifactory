@@ -1,0 +1,10 @@
+dependencies {
+
+  compile project(':open:log')
+  compile project(':open:update')
+  compile project(':open:common')
+  compile project(':open:api')
+  compile project(':open:traffic')
+  compile project(':open:config')
+
+}
