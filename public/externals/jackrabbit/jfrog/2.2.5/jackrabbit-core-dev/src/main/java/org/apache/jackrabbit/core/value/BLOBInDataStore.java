@@ -30,7 +30,7 @@ import javax.jcr.RepositoryException;
 /**
  * Represents binary data which is stored in the data store.
  */
-class BLOBInDataStore extends BLOBFileValue {
+public class BLOBInDataStore extends BLOBFileValue {
 
     private final DataStore store;
     private final DataIdentifier identifier;
@@ -61,7 +61,7 @@ class BLOBInDataStore extends BLOBFileValue {
         // do nothing
     }
 
-    DataIdentifier getDataIdentifier() {
+    public DataIdentifier getDataIdentifier() {
         return identifier;
     }
 
@@ -130,7 +130,7 @@ class BLOBInDataStore extends BLOBFileValue {
         return s.startsWith(PREFIX);
     }
 
-    private DataRecord getDataRecord() throws DataStoreException {
+    public DataRecord getDataRecord() throws DataStoreException {
         // may not keep the record, otherwise garbage collection doesn't work
         return store.getRecord(identifier);
     }

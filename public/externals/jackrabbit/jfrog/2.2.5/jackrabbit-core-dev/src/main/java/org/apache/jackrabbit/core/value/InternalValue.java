@@ -446,7 +446,7 @@ public class InternalValue extends AbstractQValue {
 
     //----------------------------------------------------< conversions, etc. >
 
-    BLOBFileValue getBLOBFileValue() {
+    public BLOBFileValue getBLOBFileValue() {
         assert val != null && type == PropertyType.BINARY;
         return (BLOBFileValue) val;
     }
