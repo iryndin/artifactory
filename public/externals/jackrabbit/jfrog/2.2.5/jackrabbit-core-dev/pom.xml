@@ -264,7 +264,7 @@ org.apache.jackrabbit.test.api.ShareableNodeTest#testGetNodesByPattern
     <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-core-jfrog</artifactId>
-        <version>2.4.1-SNAPSHOT</version>
+        <version>2.4.1e</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
