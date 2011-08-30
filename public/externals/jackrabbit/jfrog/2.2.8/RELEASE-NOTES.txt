@@ -1,0 +1,75 @@
+Release Notes -- Apache Jackrabbit -- Version 2.2.8
+
+Introduction
+------------
+
+This is Apache Jackrabbit(TM) 2.2, a fully compliant implementation of the
+Content Repository for Java(TM) Technology API, version 2.0 (JCR 2.0) as
+specified in the Java Specification Request 283 (JSR 283).
+
+Apache Jackrabbit 2.2.8 is patch release that contains fixes and
+improvements over previous 2.2.x releases. This release is backwards
+compatible with all earlier 2.x releases.
+
+Note that earlier 2.2.x releases (< 2.2.7) had a problem where very large
+positive or negative long property values (more than 62 bits) could not be
+correctly read from the reepository. The values are still correctly stored
+in the reporistory, and can be properly read after upgrading to this release,
+but any previous computations or other information derived from such
+properties should be checked for correctness.
+
+Changes in this release
+-----------------------
+
+Bug fixes
+
+  [JCR-2951] Item.remove fails if a child-item is not visible to the ...
+  [JCR-2980] Nodes that have properties marked for async extraction ...
+  [JCR-2996] QOM to SQL2 doesn't cast numeric literals
+  [JCR-2999] Access control evaluation does not properly cope with XA ...
+  [JCR-3000] SQL2 Join with OR clause still has some issues
+  [JCR-3001] DescendantSelfAxisQuery may fail with IOException when ...
+  [JCR-3007] setProperty access control evaluation does not properly cope ...
+  [JCR-3009] Prefix fulltext queries with Japanese or Chinese characters ...
+  [JCR-3013] ArrayIndexOutOfBoundsException: ConcurrentCache
+  [JCR-3015] EntryCollector may log warning for inexistent item
+
+For more detailed information about all the changes in this and other
+Jackrabbit releases, please see the Jackrabbit issue tracker at
+
+    https://issues.apache.org/jira/browse/JCR
+
+Release Contents
+----------------
+
+This release consists of a single source archive packaged as a zip file.
+The archive can be unpacked with the jar tool from your JDK installation.
+See the README.txt file for instructions on how to build this release.
+
+The source archive is accompanied by SHA1 and MD5 checksums and a PGP
+signature that you can use to verify the authenticity of your download.
+The public key used for the PGP signature can be found at
+https://svn.apache.org/repos/asf/jackrabbit/dist/KEYS.
+
+About Apache Jackrabbit
+-----------------------
+
+Apache Jackrabbit is a fully conforming implementation of the Content
+Repository for Java Technology API (JCR). A content repository is a
+hierarchical content store with support for structured and unstructured
+content, full text search, versioning, transactions, observation, and
+more.
+
+For more information, visit http://jackrabbit.apache.org/
+
+About The Apache Software Foundation
+------------------------------------
+
+Established in 1999, The Apache Software Foundation provides organizational,
+legal, and financial support for more than 100 freely-available,
+collaboratively-developed Open Source projects. The pragmatic Apache License
+enables individual and commercial users to easily deploy Apache software;
+the Foundation's intellectual property framework limits the legal exposure
+of its 2,500+ contributors.
+
+For more information, visit http://www.apache.org/
