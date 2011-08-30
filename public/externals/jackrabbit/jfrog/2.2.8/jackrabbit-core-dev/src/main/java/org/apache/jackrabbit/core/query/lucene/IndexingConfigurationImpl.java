@@ -215,7 +215,7 @@ public class IndexingConfigurationImpl
      */
     public boolean isIndexed(NodeState state, Name propertyName) {
         List<IndexingRule> rules = getApplicableIndexingRules(state);
-        if (rules != null) {
+        if (rules != null && rules.size() > 0) {
             for (IndexingRule rule : rules) {
                 if (rule.isIndexed(propertyName)) {
                     return true;
@@ -378,12 +378,8 @@ public class IndexingConfigurationImpl
     private IndexingRule getApplicableIndexingRule(NodeState state) {
         List<IndexingRule> rules = getApplicableIndexingRules(state);
 
-        if (rules != null) {
-            for (IndexingRule rule : rules) {
-                if (rule.appliesTo(state)) {
-                    return rule;
-                }
-            }
+        if (rules != null && rules.size() > 0) {
+            return rules.get(0);
         }
 
         // no applicable rule
@@ -399,18 +395,27 @@ public class IndexingConfigurationImpl
      */
     private List<IndexingRule> getApplicableIndexingRules(NodeState state) {
         List<IndexingRule> rules = null;
-        List<IndexingRule> r = configElements.get(state.getNodeTypeName());
-        if (r != null) {
-            rules = new ArrayList<IndexingRule>(r);
+        List<IndexingRule> candidateRules = configElements.get(state.getNodeTypeName());
+        if (candidateRules != null) {
+            rules = new ArrayList<IndexingRule>();
+            for (IndexingRule candidateRule : candidateRules) {
+                if (candidateRule.appliesTo(state)) {
+                    rules.add(candidateRule);
+                }
+            }
+
         }
 
         for (Name name : state.getMixinTypeNames()) {
-            r = configElements.get(name);
-            if (r != null) {
+            candidateRules = configElements.get(name);
+            if (candidateRules != null) {
                 if (rules == null) {
-                    rules = new ArrayList<IndexingRule>(r);
-                } else {
-                    rules.addAll(r);
+                    rules = new ArrayList<IndexingRule>();
+                }
+                for (IndexingRule candidateRule : candidateRules) {
+                    if (candidateRule.appliesTo(state)) {
+                        rules.add(candidateRule);
+                    }
                 }
             }
         }
