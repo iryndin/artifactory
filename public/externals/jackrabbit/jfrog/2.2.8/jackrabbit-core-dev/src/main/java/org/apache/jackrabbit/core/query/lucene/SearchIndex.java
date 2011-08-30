@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -618,6 +620,11 @@ public class SearchIndex extends AbstractQueryHandler {
                     addCollection.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    if (addCollection.size() > getBufferSize()) {
+                        index.update(removeCollection, addCollection);
+                        addCollection.clear();
+                        removeCollection.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId() + ": " + e.toString());
@@ -644,6 +651,10 @@ public class SearchIndex extends AbstractQueryHandler {
                     modified.add(createDocument(
                             state, getNamespaceMappings(),
                             index.getIndexFormatVersion()));
+                    if (modified.size() > getBufferSize()) {
+                        index.update(Collections.<NodeId>emptySet(), modified);
+                        modified.clear();
+                    }
                 } catch (RepositoryException e) {
                     log.warn("Exception while creating document for node: "
                             + state.getNodeId(), e);

@@ -35,7 +35,7 @@ import org.apache.jackrabbit.core.data.DataStore;
  * This interface is for Jackrabbit-internal use only. Applications should
  * use <code>javax.jcr.ValueFactory</code> to create binary values.
  */
-abstract class BLOBFileValue implements Binary {
+public abstract class BLOBFileValue implements Binary {
 
     /**
      * Deletes the persistent resource backing this <code>BLOBFileValue</code>.
@@ -70,7 +70,7 @@ abstract class BLOBFileValue implements Binary {
      *
      * @return the data identifier or null
      */
-    DataIdentifier getDataIdentifier() {
+    public DataIdentifier getDataIdentifier() {
         return null;
     }
 
