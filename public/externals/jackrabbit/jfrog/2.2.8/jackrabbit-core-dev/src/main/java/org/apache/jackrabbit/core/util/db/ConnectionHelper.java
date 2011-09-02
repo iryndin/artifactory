@@ -301,7 +301,7 @@ public class ConnectionHelper {
      * @return the update count
      * @throws SQLException on error
      */
-    public final int update(final String sql, final Object[] params) throws SQLException {
+    public final int update(final String sql, final Object... params) throws SQLException {
         return new RetryManager<Integer>() {
 
             @Override
