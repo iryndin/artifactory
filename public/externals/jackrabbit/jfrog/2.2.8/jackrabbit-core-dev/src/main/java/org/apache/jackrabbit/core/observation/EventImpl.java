@@ -31,6 +31,7 @@ import org.apache.jackrabbit.spi.commons.value.ValueFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
 /**
@@ -218,6 +219,14 @@ public final class EventImpl implements JackrabbitEvent, Event {
      */
     public boolean isExternal() {
         return eventState.isExternal();
+    }
+
+    public Session getEventListenerSession() {
+        return session;
+    }
+
+    public Session getEventSession() {
+        return eventState.getSession();
     }
 
     /**
