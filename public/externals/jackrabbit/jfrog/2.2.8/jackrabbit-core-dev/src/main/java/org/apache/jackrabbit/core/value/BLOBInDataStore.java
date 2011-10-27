@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -92,7 +94,10 @@ public class BLOBInDataStore extends BLOBFileValue {
         try {
             return getDataRecord().getLength();
         } catch (DataStoreException e) {
-            log.warn("getSize for " + identifier + " failed", e);
+            log.warn("Could not get size for " + identifier);
+            if (log.isDebugEnabled()) {
+                log.debug("getSize for " + identifier + " failed", e);
+            }
             return -1;
         }
     }
