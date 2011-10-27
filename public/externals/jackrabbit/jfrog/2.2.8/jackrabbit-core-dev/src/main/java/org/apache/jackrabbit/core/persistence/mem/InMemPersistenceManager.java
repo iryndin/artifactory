@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2011, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,7 +70,7 @@ import java.util.Map;
  * @deprecated Please migrate to a bundle persistence manager
  *   (<a href="https://issues.apache.org/jira/browse/JCR-2802">JCR-2802</a>)
  */
-@Deprecated
+//@Deprecated
 public class InMemPersistenceManager extends AbstractPersistenceManager {
 
     private static Logger log = LoggerFactory.getLogger(InMemPersistenceManager.class);
@@ -99,11 +101,11 @@ public class InMemPersistenceManager extends AbstractPersistenceManager {
     protected FileSystem wspFS;
 
     // initial capacity
-    protected int initialCapacity = 32768;
+    protected int initialCapacity = 16;
     // load factor for the hash map
     protected float loadFactor = 0.75f;
     // should hash map be persisted?
-    protected boolean persistent = true;
+    protected boolean persistent = false;
 
     /**
      * Creates a new <code>InMemPersistenceManager</code> instance.
