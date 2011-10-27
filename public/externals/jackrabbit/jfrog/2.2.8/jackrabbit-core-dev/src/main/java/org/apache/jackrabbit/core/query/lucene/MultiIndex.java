@@ -392,8 +392,8 @@ public class MultiIndex {
             reindexing = true;
             log.info("\n###########################################################################\n" +
                     "              INITIALIZING OR RECREATING FULL REPOSITORY INDEX\n" +
-                    " This is normal with a first-run of a new or upgraded installation or\n" +
-                    " when the $ARTIFACTORY_HOME/data/index folder no longer exists.\n" +
+                    " This is normal with a first-run of a new or upgraded installation or when\n" +
+                    " the $ARTIFACTORY_HOME/data/index folder no longer exists.\n" +
                     " This one-time initialization may take some time, depending on the current\n" +
                     " size of your repository.\n" +
                     "###########################################################################");
