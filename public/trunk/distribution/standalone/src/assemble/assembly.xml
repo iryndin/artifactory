@@ -1,0 +1,221 @@
+<!--
+  ~ Artifactory is a binaries repository manager.
+  ~ Copyright (C) 2011 JFrog Ltd.
+  ~
+  ~ Artifactory is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Artifactory is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>standalone</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <fileSets>
+        <!-- Removing the default annoying permissions of 777 -->
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>./</include>
+            </includes>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/bin</outputDirectory>
+            <includes>
+                <include>./</include>
+            </includes>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/clilib</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>./</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/misc</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>./</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/webapps</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>./</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/lib</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>./</include>
+            </includes>
+        </fileSet>
+        <!-- add the root install directory excluding directories with special treatment below -->
+        <fileSet>
+            <directory>${project.basedir}/src/main/install</directory>
+            <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>bin/**</exclude>
+                <exclude>misc/**</exclude>
+            </excludes>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*.bat</include>
+            </includes>
+            <lineEnding>dos</lineEnding>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+                <include>artadmin</include>
+                <include>artifactoryctl</include>
+                <include>artifactory.default</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+            <fileMode>755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/install/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*.conf</include>
+                <include>**/*.exe</include>
+            </includes>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/install/misc</directory>
+            <outputDirectory>misc</outputDirectory>
+            <filtered>true</filtered>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../../base/config/src/main/resources/META-INF/default</directory>
+            <outputDirectory>etc</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/etc/repo/filesystem-derby</outputDirectory>
+            <includes>
+                <include>./</include>
+            </includes>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../../base/config/src/main/resources/META-INF/jcr</directory>
+            <outputDirectory>etc/repo/filesystem-derby</outputDirectory>
+            <includes>
+                <include>repo.xml</include>
+            </includes>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/target</directory>
+            <outputDirectory/>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-sources.jar</exclude>
+                <exclude>*-tests.jar</exclude>
+            </excludes>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <!-- Copy the cli files -->
+        <fileSet>
+            <directory>${project.basedir}/target/cli/artifactory-cli-${cli.version}</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <excludes>
+                <exclude>bin/*</exclude>
+            </excludes>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/target/cli/artifactory-cli-${cli.version}/bin</directory>
+            <outputDirectory>/bin</outputDirectory>
+            <includes>
+                <include>artadmin</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/target/cli/artifactory-cli-${cli.version}/bin</directory>
+            <outputDirectory>/bin</outputDirectory>
+            <includes>
+                <include>*.bat</include>
+                <include>*.cmd</include>
+            </includes>
+            <lineEnding>dos</lineEnding>
+            <fileMode>644</fileMode>
+        </fileSet>
+        <!-- Always leave this at the end since the assembly set 777 on it for all kind of bad reasons :(-->
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>./</include>
+            </includes>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <!-- add the artifactory war file to the webapp dir -->
+        <dependencySet>
+            <outputDirectory>webapps</outputDirectory>
+            <outputFileNameMapping>artifactory.war</outputFileNameMapping>
+            <useStrictFiltering>true</useStrictFiltering>
+            <includes>
+                <include>org.artifactory:artifactory-web-war</include>
+            </includes>
+        </dependencySet>
+        <!-- add some mandatory dependencies to jetty lib directory -->
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useStrictFiltering>true</useStrictFiltering>
+            <includes>
+                <include>org.eclipse.jetty:*</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useStrictFiltering>true</useStrictFiltering>
+            <scope>provided</scope>
+            <includes>
+                <include>javax.servlet:servlet-api</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>
