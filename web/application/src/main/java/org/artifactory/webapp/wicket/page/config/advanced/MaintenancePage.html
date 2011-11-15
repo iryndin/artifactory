@@ -1,0 +1,47 @@
+<wicket:extend>
+    <div wicket:id="gcBorder" class="cronField storage">
+        <form wicket:id="gcForm">
+            <div class="field-row">
+                <div class="field required field-sep" style="margin-left: 2px;">
+                    <label>
+                        <wicket:message key="cronExp"/>
+                        <span wicket:id="cronExp.help"/>
+                    </label>
+
+                    <div class="value">
+                        <input wicket:id="cronExp" type="text" class="text"/>
+                    </div>
+                </div>
+
+                <div class="field field-sep">
+                    <label>Next Garbage Collection Time</label>
+
+                    <div class="value">
+                        <span wicket:id="cronNextDatePanel"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button wicket:id="collect"></button>
+                <span wicket:id="gcHelp"></span>
+            </div>
+        </form>
+    </div>
+
+    <div wicket:id="storage" class="storage">
+        <div class="buttons">
+            <button wicket:id="compress"></button>
+            <span wicket:id="compressHelp"></span>
+        </div>
+        <div class="buttons">
+            <button wicket:id="prune"></button>
+            <span wicket:id="pruneHelp"></span>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="default-button" wicket:id="saveGcButton"></button>
+        <button wicket:id="cancel"></button>
+    </div>
+</wicket:extend>

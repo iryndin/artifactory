@@ -1,0 +1,8 @@
+/*
+  repositories {
+    mavenRepo name: '${plugins.resolver.name}', urls: "${plugins.repository.url}"
+  }
+  dependencies {
+    classpath 'XXX'
+  }
+  */
