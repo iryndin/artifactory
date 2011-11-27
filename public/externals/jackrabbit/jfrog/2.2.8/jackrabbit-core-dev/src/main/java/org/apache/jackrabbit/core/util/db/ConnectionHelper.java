@@ -247,8 +247,8 @@ public class ConnectionHelper {
                 connection.rollback();
             }
         } finally {
-            DbUtility.close(connection, null, null);
             batchConnectionTl.remove();
+            DbUtility.close(connection, null, null);
         }
     }
 
