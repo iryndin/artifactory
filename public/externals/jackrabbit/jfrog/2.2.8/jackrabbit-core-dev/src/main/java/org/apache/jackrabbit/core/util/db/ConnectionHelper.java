@@ -239,15 +239,16 @@ public class ConnectionHelper {
         if (!inBatchMode()) {
             throw new IllegalStateException("not in batch mode");
         }
+        Connection connection = batchConnectionTl.get();
         try {
             if (commit) {
-                batchConnectionTl.get().commit();
+                connection.commit();
             } else {
-                batchConnectionTl.get().rollback();
+                connection.rollback();
             }
         } finally {
-            DbUtility.close(batchConnectionTl.get(), null, null);
-            batchConnectionTl.set(null);
+            DbUtility.close(connection, null, null);
+            batchConnectionTl.remove();
         }
     }
 
