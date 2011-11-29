@@ -1,7 +1,0 @@
-add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-          name = '${libs.resolver.name}'
-          m2compatible = ${libs.resolver.m2Compatible}
-          url = '${libs.repository.url}'
-          addArtifactPattern('${libs.artifact.pattern}')
-          addIvyPattern('${libs.ivy.pattern}')
-        }
