@@ -1,0 +1,23 @@
+dependencies {
+  compile group: 'commons-lang', name: 'commons-lang', version: '2.4'
+  compile group: 'commons-io', name: 'commons-io', version: '1.4'
+  compile group: 'org.jfrog', name: 'build-info-api', version: '1.3.1'
+  compile group: 'org.artifactory', name: 'artifactory-jcr-commons', version: '1.1.2-SNAPSHOT'
+  compile group: 'org.codehaus.woodstox', name: 'woodstox-core-asl', version: '4.1.2'
+  compile(group: 'net.java.dev.stax-utils', name: 'stax-utils', version: '20060502') {
+    exclude module: 'jsr173-ri'
+  }
+  compile group: 'net.sourceforge.findbugs', name: 'jsr305', version: '1.3.2'
+  compile(group: 'org.apache.ivy', name: 'ivy', version: '2.1.0') {
+    exclude module: 'oro'
+  }
+  compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.5.0'
+  compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.3.1'
+  compile group: 'com.google.guava', name: 'guava', version: 'r06'
+  compile project(':open:log')
+  compile project(':open:papi')
+  compile project(':open:config')
+  testCompile 'org.easymock:easymockclassextension:2.5.2'
+  testCompile project(path: ':open:config')
+  testCompile project(path: ':open:config', configuration: 'basicConfigTest')
+}

@@ -1,0 +1,1 @@
+${libs.creds.line.break}org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials("Artifactory Realm", "${auth.host}", "${auth.username}", "${auth.password}");
