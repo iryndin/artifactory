@@ -300,11 +300,14 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
      * {@inheritDoc}
      */
     public boolean hasItem(NodeId id) {
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             return stateMgr.hasItemState(id);
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 
@@ -320,8 +323,9 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
         if (id.equals(activitiesId)) {
             return null;
         }
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             synchronized (versionItems) {
                 InternalVersionItem item = versionItems.get(id);
                 if (item == null) {
@@ -335,7 +339,9 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
                 return item;
             }
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
     /**
@@ -463,8 +469,9 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
      * @param items items updated
      */
     public void itemsUpdated(Collection<InternalVersionItem> items) {
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             synchronized (versionItems) {
                 for (InternalVersionItem item : items) {
                     InternalVersionItem cached = versionItems.remove(item.getId());
@@ -482,7 +489,9 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
                 }
             }
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 
@@ -501,11 +510,14 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
      */
     protected void itemDiscarded(InternalVersionItem item) {
         // evict removed item from cache
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             versionItems.remove(item.getId());
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 
@@ -599,11 +611,14 @@ public class InternalVersionManagerImpl extends InternalVersionManagerBase
      */
     public void stateDestroyed(ItemState destroyed) {
         // evict removed item from cache
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             versionItems.remove(destroyed.getId());
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 

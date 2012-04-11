@@ -727,15 +727,18 @@ public class InternalXAVersionManager extends InternalVersionManagerBase
      */
     private InternalVersionHistoryImpl makeLocalCopy(InternalVersionHistoryImpl history)
             throws RepositoryException {
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             NodeState state = (NodeState) stateMgr.getItemState(history.getId());
             NodeStateEx stateEx = new NodeStateEx(stateMgr, ntReg, state, null);
             return new InternalVersionHistoryImpl(this, stateEx);
         } catch (ItemStateException e) {
             throw new RepositoryException("Unable to make local copy", e);
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 
@@ -749,15 +752,18 @@ public class InternalXAVersionManager extends InternalVersionManagerBase
      */
     private InternalActivityImpl makeLocalCopy(InternalActivityImpl act)
             throws RepositoryException {
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             NodeState state = (NodeState) stateMgr.getItemState(act.getId());
             NodeStateEx stateEx = new NodeStateEx(stateMgr, ntReg, state, null);
             return new InternalActivityImpl(this, stateEx);
         } catch (ItemStateException e) {
             throw new RepositoryException("Unable to make local copy", e);
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 

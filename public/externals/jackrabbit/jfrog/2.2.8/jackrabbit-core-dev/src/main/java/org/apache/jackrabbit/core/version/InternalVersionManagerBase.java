@@ -136,8 +136,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     public InternalVersionHistory getVersionHistoryOfNode(NodeId id)
             throws RepositoryException {
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             String uuid = id.toString();
             Name name = getName(uuid);
 
@@ -149,7 +150,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
                 throw new ItemNotFoundException("Version history of node " + id + " not found.");
             }
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 
@@ -301,8 +304,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
             throws RepositoryException {
         VersionHistoryInfo info = null;
 
-        VersioningLock.ReadLock lock = acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = acquireReadLock();
             String uuid = node.getNodeId().toString();
             Name name = getName(uuid);
 
@@ -315,7 +319,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
                         history.getState().getChildNodeEntry(root, 1).getId());
             }
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
 
         if (info == null) {
