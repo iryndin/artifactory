@@ -77,6 +77,7 @@ public class VersioningLock {
         }
 
         public ReadLock downgrade() throws InterruptedException {
+            // Proof that the guy who wrote this has no capabilities of writing high level TX code!!!
             ReadLock rLock = new ReadLock(readWriteLock.readLock());
             release();
             return rLock;

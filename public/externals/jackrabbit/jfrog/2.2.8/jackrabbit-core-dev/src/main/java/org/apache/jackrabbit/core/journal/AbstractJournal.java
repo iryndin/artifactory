@@ -184,12 +184,14 @@ public abstract class AbstractJournal implements Journal {
      */
     public void sync() throws JournalException {
         if (internalVersionManager != null) {
-            VersioningLock.ReadLock lock =
-                internalVersionManager.acquireReadLock();
+            VersioningLock.ReadLock lock = null;
             try {
+                lock = internalVersionManager.acquireReadLock();
                 internalSync();
             } finally {
-                lock.release();
+                if (lock != null) {
+                    lock.release();
+                }
             }
         } else {
             internalSync();
@@ -259,12 +261,14 @@ public abstract class AbstractJournal implements Journal {
      */
     public void lockAndSync() throws JournalException {
         if (internalVersionManager != null) {
-            VersioningLock.ReadLock lock =
-                internalVersionManager.acquireReadLock();
+            VersioningLock.ReadLock lock = null;
             try {
+                lock = internalVersionManager.acquireReadLock();
                 internalLockAndSync();
             } finally {
-                lock.release();
+                if (lock != null) {
+                    lock.release();
+                }
             }
         } else {
             internalLockAndSync();

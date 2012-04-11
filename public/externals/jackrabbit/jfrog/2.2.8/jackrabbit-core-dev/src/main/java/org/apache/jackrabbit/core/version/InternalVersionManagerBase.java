@@ -173,13 +173,12 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      * Acquires the write lock on this version manager.
      * @return returns the write lock
      */
-    protected VersioningLock.WriteLock acquireWriteLock() {
-        while (true) {
-            try {
-                return rwLock.acquireWriteLock();
-            } catch (InterruptedException e) {
-                // ignore
-            }
+    protected VersioningLock.WriteLock acquireWriteLock() throws RepositoryException {
+        try {
+            return rwLock.acquireWriteLock();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RepositoryException(e);
         }
     }
 
@@ -188,12 +187,11 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      * @return returns the read lock
      */
     public VersioningLock.ReadLock acquireReadLock() {
-        while (true) {
-            try {
-                return rwLock.acquireReadLock();
-            } catch (InterruptedException e) {
-                // ignore
-            }
+        try {
+            return rwLock.acquireReadLock();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
     }
 
@@ -280,15 +278,16 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     private WriteOperation startWriteOperation() throws RepositoryException {
         boolean success = false;
-        VersioningLock.WriteLock lock = acquireWriteLock();
+        VersioningLock.WriteLock lock = null;
         try {
+            lock = acquireWriteLock();
             stateMgr.edit();
             success = true;
             return new WriteOperation(lock);
         } catch (IllegalStateException e) {
             throw new RepositoryException("Unable to start edit operation.", e);
         } finally {
-            if (!success) {
+            if (lock != null && !success) {
                 lock.release();
             }
         }
@@ -405,8 +404,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     NodeStateEx internalCreateVersionHistory(NodeState node, NodeId copiedFrom)
             throws RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             // create deep path
             String uuid = node.getNodeId().toString();
             NodeStateEx parent = getParentNode(getHistoryRoot(), uuid, NameConstants.REP_VERSIONSTORAGE);
@@ -430,7 +430,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
         } catch (ItemStateException e) {
             throw new RepositoryException(e);
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 
@@ -443,8 +445,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     NodeStateEx internalCreateActivity(String title)
             throws RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             // create deep path
             NodeId activityId = new NodeId();
             NodeStateEx parent = getParentNode(getActivitiesRoot(), activityId.toString(), NameConstants.REP_ACTIVITIES);
@@ -462,7 +465,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
         } catch (ItemStateException e) {
             throw new RepositoryException(e);
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 
@@ -474,8 +479,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     protected void internalRemoveActivity(InternalActivityImpl activity)
             throws RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             // check if the activity has any references in the workspaces
             NodeId nodeId = activity.getId();
             if (stateMgr.hasNodeReferences(nodeId)) {
@@ -507,7 +513,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
         } catch (ItemStateException e) {
             log.error("Error while storing: " + e.toString());
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 
@@ -565,8 +573,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     protected InternalVersion checkin(NodeStateEx node, Calendar created)
             throws RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             boolean simple =
                 !node.getEffectiveNodeType().includesNodeType(MIX_VERSIONABLE);
             InternalVersionHistoryImpl vh;
@@ -589,7 +598,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
         } catch (ItemStateException e) {
             throw new RepositoryException(e);
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 
@@ -712,14 +723,17 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
      */
     protected void internalRemoveVersion(InternalVersionHistoryImpl history, Name name)
             throws VersionException, RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             history.removeVersion(name);
             operation.save();
         } catch (ItemStateException e) {
             log.error("Error while storing: " + e.toString());
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 
@@ -738,8 +752,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
                                               Name version, Name label,
                                               boolean move)
             throws RepositoryException {
-        WriteOperation operation = startWriteOperation();
+        WriteOperation operation = null;
         try {
+            operation = startWriteOperation();
             InternalVersion v = history.setVersionLabel(version, label, move);
             operation.save();
             return v;
@@ -747,7 +762,9 @@ abstract class InternalVersionManagerBase implements InternalVersionManager {
             log.error("Error while storing: " + e.toString());
             return null;
         } finally {
-            operation.close();
+            if (operation != null) {
+                operation.close();
+            }
         }
     }
 

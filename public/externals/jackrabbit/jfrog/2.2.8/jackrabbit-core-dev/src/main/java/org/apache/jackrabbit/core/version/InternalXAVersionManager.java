@@ -633,22 +633,33 @@ public class InternalXAVersionManager extends InternalVersionManagerBase
             public void beforeOperation(TransactionContext tx) {
             }
 
-            public void prepare(TransactionContext tx) {
-                vmgrLock = vMgr.acquireWriteLock();
-                vmgrLocked = true;
+            public void prepare(TransactionContext tx) throws TransactionException {
+                acquireWriteLock();
             }
 
-            public void commit(TransactionContext tx) {
-                // JCR-2712: Ensure that the transaction is prepared
-                if (!vmgrLocked) {
-                    prepare(tx);
+            private void acquireWriteLock() throws TransactionException {
+                if (vmgrLocked) {
+                    return;
+                }
+                try {
+                    vmgrLock = vMgr.acquireWriteLock();
+                    vmgrLocked = true;
+                } catch (RepositoryException e) {
+                    throw new TransactionException("Write lock interrupted",e);
                 }
             }
 
-            public void rollback(TransactionContext tx) {
+            public void commit(TransactionContext tx) throws TransactionException {
                 // JCR-2712: Ensure that the transaction is prepared
                 if (!vmgrLocked) {
-                    prepare(tx);
+                    acquireWriteLock();
+                }
+            }
+
+            public void rollback(TransactionContext tx) throws TransactionException {
+                // JCR-2712: Ensure that the transaction is prepared
+                if (!vmgrLocked) {
+                    acquireWriteLock();
                 }
             }
 

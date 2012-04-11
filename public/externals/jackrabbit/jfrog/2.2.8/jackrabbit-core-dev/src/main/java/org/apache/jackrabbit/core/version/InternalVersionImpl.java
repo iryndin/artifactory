@@ -145,8 +145,9 @@ class InternalVersionImpl extends InternalVersionItemImpl
      * {@inheritDoc}
      */
     public List<InternalVersion> getSuccessors() {
-        VersioningLock.ReadLock lock = vMgr.acquireReadLock();
+        VersioningLock.ReadLock lock = null;
         try {
+            lock = vMgr.acquireReadLock();
             InternalValue[] values =
                 node.getPropertyValues(NameConstants.JCR_SUCCESSORS);
             if (values != null) {
@@ -167,7 +168,9 @@ class InternalVersionImpl extends InternalVersionItemImpl
                 return Collections.emptyList();
             }
         } finally {
-            lock.release();
+            if (lock != null) {
+                lock.release();
+            }
         }
     }
 

@@ -192,31 +192,32 @@ public class TransactionContext extends Timer.Task {
             throw new XAException(XAException.XA_RBTIMEOUT);
         }
         bindCurrentXid();
+
+        // cancel the rollback task
+        cancel();
+
         status = STATUS_COMMITTING;
         beforeOperation();
 
-        TransactionException txe = null;
+        Exception txe = null;
         for (int i = 0; i < resources.length; i++) {
             InternalXAResource resource = resources[i];
             if (txe != null) {
                 try {
                     resource.rollback(this);
-                } catch (TransactionException e) {
+                } catch (Exception e) {
                     log.warn("Unable to rollback changes on " + resource, e);
                 }
             } else {
                 try {
                     resource.commit(this);
-                } catch (TransactionException e) {
+                } catch (Exception e) {
                     txe = e;
                 }
             }
         }
         afterOperation();
         status = STATUS_COMMITTED;
-
-        // cancel the rollback task
-        cancel();
         cleanCurrentXid();
 
         if (txe != null) {
@@ -236,6 +237,10 @@ public class TransactionContext extends Timer.Task {
             throw new XAException(XAException.XA_RBTIMEOUT);
         }
         bindCurrentXid();
+
+        // cancel the rollback task
+        cancel();
+
         status = STATUS_ROLLING_BACK;
         beforeOperation();
 
@@ -244,7 +249,7 @@ public class TransactionContext extends Timer.Task {
             InternalXAResource resource = resources[i];
             try {
                 resource.rollback(this);
-            } catch (TransactionException e) {
+            } catch (Exception e) {
                 log.warn("Unable to rollback changes on " + resource, e);
                 errors++;
             }
@@ -252,8 +257,6 @@ public class TransactionContext extends Timer.Task {
         afterOperation();
         status = STATUS_ROLLED_BACK;
 
-        // cancel the rollback task
-        cancel();
         cleanCurrentXid();
 
         if (errors != 0) {
@@ -267,6 +270,9 @@ public class TransactionContext extends Timer.Task {
      */
     public void run() {
         synchronized (this) {
+            // cancel the rollback task
+            cancel();
+
             if (status == STATUS_PREPARED) {
                 try {
                     rollback();
@@ -275,8 +281,6 @@ public class TransactionContext extends Timer.Task {
                 }
                 log.warn("Transaction rolled back because timeout expired.");
             }
-            // cancel the rollback task
-            cancel();
         }
     }
 
