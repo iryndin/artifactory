@@ -1,4 +1,6 @@
 /*
+ * This file has been changed for Artifactory by JFrog Ltd. Copyright 2012, JFrog Ltd.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -77,7 +79,6 @@ public class VersioningLock {
         }
 
         public ReadLock downgrade() throws InterruptedException {
-            // Proof that the guy who wrote this has no capabilities of writing high level TX code!!!
             ReadLock rLock = new ReadLock(readWriteLock.readLock());
             release();
             return rLock;
