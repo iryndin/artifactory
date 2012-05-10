@@ -277,6 +277,9 @@ public class ConnectionHelper {
     void reallyExec(String sql, Object... params) throws SQLException {
         Connection con = null;
         Statement stmt = null;
+        if (log.isTraceEnabled()) {
+            log.trace("query begin: {}", sql);
+        }
         try {
             con = getConnection();
             if (params == null || params.length == 0) {
@@ -291,6 +294,9 @@ public class ConnectionHelper {
             }
         } finally {
             closeResources(con, stmt, null);
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("query ended: {}", sql);
         }
     }
 
@@ -316,13 +322,20 @@ public class ConnectionHelper {
     int reallyUpdate(String sql, Object[] params) throws SQLException {
         Connection con = null;
         PreparedStatement stmt = null;
+        if (log.isTraceEnabled()) {
+            log.trace("update begin: {}", sql);
+        }
         try {
             con = getConnection();
             stmt = con.prepareStatement(sql);
             if (log.isDebugEnabled()) {
                 debugSql(sql, params);
             }
-            return execute(stmt, params).getUpdateCount();
+            int updateCount = execute(stmt, params).getUpdateCount();
+            if (log.isTraceEnabled()) {
+                log.trace("update ended: {}", sql);
+            }
+            return updateCount;
         } finally {
             closeResources(con, stmt, null);
         }
@@ -356,6 +369,9 @@ public class ConnectionHelper {
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        if (log.isTraceEnabled()) {
+            log.trace("select begin: {}", sql);
+        }
         try {
             con = getConnection();
             if (returnGeneratedKeys) {
@@ -373,6 +389,9 @@ public class ConnectionHelper {
                 rs = stmt.getGeneratedKeys();
             } else {
                 rs = stmt.getResultSet();
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("select ended: {}", sql);
             }
             // Don't wrap null
             if (rs == null) {
