@@ -1,0 +1,33 @@
+<wicket:panel>
+    <form wicket:id="form">
+        <div wicket:id="yumCalculationBorder">
+            <div class="field-row">
+                <div class="field">
+                    <label>YUM Metadata Folder Depth:</label>
+
+                    <div class="value">
+                        <input wicket:id="yumRootDepth" type="text"/>
+                        <span wicket:id="yumRootDepth.help"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <input wicket:id="calculateYumMetadata" type="checkbox"/>
+                    <span wicket:id="calculateYumMetadata.help"></span>
+                </div>
+                <div class="field">
+                    <button type="button" wicket:id="calculateNow"></button>
+                </div>
+            </div>
+        </div>
+        <div wicket:id="nuGetBorder">
+            <div class="field-row">
+                <div class="field">
+                    <input wicket:id="enableNuGetSupport" type="checkbox"/>
+                    <span wicket:id="enableNuGetSupport.help"></span>
+                </div>
+            </div>
+        </div>
+    </form>
+</wicket:panel>
