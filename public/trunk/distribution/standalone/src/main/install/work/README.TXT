@@ -1,1 +1,0 @@
-Work dir is required for jetty to work as a service. Do not delete this file.
