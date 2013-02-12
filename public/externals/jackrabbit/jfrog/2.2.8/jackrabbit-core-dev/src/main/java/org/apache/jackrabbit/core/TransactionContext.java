@@ -153,11 +153,11 @@ public class TransactionContext extends Timer.Task {
         status = STATUS_PREPARING;
         beforeOperation();
 
-        TransactionException txe = null;
+        Exception txe = null;
         for (int i = 0; i < resources.length; i++) {
             try {
                 resources[i].prepare(this);
-            } catch (TransactionException e) {
+            } catch (Exception e) {
                 txe = e;
                 break;
             }
