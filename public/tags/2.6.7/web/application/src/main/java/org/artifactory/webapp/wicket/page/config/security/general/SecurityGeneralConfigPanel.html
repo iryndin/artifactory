@@ -1,0 +1,24 @@
+<wicket:extend>
+    <form wicket:id="form">
+        <div class="field">
+            <div class="value security-general">
+                <input wicket:id="anonAccessEnabled" type="checkbox" class="text"/>
+                <span wicket:id="anonAccessEnabled.help"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <div class="value security-general">
+                <input wicket:id="hideUnauthorizedResources" type="checkbox" class="text"/>
+                <span wicket:id="hideUnauthorizedResources.help"/>
+            </div>
+        </div>
+        <div class="field field-sep">
+            <label>Password Encryption Policy</label>
+            <span wicket:id="passwordSettings.encryptionPolicy.help"/>
+
+            <span class="value">
+                <select wicket:id="passwordSettings.encryptionPolicy"/>
+            </span>
+        </div>
+    </form>
+</wicket:extend>
