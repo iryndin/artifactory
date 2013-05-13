@@ -1,0 +1,15 @@
+org.artifactory.binstore
+org.artifactory.factory
+org.artifactory.fs
+org.artifactory.interceptor
+org.artifactory.md
+org.artifactory.repo
+org.artifactory.resource
+org.artifactory.sapi.common
+org.artifactory.sapi.data
+org.artifactory.sapi.fs
+org.artifactory.sapi.interceptor
+org.artifactory.sapi.search
+org.artifactory.sapi.security
+org.artifactory.security
+org.artifactory.util

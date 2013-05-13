@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TestNG:  Unit Test</title>
+<style type="text/css">
+table caption,table.info_table,table.result,table.passed,table.failed {margin-bottom:10px;border:1px solid #000099;border-collapse:collapse;empty-cells:show;}
+table.info_table td,table.info_table th,table.result td,table.result th,table.passed td,table.passed th,table.failed td,table.failed th {
+border:1px solid #000099;padding:.25em .5em .25em .5em
+}
+table.result th {vertical-align:bottom}
+tr.param th {padding-left:1em;padding-right:1em}
+tr.param td {padding-left:.5em;padding-right:2em}
+td.numi,th.numi,td.numi_attn {
+text-align:right
+}
+tr.total td {font-weight:bold}
+table caption {
+text-align:center;font-weight:bold;
+}
+table.passed tr.stripe td,table tr.passedodd td {background-color: #00AA00;}
+table.passed td,table tr.passedeven td {background-color: #33FF33;}
+table.passed tr.stripe td,table tr.skippedodd td {background-color: #cccccc;}
+table.passed td,table tr.skippedodd td {background-color: #dddddd;}
+table.failed tr.stripe td,table tr.failedodd td,table.result td.numi_attn {background-color: #FF3333;}
+table.failed td,table tr.failedeven td,table.result tr.stripe td.numi_attn {background-color: #DD0000;}
+tr.stripe td,tr.stripe th {background-color: #E6EBF9;}
+p.totop {font-size:85%;text-align:center;border-bottom:2px black solid}
+div.shootout {padding:2em;border:3px #4854A8 solid}
+</style>
+</head>
+<body>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
+<tr><td style="text-align:left;padding-right:2em">Command line test</td><td class="numi">125</td><td class="numi">125</td><td class="numi">0</td><td class="numi">0</td><td class="numi">1.7 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+</table>
+<table cellspacing="0" cellpadding="0" class="passed" id="summary">
+<tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Start</th><th>Time<br/>(ms)</th></tr>
+<tr><th colspan="4">Command line test &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.addon.AddonTypeTest</td><td><a href="#m1"><b>testAddonsDisplayOrdinal</b>  </a></td><td class="numi">1</td><td>1368450689268</td><td class="numi">15</td></tr>
+<tr class="passedeven"><td rowspan="1">org.artifactory.request.ArtifactoryResponseTest</td><td><a href="#m2"><b>sendErroChangesState</b>  </a></td><td class="numi">1</td><td>1368450689284</td><td class="numi">18</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.build.BuildInfoIOTest</td><td><a href="#m3"><b>generateFromObject</b>  </a></td><td class="numi">1</td><td>1368450689302</td><td class="numi">355</td></tr>
+<tr class="passedeven"><td rowspan="12">org.artifactory.security.CryptoHelperTest</td><td><a href="#m4"><b>availableAlgorithms</b>  </a></td><td class="numi">1</td><td>1368450689976</td><td class="numi">89</td></tr><tr class="passedeven"><td><a href="#m5"><b>encrypt</b>  </a></td><td class="numi">1</td><td>1368450690066</td><td class="numi">251</td></tr><tr class="passedeven"><td><a href="#m6"><b>encryptDecrypt</b>  </a></td><td class="numi">1</td><td>1368450690319</td><td class="numi">48</td></tr><tr class="passedeven"><td><a href="#m7"><b>encryptDecryptSymmetric</b>  </a></td><td class="numi">1</td><td>1368450690368</td><td class="numi">22</td></tr><tr class="passedeven"><td><a href="#m8"><b>encryptSymmetric</b>  </a></td><td class="numi">1</td><td>1368450690391</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m9"><b>escapeEncryptedPassword</b>  </a></td><td class="numi">1</td><td>1368450690393</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m10"><b>generateKeyPair</b>  </a></td><td class="numi">1</td><td>1368450690394</td><td class="numi">33</td></tr><tr class="passedeven"><td><a href="#m11"><b>generateSecretKey</b>  </a></td><td class="numi">1</td><td>1368450690428</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m12"><b>isEncrypted</b>  </a></td><td class="numi">1</td><td>1368450690429</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m13"><b>restoreKeysFromBase64</b>  </a></td><td class="numi">1</td><td>1368450690430</td><td class="numi">39</td></tr><tr class="passedeven"><td><a href="#m14"><b>restorePrivateKey</b>  </a></td><td class="numi">1</td><td>1368450690470</td><td class="numi">39</td></tr><tr class="passedeven"><td><a href="#m15"><b>toBase64String</b>  </a></td><td class="numi">1</td><td>1368450690510</td><td class="numi">24</td></tr>
+<tr class="passedodd"><td rowspan="2">org.artifactory.security.CustomizedEncryptedPasswordPrefixTest</td><td><a href="#m16"><b>testCustomizedEncryptedPasswordPrefixSurroundingCharacters</b>  </a></td><td class="numi">1</td><td>1368450690560</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m17"><b>testCustomizedEncryptedPasswordPrefixWithInvalidSurroundingCharacters</b>  </a></td><td class="numi">1</td><td>1368450690563</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.security.GroupConfigurationImplTest</td><td><a href="#m18"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450690565</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m19"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690566</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.common.IvyNamingTest</td><td><a href="#m20"><b>ivyFileName</b>  </a></td><td class="numi">1</td><td>1368450690567</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="16">org.artifactory.maven.MavenModelUtilsTest</td><td><a href="#m21"><b>buildSnapshotMavenMetadataWithM3Metadata</b>  </a></td><td class="numi">1</td><td>1368450690591</td><td class="numi">16</td></tr><tr class="passedeven"><td><a href="#m22"><b>buildSnapshotMavenMetadataWithoutM3Metadata</b>  </a></td><td class="numi">1</td><td>1368450690609</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m23"><b>getArtifactInfoJar</b>  </a></td><td class="numi">1</td><td>1368450690611</td><td class="numi">16</td></tr><tr class="passedeven"><td><a href="#m24"><b>getArtifactInfoPom</b>  </a></td><td class="numi">1</td><td>1368450690628</td><td class="numi">37</td></tr><tr class="passedeven"><td><a href="#m25"><b>inputStreamToMavenMetadata</b>  </a></td><td class="numi">1</td><td>1368450690666</td><td class="numi">6</td></tr><tr class="passedeven"><td><a href="#m26"><b>mavenMetadataToString</b>  </a></td><td class="numi">1</td><td>1368450690674</td><td class="numi">7</td></tr><tr class="passedeven"><td><a href="#m27"><b>mavenModelToArtifactInfo</b>  </a></td><td class="numi">1</td><td>1368450690682</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m28"><b>mavenModelToArtifactInfoGroupIdInParent</b>  </a></td><td class="numi">1</td><td>1368450690684</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m29"><b>nonValidMetadataString</b>  </a></td><td class="numi">1</td><td>1368450690687</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m30"><b>readNewMaven3MetadataFormat</b>  </a></td><td class="numi">1</td><td>1368450690689</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m31"><b>testToMaven1Path</b>  </a></td><td class="numi">1</td><td>1368450690691</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m32"><b>testToMaven1PathMd5</b>  </a></td><td class="numi">1</td><td>1368450690692</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m33"><b>testToMaven1PathPom</b>  </a></td><td class="numi">1</td><td>1368450690693</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m34"><b>testToMaven1PathSha1</b>  </a></td><td class="numi">1</td><td>1368450690694</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m35"><b>validStringToMetadata</b>  </a></td><td class="numi">1</td><td>1368450690695</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m36"><b>validStringToMetadataNoVersioning</b>  </a></td><td class="numi">1</td><td>1368450690697</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="31">org.artifactory.maven.MavenNamingTest</td><td><a href="#m37"><b>artifactWithAlphaNumberArtifactId</b>  </a></td><td class="numi">3</td><td>1368450690725</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m38"><b>artifactWithAlphaNumberArtifactId</b>  </a></td><td class="numi">3</td><td>1368450690725</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m39"><b>artifactWithAlphaNumberArtifactId</b>  </a></td><td class="numi">3</td><td>1368450690725</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m40"><b>artifactWithAlphaNumericClassifier</b>  </a></td><td class="numi">2</td><td>1368450690730</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m41"><b>artifactWithAlphaNumericClassifier</b>  </a></td><td class="numi">2</td><td>1368450690730</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m42"><b>artifactWithAlphaNumericVersion</b>  </a></td><td class="numi">1</td><td>1368450690734</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m43"><b>artifactWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450690735</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m44"><b>artifactWithLongExtension</b>  </a></td><td class="numi">1</td><td>1368450690737</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m45"><b>artifactWithMultipleArtifactIds</b>  </a></td><td class="numi">5</td><td>1368450690740</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m46"><b>artifactWithMultipleArtifactIds</b>  </a></td><td class="numi">5</td><td>1368450690740</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m47"><b>artifactWithMultipleArtifactIds</b>  </a></td><td class="numi">5</td><td>1368450690740</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m48"><b>artifactWithMultipleArtifactIds</b>  </a></td><td class="numi">5</td><td>1368450690740</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m49"><b>artifactWithMultipleArtifactIds</b>  </a></td><td class="numi">5</td><td>1368450690740</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m50"><b>artifactWithNoClassifier</b>  </a></td><td class="numi">1</td><td>1368450690745</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m51"><b>artifactWithNumericArtifactId</b>  </a></td><td class="numi">1</td><td>1368450690747</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m52"><b>artifactWithNumericClassifier</b>  </a></td><td class="numi">1</td><td>1368450690748</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m53"><b>artifactWithPath</b>  </a></td><td class="numi">1</td><td>1368450690749</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m54"><b>artifactWithShortExtension</b>  </a></td><td class="numi">1</td><td>1368450690750</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m55"><b>getArtifactInfo</b>  </a></td><td class="numi">1</td><td>1368450690752</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m56"><b>isMavenMetadataChecksum</b>  </a></td><td class="numi">1</td><td>1368450690753</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m57"><b>isMetadata</b>  </a></td><td class="numi">1</td><td>1368450690754</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m58"><b>isNonUniqueSnapshotVersion</b>  </a></td><td class="numi">1</td><td>1368450690756</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m59"><b>isSnapshotMavenMetadata</b>  </a></td><td class="numi">1</td><td>1368450690757</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m60"><b>pathWithCompositeFileExtension</b>  </a></td><td class="numi">1</td><td>1368450690758</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m61"><b>testIsClientOrServerPom</b>  </a></td><td class="numi">1</td><td>1368450690760</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m62"><b>testIsNonUniqueSnapshotFilePath</b>  </a></td><td class="numi">1</td><td>1368450690761</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m63"><b>testIsVersionUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450690762</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m64"><b>testUniqueSnapshotVersionBuildNumber</b>  </a></td><td class="numi">1</td><td>1368450690765</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m65"><b>testUniqueVersionTimestamp</b>  </a></td><td class="numi">1</td><td>1368450690766</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m66"><b>testUniqueVersionTimestampAndBuildNumber</b>  </a></td><td class="numi">1</td><td>1368450690768</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m67"><b>uniqueSnapshotVersionBaseVersion</b>  </a></td><td class="numi">1</td><td>1368450690769</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="1">org.artifactory.maven.MavenPomBuilderTest</td><td><a href="#m68"><b>buildSimple</b>  </a></td><td class="numi">1</td><td>1368450690771</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.maven.MavenServiceImplTest</td><td><a href="#m69"><b>generateMavenSettings</b>  </a></td><td class="numi">1</td><td>1368450690771</td><td class="numi">26</td></tr>
+<tr class="passedeven"><td rowspan="20">org.artifactory.util.PathValidatorTest</td><td><a href="#m70"><b>illegalBackslash</b>  </a></td><td class="numi">1</td><td>1368450690798</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m71"><b>illegalCarretLeft</b>  </a></td><td class="numi">1</td><td>1368450690799</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m72"><b>illegalCarretRight</b>  </a></td><td class="numi">1</td><td>1368450690800</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m73"><b>illegalColon</b>  </a></td><td class="numi">1</td><td>1368450690801</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m74"><b>illegalPipe</b>  </a></td><td class="numi">1</td><td>1368450690801</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m75"><b>illegalQuestionMark</b>  </a></td><td class="numi">1</td><td>1368450690802</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m76"><b>illegalQuotationMark</b>  </a></td><td class="numi">1</td><td>1368450690803</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m77"><b>illegalStar</b>  </a></td><td class="numi">1</td><td>1368450690804</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m78"><b>invalidAllSpaces</b>  </a></td><td class="numi">1</td><td>1368450690804</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m79"><b>invalidDot</b>  </a></td><td class="numi">1</td><td>1368450690805</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m80"><b>invalidDotDot</b>  </a></td><td class="numi">1</td><td>1368450690808</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m81"><b>invalidSingleAmpersand</b>  </a></td><td class="numi">1</td><td>1368450690809</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m82"><b>invalidSingleColon</b>  </a></td><td class="numi">1</td><td>1368450690810</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m83"><b>invalidSingleDot</b>  </a></td><td class="numi">1</td><td>1368450690811</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m84"><b>invalidSingleDotDot</b>  </a></td><td class="numi">1</td><td>1368450690811</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m85"><b>invalidSingleSlash</b>  </a></td><td class="numi">1</td><td>1368450690812</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m86"><b>invalidSingleTokenAmpersand</b>  </a></td><td class="numi">1</td><td>1368450690813</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m87"><b>invalidSpaceAfterSlash</b>  </a></td><td class="numi">1</td><td>1368450690814</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m88"><b>invalidSpaceBeforeSlash</b>  </a></td><td class="numi">1</td><td>1368450690814</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m89"><b>validPaths</b>  </a></td><td class="numi">1</td><td>1368450690815</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="2">org.artifactory.security.PermissionTargetConfigurationImplTest</td><td><a href="#m90"><b>testDefaultValues</b>  </a></td><td class="numi">1</td><td>1368450690816</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m91"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690818</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="3">org.artifactory.maven.PomTargetPathValidatorTest</td><td><a href="#m92"><b>validatePluginPom</b>  </a></td><td class="numi">1</td><td>1368450690819</td><td class="numi">17</td></tr><tr class="passedeven"><td><a href="#m93"><b>validatePomTargetInValidPath</b>  </a></td><td class="numi">1</td><td>1368450690836</td><td class="numi">5</td></tr><tr class="passedeven"><td><a href="#m94"><b>validatePomTargetValidPath</b>  </a></td><td class="numi">1</td><td>1368450690841</td><td class="numi">3</td></tr>
+<tr class="passedodd"><td rowspan="2">org.artifactory.security.PrincipalConfigurationImplTest</td><td><a href="#m95"><b>testDefaultValues</b>  </a></td><td class="numi">1</td><td>1368450690844</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m96"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690845</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="4">org.artifactory.repo.RepoDetailsTest</td><td><a href="#m97"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450690845</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m98"><b>testLocalOrVirtualConstructor</b>  </a></td><td class="numi">1</td><td>1368450690846</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m99"><b>testRemoteConstructor</b>  </a></td><td class="numi">1</td><td>1368450690847</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m100"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690848</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.repo.RepoDetailsTypeTest</td><td><a href="#m101"><b>testDisplayName</b>  </a></td><td class="numi">1</td><td>1368450690848</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.security.SecurityEntityListItemTest</td><td><a href="#m102"><b>testDefaultValues</b>  </a></td><td class="numi">1</td><td>1368450690849</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m103"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690850</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="6">org.artifactory.storage.StorageUnitTest</td><td><a href="#m104"><b>bytesToReadableFormat</b>  </a></td><td class="numi">1</td><td>1368450690851</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m105"><b>convertBytesToGb</b>  </a></td><td class="numi">1</td><td>1368450690854</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m106"><b>convertBytesToMb</b>  </a></td><td class="numi">1</td><td>1368450690855</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m107"><b>readableFormatToBytes</b>  </a></td><td class="numi">1</td><td>1368450690855</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m108"><b>revertGbToBytes</b>  </a></td><td class="numi">1</td><td>1368450690857</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m109"><b>revertMbToBytes</b>  </a></td><td class="numi">1</td><td>1368450690858</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.util.StringInputStreamTest</td><td><a href="#m110"><b>readMultiLineString</b>  </a></td><td class="numi">1</td><td>1368450690858</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m111"><b>readOneLineString</b>  </a></td><td class="numi">1</td><td>1368450690859</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="5">org.artifactory.util.TimeUnitFormatTest</td><td><a href="#m112"><b>stillNanos</b>  </a></td><td class="numi">1</td><td>1368450690859</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m113"><b>toMillis</b>  </a></td><td class="numi">1</td><td>1368450690861</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m114"><b>toMinutes</b>  </a></td><td class="numi">1</td><td>1368450690862</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m115"><b>toSeconds</b>  </a></td><td class="numi">1</td><td>1368450690863</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m116"><b>toSecondsWithMillisecondTimeUnit</b>  </a></td><td class="numi">1</td><td>1368450690863</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.security.UserConfigurationImplTest</td><td><a href="#m117"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450690864</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m118"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450690865</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="7">org.artifactory.util.ZipUtilsTest</td><td><a href="#m119"><b>locateExistingEntry</b>  </a></td><td class="numi">1</td><td>1368450690889</td><td class="numi">8</td></tr><tr class="passedodd"><td><a href="#m120"><b>locateMissingEntry</b>  </a></td><td class="numi">1</td><td>1368450690898</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m121"><b>testExtractTarFile</b>  </a></td><td class="numi">1</td><td>1368450690900</td><td class="numi">35</td></tr><tr class="passedodd"><td><a href="#m122"><b>testExtractTarGzFile</b>  </a></td><td class="numi">1</td><td>1368450690936</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m123"><b>testExtractTgzFile</b>  </a></td><td class="numi">1</td><td>1368450690941</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m124"><b>testExtractZipFile</b>  </a></td><td class="numi">1</td><td>1368450690945</td><td class="numi">26</td></tr><tr class="passedodd"><td><a href="#m125"><b>testUnsupportedArchive</b>  </a></td><td class="numi">1</td><td>1368450690973</td><td class="numi">1</td></tr>
+</table>
+<h1>Command line test</h1>
+<h2 id="m1">org.artifactory.util.TimeUnitFormatTest:toMillis</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m2">org.artifactory.maven.MavenModelUtilsTest:readNewMaven3MetadataFormat</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m3">org.artifactory.util.PathValidatorTest:illegalStar</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;*&apos; is not a valid name character: the/universe/has/lots/of/*</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalStar(PathValidatorTest.java:92)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m4">org.artifactory.util.ZipUtilsTest:testExtractTarGzFile</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m5">org.artifactory.util.PathValidatorTest:invalidSingleColon</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;:&apos; is not a valid name character: :</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleColon(PathValidatorTest.java:22)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m6">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumericVersion</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>1.0alpha</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m7">org.artifactory.common.IvyNamingTest:ivyFileName</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m8">org.artifactory.maven.MavenNamingTest:isMavenMetadataChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m9">org.artifactory.util.PathValidatorTest:invalidSingleTokenAmpersand</h2>
+<div style="padding-left:3em">
+<p>Path cannot have single ampersand: bbb/&amp;</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleTokenAmpersand(PathValidatorTest.java:32)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m10">org.artifactory.security.PrincipalConfigurationImplTest:testDefaultValues</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m11">org.artifactory.util.StringInputStreamTest:readMultiLineString</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m12">org.artifactory.maven.MavenModelUtilsTest:validStringToMetadataNoVersioning</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m13">org.artifactory.maven.MavenNamingTest:testUniqueSnapshotVersionBuildNumber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m14">org.artifactory.maven.MavenModelUtilsTest:buildSnapshotMavenMetadataWithoutM3Metadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m15">org.artifactory.util.TimeUnitFormatTest:toSeconds</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m16">org.artifactory.maven.MavenModelUtilsTest:testToMaven1Path</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m17">org.artifactory.util.PathValidatorTest:invalidDotDot</h2>
+<div style="padding-left:3em">
+<p>Path element cannot end with a dot: dot/../dot/file.jar</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+<br/>at org.artifactory.util.PathValidatorTest.invalidDotDot(PathValidatorTest.java:52)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m18">org.artifactory.security.CryptoHelperTest:availableAlgorithms</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m19">org.artifactory.util.PathValidatorTest:illegalPipe</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;|&apos; is not a valid name character: sup|r|mario</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalPipe(PathValidatorTest.java:87)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m20">org.artifactory.security.UserConfigurationImplTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m21">org.artifactory.util.PathValidatorTest:invalidSpaceAfterSlash</h2>
+<div style="padding-left:3em">
+<p>Path cannot have a space after a slash: blabla/hello/      </p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:96)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSpaceAfterSlash(PathValidatorTest.java:107)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m22">org.artifactory.util.PathValidatorTest:illegalCarretLeft</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;&lt;&apos; is not a valid name character: hibla&lt;sdf</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalCarretLeft(PathValidatorTest.java:62)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m23">org.artifactory.util.TimeUnitFormatTest:toSecondsWithMillisecondTimeUnit</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m24">org.artifactory.util.PathValidatorTest:illegalColon</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;:&apos; is not a valid name character: c/olo:n/repo/path</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalColon(PathValidatorTest.java:97)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m25">org.artifactory.util.PathValidatorTest:illegalCarretRight</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;&gt;&apos; is not a valid name character: path/to&gt;file.jar</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalCarretRight(PathValidatorTest.java:67)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m26">org.artifactory.maven.MavenNamingTest:isMetadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m27">org.artifactory.security.SecurityEntityListItemTest:testDefaultValues</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m28">org.artifactory.maven.MavenNamingTest:artifactWithMultipleArtifactIds</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>artifactId2-artifactId2</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m29">org.artifactory.request.ArtifactoryResponseTest:sendErroChangesState</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m30">org.artifactory.security.SecurityEntityListItemTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m31">org.artifactory.security.CryptoHelperTest:encrypt</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m32">org.artifactory.storage.StorageUnitTest:revertGbToBytes</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m33">org.artifactory.util.PathValidatorTest:invalidSpaceBeforeSlash</h2>
+<div style="padding-left:3em">
+<p>Path cannot have a slash after a space:  shsh/gaga /hdt</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:72)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSpaceBeforeSlash(PathValidatorTest.java:102)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m34">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumberArtifactId</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>artifactId1231</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m35">org.artifactory.repo.RepoDetailsTest:testLocalOrVirtualConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m36">org.artifactory.util.PathValidatorTest:invalidSingleSlash</h2>
+<div style="padding-left:3em">
+<p>Path cannot contain double slash &apos;//&apos;: /</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:70)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleSlash(PathValidatorTest.java:17)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m37">org.artifactory.repo.RepoDetailsTypeTest:testDisplayName</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m38">org.artifactory.util.PathValidatorTest:invalidSingleAmpersand</h2>
+<div style="padding-left:3em">
+<p>Path cannot have single ampersand: &amp;</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleAmpersand(PathValidatorTest.java:27)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m39">org.artifactory.maven.MavenModelUtilsTest:testToMaven1PathMd5</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m40">org.artifactory.storage.StorageUnitTest:convertBytesToGb</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m41">org.artifactory.maven.MavenNamingTest:artifactWithLongExtension</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m42">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumberArtifactId</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>1213artifactId1231</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m43">org.artifactory.security.GroupConfigurationImplTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m44">org.artifactory.maven.MavenModelUtilsTest:mavenModelToArtifactInfoGroupIdInParent</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m45">org.artifactory.util.ZipUtilsTest:testExtractZipFile</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m46">org.artifactory.util.PathValidatorTest:illegalBackslash</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;\&apos; is not a valid name character: back\slash.zors</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalBackslash(PathValidatorTest.java:72)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m47">org.artifactory.util.ZipUtilsTest:testUnsupportedArchive</h2>
+<div style="padding-left:3em">
+<p>Unsupported archive extension: &apos;ar&apos;</p>
+org.artifactory.util.ZipUtils.verifySupportedExtension(ZipUtils.java:213)
+<br/>at org.artifactory.util.ZipUtils.createArchiveInputStream(ZipUtils.java:172)
+<br/>at org.artifactory.util.ZipUtils.extractFiles(ZipUtils.java:150)
+<br/>at org.artifactory.util.ZipUtils.extract(ZipUtils.java:93)
+<br/>at org.artifactory.util.ZipUtilsTest.extract(ZipUtilsTest.java:110)
+<br/>at org.artifactory.util.ZipUtilsTest.testUnsupportedArchive(ZipUtilsTest.java:103)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m48">org.artifactory.maven.MavenModelUtilsTest:getArtifactInfoJar</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m49">org.artifactory.security.CryptoHelperTest:generateSecretKey</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m50">org.artifactory.repo.RepoDetailsTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m51">org.artifactory.security.CryptoHelperTest:encryptDecrypt</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m52">org.artifactory.util.ZipUtilsTest:locateExistingEntry</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m53">org.artifactory.maven.PomTargetPathValidatorTest:validatePluginPom</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m54">org.artifactory.maven.MavenNamingTest:artifactWithMultipleArtifactIds</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>2artifactId-artifactId</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m55">org.artifactory.security.CryptoHelperTest:escapeEncryptedPassword</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m56">org.artifactory.maven.MavenModelUtilsTest:mavenModelToArtifactInfo</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m57">org.artifactory.security.PermissionTargetConfigurationImplTest:testDefaultValues</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m58">org.artifactory.maven.MavenNamingTest:uniqueSnapshotVersionBaseVersion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m59">org.artifactory.maven.MavenNamingTest:testIsVersionUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m60">org.artifactory.util.TimeUnitFormatTest:toMinutes</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m61">org.artifactory.repo.RepoDetailsTest:testRemoteConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m62">org.artifactory.maven.MavenServiceImplTest:generateMavenSettings</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m63">org.artifactory.maven.MavenNamingTest:testIsClientOrServerPom</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m64">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumericClassifier</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>classifier123</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m65">org.artifactory.storage.StorageUnitTest:readableFormatToBytes</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m66">org.artifactory.repo.RepoDetailsTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m67">org.artifactory.maven.MavenNamingTest:isSnapshotMavenMetadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m68">org.artifactory.security.CryptoHelperTest:restoreKeysFromBase64</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m69">org.artifactory.maven.MavenNamingTest:artifactWithMultipleArtifactIds</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>artifactId-artifactId2</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m70">org.artifactory.addon.AddonTypeTest:testAddonsDisplayOrdinal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m71">org.artifactory.util.PathValidatorTest:invalidAllSpaces</h2>
+<div style="padding-left:3em">
+<p>Path cannot be blank:        </p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:51)
+<br/>at org.artifactory.util.PathValidatorTest.invalidAllSpaces(PathValidatorTest.java:57)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m72">org.artifactory.security.CryptoHelperTest:generateKeyPair</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m73">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumericClassifier</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>123classifier</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m74">org.artifactory.maven.MavenModelUtilsTest:getArtifactInfoPom</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m75">org.artifactory.security.GroupConfigurationImplTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m76">org.artifactory.maven.MavenNamingTest:artifactWithNoClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m77">org.artifactory.maven.MavenNamingTest:testUniqueVersionTimestampAndBuildNumber</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m78">org.artifactory.security.CryptoHelperTest:isEncrypted</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m79">org.artifactory.security.UserConfigurationImplTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m80">org.artifactory.maven.MavenNamingTest:artifactWithNumericArtifactId</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m81">org.artifactory.security.CryptoHelperTest:encryptSymmetric</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m82">org.artifactory.maven.MavenNamingTest:testUniqueVersionTimestamp</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m83">org.artifactory.maven.MavenNamingTest:artifactWithMultipleArtifactIds</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>artifactId2-artifactId</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m84">org.artifactory.maven.MavenModelUtilsTest:validStringToMetadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m85">org.artifactory.util.PathValidatorTest:illegalQuotationMark</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;&quot;&apos; is not a valid name character: make&quot;believe.hello</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalQuotationMark(PathValidatorTest.java:82)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m86">org.artifactory.storage.StorageUnitTest:revertMbToBytes</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m87">org.artifactory.maven.MavenNamingTest:pathWithCompositeFileExtension</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m88">org.artifactory.maven.MavenNamingTest:getArtifactInfo</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m89">org.artifactory.maven.MavenNamingTest:artifactWithShortExtension</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m90">org.artifactory.maven.PomTargetPathValidatorTest:validatePomTargetValidPath</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m91">org.artifactory.security.CryptoHelperTest:encryptDecryptSymmetric</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m92">org.artifactory.storage.StorageUnitTest:convertBytesToMb</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m93">org.artifactory.security.PrincipalConfigurationImplTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m94">org.artifactory.util.PathValidatorTest:invalidSingleDotDot</h2>
+<div style="padding-left:3em">
+<p>Path element cannot end with a dot: ..</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleDotDot(PathValidatorTest.java:42)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m95">org.artifactory.maven.MavenModelUtilsTest:mavenMetadataToString</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m96">org.artifactory.maven.MavenModelUtilsTest:testToMaven1PathSha1</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m97">org.artifactory.util.PathValidatorTest:invalidDot</h2>
+<div style="padding-left:3em">
+<p>Path element cannot end with a dot: blabla/.</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+<br/>at org.artifactory.util.PathValidatorTest.invalidDot(PathValidatorTest.java:47)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m98">org.artifactory.util.ZipUtilsTest:testExtractTgzFile</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m99">org.artifactory.maven.MavenModelUtilsTest:testToMaven1PathPom</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m100">org.artifactory.util.PathValidatorTest:validPaths</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m101">org.artifactory.maven.MavenNamingTest:artifactWithPath</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m102">org.artifactory.security.CustomizedEncryptedPasswordPrefixTest:testCustomizedEncryptedPasswordPrefixWithInvalidSurroundingCharacters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m103">org.artifactory.maven.MavenNamingTest:artifactWithNumericClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m104">org.artifactory.util.StringInputStreamTest:readOneLineString</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m105">org.artifactory.security.PermissionTargetConfigurationImplTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m106">org.artifactory.maven.MavenNamingTest:artifactWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m107">org.artifactory.maven.MavenModelUtilsTest:buildSnapshotMavenMetadataWithM3Metadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m108">org.artifactory.util.TimeUnitFormatTest:stillNanos</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m109">org.artifactory.maven.MavenNamingTest:testIsNonUniqueSnapshotFilePath</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m110">org.artifactory.maven.MavenNamingTest:artifactWithAlphaNumberArtifactId</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>1213artifactId</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m111">org.artifactory.maven.MavenModelUtilsTest:nonValidMetadataString</h2>
+<div style="padding-left:3em">
+<p>Failed to parse metadata: start tag unexpected character &lt; (position: START_DOCUMENT seen &lt;metadatablabla\n&lt;... @2:2) </p>
+org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:151)
+<br/>at org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:125)
+<br/>at org.artifactory.maven.MavenModelUtilsTest.nonValidMetadataString(MavenModelUtilsTest.java:113)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m112">org.artifactory.build.BuildInfoIOTest:generateFromObject</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m113">org.artifactory.util.PathValidatorTest:illegalQuestionMark</h2>
+<div style="padding-left:3em">
+<p>Invalid path. &apos;?&apos; is not a valid name character: riddle/me_this?.tar</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+<br/>at org.artifactory.util.PathValidatorTest.illegalQuestionMark(PathValidatorTest.java:77)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m114">org.artifactory.maven.MavenPomBuilderTest:buildSimple</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m115">org.artifactory.util.ZipUtilsTest:testExtractTarFile</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m116">org.artifactory.security.CryptoHelperTest:toBase64String</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m117">org.artifactory.maven.MavenNamingTest:artifactWithMultipleArtifactIds</h2>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr class="param"><th>Parameter #1</th></tr>
+<tr class="param stripe"><td>artifactId-artifactId</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m118">org.artifactory.security.CryptoHelperTest:restorePrivateKey</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m119">org.artifactory.util.PathValidatorTest:invalidSingleDot</h2>
+<div style="padding-left:3em">
+<p>Path element cannot end with a dot: .</p>
+org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+<br/>at org.artifactory.util.PathValidatorTest.invalidSingleDot(PathValidatorTest.java:37)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m120">org.artifactory.util.ZipUtilsTest:locateMissingEntry</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m121">org.artifactory.storage.StorageUnitTest:bytesToReadableFormat</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m122">org.artifactory.maven.MavenModelUtilsTest:inputStreamToMavenMetadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m123">org.artifactory.maven.PomTargetPathValidatorTest:validatePomTargetInValidPath</h2>
+<div style="padding-left:3em">
+<p>The target deployment path &apos;blab/bla/1.0.0-alpha2&apos; does not match the POM&apos;s expected path prefix &apos;yourpit/yourpit/1.0.0-alpha2&apos;. Please verify your POM content for correctness and make sure the source path is a valid Maven repository root path.</p>
+org.artifactory.maven.PomTargetPathValidator.validate(PomTargetPathValidator.java:86)
+<br/>at org.artifactory.maven.PomTargetPathValidatorTest.validatePomTargetInValidPath(PomTargetPathValidatorTest.java:58)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m124">org.artifactory.security.CustomizedEncryptedPasswordPrefixTest:testCustomizedEncryptedPasswordPrefixSurroundingCharacters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m125">org.artifactory.maven.MavenNamingTest:isNonUniqueSnapshotVersion</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+</body></html>

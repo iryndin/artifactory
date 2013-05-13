@@ -1,0 +1,1465 @@
+<html>
+<head>
+<title>TestNG:  Command line test</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>Command line test</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>152/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Mon May 13 13:11:08 GMT 2013</td>
+</tr>
+<tr><td>Total time:</td><td>1 seconds (1114 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsInfoTest.addChecksum()'><b>addChecksum</b><br>Test class: org.artifactory.checksum.ChecksumsInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsInfoTest@53bc45d4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithInvalidModuleInfo()'><b>constructArtifactPathWithInvalidModuleInfo</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unable to construct a path from an invalid module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:113)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithInvalidModuleInfo(ModuleInfoUtilsTest.java:40)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1509718305", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1509718305'><pre>java.lang.IllegalArgumentException: Unable to construct a path from an invalid module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:113)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithInvalidModuleInfo(ModuleInfoUtilsTest.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullModuleInfo()'><b>constructArtifactPathWithNullModuleInfo</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unable to construct a path from a null module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:110)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullModuleInfo(ModuleInfoUtilsTest.java:34)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1316262830", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1316262830'><pre>java.lang.IllegalArgumentException: Unable to construct a path from a null module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:110)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullModuleInfo(ModuleInfoUtilsTest.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullRepoLayout()'><b>constructArtifactPathWithNullRepoLayout</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unable to construct a path from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:116)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:46)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1200336063", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1200336063'><pre>java.lang.IllegalArgumentException: Unable to construct a path from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:116)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsInfoTest.copyConstructor()'><b>copyConstructor</b><br>Test class: org.artifactory.checksum.ChecksumsInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsInfoTest@53bc45d4</td></tr>
+<tr>
+<td title='org.artifactory.api.config.ExportSettingsTest.copyConstructor()'><b>copyConstructor</b><br>Test class: org.artifactory.api.config.ExportSettingsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.config.ExportSettingsTest@7e69a380</td></tr>
+<tr>
+<td title='org.artifactory.api.search.artifact.ArtifactSearchControlsTest.emptyControls()'><b>emptyControls</b><br>Test class: org.artifactory.api.search.artifact.ArtifactSearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.artifact.ArtifactSearchControlsTest@c16d8ba</td></tr>
+<tr>
+<td title='org.artifactory.api.config.ExportSettingsTest.fileConstructor()'><b>fileConstructor</b><br>Test class: org.artifactory.api.config.ExportSettingsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.config.ExportSettingsTest@7e69a380</td></tr>
+<tr>
+<td title='org.artifactory.repo.remote.browse.RemoteItemTest.getNameFromDirectory()'><b>getNameFromDirectory</b><br>Test class: org.artifactory.repo.remote.browse.RemoteItemTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.remote.browse.RemoteItemTest@2e1eb2c3</td></tr>
+<tr>
+<td title='org.artifactory.repo.remote.browse.RemoteItemTest.getNameFromFile()'><b>getNameFromFile</b><br>Test class: org.artifactory.repo.remote.browse.RemoteItemTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.remote.browse.RemoteItemTest@2e1eb2c3</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.invalidMD5Checksum()'><b>invalidMD5Checksum</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.invalidSha1Checksum()'><b>invalidSha1Checksum</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.api.search.archive.ArchiveSearchControlsTest.isWildcardsOnly()'><b>isWildcardsOnly</b><br>Test class: org.artifactory.api.search.archive.ArchiveSearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.archive.ArchiveSearchControlsTest@2a807bbc</td></tr>
+<tr>
+<td title='org.artifactory.api.search.artifact.ChecksumSearchControlsTest.isWildcardsOnly()'><b>isWildcardsOnly</b><br>Test class: org.artifactory.api.search.artifact.ChecksumSearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.artifact.ChecksumSearchControlsTest@52c11156</td></tr>
+<tr>
+<td title='org.artifactory.api.search.gavc.GavcSearchControlsTest.isWildcardsOnly()'><b>isWildcardsOnly</b><br>Test class: org.artifactory.api.search.gavc.GavcSearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.gavc.GavcSearchControlsTest@27abb00a</td></tr>
+<tr>
+<td title='org.artifactory.api.search.property.PropertySearchControlsTest.isWildcardsOnly()'><b>isWildcardsOnly</b><br>Test class: org.artifactory.api.search.property.PropertySearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.property.PropertySearchControlsTest@56b6d31c</td></tr>
+<tr>
+<td title='org.artifactory.api.search.SearchControlsBaseTest.isWildcardsOnly()'><b>isWildcardsOnly</b><br>Test class: org.artifactory.api.search.SearchControlsBaseTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.SearchControlsBaseTest@2ee08dfa</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchDifferentOriginalAndActual()'><b>matchDifferentOriginalAndActual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchIfOriginalIsTruetedAndActualIsSet()'><b>matchIfOriginalIsTruetedAndActualIsSet</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchNullActual()'><b>matchNullActual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchNullOriginal()'><b>matchNullOriginal</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchNullOriginalAndActual()'><b>matchNullOriginalAndActual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.matchSameOriginalAndActual()'><b>matchSameOriginalAndActual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.api.common.MultiStatusHolderTest.mergeTwoStatusHolders()'><b>mergeTwoStatusHolders</b><br>Test class: org.artifactory.api.common.MultiStatusHolderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.common.MultiStatusHolderTest@55695a74</td></tr>
+<tr>
+<td title='org.artifactory.api.common.MultiStatusHolderTest.mergeWithEmptyStatusHolder()'><b>mergeWithEmptyStatusHolder</b><br>Test class: org.artifactory.api.common.MultiStatusHolderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.common.MultiStatusHolderTest@55695a74</td></tr>
+<tr>
+<td title='org.artifactory.api.common.MultiStatusHolderTest.mergeWithErrorOverride()'><b>mergeWithErrorOverride</b><br>Test class: org.artifactory.api.common.MultiStatusHolderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.common.MultiStatusHolderTest@55695a74</td></tr>
+<tr>
+<td title='org.artifactory.api.common.MultiStatusHolderTest.mergeWithSingleStatusHolder()'><b>mergeWithSingleStatusHolder</b><br>Test class: org.artifactory.api.common.MultiStatusHolderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.common.MultiStatusHolderTest@55695a74</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithBlankItemPath()'><b>moduleInfoFromArtifactPathWithBlankItemPath</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithBlankItemPath(ModuleInfoUtilsTest.java:65)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace586830923", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace586830923'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithBlankItemPath(ModuleInfoUtilsTest.java:65)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullArtifactPath()'><b>moduleInfoFromArtifactPathWithNullArtifactPath</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullArtifactPath(ModuleInfoUtilsTest.java:53)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1622415837", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1622415837'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullArtifactPath(ModuleInfoUtilsTest.java:53)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullRepoLayout()'><b>moduleInfoFromArtifactPathWithNullRepoLayout</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:77)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1343106500", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1343106500'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithBlankItemPath()'><b>moduleInfoFromDescriptorPathWithBlankItemPath</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithBlankItemPath(ModuleInfoUtilsTest.java:71)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1390331883", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1390331883'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithBlankItemPath(ModuleInfoUtilsTest.java:71)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullArtifactPath()'><b>moduleInfoFromDescriptorPathWithNullArtifactPath</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullArtifactPath(ModuleInfoUtilsTest.java:59)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace538394574", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace538394574'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullArtifactPath(ModuleInfoUtilsTest.java:59)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullRepoLayout()'><b>moduleInfoFromDescriptorPathWithNullRepoLayout</b><br>Test class: org.artifactory.api.module.ModuleInfoUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullRepoLayout(ModuleInfoUtilsTest.java:83)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1449000407", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1449000407'><pre>java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullRepoLayout(ModuleInfoUtilsTest.java:83)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoUtilsTest@72f5ba2c</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.notValidChecksumNormalizationTest()'><b>notValidChecksumNormalizationTest</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.nullAndEmptyAreNotValidChecksums()'><b>nullAndEmptyAreNotValidChecksums</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.repo.remote.browse.RemoteItemTest.nullUrl()'><b>nullUrl</b><br>Test class: org.artifactory.repo.remote.browse.RemoteItemTest</td>
+<td><div><pre>java.lang.NullPointerException: URL cannot be null
+	at org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:58)
+	at org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:53)
+	at org.artifactory.repo.remote.browse.RemoteItemTest.nullUrl(RemoteItemTest.java:34)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1495681901", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1495681901'><pre>java.lang.NullPointerException: URL cannot be null
+	at org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:58)
+	at org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:53)
+	at org.artifactory.repo.remote.browse.RemoteItemTest.nullUrl(RemoteItemTest.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.repo.remote.browse.RemoteItemTest@2e1eb2c3</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.search.result.PatternResultFileSetTest.testAddMethod()'><b>testAddMethod</b><br>Test class: org.artifactory.api.rest.search.result.PatternResultFileSetTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.search.result.PatternResultFileSetTest@6291d9aa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testArtifactModuleToModule()'><b>testArtifactModuleToModule</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testArtifactPathToModule()'><b>testArtifactPathToModule</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testClassifierWithDots()'><b>testClassifierWithDots</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoBuilderTest.testCopyConstructor()'><b>testCopyConstructor</b><br>Test class: org.artifactory.api.module.ModuleInfoBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoBuilderTest@593b8970</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoBuilderTest.testCopyDefaultConstruct()'><b>testCopyDefaultConstruct</b><br>Test class: org.artifactory.api.module.ModuleInfoBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoBuilderTest@593b8970</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testCustom1()'><b>testCustom1</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testCustom2()'><b>testCustom2</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListElementTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.api.rest.artifact.FileListElementTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListElementTest@4f132932</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.api.rest.artifact.FileListTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListTest@4c1db3de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.api.module.ModuleInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoTest@496d6956</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.search.result.PatternResultFileSetTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.api.rest.search.result.PatternResultFileSetTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.search.result.PatternResultFileSetTest@6291d9aa</td></tr>
+<tr>
+<td title='org.artifactory.api.mail.MailServerConfigurationTest.testDefaultMailServerDescriptorConstructor()'><b>testDefaultMailServerDescriptorConstructor</b><br>Test class: org.artifactory.api.mail.MailServerConfigurationTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mail.MailServerConfigurationTest@2feea189</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testDescriptorPathToModule()'><b>testDescriptorPathToModule</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.CustomModuleInfoUtilsTest.testDescriptorPathToModuleWithConstantExtension()'><b>testDescriptorPathToModuleWithConstantExtension</b><br>Test class: org.artifactory.api.module.CustomModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.CustomModuleInfoUtilsTest@36856daa</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListElementTest.testFullConstructor()'><b>testFullConstructor</b><br>Test class: org.artifactory.api.rest.artifact.FileListElementTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListElementTest@4f132932</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListTest.testFullConstructor()'><b>testFullConstructor</b><br>Test class: org.artifactory.api.rest.artifact.FileListTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListTest@4c1db3de</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.search.result.PatternResultFileSetTest.testFullConstructor()'><b>testFullConstructor</b><br>Test class: org.artifactory.api.rest.search.result.PatternResultFileSetTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.search.result.PatternResultFileSetTest@6291d9aa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoTest.testFullInfo()'><b>testFullInfo</b><br>Test class: org.artifactory.api.module.ModuleInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoTest@496d6956</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testGradleStyle()'><b>testGradleStyle</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testGradleToGradle()'><b>testGradleToGradle</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testGradleToIvy()'><b>testGradleToIvy</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testGradleToMaven()'><b>testGradleToMaven</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testIntegration()'><b>testIntegration</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testIntegrationChecksum()'><b>testIntegrationChecksum</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testIntegrationChecksumWithClassifier()'><b>testIntegrationChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testIntegrationWithClassifier()'><b>testIntegrationWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest.testInvalidPaths()'><b>testInvalidPaths</b><br>Test class: org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@3f56b60a</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest.testInvalidPaths()'><b>testInvalidPaths</b><br>Test class: org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@1594f8c</td></tr>
+<tr>
+<td title='org.artifactory.api.mime.NamingUtilsTest.testIsMetadata()'><b>testIsMetadata</b><br>Test class: org.artifactory.api.mime.NamingUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mime.NamingUtilsTest@7cddffbd</td></tr>
+<tr>
+<td title='org.artifactory.api.mime.NamingUtilsTest.testIsMetadataChecksum()'><b>testIsMetadataChecksum</b><br>Test class: org.artifactory.api.mime.NamingUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mime.NamingUtilsTest@7cddffbd</td></tr>
+<tr>
+<td title='org.artifactory.api.mime.NamingUtilsTest.testIsProperties()'><b>testIsProperties</b><br>Test class: org.artifactory.api.mime.NamingUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mime.NamingUtilsTest@7cddffbd</td></tr>
+<tr>
+<td title='org.artifactory.api.mime.NamingUtilsTest.testIsViewable()'><b>testIsViewable</b><br>Test class: org.artifactory.api.mime.NamingUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mime.NamingUtilsTest@7cddffbd</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testIvyToGradle()'><b>testIvyToGradle</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testIvyToIvy()'><b>testIvyToIvy</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testIvyToMaven()'><b>testIvyToMaven</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.api.mime.NamingUtilsTest.testJavaSourceNameFromClassName()'><b>testJavaSourceNameFromClassName</b><br>Test class: org.artifactory.api.mime.NamingUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mime.NamingUtilsTest@7cddffbd</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testLinkedInIvyModule()'><b>testLinkedInIvyModule</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testLowercaseSnapshot()'><b>testLowercaseSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.mail.MailServerConfigurationTest.testMailServerDescriptorConstructor()'><b>testMailServerDescriptorConstructor</b><br>Test class: org.artifactory.api.mail.MailServerConfigurationTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mail.MailServerConfigurationTest@2feea189</td></tr>
+<tr>
+<td title='org.artifactory.api.mail.MailServerConfigurationTest.testMainConstructor()'><b>testMainConstructor</b><br>Test class: org.artifactory.api.mail.MailServerConfigurationTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mail.MailServerConfigurationTest@2feea189</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testMavenToGradle()'><b>testMavenToGradle</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testMavenToIvy()'><b>testMavenToIvy</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.PathTranslationHelperTest.testMavenToMaven()'><b>testMavenToMaven</b><br>Test class: org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.PathTranslationHelperTest@430e0623</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoTest.testMinimalInfo()'><b>testMinimalInfo</b><br>Test class: org.artifactory.api.module.ModuleInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoTest@496d6956</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.search.result.PatternResultFileSetTest.testNoFilesConstructor()'><b>testNoFilesConstructor</b><br>Test class: org.artifactory.api.rest.search.result.PatternResultFileSetTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.search.result.PatternResultFileSetTest@6291d9aa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoBuilderTest.testNoParams()'><b>testNoParams</b><br>Test class: org.artifactory.api.module.ModuleInfoBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoBuilderTest@593b8970</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testNonUniqueSnapshot()'><b>testNonUniqueSnapshot</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testNonUniqueSnapshotWithClassifier()'><b>testNonUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.mail.MailServerConfigurationTest.testNullMailServerDescriptorConstructor()'><b>testNullMailServerDescriptorConstructor</b><br>Test class: org.artifactory.api.mail.MailServerConfigurationTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.mail.MailServerConfigurationTest@2feea189</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoBuilderTest.testNullParams()'><b>testNullParams</b><br>Test class: org.artifactory.api.module.ModuleInfoBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoBuilderTest@593b8970</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoTest.testPartialInfo()'><b>testPartialInfo</b><br>Test class: org.artifactory.api.module.ModuleInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoTest@496d6956</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testRelease()'><b>testRelease</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testRelease()'><b>testRelease</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testRelease()'><b>testRelease</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testReleaseChecksum()'><b>testReleaseChecksum</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testReleaseChecksum()'><b>testReleaseChecksum</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testReleaseChecksumWithClassifier()'><b>testReleaseChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testReleaseChecksumWithClassifier()'><b>testReleaseChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testReleaseWithClassifier()'><b>testReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testReleaseWithClassifier()'><b>testReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testReleaseWithClassifier()'><b>testReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListElementTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.api.rest.artifact.FileListElementTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListElementTest@4f132932</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.artifact.FileListTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.api.rest.artifact.FileListTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.artifact.FileListTest@4c1db3de</td></tr>
+<tr>
+<td title='org.artifactory.api.rest.search.result.PatternResultFileSetTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.api.rest.search.result.PatternResultFileSetTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.rest.search.result.PatternResultFileSetTest@6291d9aa</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest.testSpringArtifacts()'><b>testSpringArtifacts</b><br>Test class: org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@78b274de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest.testSpringBundles()'><b>testSpringBundles</b><br>Test class: org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@78b274de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringIvyModuleInfoUtilsTest.testSpringBundlesExternal()'><b>testSpringBundlesExternal</b><br>Test class: org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@61bcaeed</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringIvyModuleInfoUtilsTest.testSpringBundlesMilestone()'><b>testSpringBundlesMilestone</b><br>Test class: org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@61bcaeed</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringIvyModuleInfoUtilsTest.testSpringBundlesRelease()'><b>testSpringBundlesRelease</b><br>Test class: org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@61bcaeed</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringIvyModuleInfoUtilsTest.testSpringBundlesSnapshot1()'><b>testSpringBundlesSnapshot1</b><br>Test class: org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@61bcaeed</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringIvyModuleInfoUtilsTest.testSpringBundlesSnapshot2()'><b>testSpringBundlesSnapshot2</b><br>Test class: org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@61bcaeed</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest.testSpringDistMilestone()'><b>testSpringDistMilestone</b><br>Test class: org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@78b274de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest.testSpringDistRelease()'><b>testSpringDistRelease</b><br>Test class: org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@78b274de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest.testSpringDistSnapshot()'><b>testSpringDistSnapshot</b><br>Test class: org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@78b274de</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongGradleStyle()'><b>testSuperLongGradleStyle</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongIntegration()'><b>testSuperLongIntegration</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongIntegrationChecksum()'><b>testSuperLongIntegrationChecksum</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongIntegrationChecksumWithClassifier()'><b>testSuperLongIntegrationChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongIntegrationWithClassifier()'><b>testSuperLongIntegrationWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongLinkedInIvyModule()'><b>testSuperLongLinkedInIvyModule</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongLowercaseSnapshot()'><b>testSuperLongLowercaseSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongNonUniqueSnapshot()'><b>testSuperLongNonUniqueSnapshot</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongNonUniqueSnapshotWithClassifier()'><b>testSuperLongNonUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongRelease()'><b>testSuperLongRelease</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongRelease()'><b>testSuperLongRelease</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongRelease()'><b>testSuperLongRelease</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongReleaseChecksum()'><b>testSuperLongReleaseChecksum</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongReleaseChecksum()'><b>testSuperLongReleaseChecksum</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongReleaseChecksumWithClassifier()'><b>testSuperLongReleaseChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongReleaseChecksumWithClassifier()'><b>testSuperLongReleaseChecksumWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.GradleModuleInfoUtilsTest.testSuperLongReleaseWithClassifier()'><b>testSuperLongReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.GradleModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.GradleModuleInfoUtilsTest@71e2cfdc</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongReleaseWithClassifier()'><b>testSuperLongReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongReleaseWithClassifier()'><b>testSuperLongReleaseWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongTimezoneSnapshot()'><b>testSuperLongTimezoneSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongUniqueSnapshot()'><b>testSuperLongUniqueSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongUniqueSnapshot()'><b>testSuperLongUniqueSnapshot</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testSuperLongUniqueSnapshotWithClassifier()'><b>testSuperLongUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testSuperLongUniqueSnapshotWithClassifier()'><b>testSuperLongUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testTimezoneSnapshot()'><b>testTimezoneSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testUniqueSnapshot()'><b>testUniqueSnapshot</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testUniqueSnapshot()'><b>testUniqueSnapshot</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.api.module.IvyModuleInfoUtilsTest.testUniqueSnapshotWithClassifier()'><b>testUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.IvyModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.IvyModuleInfoUtilsTest@5baf41f4</td></tr>
+<tr>
+<td title='org.artifactory.api.module.Maven23ModuleInfoUtilsTest.testUniqueSnapshotWithClassifier()'><b>testUniqueSnapshotWithClassifier</b><br>Test class: org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.Maven23ModuleInfoUtilsTest@18893021</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest.testValidMd5Test()'><b>testValidMd5Test</b><br>Test class: org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@3f56b60a</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest.testValidMetadataTest()'><b>testValidMetadataTest</b><br>Test class: org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@1594f8c</td></tr>
+<tr>
+<td title='org.artifactory.api.module.ModuleInfoBuilderTest.testValidParams()'><b>testValidParams</b><br>Test class: org.artifactory.api.module.ModuleInfoBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.module.ModuleInfoBuilderTest@593b8970</td></tr>
+<tr>
+<td title='org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest.testValidSha1Test()'><b>testValidSha1Test</b><br>Test class: org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@3f56b60a</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.trustedOriginalShouldReturnActual()'><b>trustedOriginalShouldReturnActual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.validChecksumWithDifferentCaseNormalizationTest()'><b>validChecksumWithDifferentCaseNormalizationTest</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.validMD5Checksum()'><b>validMD5Checksum</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.validSha1Checksum()'><b>validSha1Checksum</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.api.search.artifact.ArtifactSearchControlsTest.wildcardsOnlyControls()'><b>wildcardsOnlyControls</b><br>Test class: org.artifactory.api.search.artifact.ArtifactSearchControlsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.api.search.artifact.ArtifactSearchControlsTest@c16d8ba</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumsTypeTest.wrongLengthChecksums()'><b>wrongLengthChecksums</b><br>Test class: org.artifactory.checksum.ChecksumsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumsTypeTest@77b1a17a</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.wrongMd5Actual()'><b>wrongMd5Actual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td><div><pre>java.lang.IllegalStateException: Actual checksum invalid f : 12345678901234567890123456789012 for type MD5
+	at org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongMd5Actual(ChecksumInfoTest.java:48)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace454930340", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace454930340'><pre>java.lang.IllegalStateException: Actual checksum invalid f : 12345678901234567890123456789012 for type MD5
+	at org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongMd5Actual(ChecksumInfoTest.java:48)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+<tr>
+<td title='org.artifactory.checksum.ChecksumInfoTest.wrongSha1Actual()'><b>wrongSha1Actual</b><br>Test class: org.artifactory.checksum.ChecksumInfoTest</td>
+<td><div><pre>java.lang.IllegalStateException: Actual checksum invalid f : 1234567890123456789012345678901234567890 for type SHA-1
+	at org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongSha1Actual(ChecksumInfoTest.java:43)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace972441060", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace972441060'><pre>java.lang.IllegalStateException: Actual checksum invalid f : 1234567890123456789012345678901234567890 for type SHA-1
+	at org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongSha1Actual(ChecksumInfoTest.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.checksum.ChecksumInfoTest@4db50639</td></tr>
+</table><p>
+</body>
+</html>
