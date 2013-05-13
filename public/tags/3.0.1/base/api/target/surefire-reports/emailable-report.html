@@ -1,0 +1,459 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TestNG:  Unit Test</title>
+<style type="text/css">
+table caption,table.info_table,table.result,table.passed,table.failed {margin-bottom:10px;border:1px solid #000099;border-collapse:collapse;empty-cells:show;}
+table.info_table td,table.info_table th,table.result td,table.result th,table.passed td,table.passed th,table.failed td,table.failed th {
+border:1px solid #000099;padding:.25em .5em .25em .5em
+}
+table.result th {vertical-align:bottom}
+tr.param th {padding-left:1em;padding-right:1em}
+tr.param td {padding-left:.5em;padding-right:2em}
+td.numi,th.numi,td.numi_attn {
+text-align:right
+}
+tr.total td {font-weight:bold}
+table caption {
+text-align:center;font-weight:bold;
+}
+table.passed tr.stripe td,table tr.passedodd td {background-color: #00AA00;}
+table.passed td,table tr.passedeven td {background-color: #33FF33;}
+table.passed tr.stripe td,table tr.skippedodd td {background-color: #cccccc;}
+table.passed td,table tr.skippedodd td {background-color: #dddddd;}
+table.failed tr.stripe td,table tr.failedodd td,table.result td.numi_attn {background-color: #FF3333;}
+table.failed td,table tr.failedeven td,table.result tr.stripe td.numi_attn {background-color: #DD0000;}
+tr.stripe td,tr.stripe th {background-color: #E6EBF9;}
+p.totop {font-size:85%;text-align:center;border-bottom:2px black solid}
+div.shootout {padding:2em;border:3px #4854A8 solid}
+</style>
+</head>
+<body>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
+<tr><td style="text-align:left;padding-right:2em">Command line test</td><td class="numi">152</td><td class="numi">152</td><td class="numi">0</td><td class="numi">0</td><td class="numi">1.1 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+</table>
+<table cellspacing="0" cellpadding="0" class="passed" id="summary">
+<tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Start</th><th>Time<br/>(ms)</th></tr>
+<tr><th colspan="4">Command line test &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.api.search.archive.ArchiveSearchControlsTest</td><td><a href="#m1"><b>isWildcardsOnly</b>  </a></td><td class="numi">1</td><td>1368450668967</td><td class="numi">24</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.api.search.artifact.ArtifactSearchControlsTest</td><td><a href="#m2"><b>emptyControls</b>  </a></td><td class="numi">1</td><td>1368450668992</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m3"><b>wildcardsOnlyControls</b>  </a></td><td class="numi">1</td><td>1368450668994</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="11">org.artifactory.checksum.ChecksumInfoTest</td><td><a href="#m4"><b>matchDifferentOriginalAndActual</b>  </a></td><td class="numi">1</td><td>1368450668994</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m5"><b>matchIfOriginalIsTruetedAndActualIsSet</b>  </a></td><td class="numi">1</td><td>1368450668997</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m6"><b>matchNullActual</b>  </a></td><td class="numi">1</td><td>1368450668998</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m7"><b>matchNullOriginal</b>  </a></td><td class="numi">1</td><td>1368450668999</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m8"><b>matchNullOriginalAndActual</b>  </a></td><td class="numi">1</td><td>1368450669000</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m9"><b>matchSameOriginalAndActual</b>  </a></td><td class="numi">1</td><td>1368450669000</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m10"><b>notValidChecksumNormalizationTest</b>  </a></td><td class="numi">1</td><td>1368450669002</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m11"><b>trustedOriginalShouldReturnActual</b>  </a></td><td class="numi">1</td><td>1368450669003</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m12"><b>validChecksumWithDifferentCaseNormalizationTest</b>  </a></td><td class="numi">1</td><td>1368450669003</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m13"><b>wrongMd5Actual</b>  </a></td><td class="numi">1</td><td>1368450669005</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m14"><b>wrongSha1Actual</b>  </a></td><td class="numi">1</td><td>1368450669006</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="1">org.artifactory.api.search.artifact.ChecksumSearchControlsTest</td><td><a href="#m15"><b>isWildcardsOnly</b>  </a></td><td class="numi">1</td><td>1368450669007</td><td class="numi">2</td></tr>
+<tr class="passedodd"><td rowspan="3">org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest</td><td><a href="#m16"><b>testInvalidPaths</b>  </a></td><td class="numi">1</td><td>1368450669303</td><td class="numi">13</td></tr><tr class="passedodd"><td><a href="#m17"><b>testValidMd5Test</b>  </a></td><td class="numi">1</td><td>1368450669318</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m18"><b>testValidSha1Test</b>  </a></td><td class="numi">1</td><td>1368450669320</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="2">org.artifactory.checksum.ChecksumsInfoTest</td><td><a href="#m19"><b>addChecksum</b>  </a></td><td class="numi">1</td><td>1368450669321</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m20"><b>copyConstructor</b>  </a></td><td class="numi">1</td><td>1368450669324</td><td class="numi">8</td></tr>
+<tr class="passedodd"><td rowspan="6">org.artifactory.checksum.ChecksumsTypeTest</td><td><a href="#m21"><b>invalidMD5Checksum</b>  </a></td><td class="numi">1</td><td>1368450669333</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m22"><b>invalidSha1Checksum</b>  </a></td><td class="numi">1</td><td>1368450669334</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m23"><b>nullAndEmptyAreNotValidChecksums</b>  </a></td><td class="numi">1</td><td>1368450669335</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m24"><b>validMD5Checksum</b>  </a></td><td class="numi">1</td><td>1368450669336</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m25"><b>validSha1Checksum</b>  </a></td><td class="numi">1</td><td>1368450669337</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m26"><b>wrongLengthChecksums</b>  </a></td><td class="numi">1</td><td>1368450669338</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="6">org.artifactory.api.module.CustomModuleInfoUtilsTest</td><td><a href="#m27"><b>testArtifactModuleToModule</b>  </a></td><td class="numi">1</td><td>1368450669338</td><td class="numi">17</td></tr><tr class="passedeven"><td><a href="#m28"><b>testArtifactPathToModule</b>  </a></td><td class="numi">1</td><td>1368450669356</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m29"><b>testCustom1</b>  </a></td><td class="numi">1</td><td>1368450669359</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m30"><b>testCustom2</b>  </a></td><td class="numi">1</td><td>1368450669364</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m31"><b>testDescriptorPathToModule</b>  </a></td><td class="numi">1</td><td>1368450669368</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m32"><b>testDescriptorPathToModuleWithConstantExtension</b>  </a></td><td class="numi">1</td><td>1368450669372</td><td class="numi">2</td></tr>
+<tr class="passedodd"><td rowspan="2">org.artifactory.api.config.ExportSettingsTest</td><td><a href="#m33"><b>copyConstructor</b>  </a></td><td class="numi">1</td><td>1368450669374</td><td class="numi">16</td></tr><tr class="passedodd"><td><a href="#m34"><b>fileConstructor</b>  </a></td><td class="numi">1</td><td>1368450669391</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="3">org.artifactory.api.rest.artifact.FileListElementTest</td><td><a href="#m35"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450669392</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m36"><b>testFullConstructor</b>  </a></td><td class="numi">1</td><td>1368450669393</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m37"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450669394</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="3">org.artifactory.api.rest.artifact.FileListTest</td><td><a href="#m38"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450669395</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m39"><b>testFullConstructor</b>  </a></td><td class="numi">1</td><td>1368450669396</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m40"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450669399</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="1">org.artifactory.api.search.gavc.GavcSearchControlsTest</td><td><a href="#m41"><b>isWildcardsOnly</b>  </a></td><td class="numi">1</td><td>1368450669400</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="16">org.artifactory.api.module.GradleModuleInfoUtilsTest</td><td><a href="#m42"><b>testIntegration</b>  </a></td><td class="numi">1</td><td>1368450669401</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m43"><b>testIntegrationChecksum</b>  </a></td><td class="numi">1</td><td>1368450669405</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m44"><b>testIntegrationChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669409</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m45"><b>testIntegrationWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669413</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m46"><b>testRelease</b>  </a></td><td class="numi">1</td><td>1368450669417</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m47"><b>testReleaseChecksum</b>  </a></td><td class="numi">1</td><td>1368450669420</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m48"><b>testReleaseChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669423</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m49"><b>testReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669427</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m50"><b>testSuperLongIntegration</b>  </a></td><td class="numi">1</td><td>1368450669430</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m51"><b>testSuperLongIntegrationChecksum</b>  </a></td><td class="numi">1</td><td>1368450669434</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m52"><b>testSuperLongIntegrationChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669438</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m53"><b>testSuperLongIntegrationWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669442</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m54"><b>testSuperLongRelease</b>  </a></td><td class="numi">1</td><td>1368450669445</td><td class="numi">4</td></tr><tr class="passedodd"><td><a href="#m55"><b>testSuperLongReleaseChecksum</b>  </a></td><td class="numi">1</td><td>1368450669449</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m56"><b>testSuperLongReleaseChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669452</td><td class="numi">3</td></tr><tr class="passedodd"><td><a href="#m57"><b>testSuperLongReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669455</td><td class="numi">3</td></tr>
+<tr class="passedeven"><td rowspan="16">org.artifactory.api.module.IvyModuleInfoUtilsTest</td><td><a href="#m58"><b>testGradleStyle</b>  </a></td><td class="numi">1</td><td>1368450669459</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m59"><b>testLinkedInIvyModule</b>  </a></td><td class="numi">1</td><td>1368450669462</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m60"><b>testLowercaseSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669463</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m61"><b>testRelease</b>  </a></td><td class="numi">1</td><td>1368450669465</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m62"><b>testReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669468</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m63"><b>testSuperLongGradleStyle</b>  </a></td><td class="numi">1</td><td>1368450669469</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m64"><b>testSuperLongLinkedInIvyModule</b>  </a></td><td class="numi">1</td><td>1368450669473</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m65"><b>testSuperLongLowercaseSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669475</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m66"><b>testSuperLongRelease</b>  </a></td><td class="numi">1</td><td>1368450669477</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m67"><b>testSuperLongReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669480</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m68"><b>testSuperLongTimezoneSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669482</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m69"><b>testSuperLongUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669484</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m70"><b>testSuperLongUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669487</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m71"><b>testTimezoneSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669490</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m72"><b>testUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669491</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m73"><b>testUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669494</td><td class="numi">2</td></tr>
+<tr class="passedodd"><td rowspan="4">org.artifactory.api.mail.MailServerConfigurationTest</td><td><a href="#m74"><b>testDefaultMailServerDescriptorConstructor</b>  </a></td><td class="numi">1</td><td>1368450669497</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m75"><b>testMailServerDescriptorConstructor</b>  </a></td><td class="numi">1</td><td>1368450669499</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m76"><b>testMainConstructor</b>  </a></td><td class="numi">1</td><td>1368450669500</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m77"><b>testNullMailServerDescriptorConstructor</b>  </a></td><td class="numi">1</td><td>1368450669501</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="17">org.artifactory.api.module.Maven23ModuleInfoUtilsTest</td><td><a href="#m78"><b>testClassifierWithDots</b>  </a></td><td class="numi">1</td><td>1368450669501</td><td class="numi">25</td></tr><tr class="passedeven"><td><a href="#m79"><b>testNonUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669527</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m80"><b>testNonUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669530</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m81"><b>testRelease</b>  </a></td><td class="numi">1</td><td>1368450669532</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m82"><b>testReleaseChecksum</b>  </a></td><td class="numi">1</td><td>1368450669535</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m83"><b>testReleaseChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669537</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m84"><b>testReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669540</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m85"><b>testSuperLongNonUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669542</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m86"><b>testSuperLongNonUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669547</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m87"><b>testSuperLongRelease</b>  </a></td><td class="numi">1</td><td>1368450669551</td><td class="numi">4</td></tr><tr class="passedeven"><td><a href="#m88"><b>testSuperLongReleaseChecksum</b>  </a></td><td class="numi">1</td><td>1368450669555</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m89"><b>testSuperLongReleaseChecksumWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669558</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m90"><b>testSuperLongReleaseWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669561</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m91"><b>testSuperLongUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669563</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m92"><b>testSuperLongUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669567</td><td class="numi">3</td></tr><tr class="passedeven"><td><a href="#m93"><b>testUniqueSnapshot</b>  </a></td><td class="numi">1</td><td>1368450669570</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m94"><b>testUniqueSnapshotWithClassifier</b>  </a></td><td class="numi">1</td><td>1368450669572</td><td class="numi">2</td></tr>
+<tr class="passedodd"><td rowspan="2">org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest</td><td><a href="#m95"><b>testInvalidPaths</b>  </a></td><td class="numi">1</td><td>1368450669602</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m96"><b>testValidMetadataTest</b>  </a></td><td class="numi">1</td><td>1368450669604</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="5">org.artifactory.api.module.ModuleInfoBuilderTest</td><td><a href="#m97"><b>testCopyConstructor</b>  </a></td><td class="numi">1</td><td>1368450669606</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m98"><b>testCopyDefaultConstruct</b>  </a></td><td class="numi">1</td><td>1368450669606</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m99"><b>testNoParams</b>  </a></td><td class="numi">1</td><td>1368450669607</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m100"><b>testNullParams</b>  </a></td><td class="numi">1</td><td>1368450669608</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m101"><b>testValidParams</b>  </a></td><td class="numi">1</td><td>1368450669609</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="4">org.artifactory.api.module.ModuleInfoTest</td><td><a href="#m102"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450669609</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m103"><b>testFullInfo</b>  </a></td><td class="numi">1</td><td>1368450669610</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m104"><b>testMinimalInfo</b>  </a></td><td class="numi">1</td><td>1368450669611</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m105"><b>testPartialInfo</b>  </a></td><td class="numi">1</td><td>1368450669611</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="9">org.artifactory.api.module.ModuleInfoUtilsTest</td><td><a href="#m106"><b>constructArtifactPathWithInvalidModuleInfo</b>  </a></td><td class="numi">1</td><td>1368450669612</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m107"><b>constructArtifactPathWithNullModuleInfo</b>  </a></td><td class="numi">1</td><td>1368450669613</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m108"><b>constructArtifactPathWithNullRepoLayout</b>  </a></td><td class="numi">1</td><td>1368450669615</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m109"><b>moduleInfoFromArtifactPathWithBlankItemPath</b>  </a></td><td class="numi">1</td><td>1368450669616</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m110"><b>moduleInfoFromArtifactPathWithNullArtifactPath</b>  </a></td><td class="numi">1</td><td>1368450669617</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m111"><b>moduleInfoFromArtifactPathWithNullRepoLayout</b>  </a></td><td class="numi">1</td><td>1368450669618</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m112"><b>moduleInfoFromDescriptorPathWithBlankItemPath</b>  </a></td><td class="numi">1</td><td>1368450669619</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m113"><b>moduleInfoFromDescriptorPathWithNullArtifactPath</b>  </a></td><td class="numi">1</td><td>1368450669620</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m114"><b>moduleInfoFromDescriptorPathWithNullRepoLayout</b>  </a></td><td class="numi">1</td><td>1368450669621</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="4">org.artifactory.api.common.MultiStatusHolderTest</td><td><a href="#m115"><b>mergeTwoStatusHolders</b>  </a></td><td class="numi">1</td><td>1368450669622</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m116"><b>mergeWithEmptyStatusHolder</b>  </a></td><td class="numi">1</td><td>1368450669624</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m117"><b>mergeWithErrorOverride</b>  </a></td><td class="numi">1</td><td>1368450669625</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m118"><b>mergeWithSingleStatusHolder</b>  </a></td><td class="numi">1</td><td>1368450669626</td><td class="numi">11</td></tr>
+<tr class="passedeven"><td rowspan="5">org.artifactory.api.mime.NamingUtilsTest</td><td><a href="#m119"><b>testIsMetadata</b>  </a></td><td class="numi">1</td><td>1368450669660</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m120"><b>testIsMetadataChecksum</b>  </a></td><td class="numi">1</td><td>1368450669662</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m121"><b>testIsProperties</b>  </a></td><td class="numi">1</td><td>1368450669663</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m122"><b>testIsViewable</b>  </a></td><td class="numi">1</td><td>1368450669664</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m123"><b>testJavaSourceNameFromClassName</b>  </a></td><td class="numi">1</td><td>1368450669665</td><td class="numi">3</td></tr>
+<tr class="passedodd"><td rowspan="9">org.artifactory.addon.layouts.translate.PathTranslationHelperTest</td><td><a href="#m124"><b>testGradleToGradle</b>  </a></td><td class="numi">1</td><td>1368450669692</td><td class="numi">17</td></tr><tr class="passedodd"><td><a href="#m125"><b>testGradleToIvy</b>  </a></td><td class="numi">1</td><td>1368450669710</td><td class="numi">17</td></tr><tr class="passedodd"><td><a href="#m126"><b>testGradleToMaven</b>  </a></td><td class="numi">1</td><td>1368450669728</td><td class="numi">15</td></tr><tr class="passedodd"><td><a href="#m127"><b>testIvyToGradle</b>  </a></td><td class="numi">1</td><td>1368450669744</td><td class="numi">16</td></tr><tr class="passedodd"><td><a href="#m128"><b>testIvyToIvy</b>  </a></td><td class="numi">1</td><td>1368450669761</td><td class="numi">15</td></tr><tr class="passedodd"><td><a href="#m129"><b>testIvyToMaven</b>  </a></td><td class="numi">1</td><td>1368450669777</td><td class="numi">13</td></tr><tr class="passedodd"><td><a href="#m130"><b>testMavenToGradle</b>  </a></td><td class="numi">1</td><td>1368450669792</td><td class="numi">11</td></tr><tr class="passedodd"><td><a href="#m131"><b>testMavenToIvy</b>  </a></td><td class="numi">1</td><td>1368450669804</td><td class="numi">12</td></tr><tr class="passedodd"><td><a href="#m132"><b>testMavenToMaven</b>  </a></td><td class="numi">1</td><td>1368450669817</td><td class="numi">11</td></tr>
+<tr class="passedeven"><td rowspan="5">org.artifactory.api.rest.search.result.PatternResultFileSetTest</td><td><a href="#m133"><b>testAddMethod</b>  </a></td><td class="numi">1</td><td>1368450669829</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m134"><b>testDefaultConstructor</b>  </a></td><td class="numi">1</td><td>1368450669830</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m135"><b>testFullConstructor</b>  </a></td><td class="numi">1</td><td>1368450669831</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m136"><b>testNoFilesConstructor</b>  </a></td><td class="numi">1</td><td>1368450669832</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m137"><b>testSetters</b>  </a></td><td class="numi">1</td><td>1368450669832</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.api.search.property.PropertySearchControlsTest</td><td><a href="#m138"><b>isWildcardsOnly</b>  </a></td><td class="numi">1</td><td>1368450669833</td><td class="numi">13</td></tr>
+<tr class="passedeven"><td rowspan="3">org.artifactory.repo.remote.browse.RemoteItemTest</td><td><a href="#m139"><b>getNameFromDirectory</b>  </a></td><td class="numi">1</td><td>1368450669846</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m140"><b>getNameFromFile</b>  </a></td><td class="numi">1</td><td>1368450669848</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m141"><b>nullUrl</b>  </a></td><td class="numi">1</td><td>1368450669848</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.api.search.SearchControlsBaseTest</td><td><a href="#m142"><b>isWildcardsOnly</b>  </a></td><td class="numi">1</td><td>1368450669849</td><td class="numi">193</td></tr>
+<tr class="passedeven"><td rowspan="5">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest</td><td><a href="#m143"><b>testSpringBundlesExternal</b>  </a></td><td class="numi">1</td><td>1368450670042</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m144"><b>testSpringBundlesMilestone</b>  </a></td><td class="numi">1</td><td>1368450670044</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m145"><b>testSpringBundlesRelease</b>  </a></td><td class="numi">1</td><td>1368450670045</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m146"><b>testSpringBundlesSnapshot1</b>  </a></td><td class="numi">1</td><td>1368450670047</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m147"><b>testSpringBundlesSnapshot2</b>  </a></td><td class="numi">1</td><td>1368450670048</td><td class="numi">1</td></tr>
+<tr class="passedodd"><td rowspan="5">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest</td><td><a href="#m148"><b>testSpringArtifacts</b>  </a></td><td class="numi">1</td><td>1368450670050</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m149"><b>testSpringBundles</b>  </a></td><td class="numi">1</td><td>1368450670051</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m150"><b>testSpringDistMilestone</b>  </a></td><td class="numi">1</td><td>1368450670052</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m151"><b>testSpringDistRelease</b>  </a></td><td class="numi">1</td><td>1368450670053</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m152"><b>testSpringDistSnapshot</b>  </a></td><td class="numi">1</td><td>1368450670054</td><td class="numi">1</td></tr>
+</table>
+<h1>Command line test</h1>
+<h2 id="m1">org.artifactory.api.common.MultiStatusHolderTest:mergeWithErrorOverride</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m2">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m3">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongIntegrationChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m4">org.artifactory.api.module.CustomModuleInfoUtilsTest:testArtifactPathToModule</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m5">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongIntegrationWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m6">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongIntegrationChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m7">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testNonUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m8">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m9">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m10">org.artifactory.api.config.ExportSettingsTest:copyConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m11">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest:testSpringDistMilestone</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m12">org.artifactory.api.module.ModuleInfoTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m13">org.artifactory.api.module.ModuleInfoBuilderTest:testCopyDefaultConstruct</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m14">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest:testSpringBundles</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m15">org.artifactory.api.module.IvyModuleInfoUtilsTest:testRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m16">org.artifactory.checksum.ChecksumsTypeTest:wrongLengthChecksums</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m17">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest:testSpringBundlesExternal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m18">org.artifactory.api.module.GradleModuleInfoUtilsTest:testReleaseChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m19">org.artifactory.api.config.ExportSettingsTest:fileConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m20">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testIvyToGradle</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m21">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m22">org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest:testInvalidPaths</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m23">org.artifactory.api.rest.artifact.FileListTest:testFullConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m24">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongTimezoneSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m25">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromArtifactPathWithBlankItemPath</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a blank item path.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithBlankItemPath(ModuleInfoUtilsTest.java:65)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m26">org.artifactory.api.rest.artifact.FileListTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m27">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest:testSpringDistRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m28">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongLowercaseSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m29">org.artifactory.api.rest.artifact.FileListTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m30">org.artifactory.checksum.ChecksumInfoTest:validChecksumWithDifferentCaseNormalizationTest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m31">org.artifactory.api.module.ModuleInfoTest:testMinimalInfo</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m32">org.artifactory.api.module.GradleModuleInfoUtilsTest:testIntegrationChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m33">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongReleaseChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m34">org.artifactory.api.module.ModuleInfoTest:testFullInfo</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m35">org.artifactory.api.module.ModuleInfoUtilsTest:constructArtifactPathWithInvalidModuleInfo</h2>
+<div style="padding-left:3em">
+<p>Unable to construct a path from an invalid module info object.</p>
+org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:113)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithInvalidModuleInfo(ModuleInfoUtilsTest.java:40)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m36">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongReleaseChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m37">org.artifactory.api.module.IvyModuleInfoUtilsTest:testLowercaseSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m38">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testMavenToGradle</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m39">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongNonUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m40">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest:testSpringArtifacts</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m41">org.artifactory.api.module.ModuleInfoUtilsTest:constructArtifactPathWithNullModuleInfo</h2>
+<div style="padding-left:3em">
+<p>Unable to construct a path from a null module info object.</p>
+org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:110)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullModuleInfo(ModuleInfoUtilsTest.java:34)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m42">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m43">org.artifactory.api.mime.NamingUtilsTest:testIsMetadataChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m44">org.artifactory.api.module.ModuleInfoTest:testPartialInfo</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m45">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testReleaseChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m46">org.artifactory.checksum.ChecksumInfoTest:matchDifferentOriginalAndActual</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m47">org.artifactory.api.common.MultiStatusHolderTest:mergeTwoStatusHolders</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m48">org.artifactory.api.module.IvyModuleInfoUtilsTest:testLinkedInIvyModule</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m49">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromArtifactPathWithNullRepoLayout</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a null repository layout.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:77)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m50">org.artifactory.api.mime.NamingUtilsTest:testIsProperties</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m51">org.artifactory.api.search.SearchControlsBaseTest:isWildcardsOnly</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m52">org.artifactory.api.rest.search.result.PatternResultFileSetTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m53">org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest:testSpringDistSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m54">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest:testSpringBundlesSnapshot1</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m55">org.artifactory.api.rest.search.result.PatternResultFileSetTest:testAddMethod</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m56">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testNonUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m57">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongReleaseChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m58">org.artifactory.api.mail.MailServerConfigurationTest:testMailServerDescriptorConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m59">org.artifactory.api.module.CustomModuleInfoUtilsTest:testArtifactModuleToModule</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m60">org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest:testValidMetadataTest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m61">org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest:testInvalidPaths</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m62">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testIvyToIvy</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m63">org.artifactory.api.module.IvyModuleInfoUtilsTest:testReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m64">org.artifactory.api.mail.MailServerConfigurationTest:testNullMailServerDescriptorConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m65">org.artifactory.repo.remote.browse.RemoteItemTest:getNameFromFile</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m66">org.artifactory.api.module.GradleModuleInfoUtilsTest:testReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m67">org.artifactory.api.module.ModuleInfoUtilsTest:constructArtifactPathWithNullRepoLayout</h2>
+<div style="padding-left:3em">
+<p>Unable to construct a path from a null repository layout.</p>
+org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:116)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:46)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m68">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromArtifactPathWithNullArtifactPath</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a blank item path.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullArtifactPath(ModuleInfoUtilsTest.java:53)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m69">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongLinkedInIvyModule</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m70">org.artifactory.checksum.ChecksumsTypeTest:invalidSha1Checksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m71">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m72">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m73">org.artifactory.api.module.ModuleInfoBuilderTest:testValidParams</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m74">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongIntegration</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m75">org.artifactory.api.module.GradleModuleInfoUtilsTest:testIntegrationChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m76">org.artifactory.api.search.archive.ArchiveSearchControlsTest:isWildcardsOnly</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m77">org.artifactory.api.mime.NamingUtilsTest:testIsViewable</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m78">org.artifactory.api.rest.artifact.FileListElementTest:testDefaultConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m79">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testGradleToIvy</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m80">org.artifactory.api.search.artifact.ChecksumSearchControlsTest:isWildcardsOnly</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m81">org.artifactory.api.mime.NamingUtilsTest:testJavaSourceNameFromClassName</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m82">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest:testSpringBundlesRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m83">org.artifactory.checksum.ChecksumInfoTest:matchNullOriginalAndActual</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m84">org.artifactory.api.mime.NamingUtilsTest:testIsMetadata</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m85">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testIvyToMaven</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m86">org.artifactory.api.module.GradleModuleInfoUtilsTest:testReleaseChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m87">org.artifactory.checksum.ChecksumsInfoTest:addChecksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m88">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testMavenToMaven</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m89">org.artifactory.api.module.GradleModuleInfoUtilsTest:testIntegration</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m90">org.artifactory.checksum.ChecksumsTypeTest:nullAndEmptyAreNotValidChecksums</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m91">org.artifactory.checksum.ChecksumInfoTest:matchIfOriginalIsTruetedAndActualIsSet</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m92">org.artifactory.api.rest.artifact.FileListElementTest:testFullConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m93">org.artifactory.checksum.ChecksumInfoTest:notValidChecksumNormalizationTest</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m94">org.artifactory.api.module.GradleModuleInfoUtilsTest:testRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m95">org.artifactory.checksum.ChecksumsTypeTest:invalidMD5Checksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m96">org.artifactory.api.module.IvyModuleInfoUtilsTest:testTimezoneSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m97">org.artifactory.api.module.CustomModuleInfoUtilsTest:testDescriptorPathToModule</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m98">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest:testSpringBundlesSnapshot2</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m99">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongNonUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m100">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromDescriptorPathWithBlankItemPath</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a blank item path.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithBlankItemPath(ModuleInfoUtilsTest.java:71)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m101">org.artifactory.checksum.ChecksumInfoTest:wrongMd5Actual</h2>
+<div style="padding-left:3em">
+<p>Actual checksum invalid f : 12345678901234567890123456789012 for type MD5</p>
+org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+<br/>at org.artifactory.checksum.ChecksumInfoTest.wrongMd5Actual(ChecksumInfoTest.java:48)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m102">org.artifactory.checksum.ChecksumInfoTest:matchNullOriginal</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m103">org.artifactory.api.search.property.PropertySearchControlsTest:isWildcardsOnly</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m104">org.artifactory.api.rest.search.result.PatternResultFileSetTest:testFullConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m105">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testClassifierWithDots</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m106">org.artifactory.api.module.SpringIvyModuleInfoUtilsTest:testSpringBundlesMilestone</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m107">org.artifactory.checksum.ChecksumInfoTest:trustedOriginalShouldReturnActual</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m108">org.artifactory.api.search.artifact.ArtifactSearchControlsTest:wildcardsOnlyControls</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m109">org.artifactory.checksum.ChecksumsInfoTest:copyConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m110">org.artifactory.api.search.artifact.ArtifactSearchControlsTest:emptyControls</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m111">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m112">org.artifactory.api.mail.MailServerConfigurationTest:testDefaultMailServerDescriptorConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m113">org.artifactory.api.mail.MailServerConfigurationTest:testMainConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m114">org.artifactory.api.module.CustomModuleInfoUtilsTest:testDescriptorPathToModuleWithConstantExtension</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m115">org.artifactory.api.rest.search.result.PatternResultFileSetTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m116">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongGradleStyle</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m117">org.artifactory.api.module.ModuleInfoBuilderTest:testNoParams</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m118">org.artifactory.api.module.IvyModuleInfoUtilsTest:testUniqueSnapshotWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m119">org.artifactory.api.common.MultiStatusHolderTest:mergeWithEmptyStatusHolder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m120">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongReleaseChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m121">org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest:testValidSha1Test</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m122">org.artifactory.api.search.gavc.GavcSearchControlsTest:isWildcardsOnly</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m123">org.artifactory.api.module.CustomModuleInfoUtilsTest:testCustom2</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m124">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m125">org.artifactory.api.module.GradleModuleInfoUtilsTest:testIntegrationWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m126">org.artifactory.api.module.IvyModuleInfoUtilsTest:testUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m127">org.artifactory.api.module.IvyModuleInfoUtilsTest:testGradleStyle</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m128">org.artifactory.repo.remote.browse.RemoteItemTest:nullUrl</h2>
+<div style="padding-left:3em">
+<p>URL cannot be null</p>
+org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:58)
+<br/>at org.artifactory.repo.remote.browse.RemoteItem.&lt;init&gt;(RemoteItem.java:53)
+<br/>at org.artifactory.repo.remote.browse.RemoteItemTest.nullUrl(RemoteItemTest.java:34)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m129">org.artifactory.api.module.CustomModuleInfoUtilsTest:testCustom1</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m130">org.artifactory.api.rest.search.result.PatternResultFileSetTest:testNoFilesConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m131">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testGradleToMaven</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m132">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m133">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromDescriptorPathWithNullArtifactPath</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a blank item path.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullArtifactPath(ModuleInfoUtilsTest.java:59)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m134">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testRelease</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m135">org.artifactory.repo.remote.browse.RemoteItemTest:getNameFromDirectory</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m136">org.artifactory.api.module.IvyModuleInfoUtilsTest:testSuperLongUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m137">org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest:testValidMd5Test</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m138">org.artifactory.api.module.ModuleInfoBuilderTest:testNullParams</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m139">org.artifactory.checksum.ChecksumInfoTest:matchNullActual</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m140">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testSuperLongUniqueSnapshot</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m141">org.artifactory.checksum.ChecksumsTypeTest:validMD5Checksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m142">org.artifactory.api.module.Maven23ModuleInfoUtilsTest:testReleaseChecksumWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m143">org.artifactory.api.common.MultiStatusHolderTest:mergeWithSingleStatusHolder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m144">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testGradleToGradle</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m145">org.artifactory.api.module.ModuleInfoUtilsTest:moduleInfoFromDescriptorPathWithNullRepoLayout</h2>
+<div style="padding-left:3em">
+<p>Cannot construct a module info object from a null repository layout.</p>
+org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+<br/>at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+<br/>at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullRepoLayout(ModuleInfoUtilsTest.java:83)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m146">org.artifactory.api.module.ModuleInfoBuilderTest:testCopyConstructor</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m147">org.artifactory.api.module.GradleModuleInfoUtilsTest:testSuperLongReleaseWithClassifier</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m148">org.artifactory.checksum.ChecksumInfoTest:wrongSha1Actual</h2>
+<div style="padding-left:3em">
+<p>Actual checksum invalid f : 1234567890123456789012345678901234567890 for type SHA-1</p>
+org.artifactory.checksum.ChecksumInfo.&lt;init&gt;(ChecksumInfo.java:45)
+<br/>at org.artifactory.checksum.ChecksumInfoTest.wrongSha1Actual(ChecksumInfoTest.java:43)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m149">org.artifactory.checksum.ChecksumInfoTest:matchSameOriginalAndActual</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m150">org.artifactory.api.rest.artifact.FileListElementTest:testSetters</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m151">org.artifactory.checksum.ChecksumsTypeTest:validSha1Checksum</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m152">org.artifactory.addon.layouts.translate.PathTranslationHelperTest:testMavenToIvy</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+</body></html>

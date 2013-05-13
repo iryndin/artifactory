@@ -1,0 +1,1814 @@
+<html>
+<head>
+<title>TestNG:  Command line test</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>Command line test</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>125/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Mon May 13 13:11:29 GMT 2013</td>
+</tr>
+<tr><td>Total time:</td><td>1 seconds (1732 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumberArtifactId()'><b>artifactWithAlphaNumberArtifactId</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: artifactId1231</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumberArtifactId()'><b>artifactWithAlphaNumberArtifactId</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: 1213artifactId</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumberArtifactId()'><b>artifactWithAlphaNumberArtifactId</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: 1213artifactId1231</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumericClassifier()'><b>artifactWithAlphaNumericClassifier</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: classifier123</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumericClassifier()'><b>artifactWithAlphaNumericClassifier</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: 123classifier</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithAlphaNumericVersion()'><b>artifactWithAlphaNumericVersion</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: 1.0alpha</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithClassifier()'><b>artifactWithClassifier</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithLongExtension()'><b>artifactWithLongExtension</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithMultipleArtifactIds()'><b>artifactWithMultipleArtifactIds</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: artifactId-artifactId</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithMultipleArtifactIds()'><b>artifactWithMultipleArtifactIds</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: artifactId2-artifactId</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithMultipleArtifactIds()'><b>artifactWithMultipleArtifactIds</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: artifactId-artifactId2</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithMultipleArtifactIds()'><b>artifactWithMultipleArtifactIds</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: artifactId2-artifactId2</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithMultipleArtifactIds()'><b>artifactWithMultipleArtifactIds</b><br>Test class: org.artifactory.maven.MavenNamingTest<br>Parameters: 2artifactId-artifactId</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithNoClassifier()'><b>artifactWithNoClassifier</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithNumericArtifactId()'><b>artifactWithNumericArtifactId</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithNumericClassifier()'><b>artifactWithNumericClassifier</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithPath()'><b>artifactWithPath</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.artifactWithShortExtension()'><b>artifactWithShortExtension</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.availableAlgorithms()'><b>availableAlgorithms</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenPomBuilderTest.buildSimple()'><b>buildSimple</b><br>Test class: org.artifactory.maven.MavenPomBuilderTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenPomBuilderTest@66159148</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.buildSnapshotMavenMetadataWithM3Metadata()'><b>buildSnapshotMavenMetadataWithM3Metadata</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.buildSnapshotMavenMetadataWithoutM3Metadata()'><b>buildSnapshotMavenMetadataWithoutM3Metadata</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.bytesToReadableFormat()'><b>bytesToReadableFormat</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.convertBytesToGb()'><b>convertBytesToGb</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.convertBytesToMb()'><b>convertBytesToMb</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.encrypt()'><b>encrypt</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.encryptDecrypt()'><b>encryptDecrypt</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.encryptDecryptSymmetric()'><b>encryptDecryptSymmetric</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.encryptSymmetric()'><b>encryptSymmetric</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.escapeEncryptedPassword()'><b>escapeEncryptedPassword</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.build.BuildInfoIOTest.generateFromObject()'><b>generateFromObject</b><br>Test class: org.artifactory.build.BuildInfoIOTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.build.BuildInfoIOTest@3a57e86</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.generateKeyPair()'><b>generateKeyPair</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenServiceImplTest.generateMavenSettings()'><b>generateMavenSettings</b><br>Test class: org.artifactory.maven.MavenServiceImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenServiceImplTest@2d7f2fae</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.generateSecretKey()'><b>generateSecretKey</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.getArtifactInfo()'><b>getArtifactInfo</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.getArtifactInfoJar()'><b>getArtifactInfoJar</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.getArtifactInfoPom()'><b>getArtifactInfoPom</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalBackslash()'><b>illegalBackslash</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;\&apos; is not a valid name character: back\slash.zors
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalBackslash(PathValidatorTest.java:72)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1245715615", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1245715615'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;\&apos; is not a valid name character: back\slash.zors
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalBackslash(PathValidatorTest.java:72)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalCarretLeft()'><b>illegalCarretLeft</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&lt;&apos; is not a valid name character: hibla&lt;sdf
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalCarretLeft(PathValidatorTest.java:62)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace924266702", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace924266702'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&lt;&apos; is not a valid name character: hibla&lt;sdf
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalCarretLeft(PathValidatorTest.java:62)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalCarretRight()'><b>illegalCarretRight</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&gt;&apos; is not a valid name character: path/to&gt;file.jar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalCarretRight(PathValidatorTest.java:67)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1401241763", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1401241763'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&gt;&apos; is not a valid name character: path/to&gt;file.jar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalCarretRight(PathValidatorTest.java:67)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalColon()'><b>illegalColon</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;:&apos; is not a valid name character: c/olo:n/repo/path
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalColon(PathValidatorTest.java:97)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1364637739", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1364637739'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;:&apos; is not a valid name character: c/olo:n/repo/path
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalColon(PathValidatorTest.java:97)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalPipe()'><b>illegalPipe</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;|&apos; is not a valid name character: sup|r|mario
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalPipe(PathValidatorTest.java:87)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace341129413", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace341129413'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;|&apos; is not a valid name character: sup|r|mario
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalPipe(PathValidatorTest.java:87)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalQuestionMark()'><b>illegalQuestionMark</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;?&apos; is not a valid name character: riddle/me_this?.tar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalQuestionMark(PathValidatorTest.java:77)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1728190448", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1728190448'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;?&apos; is not a valid name character: riddle/me_this?.tar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalQuestionMark(PathValidatorTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalQuotationMark()'><b>illegalQuotationMark</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&quot;&apos; is not a valid name character: make&quot;believe.hello
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalQuotationMark(PathValidatorTest.java:82)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace980533861", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace980533861'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;&quot;&apos; is not a valid name character: make&quot;believe.hello
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalQuotationMark(PathValidatorTest.java:82)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.illegalStar()'><b>illegalStar</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;*&apos; is not a valid name character: the/universe/has/lots/of/*
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalStar(PathValidatorTest.java:92)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace43094749", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace43094749'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;*&apos; is not a valid name character: the/universe/has/lots/of/*
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.illegalStar(PathValidatorTest.java:92)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.inputStreamToMavenMetadata()'><b>inputStreamToMavenMetadata</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidAllSpaces()'><b>invalidAllSpaces</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot be blank:        
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:51)
+	at org.artifactory.util.PathValidatorTest.invalidAllSpaces(PathValidatorTest.java:57)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace591457404", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace591457404'><pre>java.nio.file.InvalidPathException: Path cannot be blank:        
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:51)
+	at org.artifactory.util.PathValidatorTest.invalidAllSpaces(PathValidatorTest.java:57)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidDot()'><b>invalidDot</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: blabla/.
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidDot(PathValidatorTest.java:47)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace388177239", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace388177239'><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: blabla/.
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidDot(PathValidatorTest.java:47)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidDotDot()'><b>invalidDotDot</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: dot/../dot/file.jar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidDotDot(PathValidatorTest.java:52)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace39536287", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace39536287'><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: dot/../dot/file.jar
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidDotDot(PathValidatorTest.java:52)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleAmpersand()'><b>invalidSingleAmpersand</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot have single ampersand: &amp;
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+	at org.artifactory.util.PathValidatorTest.invalidSingleAmpersand(PathValidatorTest.java:27)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace913928686", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace913928686'><pre>java.nio.file.InvalidPathException: Path cannot have single ampersand: &amp;
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+	at org.artifactory.util.PathValidatorTest.invalidSingleAmpersand(PathValidatorTest.java:27)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleColon()'><b>invalidSingleColon</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Invalid path. &apos;:&apos; is not a valid name character: :
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.invalidSingleColon(PathValidatorTest.java:22)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1596382258", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1596382258'><pre>java.nio.file.InvalidPathException: Invalid path. &apos;:&apos; is not a valid name character: :
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:109)
+	at org.artifactory.util.PathValidatorTest.invalidSingleColon(PathValidatorTest.java:22)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleDot()'><b>invalidSingleDot</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: .
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidSingleDot(PathValidatorTest.java:37)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1883408235", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1883408235'><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: .
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidSingleDot(PathValidatorTest.java:37)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleDotDot()'><b>invalidSingleDotDot</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: ..
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidSingleDotDot(PathValidatorTest.java:42)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace533248865", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace533248865'><pre>java.nio.file.InvalidPathException: Path element cannot end with a dot: ..
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:74)
+	at org.artifactory.util.PathValidatorTest.invalidSingleDotDot(PathValidatorTest.java:42)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleSlash()'><b>invalidSingleSlash</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot contain double slash &apos;//&apos;: /
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:70)
+	at org.artifactory.util.PathValidatorTest.invalidSingleSlash(PathValidatorTest.java:17)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace864415124", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace864415124'><pre>java.nio.file.InvalidPathException: Path cannot contain double slash &apos;//&apos;: /
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:70)
+	at org.artifactory.util.PathValidatorTest.invalidSingleSlash(PathValidatorTest.java:17)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSingleTokenAmpersand()'><b>invalidSingleTokenAmpersand</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot have single ampersand: bbb/&amp;
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+	at org.artifactory.util.PathValidatorTest.invalidSingleTokenAmpersand(PathValidatorTest.java:32)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace498117113", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace498117113'><pre>java.nio.file.InvalidPathException: Path cannot have single ampersand: bbb/&amp;
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:76)
+	at org.artifactory.util.PathValidatorTest.invalidSingleTokenAmpersand(PathValidatorTest.java:32)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSpaceAfterSlash()'><b>invalidSpaceAfterSlash</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot have a space after a slash: blabla/hello/      
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:96)
+	at org.artifactory.util.PathValidatorTest.invalidSpaceAfterSlash(PathValidatorTest.java:107)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace963062185", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace963062185'><pre>java.nio.file.InvalidPathException: Path cannot have a space after a slash: blabla/hello/      
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:96)
+	at org.artifactory.util.PathValidatorTest.invalidSpaceAfterSlash(PathValidatorTest.java:107)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.invalidSpaceBeforeSlash()'><b>invalidSpaceBeforeSlash</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td><div><pre>java.nio.file.InvalidPathException: Path cannot have a slash after a space:  shsh/gaga /hdt
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:72)
+	at org.artifactory.util.PathValidatorTest.invalidSpaceBeforeSlash(PathValidatorTest.java:102)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace601895856", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace601895856'><pre>java.nio.file.InvalidPathException: Path cannot have a slash after a space:  shsh/gaga /hdt
+	at org.artifactory.util.PathValidator.validate(PathValidator.java:72)
+	at org.artifactory.util.PathValidatorTest.invalidSpaceBeforeSlash(PathValidatorTest.java:102)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.isEncrypted()'><b>isEncrypted</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.isMavenMetadataChecksum()'><b>isMavenMetadataChecksum</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.isMetadata()'><b>isMetadata</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.isNonUniqueSnapshotVersion()'><b>isNonUniqueSnapshotVersion</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.isSnapshotMavenMetadata()'><b>isSnapshotMavenMetadata</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.common.IvyNamingTest.ivyFileName()'><b>ivyFileName</b><br>Test class: org.artifactory.common.IvyNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.common.IvyNamingTest@17e2c93c</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.locateExistingEntry()'><b>locateExistingEntry</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.locateMissingEntry()'><b>locateMissingEntry</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.mavenMetadataToString()'><b>mavenMetadataToString</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.mavenModelToArtifactInfo()'><b>mavenModelToArtifactInfo</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.mavenModelToArtifactInfoGroupIdInParent()'><b>mavenModelToArtifactInfoGroupIdInParent</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.nonValidMetadataString()'><b>nonValidMetadataString</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td><div><pre>java.io.IOException: Failed to parse metadata: start tag unexpected character &lt; (position: START_DOCUMENT seen &lt;metadatablabla\n&lt;... @2:2) 
+	at org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:151)
+	at org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:125)
+	at org.artifactory.maven.MavenModelUtilsTest.nonValidMetadataString(MavenModelUtilsTest.java:113)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1921760866", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1921760866'><pre>java.io.IOException: Failed to parse metadata: start tag unexpected character &lt; (position: START_DOCUMENT seen &lt;metadatablabla\n&lt;... @2:2) 
+	at org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:151)
+	at org.artifactory.maven.MavenModelUtils.toMavenMetadata(MavenModelUtils.java:125)
+	at org.artifactory.maven.MavenModelUtilsTest.nonValidMetadataString(MavenModelUtilsTest.java:113)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.pathWithCompositeFileExtension()'><b>pathWithCompositeFileExtension</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.util.StringInputStreamTest.readMultiLineString()'><b>readMultiLineString</b><br>Test class: org.artifactory.util.StringInputStreamTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.StringInputStreamTest@66f95a5a</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.readNewMaven3MetadataFormat()'><b>readNewMaven3MetadataFormat</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.util.StringInputStreamTest.readOneLineString()'><b>readOneLineString</b><br>Test class: org.artifactory.util.StringInputStreamTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.StringInputStreamTest@66f95a5a</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.readableFormatToBytes()'><b>readableFormatToBytes</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.restoreKeysFromBase64()'><b>restoreKeysFromBase64</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.restorePrivateKey()'><b>restorePrivateKey</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.revertGbToBytes()'><b>revertGbToBytes</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.storage.StorageUnitTest.revertMbToBytes()'><b>revertMbToBytes</b><br>Test class: org.artifactory.storage.StorageUnitTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.StorageUnitTest@11f54254</td></tr>
+<tr>
+<td title='org.artifactory.request.ArtifactoryResponseTest.sendErroChangesState()'><b>sendErroChangesState</b><br>Test class: org.artifactory.request.ArtifactoryResponseTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.request.ArtifactoryResponseTest@5b5e4f78</td></tr>
+<tr>
+<td title='org.artifactory.util.TimeUnitFormatTest.stillNanos()'><b>stillNanos</b><br>Test class: org.artifactory.util.TimeUnitFormatTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.TimeUnitFormatTest@52ba2221</td></tr>
+<tr>
+<td title='org.artifactory.addon.AddonTypeTest.testAddonsDisplayOrdinal()'><b>testAddonsDisplayOrdinal</b><br>Test class: org.artifactory.addon.AddonTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.addon.AddonTypeTest@23fdf653</td></tr>
+<tr>
+<td title='org.artifactory.security.CustomizedEncryptedPasswordPrefixTest.testCustomizedEncryptedPasswordPrefixSurroundingCharacters()'><b>testCustomizedEncryptedPasswordPrefixSurroundingCharacters</b><br>Test class: org.artifactory.security.CustomizedEncryptedPasswordPrefixTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CustomizedEncryptedPasswordPrefixTest@244071d</td></tr>
+<tr>
+<td title='org.artifactory.security.CustomizedEncryptedPasswordPrefixTest.testCustomizedEncryptedPasswordPrefixWithInvalidSurroundingCharacters()'><b>testCustomizedEncryptedPasswordPrefixWithInvalidSurroundingCharacters</b><br>Test class: org.artifactory.security.CustomizedEncryptedPasswordPrefixTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CustomizedEncryptedPasswordPrefixTest@244071d</td></tr>
+<tr>
+<td title='org.artifactory.security.GroupConfigurationImplTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.security.GroupConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.GroupConfigurationImplTest@566749c5</td></tr>
+<tr>
+<td title='org.artifactory.repo.RepoDetailsTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.repo.RepoDetailsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.RepoDetailsTest@6abbfce0</td></tr>
+<tr>
+<td title='org.artifactory.security.UserConfigurationImplTest.testDefaultConstructor()'><b>testDefaultConstructor</b><br>Test class: org.artifactory.security.UserConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.UserConfigurationImplTest@79135fd7</td></tr>
+<tr>
+<td title='org.artifactory.security.PermissionTargetConfigurationImplTest.testDefaultValues()'><b>testDefaultValues</b><br>Test class: org.artifactory.security.PermissionTargetConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.PermissionTargetConfigurationImplTest@7636d59a</td></tr>
+<tr>
+<td title='org.artifactory.security.PrincipalConfigurationImplTest.testDefaultValues()'><b>testDefaultValues</b><br>Test class: org.artifactory.security.PrincipalConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.PrincipalConfigurationImplTest@7c9aff86</td></tr>
+<tr>
+<td title='org.artifactory.security.SecurityEntityListItemTest.testDefaultValues()'><b>testDefaultValues</b><br>Test class: org.artifactory.security.SecurityEntityListItemTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.SecurityEntityListItemTest@7cd5a201</td></tr>
+<tr>
+<td title='org.artifactory.repo.RepoDetailsTypeTest.testDisplayName()'><b>testDisplayName</b><br>Test class: org.artifactory.repo.RepoDetailsTypeTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.RepoDetailsTypeTest@744caec9</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.testExtractTarFile()'><b>testExtractTarFile</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.testExtractTarGzFile()'><b>testExtractTarGzFile</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.testExtractTgzFile()'><b>testExtractTgzFile</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.testExtractZipFile()'><b>testExtractZipFile</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testIsClientOrServerPom()'><b>testIsClientOrServerPom</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testIsNonUniqueSnapshotFilePath()'><b>testIsNonUniqueSnapshotFilePath</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testIsVersionUniqueSnapshot()'><b>testIsVersionUniqueSnapshot</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.repo.RepoDetailsTest.testLocalOrVirtualConstructor()'><b>testLocalOrVirtualConstructor</b><br>Test class: org.artifactory.repo.RepoDetailsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.RepoDetailsTest@6abbfce0</td></tr>
+<tr>
+<td title='org.artifactory.repo.RepoDetailsTest.testRemoteConstructor()'><b>testRemoteConstructor</b><br>Test class: org.artifactory.repo.RepoDetailsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.RepoDetailsTest@6abbfce0</td></tr>
+<tr>
+<td title='org.artifactory.security.GroupConfigurationImplTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.security.GroupConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.GroupConfigurationImplTest@566749c5</td></tr>
+<tr>
+<td title='org.artifactory.security.PermissionTargetConfigurationImplTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.security.PermissionTargetConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.PermissionTargetConfigurationImplTest@7636d59a</td></tr>
+<tr>
+<td title='org.artifactory.security.PrincipalConfigurationImplTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.security.PrincipalConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.PrincipalConfigurationImplTest@7c9aff86</td></tr>
+<tr>
+<td title='org.artifactory.repo.RepoDetailsTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.repo.RepoDetailsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.repo.RepoDetailsTest@6abbfce0</td></tr>
+<tr>
+<td title='org.artifactory.security.SecurityEntityListItemTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.security.SecurityEntityListItemTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.SecurityEntityListItemTest@7cd5a201</td></tr>
+<tr>
+<td title='org.artifactory.security.UserConfigurationImplTest.testSetters()'><b>testSetters</b><br>Test class: org.artifactory.security.UserConfigurationImplTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.UserConfigurationImplTest@79135fd7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.testToMaven1Path()'><b>testToMaven1Path</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.testToMaven1PathMd5()'><b>testToMaven1PathMd5</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.testToMaven1PathPom()'><b>testToMaven1PathPom</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.testToMaven1PathSha1()'><b>testToMaven1PathSha1</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testUniqueSnapshotVersionBuildNumber()'><b>testUniqueSnapshotVersionBuildNumber</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testUniqueVersionTimestamp()'><b>testUniqueVersionTimestamp</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.testUniqueVersionTimestampAndBuildNumber()'><b>testUniqueVersionTimestampAndBuildNumber</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.util.ZipUtilsTest.testUnsupportedArchive()'><b>testUnsupportedArchive</b><br>Test class: org.artifactory.util.ZipUtilsTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unsupported archive extension: &apos;ar&apos;
+	at org.artifactory.util.ZipUtils.verifySupportedExtension(ZipUtils.java:213)
+	at org.artifactory.util.ZipUtils.createArchiveInputStream(ZipUtils.java:172)
+	at org.artifactory.util.ZipUtils.extractFiles(ZipUtils.java:150)
+	at org.artifactory.util.ZipUtils.extract(ZipUtils.java:93)
+	at org.artifactory.util.ZipUtilsTest.extract(ZipUtilsTest.java:110)
+	at org.artifactory.util.ZipUtilsTest.testUnsupportedArchive(ZipUtilsTest.java:103)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1863634612", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1863634612'><pre>java.lang.IllegalArgumentException: Unsupported archive extension: &apos;ar&apos;
+	at org.artifactory.util.ZipUtils.verifySupportedExtension(ZipUtils.java:213)
+	at org.artifactory.util.ZipUtils.createArchiveInputStream(ZipUtils.java:172)
+	at org.artifactory.util.ZipUtils.extractFiles(ZipUtils.java:150)
+	at org.artifactory.util.ZipUtils.extract(ZipUtils.java:93)
+	at org.artifactory.util.ZipUtilsTest.extract(ZipUtilsTest.java:110)
+	at org.artifactory.util.ZipUtilsTest.testUnsupportedArchive(ZipUtilsTest.java:103)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.util.ZipUtilsTest@5bd70cde</td></tr>
+<tr>
+<td title='org.artifactory.security.CryptoHelperTest.toBase64String()'><b>toBase64String</b><br>Test class: org.artifactory.security.CryptoHelperTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.security.CryptoHelperTest@4d5698f</td></tr>
+<tr>
+<td title='org.artifactory.util.TimeUnitFormatTest.toMillis()'><b>toMillis</b><br>Test class: org.artifactory.util.TimeUnitFormatTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.TimeUnitFormatTest@52ba2221</td></tr>
+<tr>
+<td title='org.artifactory.util.TimeUnitFormatTest.toMinutes()'><b>toMinutes</b><br>Test class: org.artifactory.util.TimeUnitFormatTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.TimeUnitFormatTest@52ba2221</td></tr>
+<tr>
+<td title='org.artifactory.util.TimeUnitFormatTest.toSeconds()'><b>toSeconds</b><br>Test class: org.artifactory.util.TimeUnitFormatTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.TimeUnitFormatTest@52ba2221</td></tr>
+<tr>
+<td title='org.artifactory.util.TimeUnitFormatTest.toSecondsWithMillisecondTimeUnit()'><b>toSecondsWithMillisecondTimeUnit</b><br>Test class: org.artifactory.util.TimeUnitFormatTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.TimeUnitFormatTest@52ba2221</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenNamingTest.uniqueSnapshotVersionBaseVersion()'><b>uniqueSnapshotVersionBaseVersion</b><br>Test class: org.artifactory.maven.MavenNamingTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenNamingTest@27c00ec8</td></tr>
+<tr>
+<td title='org.artifactory.util.PathValidatorTest.validPaths()'><b>validPaths</b><br>Test class: org.artifactory.util.PathValidatorTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.util.PathValidatorTest@402f0214</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.validStringToMetadata()'><b>validStringToMetadata</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.MavenModelUtilsTest.validStringToMetadataNoVersioning()'><b>validStringToMetadataNoVersioning</b><br>Test class: org.artifactory.maven.MavenModelUtilsTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.MavenModelUtilsTest@4e318ff7</td></tr>
+<tr>
+<td title='org.artifactory.maven.PomTargetPathValidatorTest.validatePluginPom()'><b>validatePluginPom</b><br>Test class: org.artifactory.maven.PomTargetPathValidatorTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.PomTargetPathValidatorTest@a01ae18</td></tr>
+<tr>
+<td title='org.artifactory.maven.PomTargetPathValidatorTest.validatePomTargetInValidPath()'><b>validatePomTargetInValidPath</b><br>Test class: org.artifactory.maven.PomTargetPathValidatorTest</td>
+<td><div><pre>org.artifactory.api.repo.exception.maven.BadPomException: The target deployment path &apos;blab/bla/1.0.0-alpha2&apos; does not match the POM&apos;s expected path prefix &apos;yourpit/yourpit/1.0.0-alpha2&apos;. Please verify your POM content for correctness and make sure the source path is a valid Maven repository root path.
+	at org.artifactory.maven.PomTargetPathValidator.validate(PomTargetPathValidator.java:86)
+	at org.artifactory.maven.PomTargetPathValidatorTest.validatePomTargetInValidPath(PomTargetPathValidatorTest.java:58)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+... Removed 25 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1662032545", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1662032545'><pre>org.artifactory.api.repo.exception.maven.BadPomException: The target deployment path &apos;blab/bla/1.0.0-alpha2&apos; does not match the POM&apos;s expected path prefix &apos;yourpit/yourpit/1.0.0-alpha2&apos;. Please verify your POM content for correctness and make sure the source path is a valid Maven repository root path.
+	at org.artifactory.maven.PomTargetPathValidator.validate(PomTargetPathValidator.java:86)
+	at org.artifactory.maven.PomTargetPathValidatorTest.validatePomTargetInValidPath(PomTargetPathValidatorTest.java:58)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.maven.PomTargetPathValidatorTest@a01ae18</td></tr>
+<tr>
+<td title='org.artifactory.maven.PomTargetPathValidatorTest.validatePomTargetValidPath()'><b>validatePomTargetValidPath</b><br>Test class: org.artifactory.maven.PomTargetPathValidatorTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.maven.PomTargetPathValidatorTest@a01ae18</td></tr>
+</table><p>
+</body>
+</html>

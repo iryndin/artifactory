@@ -1,0 +1,1964 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="225" passed="225">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Command line suite" duration-ms="9071" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:47Z">
+    <groups>
+    </groups>
+    <test name="Command line test" duration-ms="9071" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:47Z">
+      <class name="org.artifactory.mime.MimeTypesTest">
+        <test-method status="PASS" signature="getByExtension()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="getByExtension" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getByExtension -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="setup" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="setup" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="getByExtensionUpperCase()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="getByExtensionUpperCase" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getByExtensionUpperCase -->
+        <test-method status="PASS" signature="getForUnknownExtension()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="getForUnknownExtension" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getForUnknownExtension -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="setup" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="getByMimeEntryName()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="getByMimeEntryName" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getByMimeEntryName -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.mime.MimeTypesTest@5bdeaff7]" name="setup" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+      </class> <!-- org.artifactory.mime.MimeTypesTest -->
+      <class name="org.artifactory.version.ArtifactoryVersionReaderTest">
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="setup" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="failIfNullStream()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="failIfNullStream" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Null properties file is not allowed]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Null properties file is not allowed
+	at org.artifactory.version.ArtifactoryVersionReader.read(ArtifactoryVersionReader.java:123)
+	at org.artifactory.version.ArtifactoryVersionReaderTest.failIfNullStream(ArtifactoryVersionReaderTest.java:68)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- failIfNullStream -->
+        <test-method status="PASS" signature="notExistingFutureVersion()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="notExistingFutureVersion" duration-ms="3" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- notExistingFutureVersion -->
+        <test-method status="PASS" signature="readCurrentVersion()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="readCurrentVersion" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readCurrentVersion -->
+        <test-method status="PASS" signature="readDevelopmentVersion()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="readDevelopmentVersion" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readDevelopmentVersion -->
+        <test-method status="PASS" signature="readFromFileNoTimestamp()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="readFromFileNoTimestamp" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readFromFileNoTimestamp -->
+        <test-method status="PASS" signature="readFromStreamNoTimestamp()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="readFromStreamNoTimestamp" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readFromStreamNoTimestamp -->
+        <test-method status="PASS" signature="readFromStreamWithTimestamp()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="readFromStreamWithTimestamp" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readFromStreamWithTimestamp -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:org.artifactory.version.ArtifactoryVersionReaderTest@24eb147c]" name="tearDown" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- org.artifactory.version.ArtifactoryVersionReaderTest -->
+      <class name="org.artifactory.descriptor.property.PredefinedValueTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.property.PredefinedValueTest@49bcbe77]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+      </class> <!-- org.artifactory.descriptor.property.PredefinedValueTest -->
+      <class name="org.artifactory.descriptor.security.sso.CrowdSettingsTest">
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.descriptor.security.sso.CrowdSettingsTest@2a7ead31]" name="testDefaultConstructor" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testClientPropertiesProduction()[pri:0, instance:org.artifactory.descriptor.security.sso.CrowdSettingsTest@2a7ead31]" name="testClientPropertiesProduction" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testClientPropertiesProduction -->
+      </class> <!-- org.artifactory.descriptor.security.sso.CrowdSettingsTest -->
+      <class name="org.artifactory.logging.version.v1.LogbackConfigSwapperTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.logging.version.v1.LogbackConfigSwapperTest@7b7f7411]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v1.LogbackConfigSwapperTest@7b7f7411]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testSwap()[pri:0, instance:org.artifactory.logging.version.v1.LogbackConfigSwapperTest@7b7f7411]" name="testSwap" duration-ms="5" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSwap -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v1.LogbackConfigSwapperTest@7b7f7411]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.logging.version.v1.LogbackConfigSwapperTest -->
+      <class name="org.artifactory.descriptor.repo.VirtualRepoDescriptorTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoDescriptorTest@3a7e4f0c]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="identicalCache()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoDescriptorTest@3a7e4f0c]" name="identicalCache" duration-ms="2" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- identicalCache -->
+      </class> <!-- org.artifactory.descriptor.repo.VirtualRepoDescriptorTest -->
+      <class name="org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest@be8b327]" name="readMimeTypes" is-config="true" duration-ms="22" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest@be8b327]" name="convert" duration-ms="8" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest@be8b327]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest@be8b327]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.mime.version.converter.v2.AscMimeTypeConverterTest -->
+      <class name="org.artifactory.descriptor.property.PropertyTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.property.PropertyTest@4fe7ab59]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+      </class> <!-- org.artifactory.descriptor.property.PropertyTest -->
+      <class name="org.artifactory.descriptor.repo.LocalRepoDescriptorTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.repo.LocalRepoDescriptorTest@78f2b03f]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+      </class> <!-- org.artifactory.descriptor.repo.LocalRepoDescriptorTest -->
+      <class name="org.artifactory.version.ArtifactoryConfigVersionTest">
+        <test-method status="PASS" signature="versionsCoverage()[pri:0, instance:org.artifactory.version.ArtifactoryConfigVersionTest@7c9c7dc5]" name="versionsCoverage" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- versionsCoverage -->
+      </class> <!-- org.artifactory.version.ArtifactoryConfigVersionTest -->
+      <class name="org.artifactory.descriptor.property.PropertySetTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.property.PropertySetTest@3e993445]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="testEqual()[pri:0, instance:org.artifactory.descriptor.property.PropertySetTest@3e993445]" name="testEqual" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEqual -->
+        <test-method status="PASS" signature="testUnequal()[pri:0, instance:org.artifactory.descriptor.property.PropertySetTest@3e993445]" name="testUnequal" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUnequal -->
+      </class> <!-- org.artifactory.descriptor.property.PropertySetTest -->
+      <class name="org.artifactory.descriptor.security.sso.HttpSsoSettingsTest">
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.descriptor.security.sso.HttpSsoSettingsTest@68758d51]" name="testDefaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+      </class> <!-- org.artifactory.descriptor.security.sso.HttpSsoSettingsTest -->
+      <class name="org.artifactory.descriptor.repo.VirtualRepoResolverTest">
+        <test-method status="PASS" signature="sameRepoInTwoVirtualRepos()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="sameRepoInTwoVirtualRepos" duration-ms="2" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- sameRepoInTwoVirtualRepos -->
+        <test-method status="PASS" signature="initTestRepos()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="initTestRepos" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initTestRepos -->
+        <test-method status="PASS" signature="initTestRepos()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="initTestRepos" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initTestRepos -->
+        <test-method status="PASS" signature="virtualInVirtualWithCycles()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="virtualInVirtualWithCycles" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- virtualInVirtualWithCycles -->
+        <test-method status="PASS" signature="virtualWithLocalAndRemote()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="virtualWithLocalAndRemote" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- virtualWithLocalAndRemote -->
+        <test-method status="PASS" signature="initTestRepos()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="initTestRepos" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initTestRepos -->
+        <test-method status="PASS" signature="virtualWithinVirtualNoCycles()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="virtualWithinVirtualNoCycles" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- virtualWithinVirtualNoCycles -->
+        <test-method status="PASS" signature="initTestRepos()[pri:0, instance:org.artifactory.descriptor.repo.VirtualRepoResolverTest@1a16ff7a]" name="initTestRepos" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initTestRepos -->
+      </class> <!-- org.artifactory.descriptor.repo.VirtualRepoResolverTest -->
+      <class name="org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest@5a49cb8c]" name="readMimeTypes" is-config="true" duration-ms="26" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest@5a49cb8c]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest@5a49cb8c]" name="convert" duration-ms="10" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest@5a49cb8c]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.mime.version.converter.v3.ArchivesIndexConverterTest -->
+      <class name="org.artifactory.version.converter.v135.ProxyNTHostConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v135.ProxyNTHostConverterTest@6c9d476e]" name="readMimeTypes" is-config="true" duration-ms="12" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v135.ProxyNTHostConverterTest@6c9d476e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convertConfigWithProxyDomain()[pri:0, instance:org.artifactory.version.converter.v135.ProxyNTHostConverterTest@6c9d476e]" name="convertConfigWithProxyDomain" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertConfigWithProxyDomain -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v135.ProxyNTHostConverterTest@6c9d476e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v135.ProxyNTHostConverterTest -->
+      <class name="org.artifactory.version.ConfigVersionTest">
+        <test-method status="PASS" signature="versionsCoverage()[pri:0, instance:org.artifactory.version.ConfigVersionTest@22d282a3]" name="versionsCoverage" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- versionsCoverage -->
+      </class> <!-- org.artifactory.version.ConfigVersionTest -->
+      <class name="org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="readMimeTypes" is-config="true" duration-ms="14" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="convertConfigWithChecksumPolicyTags()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="convertConfigWithChecksumPolicyTags" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertConfigWithChecksumPolicyTags -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="convertConfigWithNoChecksumPolicyTags()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="convertConfigWithNoChecksumPolicyTags" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertConfigWithNoChecksumPolicyTags -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest@7914bc90]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v143.RemoteChecksumPolicyConverterTest -->
+      <class name="org.artifactory.logging.version.LoggingVersionTest">
+        <test-method status="PASS" signature="versionsCoverage()[pri:0, instance:org.artifactory.logging.version.LoggingVersionTest@6f1b8a4c]" name="versionsCoverage" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- versionsCoverage -->
+      </class> <!-- org.artifactory.logging.version.LoggingVersionTest -->
+      <class name="org.artifactory.mime.version.converter.LatestVersionConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.mime.version.converter.LatestVersionConverterTest@6690811b]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.mime.version.converter.LatestVersionConverterTest@6690811b]" name="convert" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.LatestVersionConverterTest@6690811b]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.LatestVersionConverterTest@6690811b]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.mime.version.converter.LatestVersionConverterTest -->
+      <class name="org.artifactory.util.ExceptionUtilsTest">
+        <test-method status="PASS" signature="testGetCauseOfTypes()[pri:0, instance:org.artifactory.util.ExceptionUtilsTest@75596160]" name="testGetCauseOfTypes" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetCauseOfTypes -->
+        <test-method status="PASS" signature="testGetRootCauseNested()[pri:0, instance:org.artifactory.util.ExceptionUtilsTest@75596160]" name="testGetRootCauseNested" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetRootCauseNested -->
+        <test-method status="PASS" signature="testUnwrapThrowablesOfTypes()[pri:0, instance:org.artifactory.util.ExceptionUtilsTest@75596160]" name="testUnwrapThrowablesOfTypes" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUnwrapThrowablesOfTypes -->
+        <test-method status="PASS" signature="testGetRootCauseNotNested()[pri:0, instance:org.artifactory.util.ExceptionUtilsTest@75596160]" name="testGetRootCauseNotNested" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetRootCauseNotNested -->
+      </class> <!-- org.artifactory.util.ExceptionUtilsTest -->
+      <class name="org.artifactory.DefaultConfigLayoutTest">
+        <test-method status="PASS" signature="testConfigV147NotAutoFormatted()[pri:0, instance:org.artifactory.DefaultConfigLayoutTest@28e817d5]" name="testConfigV147NotAutoFormatted" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConfigV147NotAutoFormatted -->
+        <test-method status="PASS" signature="testConfigV148NotAutoFormatted()[pri:0, instance:org.artifactory.DefaultConfigLayoutTest@28e817d5]" name="testConfigV148NotAutoFormatted" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConfigV148NotAutoFormatted -->
+        <test-method status="PASS" signature="testConfigV149NotAutoFormatted()[pri:0, instance:org.artifactory.DefaultConfigLayoutTest@28e817d5]" name="testConfigV149NotAutoFormatted" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConfigV149NotAutoFormatted -->
+        <test-method status="PASS" signature="testDefaultConfigXmlNotAutoFormatted()[pri:0, instance:org.artifactory.DefaultConfigLayoutTest@28e817d5]" name="testDefaultConfigXmlNotAutoFormatted" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConfigXmlNotAutoFormatted -->
+      </class> <!-- org.artifactory.DefaultConfigLayoutTest -->
+      <class name="org.artifactory.util.RepoLayoutUtilsTest">
+        <test-method status="PASS" signature="testDefaultTokenValues()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultTokenValues" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultTokenValues -->
+        <test-method status="PASS" signature="testDefaultTokenRegExpValues()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultTokenRegExpValues" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultTokenRegExpValues -->
+        <test-method status="PASS" signature="testLayoutsAreCompatible()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testLayoutsAreCompatible" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLayoutsAreCompatible -->
+        <test-method status="PASS" signature="testTokenHasFilter()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testTokenHasFilter" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testTokenHasFilter -->
+        <test-method status="PASS" signature="testGetDescriptorLayoutAsIvyPattern()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testGetDescriptorLayoutAsIvyPattern" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetDescriptorLayoutAsIvyPattern -->
+        <test-method status="PASS" signature="testFailCustomTokenWithNoRegEx()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testFailCustomTokenWithNoRegEx" duration-ms="2" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[The token '[koko]' is unknown. If this is not intended, please verify the token name for correctness or add a mapping for this token using the '[$NAME&lt;REGEXP&gt;]' syntax.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: The token '[koko]' is unknown. If this is not intended, please verify the token name for correctness or add a mapping for this token using the '[$NAME&lt;REGEXP&gt;]' syntax.
+	at org.artifactory.util.RepoLayoutUtils.generateRegExpFromPattern(RepoLayoutUtils.java:303)
+	at org.artifactory.util.RepoLayoutUtils.generateRegExpFromPattern(RepoLayoutUtils.java:259)
+	at org.artifactory.util.RepoLayoutUtilsTest.testGeneratedPatternRegExp(RepoLayoutUtilsTest.java:389)
+	at org.artifactory.util.RepoLayoutUtilsTest.testFailCustomTokenWithNoRegEx(RepoLayoutUtilsTest.java:278)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFailCustomTokenWithNoRegEx -->
+        <test-method status="PASS" signature="testDefaultTokenFilterMap()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultTokenFilterMap" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultTokenFilterMap -->
+        <test-method status="PASS" signature="testWrapKeywordAsToken()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testWrapKeywordAsToken" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testWrapKeywordAsToken -->
+        <test-method status="PASS" signature="testDefaultLayouts()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultLayouts" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultLayouts -->
+        <test-method status="PASS" signature="testDefaultLayoutNames()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultLayoutNames" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultLayoutNames -->
+        <test-method status="PASS" signature="testRemoveUnReplacedTokenOptionalBrackets()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testRemoveUnReplacedTokenOptionalBrackets" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRemoveUnReplacedTokenOptionalBrackets -->
+        <test-method status="PASS" signature="testCustomTokenRegExpValues()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testCustomTokenRegExpValues" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCustomTokenRegExpValues -->
+        <test-method status="PASS" signature="testFailOnUnknownCustomToken()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testFailOnUnknownCustomToken" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[The token '[momo]' is unknown. If this is not intended, please verify the token name for correctness or add a mapping for this token using the '[$NAME&lt;REGEXP&gt;]' syntax.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: The token '[momo]' is unknown. If this is not intended, please verify the token name for correctness or add a mapping for this token using the '[$NAME&lt;REGEXP&gt;]' syntax.
+	at org.artifactory.util.RepoLayoutUtils.generateRegExpFromPattern(RepoLayoutUtils.java:303)
+	at org.artifactory.util.RepoLayoutUtils.generateRegExpFromPattern(RepoLayoutUtils.java:259)
+	at org.artifactory.util.RepoLayoutUtilsTest.testGeneratedPatternRegExp(RepoLayoutUtilsTest.java:389)
+	at org.artifactory.util.RepoLayoutUtilsTest.testFailOnUnknownCustomToken(RepoLayoutUtilsTest.java:273)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFailOnUnknownCustomToken -->
+        <test-method status="PASS" signature="testIsDefaultM2Layout()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testIsDefaultM2Layout" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIsDefaultM2Layout -->
+        <test-method status="PASS" signature="testGenerateRegExpFromPatternOfDefaultLayouts()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testGenerateRegExpFromPatternOfDefaultLayouts" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGenerateRegExpFromPatternOfDefaultLayouts -->
+        <test-method status="PASS" signature="testReservedRepoLayoutNames()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testReservedRepoLayoutNames" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReservedRepoLayoutNames -->
+        <test-method status="PASS" signature="testLayoutContainsOrgPathToken()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testLayoutContainsOrgPathToken" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLayoutContainsOrgPathToken -->
+        <test-method status="PASS" signature="testIgnoreUnknownTokens()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testIgnoreUnknownTokens" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIgnoreUnknownTokens -->
+        <test-method status="PASS" signature="testNullLayoutContainsOrgPathToken()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testNullLayoutContainsOrgPathToken" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot check a null layout for token existence.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot check a null layout for token existence.
+	at org.artifactory.util.RepoLayoutUtils.layoutContainsOrgPathToken(RepoLayoutUtils.java:150)
+	at org.artifactory.util.RepoLayoutUtilsTest.testNullLayoutContainsOrgPathToken(RepoLayoutUtilsTest.java:123)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullLayoutContainsOrgPathToken -->
+        <test-method status="PASS" signature="testDefaultTokenSet()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testDefaultTokenSet" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultTokenSet -->
+        <test-method status="PASS" signature="testGetArtifactLayoutAsIvyPattern()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testGetArtifactLayoutAsIvyPattern" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetArtifactLayoutAsIvyPattern -->
+        <test-method status="PASS" signature="testRemoveReplacedTokenOptionalBrackets()[pri:0, instance:org.artifactory.util.RepoLayoutUtilsTest@24f05c30]" name="testRemoveReplacedTokenOptionalBrackets" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRemoveReplacedTokenOptionalBrackets -->
+      </class> <!-- org.artifactory.util.RepoLayoutUtilsTest -->
+      <class name="org.artifactory.version.converter.v1414.CleanupConfigConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v1414.CleanupConfigConverterTest@50258792]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.CleanupConfigConverterTest@50258792]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testCreateCleanupCronExp()[pri:0, instance:org.artifactory.version.converter.v1414.CleanupConfigConverterTest@50258792]" name="testCreateCleanupCronExp" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCreateCleanupCronExp -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.CleanupConfigConverterTest@50258792]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v1414.CleanupConfigConverterTest -->
+      <class name="org.artifactory.descriptor.repo.ProxyDescriptorTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.repo.ProxyDescriptorTest@a0937af]" name="defaultConstructor" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="redirectedToHosts()[pri:0, instance:org.artifactory.descriptor.repo.ProxyDescriptorTest@a0937af]" name="redirectedToHosts" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- redirectedToHosts -->
+      </class> <!-- org.artifactory.descriptor.repo.ProxyDescriptorTest -->
+      <class name="org.artifactory.version.converter.v1414.AssumedOfflineConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="readMimeTypes" is-config="true" duration-ms="21" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="defaultConfigTest()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="defaultConfigTest" duration-ms="19" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConfigTest -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="withFailedRetrievalCache()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="withFailedRetrievalCache" duration-ms="18" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- withFailedRetrievalCache -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.AssumedOfflineConverterTest@3821e98d]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v1414.AssumedOfflineConverterTest -->
+      <class name="org.artifactory.descriptor.replication.RemoteReplicationDescriptorTest">
+        <test-method status="PASS" signature="testDefaultBaseValues()[pri:0, instance:org.artifactory.descriptor.replication.RemoteReplicationDescriptorTest@629c81c2]" name="testDefaultBaseValues" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultBaseValues -->
+        <test-method status="PASS" signature="testBaseSetters()[pri:0, instance:org.artifactory.descriptor.replication.RemoteReplicationDescriptorTest@629c81c2]" name="testBaseSetters" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBaseSetters -->
+      </class> <!-- org.artifactory.descriptor.replication.RemoteReplicationDescriptorTest -->
+      <class name="org.artifactory.descriptor.repo.RepoLayoutTest">
+        <test-method status="PASS" signature="testCopyConstructor()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testCopyConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCopyConstructor -->
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testDefaultConstructor" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testGradleConstants()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testGradleConstants" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGradleConstants -->
+        <test-method status="PASS" signature="testIvyConstants()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testIvyConstants" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIvyConstants -->
+        <test-method status="PASS" signature="testM1Constants()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testM1Constants" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testM1Constants -->
+        <test-method status="PASS" signature="testM2Constants()[pri:0, instance:org.artifactory.descriptor.repo.RepoLayoutTest@12bf506d]" name="testM2Constants" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testM2Constants -->
+      </class> <!-- org.artifactory.descriptor.repo.RepoLayoutTest -->
+      <class name="org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest@190c4838]" name="readMimeTypes" is-config="true" duration-ms="15" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest@190c4838]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testReplacingIntervalByCronExp()[pri:0, instance:org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest@190c4838]" name="testReplacingIntervalByCronExp" duration-ms="4" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReplacingIntervalByCronExp -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest@190c4838]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v1412.IndexerCronExpPropertyConverterTest -->
+      <class name="org.artifactory.descriptor.config.CentralConfigReadWriteTest">
+        <test-method status="PASS" signature="createTestOutputDir()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigReadWriteTest@35ba7dab]" name="createTestOutputDir" is-config="true" duration-ms="13" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTestOutputDir -->
+        <test-method status="PASS" signature="defaultConfigElements()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigReadWriteTest@35ba7dab]" name="defaultConfigElements" duration-ms="826" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConfigElements -->
+        <test-method status="PASS" signature="writeCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigReadWriteTest@35ba7dab]" name="writeCentralConfig" duration-ms="92" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- writeCentralConfig -->
+        <test-method status="PASS" signature="writeW3cSchema()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigReadWriteTest@35ba7dab]" name="writeW3cSchema" duration-ms="111" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- writeW3cSchema -->
+        <test-method status="PASS" signature="readWrittenCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigReadWriteTest@35ba7dab]" name="readWrittenCentralConfig" duration-ms="46" started-at="2013-05-13T13:10:47Z" depends-on-methods="org.artifactory.descriptor.config.CentralConfigReadWriteTest.writeCentralConfig" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readWrittenCentralConfig -->
+      </class> <!-- org.artifactory.descriptor.config.CentralConfigReadWriteTest -->
+      <class name="org.artifactory.version.converter.v144.MultiLdapXmlConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v144.MultiLdapXmlConverterTest@6fe0b6eb]" name="readMimeTypes" is-config="true" duration-ms="14" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.version.converter.v144.MultiLdapXmlConverterTest@6fe0b6eb]" name="convert" duration-ms="5" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.MultiLdapXmlConverterTest@6fe0b6eb]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.MultiLdapXmlConverterTest@6fe0b6eb]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v144.MultiLdapXmlConverterTest -->
+      <class name="org.artifactory.version.converter.v149.ReplicationElementNameConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v149.ReplicationElementNameConverterTest@60939442]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v149.ReplicationElementNameConverterTest@60939442]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.version.converter.v149.ReplicationElementNameConverterTest@60939442]" name="convert" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v149.ReplicationElementNameConverterTest@60939442]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v149.ReplicationElementNameConverterTest -->
+      <class name="org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest@1f7d9318]" name="readMimeTypes" is-config="true" duration-ms="15" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest@1f7d9318]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest@1f7d9318]" name="convert" duration-ms="4" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest@1f7d9318]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v147.DefaultRepoLayoutConverterTest -->
+      <class name="org.artifactory.util.StringsTest">
+        <test-method status="PASS" signature="maskEmpty()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskEmpty" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskEmpty -->
+        <test-method status="PASS" signature="maskKeyValue()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskKeyValue" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskKeyValue -->
+        <test-method status="PASS" signature="maskKeyValueEmpty()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskKeyValueEmpty" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskKeyValueEmpty -->
+        <test-method status="PASS" signature="maskKeyValueNoEquals()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskKeyValueNoEquals" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskKeyValueNoEquals -->
+        <test-method status="PASS" signature="maskKeyValueNull()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskKeyValueNull" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskKeyValueNull -->
+        <test-method status="PASS" signature="maskString()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskString" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskString -->
+        <test-method status="PASS" signature="maskNull()[pri:0, instance:org.artifactory.util.StringsTest@6764bcd3]" name="maskNull" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- maskNull -->
+      </class> <!-- org.artifactory.util.StringsTest -->
+      <class name="org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="setUp()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="setUp" is-config="true" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="testLoggerWasAdded()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="testLoggerWasAdded" duration-ms="2" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLoggerWasAdded -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testAppenderWasAdded()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="testAppenderWasAdded" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testAppenderWasAdded -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest@625e64fe]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.logging.version.v6.RequestTraceLoggerConverterTest -->
+      <class name="org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest@7f9657e5]" name="readMimeTypes" is-config="true" duration-ms="13" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest@7f9657e5]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest@7f9657e5]" name="convert" duration-ms="3" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest@7f9657e5]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v147.JfrogRemoteRepoUrlConverterTest -->
+      <class name="org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest@5e1e6cde]" name="readMimeTypes" is-config="true" duration-ms="13" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest@5e1e6cde]" name="convert" duration-ms="5" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest@5e1e6cde]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest@5e1e6cde]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.mime.version.converter.v1.XmlIndexedConverterTest -->
+      <class name="org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest@72a2890a]" name="readMimeTypes" is-config="true" duration-ms="12" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest@72a2890a]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest@72a2890a]" name="convert" duration-ms="5" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest@72a2890a]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v147.UnusedArtifactCleanupSwitchConverterTest -->
+      <class name="org.artifactory.util.PathUtilsTest">
+        <test-method status="PASS" signature="addTrailingSlash()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="addTrailingSlash" duration-ms="2" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- addTrailingSlash -->
+        <test-method status="PASS" signature="checksumTargetFile()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="checksumTargetFile" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- checksumTargetFile -->
+        <test-method status="PASS" signature="formatNullPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="formatNullPath" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- formatNullPath -->
+        <test-method status="PASS" signature="formatFormattedPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="formatFormattedPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- formatFormattedPath -->
+        <test-method status="PASS" signature="getFirstPathElementsAbsolutePath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getFirstPathElementsAbsolutePath" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getFirstPathElementsAbsolutePath -->
+        <test-method status="PASS" signature="formatSimplePath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="formatSimplePath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- formatSimplePath -->
+        <test-method status="PASS" signature="getFirstPathElementsEmptyPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getFirstPathElementsEmptyPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getFirstPathElementsEmptyPath -->
+        <test-method status="PASS" signature="getFirstPathElementsNullPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getFirstPathElementsNullPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getFirstPathElementsNullPath -->
+        <test-method status="PASS" signature="getFirstPathElementsRootPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getFirstPathElementsRootPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getFirstPathElementsRootPath -->
+        <test-method status="PASS" signature="getFirstPathElementsRelativePath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getFirstPathElementsRelativePath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getFirstPathElementsRelativePath -->
+        <test-method status="PASS" signature="getPathElementsEmptyPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsEmptyPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsEmptyPath -->
+        <test-method status="PASS" signature="getPathElementsAbsolutePath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsAbsolutePath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsAbsolutePath -->
+        <test-method status="PASS" signature="getPathElementsPathWithTrailingSlash()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsPathWithTrailingSlash" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsPathWithTrailingSlash -->
+        <test-method status="PASS" signature="getPathElementsNullPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsNullPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsNullPath -->
+        <test-method status="PASS" signature="getPathElementsRelativePath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsRelativePath" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsRelativePath -->
+        <test-method status="PASS" signature="getPathElementsRootPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="getPathElementsRootPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathElementsRootPath -->
+        <test-method status="PASS" signature="injectStringAtTheBeginning()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="injectStringAtTheBeginning" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- injectStringAtTheBeginning -->
+        <test-method status="PASS" signature="injectStringAtTheEnd()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="injectStringAtTheEnd" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- injectStringAtTheEnd -->
+        <test-method status="PASS" signature="injectStringEmpty()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="injectStringEmpty" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- injectStringEmpty -->
+        <test-method status="PASS" signature="injectStringInMiddle()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="injectStringInMiddle" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- injectStringInMiddle -->
+        <test-method status="PASS" signature="injectStringNull()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="injectStringNull" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- injectStringNull -->
+        <test-method status="PASS" signature="parentPathOfEmptyString()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="parentPathOfEmptyString" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- parentPathOfEmptyString -->
+        <test-method status="PASS" signature="normalizeSlashes()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="normalizeSlashes" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- normalizeSlashes -->
+        <test-method status="PASS" signature="parentPathOfPathWithParent()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="parentPathOfPathWithParent" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- parentPathOfPathWithParent -->
+        <test-method status="PASS" signature="parentPathOfRoot()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="parentPathOfRoot" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- parentPathOfRoot -->
+        <test-method status="PASS" signature="stripExtensionMultipleExtensions()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionMultipleExtensions" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionMultipleExtensions -->
+        <test-method status="PASS" signature="stripExtensionEmptyPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionEmptyPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionEmptyPath -->
+        <test-method status="PASS" signature="stripExtensionPathWithDotAtEnd()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionPathWithDotAtEnd" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionPathWithDotAtEnd -->
+        <test-method status="PASS" signature="stripExtensionNullPath()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionNullPath" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionNullPath -->
+        <test-method status="PASS" signature="stripExtensionSimple()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionSimple" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionSimple -->
+        <test-method status="PASS" signature="stripExtensionPathWithNoExtension()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripExtensionPathWithNoExtension" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripExtensionPathWithNoExtension -->
+        <test-method status="PASS" signature="stripFirstPathElement()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="stripFirstPathElement" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stripFirstPathElement -->
+        <test-method status="PASS" signature="trimLeadingSlashes()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="trimLeadingSlashes" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trimLeadingSlashes -->
+        <test-method status="PASS" signature="trimLeadingSlashesChars()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="trimLeadingSlashesChars" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trimLeadingSlashesChars -->
+        <test-method status="PASS" signature="trimTrailingSlashesChars()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="trimTrailingSlashesChars" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trimTrailingSlashesChars -->
+        <test-method status="PASS" signature="trimTrailingSlashes()[pri:0, instance:org.artifactory.util.PathUtilsTest@1d74b5ee]" name="trimTrailingSlashes" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trimTrailingSlashes -->
+      </class> <!-- org.artifactory.util.PathUtilsTest -->
+      <class name="org.artifactory.descriptor.reader.CentralConfigReaderTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="readMimeTypes" is-config="true" duration-ms="17" started-at="2013-05-13T13:10:40Z" finished-at="2013-05-13T13:10:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:40Z" finished-at="2013-05-13T13:10:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="readAllConfigFiles()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="readAllConfigFiles" duration-ms="5134" started-at="2013-05-13T13:10:40Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readAllConfigFiles -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="readV7Config()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="readV7Config" duration-ms="63" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readV7Config -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.descriptor.reader.CentralConfigReaderTest@2ee3ff04]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.descriptor.reader.CentralConfigReaderTest -->
+      <class name="org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest@6a8f5ad]" name="readMimeTypes" is-config="true" duration-ms="14" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest@6a8f5ad]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testConversion()[pri:0, instance:org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest@6a8f5ad]" name="testConversion" duration-ms="5" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConversion -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest@6a8f5ad]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.logging.version.v3.LineNumberLayoutLoggerConverterTest -->
+      <class name="org.artifactory.descriptor.config.CentralConfigDescriptorImplTest">
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="8" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="backupExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="backupExistence" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- backupExistence -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="defaultProxyChanged()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="defaultProxyChanged" duration-ms="14" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultProxyChanged -->
+        <test-method status="PASS" signature="defaultsTest()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="defaultsTest" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultsTest -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="duplicateLocalRepo()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="duplicateLocalRepo" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <exception class="org.artifactory.util.AlreadyExistsException">
+            <message>
+              <![CDATA[Repository local2 already exists]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.artifactory.util.AlreadyExistsException: Repository local2 already exists
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.repoKeyExists(CentralConfigDescriptorImpl.java:655)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.addLocalRepository(CentralConfigDescriptorImpl.java:405)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImplTest.duplicateLocalRepo(CentralConfigDescriptorImplTest.java:183)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- org.artifactory.util.AlreadyExistsException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- duplicateLocalRepo -->
+        <test-method status="PASS" signature="duplicateRemoteRepo()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="duplicateRemoteRepo" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <exception class="org.artifactory.util.AlreadyExistsException">
+            <message>
+              <![CDATA[Repository remote1 already exists]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.artifactory.util.AlreadyExistsException: Repository remote1 already exists
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.repoKeyExists(CentralConfigDescriptorImpl.java:655)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.addRemoteRepository(CentralConfigDescriptorImpl.java:412)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImplTest.duplicateRemoteRepo(CentralConfigDescriptorImplTest.java:191)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- org.artifactory.util.AlreadyExistsException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- duplicateRemoteRepo -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="duplicateVirtualRepo()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="duplicateVirtualRepo" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <exception class="org.artifactory.util.AlreadyExistsException">
+            <message>
+              <![CDATA[Repository virtual1 already exists]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.artifactory.util.AlreadyExistsException: Repository virtual1 already exists
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.repoKeyExists(CentralConfigDescriptorImpl.java:655)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImpl.addVirtualRepository(CentralConfigDescriptorImpl.java:425)
+	at org.artifactory.descriptor.config.CentralConfigDescriptorImplTest.duplicateVirtualRepo(CentralConfigDescriptorImplTest.java:199)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- org.artifactory.util.AlreadyExistsException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- duplicateVirtualRepo -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="propertySetExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="propertySetExistence" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- propertySetExistence -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="proxyExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="proxyExistence" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- proxyExistence -->
+        <test-method status="PASS" signature="removeBackup()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removeBackup" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeBackup -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="removePropertySet()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removePropertySet" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removePropertySet -->
+        <test-method status="PASS" signature="removeProxy()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removeProxy" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeProxy -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="removeReferencedProxy()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removeReferencedProxy" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeReferencedProxy -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="removeReplicationUpdates()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removeReplicationUpdates" duration-ms="1" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeReplicationUpdates -->
+        <test-method status="PASS" signature="removeRepoLayout()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="removeRepoLayout" duration-ms="9" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeRepoLayout -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="replicationsExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="replicationsExistence" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- replicationsExistence -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+        <test-method status="PASS" signature="repoLayoutExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="repoLayoutExistence" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- repoLayoutExistence -->
+        <test-method status="PASS" signature="repositoriesExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="repositoriesExistence" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- repositoriesExistence -->
+        <test-method status="PASS" signature="uniqueKeyExistence()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="uniqueKeyExistence" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- uniqueKeyExistence -->
+        <test-method status="PASS" signature="initCentralConfig()[pri:0, instance:org.artifactory.descriptor.config.CentralConfigDescriptorImplTest@24a617aa]" name="initCentralConfig" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:39Z" finished-at="2013-05-13T13:10:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initCentralConfig -->
+      </class> <!-- org.artifactory.descriptor.config.CentralConfigDescriptorImplTest -->
+      <class name="org.artifactory.mime.MimeTypesReaderTest">
+        <test-method status="PASS" signature="setup()[pri:0, instance:org.artifactory.mime.MimeTypesReaderTest@cd32a52]" name="setup" is-config="true" duration-ms="6" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="readConvertVersion1()[pri:0, instance:org.artifactory.mime.MimeTypesReaderTest@cd32a52]" name="readConvertVersion1" duration-ms="15" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readConvertVersion1 -->
+        <test-method status="PASS" signature="checkArchiveMime()[pri:0, instance:org.artifactory.mime.MimeTypesReaderTest@cd32a52]" name="checkArchiveMime" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- checkArchiveMime -->
+        <test-method status="PASS" signature="trimmedFileExtensions()[pri:0, instance:org.artifactory.mime.MimeTypesReaderTest@cd32a52]" name="trimmedFileExtensions" duration-ms="3" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trimmedFileExtensions -->
+        <test-method status="PASS" signature="versionsRead()[pri:0, instance:org.artifactory.mime.MimeTypesReaderTest@cd32a52]" name="versionsRead" duration-ms="29" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- versionsRead -->
+      </class> <!-- org.artifactory.mime.MimeTypesReaderTest -->
+      <class name="org.artifactory.common.ArtifactoryPropertiesTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="readMimeTypes" is-config="true" duration-ms="22" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="artifactoryVersion()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="artifactoryVersion" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- artifactoryVersion -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="defaultArtifactoryVersion()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="defaultArtifactoryVersion" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultArtifactoryVersion -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="printArtifactorySystemFile()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="printArtifactorySystemFile" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- printArtifactorySystemFile -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="systemPropsOverrideArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="systemPropsOverrideArtifactoryProperties" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- systemPropsOverrideArtifactoryProperties -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testLoadProps()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="testLoadProps" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLoadProps -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testSystemProps()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="testSystemProps" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSystemProps -->
+        <test-method status="PASS" signature="clearArtifactoryProperties()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="clearArtifactoryProperties" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- clearArtifactoryProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.common.ArtifactoryPropertiesTest@5f8b618e]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.common.ArtifactoryPropertiesTest -->
+      <class name="org.artifactory.descriptor.security.PasswordSettingsTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.security.PasswordSettingsTest@453b8cfd]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="encryptionEnabled()[pri:0, instance:org.artifactory.descriptor.security.PasswordSettingsTest@453b8cfd]" name="encryptionEnabled" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- encryptionEnabled -->
+      </class> <!-- org.artifactory.descriptor.security.PasswordSettingsTest -->
+      <class name="org.artifactory.mapper.MinutesToSecondsPropertyMapperTest">
+        <test-method status="PASS" signature="minutesToSecondsPropertyMapper()[pri:0, instance:org.artifactory.mapper.MinutesToSecondsPropertyMapperTest@5f9a5d3d]" name="minutesToSecondsPropertyMapper" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- minutesToSecondsPropertyMapper -->
+      </class> <!-- org.artifactory.mapper.MinutesToSecondsPropertyMapperTest -->
+      <class name="org.artifactory.version.ConfigXmlConversionTest">
+        <test-method status="PASS" signature="configVersionSanityCheck()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="configVersionSanityCheck" duration-ms="1" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- configVersionSanityCheck -->
+        <test-method status="PASS" signature="convert100()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert100" duration-ms="110" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert100 -->
+        <test-method status="PASS" signature="convert100NoBackupCron()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert100NoBackupCron" duration-ms="50" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert100NoBackupCron -->
+        <test-method status="PASS" signature="convert110()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert110" duration-ms="113" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert110 -->
+        <test-method status="PASS" signature="convert120()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert120" duration-ms="114" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert120 -->
+        <test-method status="PASS" signature="convert130()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert130" duration-ms="115" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert130 -->
+        <test-method status="PASS" signature="convert131()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert131" duration-ms="111" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert131 -->
+        <test-method status="PASS" signature="convert132Custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert132Custom" duration-ms="57" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert132Custom -->
+        <test-method status="PASS" signature="convert132Install()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert132Install" duration-ms="55" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert132Install -->
+        <test-method status="PASS" signature="convert132WithNoSchemaLocation()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert132WithNoSchemaLocation" duration-ms="54" started-at="2013-05-13T13:10:45Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert132WithNoSchemaLocation -->
+        <test-method status="PASS" signature="convert134Install()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert134Install" duration-ms="54" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert134Install -->
+        <test-method status="PASS" signature="convert135Install()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert135Install" duration-ms="49" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert135Install -->
+        <test-method status="PASS" signature="convert135ProxyWithDomain()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert135ProxyWithDomain" duration-ms="48" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert135ProxyWithDomain -->
+        <test-method status="PASS" signature="convert140DefaultProxy()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert140DefaultProxy" duration-ms="169" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert140DefaultProxy -->
+        <test-method status="PASS" signature="convert141()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert141" duration-ms="54" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert141 -->
+        <test-method status="PASS" signature="convert1412custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert1412custom" duration-ms="43" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert1412custom -->
+        <test-method status="PASS" signature="convert141Custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert141Custom" duration-ms="50" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert141Custom -->
+        <test-method status="PASS" signature="convert142Custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert142Custom" duration-ms="42" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert142Custom -->
+        <test-method status="PASS" signature="convert143()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert143" duration-ms="50" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert143 -->
+        <test-method status="PASS" signature="convert143WithServerId()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert143WithServerId" duration-ms="50" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert143WithServerId -->
+        <test-method status="PASS" signature="convert143custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert143custom" duration-ms="54" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert143custom -->
+        <test-method status="PASS" signature="convert146()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert146" duration-ms="58" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert146 -->
+        <test-method status="PASS" signature="convert150custom()[pri:0, instance:org.artifactory.version.ConfigXmlConversionTest@10e53ece]" name="convert150custom" duration-ms="40" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert150custom -->
+      </class> <!-- org.artifactory.version.ConfigXmlConversionTest -->
+      <class name="org.artifactory.version.converter.v141.ProxyDefaultConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v141.ProxyDefaultConverterTest@3f0821d0]" name="readMimeTypes" is-config="true" duration-ms="14" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="covertRemoteRepositoriesWithDefaultProxy()[pri:0, instance:org.artifactory.version.converter.v141.ProxyDefaultConverterTest@3f0821d0]" name="covertRemoteRepositoriesWithDefaultProxy" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- covertRemoteRepositoriesWithDefaultProxy -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v141.ProxyDefaultConverterTest@3f0821d0]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v141.ProxyDefaultConverterTest@3f0821d0]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v141.ProxyDefaultConverterTest -->
+      <class name="org.artifactory.version.converter.v144.ServerIdXmlConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="readMimeTypes" is-config="true" duration-ms="13" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convertDefault()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="convertDefault" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertDefault -->
+        <test-method status="PASS" signature="convertWithServerId()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="convertWithServerId" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertWithServerId -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v144.ServerIdXmlConverterTest@59542b5d]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v144.ServerIdXmlConverterTest -->
+      <class name="org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="readMimeTypes" is-config="true" duration-ms="265" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="bindArtifactoryHome" is-config="true" duration-ms="24" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convertDefault()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="convertDefault" duration-ms="63" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertDefault -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convertWithArchiveBrowsing()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="convertWithArchiveBrowsing" duration-ms="28" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertWithArchiveBrowsing -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest@4067d00a]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v1414.ArchiveBrowsingConverterTest -->
+      <class name="org.artifactory.util.FilesTest">
+        <test-method status="PASS" signature="cleanupEmptyDirectoriesDirWithEmptyNestedDirectories()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="cleanupEmptyDirectoriesDirWithEmptyNestedDirectories" duration-ms="2" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- cleanupEmptyDirectoriesDirWithEmptyNestedDirectories -->
+        <test-method status="PASS" signature="createTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="createTempDir" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTempDir -->
+        <test-method status="PASS" signature="createTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="createTempDir" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTempDir -->
+        <test-method status="PASS" signature="dleteTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="dleteTempDir" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dleteTempDir -->
+        <test-method status="PASS" signature="cleanupEmptyDirectoriesDirWithFiles()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="cleanupEmptyDirectoriesDirWithFiles" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- cleanupEmptyDirectoriesDirWithFiles -->
+        <test-method status="PASS" signature="dleteTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="dleteTempDir" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dleteTempDir -->
+        <test-method status="PASS" signature="createTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="createTempDir" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTempDir -->
+        <test-method status="PASS" signature="cleanupEmptyDirectoriesEmptyDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="cleanupEmptyDirectoriesEmptyDir" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- cleanupEmptyDirectoriesEmptyDir -->
+        <test-method status="PASS" signature="dleteTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="dleteTempDir" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dleteTempDir -->
+        <test-method status="PASS" signature="createTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="createTempDir" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTempDir -->
+        <test-method status="PASS" signature="cleanupEmptyDirectoriesNonExistentDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="cleanupEmptyDirectoriesNonExistentDir" duration-ms="10" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- cleanupEmptyDirectoriesNonExistentDir -->
+        <test-method status="PASS" signature="dleteTempDir()[pri:0, instance:org.artifactory.util.FilesTest@6326c74e]" name="dleteTempDir" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dleteTempDir -->
+      </class> <!-- org.artifactory.util.FilesTest -->
+      <class name="org.artifactory.descriptor.replication.LocalReplicationDescriptorTest">
+        <test-method status="PASS" signature="testDefaultBaseValues()[pri:0, instance:org.artifactory.descriptor.replication.LocalReplicationDescriptorTest@67c9c73]" name="testDefaultBaseValues" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultBaseValues -->
+        <test-method status="PASS" signature="testDefaultValues()[pri:0, instance:org.artifactory.descriptor.replication.LocalReplicationDescriptorTest@67c9c73]" name="testDefaultValues" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultValues -->
+        <test-method status="PASS" signature="testSetters()[pri:0, instance:org.artifactory.descriptor.replication.LocalReplicationDescriptorTest@67c9c73]" name="testSetters" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSetters -->
+        <test-method status="PASS" signature="testBaseSetters()[pri:0, instance:org.artifactory.descriptor.replication.LocalReplicationDescriptorTest@67c9c73]" name="testBaseSetters" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBaseSetters -->
+      </class> <!-- org.artifactory.descriptor.replication.LocalReplicationDescriptorTest -->
+      <class name="org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest@20346642]" name="readMimeTypes" is-config="true" duration-ms="11" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest@20346642]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testCreateDefaultGcInterval()[pri:0, instance:org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest@20346642]" name="testCreateDefaultGcInterval" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCreateDefaultGcInterval -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest@20346642]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.version.converter.v1410.GcSystemPropertyConverterTest -->
+      <class name="org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest@110b1a22]" name="readMimeTypes" is-config="true" duration-ms="19" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="testStatusHolderPackageConversion()[pri:0, instance:org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest@110b1a22]" name="testStatusHolderPackageConversion" duration-ms="5" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testStatusHolderPackageConversion -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest@110b1a22]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest@110b1a22]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.logging.version.v4.PublicApiPackageChangeLoggerConverterTest -->
+      <class name="org.artifactory.descriptor.backup.BackupDescriptorTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.backup.BackupDescriptorTest@4e392db8]" name="defaultConstructor" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="testSameTaskDefinition()[pri:0, instance:org.artifactory.descriptor.backup.BackupDescriptorTest@4e392db8]" name="testSameTaskDefinition" duration-ms="1" started-at="2013-05-13T13:10:38Z" finished-at="2013-05-13T13:10:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSameTaskDefinition -->
+      </class> <!-- org.artifactory.descriptor.backup.BackupDescriptorTest -->
+      <class name="org.artifactory.mime.version.MimeTypesVersionTest">
+        <test-method status="PASS" signature="convertVersion1()[pri:0, instance:org.artifactory.mime.version.MimeTypesVersionTest@605506d]" name="convertVersion1" duration-ms="18" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertVersion1 -->
+        <test-method status="PASS" signature="convertVersion2()[pri:0, instance:org.artifactory.mime.version.MimeTypesVersionTest@605506d]" name="convertVersion2" duration-ms="18" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convertVersion2 -->
+        <test-method status="PASS" signature="findNonExistentVersion()[pri:0, instance:org.artifactory.mime.version.MimeTypesVersionTest@605506d]" name="findNonExistentVersion" duration-ms="1" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Version 7 no found.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Version 7 no found.
+	at org.artifactory.mime.version.MimeTypesVersion.findVersion(MimeTypesVersion.java:100)
+	at org.artifactory.mime.version.MimeTypesVersionTest.findNonExistentVersion(MimeTypesVersionTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:77)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:189)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:105)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray2(ReflectionUtils.java:208)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:158)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:86)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:95)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- findNonExistentVersion -->
+        <test-method status="PASS" signature="findVersion1()[pri:0, instance:org.artifactory.mime.version.MimeTypesVersionTest@605506d]" name="findVersion1" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- findVersion1 -->
+        <test-method status="PASS" signature="versionString()[pri:0, instance:org.artifactory.mime.version.MimeTypesVersionTest@605506d]" name="versionString" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- versionString -->
+      </class> <!-- org.artifactory.mime.version.MimeTypesVersionTest -->
+      <class name="org.artifactory.descriptor.repo.RemoteRepoDescriptorTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.repo.RemoteRepoDescriptorTest@458debd3]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+      </class> <!-- org.artifactory.descriptor.repo.RemoteRepoDescriptorTest -->
+      <class name="org.artifactory.descriptor.security.ldap.LdapSettingTest">
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.security.ldap.LdapSettingTest@5113622]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="testUrlProtocolTransformer()[pri:0, instance:org.artifactory.descriptor.security.ldap.LdapSettingTest@5113622]" name="testUrlProtocolTransformer" duration-ms="0" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUrlProtocolTransformer -->
+      </class> <!-- org.artifactory.descriptor.security.ldap.LdapSettingTest -->
+      <class name="org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest@7d90f66a]" name="readMimeTypes" is-config="true" duration-ms="14" started-at="2013-05-13T13:10:46Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest@7d90f66a]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="convert()[pri:0, instance:org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest@7d90f66a]" name="convert" duration-ms="4" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- convert -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest@7d90f66a]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverterTest -->
+      <class name="org.artifactory.descriptor.security.SecurityDescriptorTest">
+        <test-method status="PASS" signature="addLdap()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="addLdap" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- addLdap -->
+        <test-method status="PASS" signature="addTwoEnabledLdaps()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="addTwoEnabledLdaps" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- addTwoEnabledLdaps -->
+        <test-method status="PASS" signature="isLdapExists()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="isLdapExists" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isLdapExists -->
+        <test-method status="PASS" signature="defaultConstructor()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="defaultConstructor" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- defaultConstructor -->
+        <test-method status="PASS" signature="removeLdap()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="removeLdap" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeLdap -->
+        <test-method status="PASS" signature="removeLastLdap()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="removeLastLdap" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeLastLdap -->
+        <test-method status="PASS" signature="removeLdapSetting()[pri:0, instance:org.artifactory.descriptor.security.SecurityDescriptorTest@6d441cce]" name="removeLdapSetting" duration-ms="0" started-at="2013-05-13T13:10:47Z" finished-at="2013-05-13T13:10:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- removeLdapSetting -->
+      </class> <!-- org.artifactory.descriptor.security.SecurityDescriptorTest -->
+    </test> <!-- Command line test -->
+  </suite> <!-- Command line suite -->
+</testng-results>

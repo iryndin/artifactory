@@ -1,0 +1,15 @@
+org.artifactory.addon.plugin
+org.artifactory.build
+org.artifactory.build.promotion
+org.artifactory.build.staging
+org.artifactory.checksum
+org.artifactory.common
+org.artifactory.exception
+org.artifactory.fs
+org.artifactory.md
+org.artifactory.repo
+org.artifactory.request
+org.artifactory.resource
+org.artifactory.search
+org.artifactory.security
+org.artifactory.util

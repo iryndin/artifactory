@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TestNG:  Unit Test</title>
+<style type="text/css">
+table caption,table.info_table,table.result,table.passed,table.failed {margin-bottom:10px;border:1px solid #000099;border-collapse:collapse;empty-cells:show;}
+table.info_table td,table.info_table th,table.result td,table.result th,table.passed td,table.passed th,table.failed td,table.failed th {
+border:1px solid #000099;padding:.25em .5em .25em .5em
+}
+table.result th {vertical-align:bottom}
+tr.param th {padding-left:1em;padding-right:1em}
+tr.param td {padding-left:.5em;padding-right:2em}
+td.numi,th.numi,td.numi_attn {
+text-align:right
+}
+tr.total td {font-weight:bold}
+table caption {
+text-align:center;font-weight:bold;
+}
+table.passed tr.stripe td,table tr.passedodd td {background-color: #00AA00;}
+table.passed td,table tr.passedeven td {background-color: #33FF33;}
+table.passed tr.stripe td,table tr.skippedodd td {background-color: #cccccc;}
+table.passed td,table tr.skippedodd td {background-color: #dddddd;}
+table.failed tr.stripe td,table tr.failedodd td,table.result td.numi_attn {background-color: #FF3333;}
+table.failed td,table tr.failedeven td,table.result tr.stripe td.numi_attn {background-color: #DD0000;}
+tr.stripe td,tr.stripe th {background-color: #E6EBF9;}
+p.totop {font-size:85%;text-align:center;border-bottom:2px black solid}
+div.shootout {padding:2em;border:3px #4854A8 solid}
+</style>
+</head>
+<body>
+<table cellspacing="0" cellpadding="0" class="result">
+<tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
+<tr><td style="text-align:left;padding-right:2em">Command line test</td><td class="numi">34</td><td class="numi">34</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0.5 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+</table>
+<table cellspacing="0" cellpadding="0" class="passed" id="summary">
+<tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Start</th><th>Time<br/>(ms)</th></tr>
+<tr><th colspan="4">Command line test &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="7">org.artifactory.traffic.entry.BaseEntryBehaviorTest</td><td><a href="#m1"><b>testEmptyUploadEntry</b>  </a></td><td class="numi">1</td><td>1368450759938</td><td class="numi">23</td></tr><tr class="passedodd"><td><a href="#m2"><b>testInvalidDownloadEntryDateFormat</b>  </a></td><td class="numi">1</td><td>1368450759961</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m3"><b>testInvalidRequestEntryDate</b>  </a></td><td class="numi">1</td><td>1368450759962</td><td class="numi">2</td></tr><tr class="passedodd"><td><a href="#m4"><b>testLongUploadEntry</b>  </a></td><td class="numi">1</td><td>1368450759964</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m5"><b>testNoDataRequestEntry</b>  </a></td><td class="numi">1</td><td>1368450759966</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m6"><b>testNullDownloadEntry</b>  </a></td><td class="numi">1</td><td>1368450759967</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m7"><b>testShortDownloadEntry</b>  </a></td><td class="numi">1</td><td>1368450759968</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="4">org.artifactory.traffic.entry.RequestEntryTest</td><td><a href="#m8"><b>requestEntryToString</b>  </a></td><td class="numi">1</td><td>1368450759968</td><td class="numi">5</td></tr><tr class="passedeven"><td><a href="#m9"><b>stringToRequestEntry</b>  </a></td><td class="numi">1</td><td>1368450759973</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m10"><b>testInvalidContentLength</b>  </a></td><td class="numi">1</td><td>1368450759974</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m11"><b>testInvalidReturnCode</b>  </a></td><td class="numi">1</td><td>1368450759975</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="3">org.artifactory.traffic.TrafficActionTest</td><td><a href="#m12"><b>testDownloadAction</b>  </a></td><td class="numi">1</td><td>1368450759976</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m13"><b>testRequestAction</b>  </a></td><td class="numi">1</td><td>1368450759977</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m14"><b>testUploadAction</b>  </a></td><td class="numi">1</td><td>1368450759978</td><td class="numi">1</td></tr>
+<tr class="passedeven"><td rowspan="4">org.artifactory.traffic.entry.TrafficEntryBuilderTest</td><td><a href="#m15"><b>testEmptyEntry</b>  </a></td><td class="numi">1</td><td>1368450759979</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m16"><b>testEntryNoData</b>  </a></td><td class="numi">1</td><td>1368450759980</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m17"><b>testNullEntry</b>  </a></td><td class="numi">1</td><td>1368450759980</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m18"><b>testValidEntry</b>  </a></td><td class="numi">1</td><td>1368450759981</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="7">org.artifactory.traffic.read.TrafficReaderTest</td><td><a href="#m19"><b>testEntriesStream</b>  </a></td><td class="numi">1</td><td>1368450760342</td><td class="numi">39</td></tr><tr class="passedodd"><td><a href="#m20"><b>testEntriesWithinRange</b>  </a></td><td class="numi">1</td><td>1368450760381</td><td class="numi">7</td></tr><tr class="passedodd"><td><a href="#m21"><b>testInvalidDates</b>  </a></td><td class="numi">1</td><td>1368450760388</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m22"><b>testNonExistingBaseDir</b>  </a></td><td class="numi">1</td><td>1368450760389</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m23"><b>testNullDates</b>  </a></td><td class="numi">1</td><td>1368450760390</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m24"><b>testNullDir</b>  </a></td><td class="numi">1</td><td>1368450760390</td><td class="numi">1</td></tr><tr class="passedodd"><td><a href="#m25"><b>testOutOfRange</b>  </a></td><td class="numi">1</td><td>1368450760391</td><td class="numi">2</td></tr>
+<tr class="passedeven"><td rowspan="5">org.artifactory.traffic.read.TrafficStreamParserTest</td><td><a href="#m26"><b>testInvalidDates</b>  </a></td><td class="numi">1</td><td>1368450760393</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m27"><b>testNullDates</b>  </a></td><td class="numi">1</td><td>1368450760394</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m28"><b>testNullReader</b>  </a></td><td class="numi">1</td><td>1368450760395</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m29"><b>testOutOfRange</b>  </a></td><td class="numi">1</td><td>1368450760395</td><td class="numi">2</td></tr><tr class="passedeven"><td><a href="#m30"><b>testWithinRange</b>  </a></td><td class="numi">1</td><td>1368450760397</td><td class="numi">21</td></tr>
+<tr class="passedodd"><td rowspan="1">org.artifactory.traffic.TrafficTest</td><td><a href="#m31"><b>testTrafficLog</b>  </a></td><td class="numi">1</td><td>1368450760431</td><td class="numi">30</td></tr>
+<tr class="passedeven"><td rowspan="3">org.artifactory.traffic.entry.TransferEntryTest</td><td><a href="#m32"><b>stringToUploadEntry</b>  </a></td><td class="numi">1</td><td>1368450760462</td><td class="numi">1</td></tr><tr class="passedeven"><td><a href="#m33"><b>testInvalidUploadEntryContentLength</b>  </a></td><td class="numi">1</td><td>1368450760463</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m34"><b>uploadEntryToString</b>  </a></td><td class="numi">1</td><td>1368450760464</td><td class="numi">0</td></tr>
+</table>
+<h1>Command line test</h1>
+<h2 id="m1">org.artifactory.traffic.entry.TransferEntryTest:uploadEntryToString</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m2">org.artifactory.traffic.read.TrafficStreamParserTest:testNullReader</h2>
+<div style="padding-left:3em">
+<p>Entry reader cannot be null</p>
+org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:57)
+<br/>at org.artifactory.traffic.read.TrafficStreamParserTest.testNullReader(TrafficStreamParserTest.java:55)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m3">org.artifactory.traffic.TrafficActionTest:testUploadAction</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m4">org.artifactory.traffic.read.TrafficStreamParserTest:testInvalidDates</h2>
+<div style="padding-left:3em">
+<p>Traffic start date cannot be after end date.</p>
+org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:63)
+<br/>at org.artifactory.traffic.read.TrafficStreamParserTest.testInvalidDates(TrafficStreamParserTest.java:78)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m5">org.artifactory.traffic.entry.TrafficEntryBuilderTest:testEntryNoData</h2>
+<div style="padding-left:3em">
+<p>Entry should contain at least three elements: |</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:47)
+<br/>at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testEntryNoData(TrafficEntryBuilderTest.java:64)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m6">org.artifactory.traffic.TrafficActionTest:testDownloadAction</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m7">org.artifactory.traffic.entry.TrafficEntryBuilderTest:testNullEntry</h2>
+<div style="padding-left:3em">
+<p>Entry is empty</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:42)
+<br/>at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testNullEntry(TrafficEntryBuilderTest.java:48)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m8">org.artifactory.traffic.entry.TrafficEntryBuilderTest:testEmptyEntry</h2>
+<div style="padding-left:3em">
+<p>Entry is empty</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:42)
+<br/>at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testEmptyEntry(TrafficEntryBuilderTest.java:56)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m9">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testShortDownloadEntry</h2>
+<div style="padding-left:3em">
+<p>Number of entry columns does not match the entry specification.Expected: 5 got: 3 tokens: [20090318162747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom]</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:110)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.DownloadEntry.&lt;init&gt;(DownloadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testShortDownloadEntry(BaseEntryBehaviorTest.java:60)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m10">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testInvalidDownloadEntryDateFormat</h2>
+<div style="padding-left:3em">
+<p>Number of entry columns does not match the entry specification.Expected: 5 got: 4 tokens: [2-00---78, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:110)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.DownloadEntry.&lt;init&gt;(DownloadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testInvalidDownloadEntryDateFormat(BaseEntryBehaviorTest.java:84)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m11">org.artifactory.traffic.entry.RequestEntryTest:testInvalidContentLength</h2>
+<div style="padding-left:3em">
+<p>Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 200, 4434a3a2]</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:110)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.UploadEntry.&lt;init&gt;(UploadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.RequestEntryTest.testInvalidContentLength(RequestEntryTest.java:101)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m12">org.artifactory.traffic.entry.TransferEntryTest:stringToUploadEntry</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m13">org.artifactory.traffic.read.TrafficStreamParserTest:testNullDates</h2>
+<div style="padding-left:3em">
+<p>Traffic dates cannot be null.</p>
+org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:60)
+<br/>at org.artifactory.traffic.read.TrafficStreamParserTest.testNullDates(TrafficStreamParserTest.java:65)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m14">org.artifactory.traffic.entry.RequestEntryTest:requestEntryToString</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m15">org.artifactory.traffic.read.TrafficReaderTest:testInvalidDates</h2>
+<div style="padding-left:3em">
+<p>Traffic start date cannot be after end date.</p>
+org.artifactory.traffic.read.TrafficReader.validateDateRange(TrafficReader.java:292)
+<br/>at org.artifactory.traffic.read.TrafficReader.getEntries(TrafficReader.java:84)
+<br/>at org.artifactory.traffic.read.TrafficReaderTest.testInvalidDates(TrafficReaderTest.java:103)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m16">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testLongUploadEntry</h2>
+<div style="padding-left:3em">
+<p>Invalid duration token: UPLOAD</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:128)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.UploadEntry.&lt;init&gt;(UploadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testLongUploadEntry(BaseEntryBehaviorTest.java:68)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m17">org.artifactory.traffic.read.TrafficReaderTest:testNonExistingBaseDir</h2>
+<div style="padding-left:3em">
+<p>Log directory must be valid.</p>
+org.artifactory.traffic.read.TrafficReader.&lt;init&gt;(TrafficReader.java:64)
+<br/>at org.artifactory.traffic.read.TrafficReaderTest.testNonExistingBaseDir(TrafficReaderTest.java:78)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m18">org.artifactory.traffic.entry.TrafficEntryBuilderTest:testValidEntry</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m19">org.artifactory.traffic.TrafficActionTest:testRequestAction</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m20">org.artifactory.traffic.TrafficTest:testTrafficLog</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m21">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testInvalidRequestEntryDate</h2>
+<div style="padding-left:3em">
+<p>Number of entry columns does not match the entry specification.Expected: 10 got: 4 tokens: [200903a816l747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:110)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.RequestEntry.&lt;init&gt;(RequestEntry.java:47)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testInvalidRequestEntryDate(BaseEntryBehaviorTest.java:76)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m22">org.artifactory.traffic.read.TrafficReaderTest:testEntriesWithinRange</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m23">org.artifactory.traffic.read.TrafficStreamParserTest:testOutOfRange</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m24">org.artifactory.traffic.entry.RequestEntryTest:stringToRequestEntry</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m25">org.artifactory.traffic.read.TrafficReaderTest:testEntriesStream</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m26">org.artifactory.traffic.read.TrafficStreamParserTest:testWithinRange</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m27">org.artifactory.traffic.read.TrafficReaderTest:testNullDir</h2>
+<div style="padding-left:3em">
+<p>Log directory must be valid.</p>
+org.artifactory.traffic.read.TrafficReader.&lt;init&gt;(TrafficReader.java:64)
+<br/>at org.artifactory.traffic.read.TrafficReaderTest.testNullDir(TrafficReaderTest.java:68)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m28">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testNullDownloadEntry</h2>
+<div style="padding-left:3em">
+<p>Entry is empty</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:101)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.DownloadEntry.&lt;init&gt;(DownloadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testNullDownloadEntry(BaseEntryBehaviorTest.java:36)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m29">org.artifactory.traffic.read.TrafficReaderTest:testOutOfRange</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m30">org.artifactory.traffic.entry.RequestEntryTest:testInvalidReturnCode</h2>
+<div style="padding-left:3em">
+<p>Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 2a00z, 443432]</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:110)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.UploadEntry.&lt;init&gt;(UploadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.RequestEntryTest.testInvalidReturnCode(RequestEntryTest.java:92)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m31">org.artifactory.traffic.read.TrafficReaderTest:testNullDates</h2>
+<div style="padding-left:3em">
+<p>Traffic dates cannot be null.</p>
+org.artifactory.traffic.read.TrafficReader.validateDateRange(TrafficReader.java:289)
+<br/>at org.artifactory.traffic.read.TrafficReader.getEntries(TrafficReader.java:84)
+<br/>at org.artifactory.traffic.read.TrafficReaderTest.testNullDates(TrafficReaderTest.java:89)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m32">org.artifactory.traffic.entry.TransferEntryTest:testInvalidUploadEntryContentLength</h2>
+<div style="padding-left:3em">
+<p>For input string: &quot;63a2&quot;</p>
+java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
+<br/>at java.lang.Long.parseLong(Long.java:441)
+<br/>at java.lang.Long.parseLong(Long.java:483)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:45)
+<br/>at org.artifactory.traffic.entry.UploadEntry.&lt;init&gt;(UploadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.TransferEntryTest.testInvalidUploadEntryContentLength(TransferEntryTest.java:80)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m33">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testEmptyUploadEntry</h2>
+<div style="padding-left:3em">
+<p>Entry is empty</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:101)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.TransferEntry.&lt;init&gt;(TransferEntry.java:43)
+<br/>at org.artifactory.traffic.entry.UploadEntry.&lt;init&gt;(UploadEntry.java:36)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testEmptyUploadEntry(BaseEntryBehaviorTest.java:44)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h2 id="m34">org.artifactory.traffic.entry.BaseEntryBehaviorTest:testNoDataRequestEntry</h2>
+<div style="padding-left:3em">
+<p>No tokens found in entry</p>
+org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:107)
+<br/>at org.artifactory.traffic.entry.TokenizedTrafficEntry.&lt;init&gt;(TokenizedTrafficEntry.java:54)
+<br/>at org.artifactory.traffic.entry.RequestEntry.&lt;init&gt;(RequestEntry.java:47)
+<br/>at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testNoDataRequestEntry(BaseEntryBehaviorTest.java:52)
+<br/>35 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+</body></html>
