@@ -242,7 +242,7 @@ public class FSDirectoryManager implements DirectoryManager {
         }
 
         public void readBytes(byte[] b, int offset, int len) throws IOException {
-            IOCounters.incrRead();
+            //IOCounters.incrRead();
             in.readBytes(b, offset, len);
         }
 
