@@ -1,0 +1,62 @@
+<wicket:panel>
+    <form wicket:id="form">
+        <div wicket:id="yumCalculationBorder">
+
+            <div class="field field-sep">
+                <div class="value">
+
+                    <label>YUM Metadata Folder Depth</label>
+
+                    <input wicket:id="yumRootDepth" type="text" class="text yum-folder-depth"/>
+                    <span wicket:id="yumRootDepth.help"/>
+                </div>
+            </div>
+
+            <div class="field field-sep field-100 clear">
+                <label>YUM Group File Names</label>
+                <span wicket:id="yumGroupFileNames.help"></span>
+
+                <div class="value">
+                    <textarea wicket:id="yumGroupFileNames"></textarea>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <input wicket:id="calculateYumMetadata" type="checkbox"/>
+                    <span wicket:id="calculateYumMetadata.help"></span>
+                </div>
+                <div class="field">
+                    <button type="button" wicket:id="calculateNow"></button>
+                </div>
+            </div>
+        </div>
+        <div wicket:id="nuGetBorder">
+            <div class="field-row">
+                <p class="info">
+                    <span wicket:id="nuGetRepoUrlLabel"/>
+                </p>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <input wicket:id="enableNuGetSupport" type="checkbox"/>
+                    <span wicket:id="enableNuGetSupport.help"></span>
+                </div>
+                <div class="field">
+                    <button type="button" wicket:id="reindexPackages"></button>
+                </div>
+            </div>
+        </div>
+        <div wicket:id="gemsSupportSection">
+            <div class="field-row">
+                <div class="field">
+                    <input wicket:id="enableGemsSupport" type="checkbox"/>
+                    <span wicket:id="enableGemsSupport.help"></span>
+                </div>
+                <div class="field">
+                    <button type="button" wicket:id="recalculateIndex"></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</wicket:panel>
