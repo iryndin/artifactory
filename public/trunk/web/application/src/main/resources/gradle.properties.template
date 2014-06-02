@@ -1,3 +1,0 @@
-artifactory_user=${auth.username}
-artifactory_password=${auth.password}
-artifactory_contextUrl=${auth.contextUrl}
