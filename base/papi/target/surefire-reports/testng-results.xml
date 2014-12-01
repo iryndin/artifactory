@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="3" passed="3">
+  <reporter-output>
+  </reporter-output>
+  <suite name="org.artifactory.util.PathUtilTest" duration-ms="14" started-at="2014-11-27T18:02:43Z" finished-at="2014-11-27T18:02:43Z">
+    <groups>
+    </groups>
+    <test name="Command line test 78059b84-33c2-4b9f-bfe9-596b6f536b06" duration-ms="14" started-at="2014-11-27T18:02:43Z" finished-at="2014-11-27T18:02:43Z">
+      <class name="org.artifactory.util.PathUtilTest">
+        <test-method status="PASS" signature="getPathNameTest()[pri:0, instance:org.artifactory.util.PathUtilTest@7d365e01]" name="getPathNameTest" duration-ms="13" started-at="2014-11-27T20:02:43Z" finished-at="2014-11-27T20:02:43Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getPathNameTest -->
+      </class> <!-- org.artifactory.util.PathUtilTest -->
+    </test> <!-- Command line test 78059b84-33c2-4b9f-bfe9-596b6f536b06 -->
+  </suite> <!-- org.artifactory.util.PathUtilTest -->
+  <suite name="org.artifactory.addon.plugin.PluginInfoTest" duration-ms="49" started-at="2014-11-27T18:02:43Z" finished-at="2014-11-27T18:02:43Z">
+    <groups>
+    </groups>
+    <test name="Command line test bb3174a2-5fe0-44e1-aced-0ee4c24be58a" duration-ms="49" started-at="2014-11-27T18:02:43Z" finished-at="2014-11-27T18:02:43Z">
+      <class name="org.artifactory.addon.plugin.PluginInfoTest">
+        <test-method status="PASS" signature="testConstructor()[pri:0, instance:org.artifactory.addon.plugin.PluginInfoTest@30f687a3]" name="testConstructor" duration-ms="32" started-at="2014-11-27T20:02:43Z" finished-at="2014-11-27T20:02:43Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConstructor -->
+        <test-method status="PASS" signature="testConstructorWithNoClosureMap()[pri:0, instance:org.artifactory.addon.plugin.PluginInfoTest@30f687a3]" name="testConstructorWithNoClosureMap" duration-ms="0" started-at="2014-11-27T20:02:43Z" finished-at="2014-11-27T20:02:43Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testConstructorWithNoClosureMap -->
+      </class> <!-- org.artifactory.addon.plugin.PluginInfoTest -->
+    </test> <!-- Command line test bb3174a2-5fe0-44e1-aced-0ee4c24be58a -->
+  </suite> <!-- org.artifactory.addon.plugin.PluginInfoTest -->
+</testng-results>

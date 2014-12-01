@@ -1,0 +1,361 @@
+<html>
+<head>
+<title>TestNG:  NodesDaoTest</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>NodesDaoTest</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>40/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Thu Nov 27 20:03:42 IST 2014</td>
+</tr>
+<tr><td>Total time:</td><td>0 seconds (243 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesAndFoldersUnderFile()'><b>countFilesAndFoldersUnderFile</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesAndFoldersUnderFolderWithDirectChildren()'><b>countFilesAndFoldersUnderFolderWithDirectChildren</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesAndFoldersUnderNonExistentFolder()'><b>countFilesAndFoldersUnderNonExistentFolder</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesUnderFile()'><b>countFilesUnderFile</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesUnderFolder()'><b>countFilesUnderFolder</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesUnderFolderWithDirectChildren()'><b>countFilesUnderFolderWithDirectChildren</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesUnderFolderWithPrefix()'><b>countFilesUnderFolderWithPrefix</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countFilesUnderNonExistentFolder()'><b>countFilesUnderNonExistentFolder</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countNodesUnderFolderWithPrefix()'><b>countNodesUnderFolderWithPrefix</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countRepositoryFiles()'><b>countRepositoryFiles</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countRepositoryFilesAndFolders()'><b>countRepositoryFilesAndFolders</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.countRepositoryFilesAndFoldersUnderFolder()'><b>countRepositoryFilesAndFoldersUnderFolder</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.createDirectoryNode()'><b>createDirectoryNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.deleteDirectoryNode()'><b>deleteDirectoryNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.deleteNonExistent()'><b>deleteNonExistent</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.findChecksumsByMd5()'><b>findChecksumsByMd5</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.findChecksumsBySha1()'><b>findChecksumsBySha1</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getChildrenOfLeafFileNode()'><b>getChildrenOfLeafFileNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getChildrenOfLeafFolderNode()'><b>getChildrenOfLeafFolderNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getChildrenOfNodeDirectlyUnderRoot()'><b>getChildrenOfNodeDirectlyUnderRoot</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getChildrenOfNodeDirectlyUnderRootWithCousinStartingWithSamePrefix()'><b>getChildrenOfNodeDirectlyUnderRootWithCousinStartingWithSamePrefix</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getChildrenOfRoot()'><b>getChildrenOfRoot</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getFilesTotalSize()'><b>getFilesTotalSize</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.getTotalSizeUnderFolderWithPrefix()'><b>getTotalSizeUnderFolderWithPrefix</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.itemExists()'><b>itemExists</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.itemNotExists()'><b>itemNotExists</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.loadDirectoryNodeById()'><b>loadDirectoryNodeById</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.loadDirectoryNodeByPath()'><b>loadDirectoryNodeByPath</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.nodeIdNoSuchNode()'><b>nodeIdNoSuchNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.nodeIdRoot()'><b>nodeIdRoot</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.nodeSha1NotExist()'><b>nodeSha1NotExist</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.nodeSha1OfFile()'><b>nodeSha1OfFile</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.nodeSha1OfFolder()'><b>nodeSha1OfFolder</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.searchBadMd5Checksums()'><b>searchBadMd5Checksums</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.searchBadSha1Checksums()'><b>searchBadSha1Checksums</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.searchFilesByProperty()'><b>searchFilesByProperty</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.searchFilesByPropertyNoMatch()'><b>searchFilesByPropertyNoMatch</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsByMd5()'><b>testFindEmptyChecksumsByMd5</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot search for invalid md5 checksum value &apos;wrong&apos;
+	at org.artifactory.storage.db.fs.dao.NodesDao.searchByChecksum(NodesDao.java:342)
+	at org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsByMd5(NodesDaoTest.java:335)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:172)
+... Removed 32 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1428253999", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1428253999'><pre>java.lang.IllegalArgumentException: Cannot search for invalid md5 checksum value &apos;wrong&apos;
+	at org.artifactory.storage.db.fs.dao.NodesDao.searchByChecksum(NodesDao.java:342)
+	at org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsByMd5(NodesDaoTest.java:335)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.MethodInvocationHelper$1.runTestMethod(MethodInvocationHelper.java:200)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:172)
+	at sun.reflect.GeneratedMethodAccessor74.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeHookable(MethodInvocationHelper.java:212)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:707)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:217)
+	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:84)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:92)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsBySha1()'><b>testFindEmptyChecksumsBySha1</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td><div><pre>java.lang.IllegalArgumentException: Cannot search for invalid sha1 checksum value &apos;wrong&apos;
+	at org.artifactory.storage.db.fs.dao.NodesDao.searchByChecksum(NodesDao.java:342)
+	at org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsBySha1(NodesDaoTest.java:309)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:172)
+... Removed 32 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace302520128", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace302520128'><pre>java.lang.IllegalArgumentException: Cannot search for invalid sha1 checksum value &apos;wrong&apos;
+	at org.artifactory.storage.db.fs.dao.NodesDao.searchByChecksum(NodesDao.java:342)
+	at org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.testFindEmptyChecksumsBySha1(NodesDaoTest.java:309)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.MethodInvocationHelper$1.runTestMethod(MethodInvocationHelper.java:200)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:172)
+	at sun.reflect.GeneratedMethodAccessor74.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeHookable(MethodInvocationHelper.java:212)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:707)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:217)
+	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:84)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:92)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+</pre></div></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+<tr>
+<td title='org.artifactory.storage.db.fs.itest.dao.NodesDaoTest.updateFolderNode()'><b>updateFolderNode</b><br>Test class: org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td></td>
+<td>0</td>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest@4f902864</td></tr>
+</table><p>
+</body>
+</html>

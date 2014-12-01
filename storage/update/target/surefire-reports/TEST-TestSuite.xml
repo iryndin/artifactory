@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="TestSuite" time="0.646" tests="40" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib"/>
+    <property name="java.vm.version" value="24.71-b01"/>
+    <property name="user.country.format" value="IL"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/eli/work/artifactory-3.x/artifactory/devenv"/>
+    <property name="java.runtime.version" value="1.7.0_71-b14"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/endorsed"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="java.io.tmpdir" value="/var/folders/yn/1sq_t_xs5917rgx6sh72hssh0000gp/T/"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.1.1/libexec/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/eli/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.10.1"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="user.home" value="/Users/eli"/>
+    <property name="user.timezone" value="Asia/Jerusalem"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="eli"/>
+    <property name="java.class.path" value="/usr/local/Cellar/maven/3.1.1/libexec/boot/plexus-classworlds-2.5.1.jar"/>
+    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="info"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher install"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.7.0_71"/>
+    <property name="java.ext.dirs" value="/Users/eli/Library/Java/Extensions:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/resources.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/rt.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/sunrsasign.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jsse.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jce.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/charsets.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jfr.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/usr/local/Cellar/maven/3.1.1/libexec"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="detectVersion125rc0" classname="org.artifactory.update.md.MetadataVersionTest" time="0.018"/>
+  <testcase name="detectVersion230" classname="org.artifactory.update.md.MetadataVersionTest" time="0.044"/>
+  <testcase name="detectVersion30beta3" classname="org.artifactory.update.md.MetadataVersionTest" time="0.001"/>
+  <testcase name="detectVersion30beta6" classname="org.artifactory.update.md.MetadataVersionTest" time="0.002"/>
+  <testcase name="versionsCoverage" classname="org.artifactory.update.md.MetadataVersionTest" time="0"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v125rc0.MdFileConverterTest" time="0.006"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v125rc0.MdFolderConverterTest" time="0.001"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v125rc0.MdStatsConverterTest" time="0.001"/>
+  <testcase name="readFileMetadata" classname="org.artifactory.update.md.v125rc0.MetadataReader125Test" time="0.07"/>
+  <testcase name="readFolderMetadata" classname="org.artifactory.update.md.v125rc0.MetadataReader125Test" time="0.004"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v130beta3.ArtifactoryFileConverterTest" time="0.008"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v130beta3.ArtifactoryFolderConverterTest" time="0.001"/>
+  <testcase name="readFileMetadata" classname="org.artifactory.update.md.v130beta3.MetadataReader130beta3Test" time="0.015"/>
+  <testcase name="readFolderMetadata" classname="org.artifactory.update.md.v130beta3.MetadataReader130beta3Test" time="0.006"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.md.v130beta6.ChecksumsConverterTest" time="0.012"/>
+  <testcase name="convertValidFolderInfo" classname="org.artifactory.update.md.v130beta6.FolderAdditionalInfoNameConverterTest" time="0.005"/>
+  <testcase name="readFileMetadata" classname="org.artifactory.update.md.v130beta6.MetadataReader130beta6Test" time="0.006"/>
+  <testcase name="readFolderMetadata" classname="org.artifactory.update.md.v130beta6.MetadataReader130beta6Test" time="0.004"/>
+  <testcase name="readAllVersions" classname="org.artifactory.update.security.SecurityInfoReaderTest" time="0.205"/>
+  <testcase name="readVersion5" classname="org.artifactory.update.security.SecurityInfoReaderTest" time="0.02"/>
+  <testcase name="convertFromVersion1" classname="org.artifactory.update.security.SecurityVersionTest" time="0.044"/>
+  <testcase name="convertFromVersion1Big" classname="org.artifactory.update.security.SecurityVersionTest" time="0.023"/>
+  <testcase name="convertFromVersion2" classname="org.artifactory.update.security.SecurityVersionTest" time="0.013"/>
+  <testcase name="convertFromVersion3" classname="org.artifactory.update.security.SecurityVersionTest" time="0.017"/>
+  <testcase name="versionsCoverage" classname="org.artifactory.update.security.SecurityVersionTest" time="0"/>
+  <testcase name="convertOutputOfSimpleUserConverter" classname="org.artifactory.update.security.v1.AclsConverterTest" time="0.004"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v1.AclsConverterTest" time="0.004"/>
+  <testcase name="convertOutputOfSimpleUserConverter" classname="org.artifactory.update.security.v1.UserPermissionsConverterTest" time="0.004"/>
+  <testcase name="convertOutputOfSimpleUserConverter" classname="org.artifactory.update.security.v2.RepoPathAclConverterTest" time="0.004"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v2.RepoPathAclConverterTest" time="0.004"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v2.SimpleUserConverterTest" time="0.003"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v3.AclRepoKeysConverterTest" time="0.005"/>
+  <testcase name="convertFileWithAnonymousRealOnAny" classname="org.artifactory.update.security.v3.AnyRemoteConverterTest" time="0.004"/>
+  <testcase name="convertFileWithoutAnonymousRealOnAny" classname="org.artifactory.update.security.v3.AnyRemoteConverterTest" time="0.002"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v6.LdapGroupSettingConverterTest" time="0.002"/>
+  <testcase name="convertValidFile" classname="org.artifactory.update.security.v6.LowercaseUsernameXmlConverterTest" time="0.004"/>
+  <testcase name="testBackupPropertyFile" classname="org.artifactory.update.test.ArtifactoryVersionTest" time="0.034"/>
+  <testcase name="testFileReturns" classname="org.artifactory.update.test.FileIOTest" time="0.001"/>
+  <testcase name="testReadingVersion" classname="org.artifactory.update.test.ReadOldBackupsTest" time="0.045"/>
+  <testcase name="testSecurityConversion" classname="org.artifactory.update.test.ReadOldBackupsTest" time="0"/>
+</testsuite>

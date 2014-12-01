@@ -1,0 +1,4586 @@
+<table border='1'>
+<tr>
+<th>Class name</th>
+<th>Method name</th>
+<th>Groups</th>
+</tr><tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreImplCachedFSProviderTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.StatsServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fileDownloadedOnFileWithNoStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getStatsNonExistingItem</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsOnNonExistingNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsOnFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getStatsFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsNonExistentPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setStatsOnFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fileDownloadedOnNonExistingItem</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fileDownloadedOnFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setStatsOnFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsOnFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getStatsFileWithNoStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.TasksDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>delete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadByType</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createDuplicate</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>exist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>create</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.security.itest.dao.FullDeleteAclsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteUserWithAce</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeletePermissionTargetWithAcl</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteAllData</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreExternalProviderPassThroughTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.upgrades.versions.ArtifactoryDBVersionTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>test300DBChanges</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>rollBackTo300Version</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>test311DBChanges</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest-upgrade </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.build.itest.dao.BuildModulesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testSimpleCreateBuildModule</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteBuildModules</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testReadBuildModulesById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateTwoBuildModulesWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFullDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.FileServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>itemNotExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1OfFile</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1NotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeIdRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteFolderById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>itemExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countRepoFilesAndFoldersUnderNonExistentRepo</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadNonExistentFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFolderAndFilesUnderRepo</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadNonExistentById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1OfFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadChildren</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadChildrenOfFile</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countAllFiles</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderRepo</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadFolderUnderRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadItemById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFolderAndFilesUnderFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getSha1BadChecksums</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getMd5BadChecksums</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteNonExistentItem</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countRepoFilesUnderNonExistentRepo</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>itemExistsRepoRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadChildrenPathNotFound</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeIdNoSuchNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.ConfigsServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>addConfigExistingConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>addConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>addOrUpdateConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.ha.itest.dao.ArtifactoryServersDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadServer</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasServer</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasServerNonExistingServer</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateServer</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadAllServers</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createServer</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.WatchesServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeWithoutWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeWithNone</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteAllUserWatchesNoSuchUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeWithWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteUserWatchesNoSuchUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeWithMultiWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createWatch</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyCachePopulation</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteUserWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeWithWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteAllUserWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreExternalProviderCopyOnReadTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.build.itest.dao.BuildsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildSameId</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testReadBuildsByFullPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildWithProps</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testReadBuildsById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteBuilds</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildWithPromotions</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBuildsForArtifactSHA1Checksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBuildsForDependencyMD5Checksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBuildsForDependencySHA1Checksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testReadBuildsByName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindLatestBuildDate</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildSameNameNumberDate</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBuildsForArtifactMD5Checksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildWithPropsAndPromotions</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateBuildSameNameAndNumber</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testSimpleCreateBuild</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fullDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.ha.itest.service.ArtifactoryServersServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testAllServers</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.security.itest.dao.AclsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateAclWithAces</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadPermissionTargets</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindAclById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateAclNoAces</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadAllAcls</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreatePermissionTargetWithRepoKeys</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindAclByPermissionTargetId</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteAcls</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreatePermissionTargetWrongRepoKeys</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreatePermissionTargetNoRepoKeys</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testUserOrGroupHasAce</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeletePermissionTarget</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreImplFileProviderTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.ConfigsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateStreamConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadStreamConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStreamConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createStreamConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasConfigNoConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasConfig</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.FileServiceSpecialCharsTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>illegalStar</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFileValidChars</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSpaceBeforeSlash</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>illegalPipe</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSingleColon</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>illegalColon</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>rootRepo</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSingleDotDot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>illegalQuotationMark</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidDot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>illegalQuestionMark</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>validCarretLeft</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFolderValidChars</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSingleDot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidDotDot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSpaceAfterSlash</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidAllSpaces</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>invalidSingleAmpersand</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>validCarretRight</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>insertBinaryEntry</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.NodesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countNodesUnderFolderWithPrefix</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createDirectoryNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1NotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindEmptyChecksumsBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countRepositoryFiles</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesAndFoldersUnderNonExistentFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getFilesTotalSize</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getChildrenOfRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countRepositoryFilesAndFoldersUnderFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1OfFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findChecksumsByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesAndFoldersUnderFile</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteNonExistent</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getChildrenOfNodeDirectlyUnderRootWithCousinStartingWithSamePrefix</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>searchFilesByProperty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getChildrenOfNodeDirectlyUnderRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>searchBadSha1Checksums</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeIdNoSuchNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>itemNotExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getChildrenOfLeafFileNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findChecksumsBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateFolderNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderFolderWithDirectChildren</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeSha1OfFile</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countRepositoryFilesAndFolders</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>nodeIdRoot</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderFolderWithPrefix</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>itemExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderNonExistentFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getTotalSizeUnderFolderWithPrefix</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesUnderFile</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>countFilesAndFoldersUnderFolderWithDirectChildren</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindEmptyChecksumsByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteDirectoryNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>searchFilesByPropertyNoMatch</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadDirectoryNodeById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getChildrenOfLeafFolderNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>searchBadMd5Checksums</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadDirectoryNodeByPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.WatchesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeWithoutWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>insertWatch</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteUserWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeWithoutWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getWatchesNodeWithWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteWatchesNodeWithWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteAllUserWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteWatchesNodeWithNoWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteAllUserWatchesNoSuchUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasWatchesNodeWithWatches</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteWatchesNonExistentNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.build.itest.dao.BuildDependenciesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteBuildDependencies</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateSimpleDependency</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateNullChecksumsDependencies</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateMultipleDependencies</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fullDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.ItemTreeTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>preBuildTree</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>rootItemTree</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>treeWithFilter</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.TasksServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>removeIndexTaskByRepoPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasIndexTask</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getIndexTasks</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>removeIndexTaskByRepoPathNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>removeIndexTask</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>addIndexTask</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreExternalProviderCopyFirstTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.ArchiveEntriesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteUnreferencedNameIds</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFindArchivePathEntry</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createIndexedArchive</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasIndexedArchivesEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>removeByChecksumNoSuchChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFindArchiveNameEntryEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getEntryPathExistingPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>removeByChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createFindArchiveNameEntry</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadByChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>isIndexedNoSuchChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findArchivePathEntryEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getEntryPathNonExistingPath</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteUnreferencedPathIds</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>isIndexed</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadByChecksumNonExisting</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.security.itest.service.UserGroupServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createUserExistingUsername</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createUserTest</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasAnonymousUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasDefaultAdmin</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createGroupExistingGroupName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.FileServiceRepoStorageSummaryTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testSummary</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.PropertiesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithEmptyProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>trimLongPropertyValue</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deletePropertiesNodeWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasPropertiesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>insertProperty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithoutProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deletePropertiesNodeWithNoProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasPropertiesNodeWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasPropertiesNodeWithoutProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deletePropertiesNonExistentNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.ArchiveEntriesServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>insertEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteKeepsPathAndName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>insertEntriesReusedPathAndName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasEntriesNoSuchChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteEntriesNotIndexed</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreImplFullDbProviderTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreExternalProviderMoveTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.base.itest.dao.DbPropertiesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadExistingProps</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createNewLatestProps</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createNewDevModeProps</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createNewLatestReleaseProps</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.service.PropertiesServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithMultiValueProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasPropertiesPathWithNoProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithNone</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasPropertiesPathWithProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setProperties</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getPropertiesNodeNotExist</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.dao.BinariesDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findChecksumsBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>binaryExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindEmptyChecksumsBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadNonExistingNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createExistingBinary</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findChecksumsBySha1ThousandLimit</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteEntries</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>loadExistingNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGetCountAndTotalSize</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findChecksumsByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindEmptyChecksumsByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>binaryNotExists</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createBinary</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>findPotentialDeletion</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.security.itest.dao.FullDeleteUserGroupsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteAllData</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteLastAdmin</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.build.itest.dao.BuildArtifactsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteBuildArtifacts</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateMultipleArtifacts</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindByMd5</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBySha1</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateSimpleArtifact</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateNullChecksumsDependencies</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFullDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.security.itest.dao.UserGroupsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindGroupById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testAddUsersToGroup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteGroup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateGroup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testWrongUpdateGroupName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserFailedNoGroups</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserSameName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testUpdateUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindUserById</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserWithNulls</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserWithGroups</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testWrongUpdateUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteUserAndGroupLinked</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindUserByName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateGroupSameId</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testUpdateGroup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindGroupByFilter</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserWithFailedGroups</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindGroupByName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUser</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateUserSameId</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testCreateGroupSameName</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.fs.itest.dao.StatsDaoTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateStatsFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFolder</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getFileStatsWithNoDownloads</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>hasStatsNonExistentId</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>updateStatsFileWithStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>getFileStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsNonExistingNode</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>deleteStatsFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>createStatsFileWithoutStats</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.build.itest.service.BuildStoreServiceImplTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testAddBuild</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testFindBuild</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteBuildB</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGetAllBuildNames</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testSearchByChecksum</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testDeleteOneBuildA</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>setup</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>fullDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>org.artifactory.storage.db.binstore.itest.service.BinaryStoreImplFullPathFileProviderTest</td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@Test</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadResources</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testGarbageOneByOne</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testLoadedNothingToDelete</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>testEmpty</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestClass</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextPrepareTestInstance</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>initBinaryStore</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@BeforeMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextBeforeTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>bindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td align='center' colspan='3'>@AfterMethod</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindArtifactoryHome</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>unbindDummyContext</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestMethod</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td align='center' colspan='3'>@AfterClass</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>verifyDbResourcesReleased</td>
+<td>dbtest </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>springTestContextAfterTestClass</td>
+<td>&nbsp;</td></tr>
+</table>

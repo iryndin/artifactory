@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="TestSuite" time="0.225" tests="60" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib"/>
+    <property name="java.vm.version" value="24.71-b01"/>
+    <property name="user.country.format" value="IL"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/eli/work/artifactory-3.x/artifactory/devenv"/>
+    <property name="java.runtime.version" value="1.7.0_71-b14"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/endorsed"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="java.io.tmpdir" value="/var/folders/yn/1sq_t_xs5917rgx6sh72hssh0000gp/T/"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.1.1/libexec/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/eli/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.10.1"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="user.home" value="/Users/eli"/>
+    <property name="user.timezone" value="Asia/Jerusalem"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="eli"/>
+    <property name="java.class.path" value="/usr/local/Cellar/maven/3.1.1/libexec/boot/plexus-classworlds-2.5.1.jar"/>
+    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="info"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher install"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.7.0_71"/>
+    <property name="java.ext.dirs" value="/Users/eli/Library/Java/Extensions:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/resources.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/rt.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/sunrsasign.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jsse.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jce.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/charsets.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/lib/jfr.jar:/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/usr/local/Cellar/maven/3.1.1/libexec"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="copyConstructor" classname="org.artifactory.api.fs.FileAdditionalInfoTest" time="0.008"/>
+  <testcase name="defaultConstructor" classname="org.artifactory.api.fs.FileAdditionalInfoTest" time="0"/>
+  <testcase name="settingChecksums" classname="org.artifactory.api.fs.FileAdditionalInfoTest" time="0"/>
+  <testcase name="testIsIdentical" classname="org.artifactory.api.fs.FileAdditionalInfoTest" time="0.001"/>
+  <testcase name="testNotIdentical" classname="org.artifactory.api.fs.FileAdditionalInfoTest" time="0.001"/>
+  <testcase name="differentChecksumNotIdentical" classname="org.artifactory.api.fs.FileInfoImplTest" time="0.012"/>
+  <testcase name="buildTree" classname="org.artifactory.api.fs.ZipEntriesTreeTest" time="0.003"/>
+  <testcase name="adminMaskOnly" classname="org.artifactory.api.security.AceInfoTest" time="0.001"/>
+  <testcase name="allMasks" classname="org.artifactory.api.security.AceInfoTest" time="0"/>
+  <testcase name="annotatorMaskOnly" classname="org.artifactory.api.security.AceInfoTest" time="0.001"/>
+  <testcase name="copyConstructor" classname="org.artifactory.api.security.AceInfoTest" time="0"/>
+  <testcase name="copyConstructorReflectionEquality" classname="org.artifactory.api.security.AceInfoTest" time="0.001"/>
+  <testcase name="deleterMaskOnly" classname="org.artifactory.api.security.AceInfoTest" time="0"/>
+  <testcase name="deployerMaskOnly" classname="org.artifactory.api.security.AceInfoTest" time="0"/>
+  <testcase name="readerMaskOnly" classname="org.artifactory.api.security.AceInfoTest" time="0.001"/>
+  <testcase name="copyConstructor" classname="org.artifactory.api.security.GroupInfoTest" time="0.001"/>
+  <testcase name="defaultConstructor" classname="org.artifactory.api.security.GroupInfoTest" time="0"/>
+  <testcase name="copyConstructor" classname="org.artifactory.api.security.PermissionTargetInfoTest" time="0.002"/>
+  <testcase name="copyConstructorReflectionEquality" classname="org.artifactory.api.security.PermissionTargetInfoTest" time="0"/>
+  <testcase name="createWithIncluesAndExcludesPatterns" classname="org.artifactory.api.security.PermissionTargetInfoTest" time="0"/>
+  <testcase name="createWithNoIncluesExcludesPatterns" classname="org.artifactory.api.security.PermissionTargetInfoTest" time="0.001"/>
+  <testcase name="testDefaultConstructor" classname="org.artifactory.api.security.PermissionTargetInfoTest" time="0"/>
+  <testcase name="addRemoveGroup" classname="org.artifactory.api.security.UserInfoTest" time="0.002"/>
+  <testcase name="copyConstructor" classname="org.artifactory.api.security.UserInfoTest" time="0.005"/>
+  <testcase name="testConversion" classname="org.artifactory.factory.xstream.ChecksumsInfoConverterTest" time="0.137"/>
+  <testcase name="testConversion" classname="org.artifactory.factory.xstream.PropertiesConverterTest" time="0.017"/>
+  <testcase name="archiveResourcePath" classname="org.artifactory.model.common.RepoPathTest" time="0.008"/>
+  <testcase name="archiveResourcePathLeadingSlash" classname="org.artifactory.model.common.RepoPathTest" time="0.001"/>
+  <testcase name="getParentRepoPathForRoot" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="getParentRepoPathLastParent" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="getParentRepoPathWithNoParent" classname="org.artifactory.model.common.RepoPathTest" time="0.001"/>
+  <testcase name="getParentRepoPathWithParent" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="repoRootPath" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="rootPath" classname="org.artifactory.model.common.RepoPathTest" time="0.001"/>
+  <testcase name="toPathRootRepoPath" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="toPathWithRelativePath" classname="org.artifactory.model.common.RepoPathTest" time="0"/>
+  <testcase name="isEmpty" classname="org.artifactory.model.xstream.fs.PropertiesImplTest" time="0.001"/>
+  <testcase name="isEmptyAndNormalProperty" classname="org.artifactory.model.xstream.fs.PropertiesImplTest" time="0"/>
+  <testcase name="authContextDifferentIfPasswordIfDifferent" classname="org.artifactory.model.xstream.security.UserImplTest" time="0.001"/>
+  <testcase name="sameAuthContextForSameInstance" classname="org.artifactory.model.xstream.security.UserImplTest" time="0"/>
+  <testcase name="sameAuthContextUserWithNoPassword" classname="org.artifactory.model.xstream.security.UserImplTest" time="0.001"/>
+  <testcase name="cacheRepoPathFromCache" classname="org.artifactory.repo.InternalRepoPathFactoryTest" time="0"/>
+  <testcase name="cacheRepoPathFromRemote" classname="org.artifactory.repo.InternalRepoPathFactoryTest" time="0"/>
+  <testcase name="cacheRepoPathFromRootRepoPath" classname="org.artifactory.repo.InternalRepoPathFactoryTest" time="0.001"/>
+  <testcase name="parseEmpty" classname="org.artifactory.storage.db.DbTypeTest" time="0.001"/>
+  <testcase name="parseNotSupported" classname="org.artifactory.storage.db.DbTypeTest" time="0.001"/>
+  <testcase name="parseNull" classname="org.artifactory.storage.db.DbTypeTest" time="0"/>
+  <testcase name="parseSupported" classname="org.artifactory.storage.db.DbTypeTest" time="0"/>
+  <testcase name="parseSupportedCapitals" classname="org.artifactory.storage.db.DbTypeTest" time="0"/>
+  <testcase name="fileInfoAdapter" classname="org.artifactory.storage.fs.tree.file.JavaIOFileAdapterTest" time="0.002"/>
+  <testcase name="folderInfoAdapter" classname="org.artifactory.storage.fs.tree.file.JavaIOFileAdapterTest" time="0.002"/>
+  <testcase name="failUnsupportedDatabaseType" classname="org.artifactory.storage.StoragePropertiesTest" time="0.002"/>
+  <testcase name="isDerby" classname="org.artifactory.storage.StoragePropertiesTest" time="0"/>
+  <testcase name="isPostgres" classname="org.artifactory.storage.StoragePropertiesTest" time="0.001"/>
+  <testcase name="minimalPropertiesFile" classname="org.artifactory.storage.StoragePropertiesTest" time="0.006"/>
+  <testcase name="minimalWithCacheSize" classname="org.artifactory.storage.StoragePropertiesTest" time="0"/>
+  <testcase name="getAncestorBeyondRoot" classname="org.artifactory.util.RepoPathUtilsTest" time="0.001"/>
+  <testcase name="getAncestorGrandParent" classname="org.artifactory.util.RepoPathUtilsTest" time="0"/>
+  <testcase name="getAncestorOfRoot" classname="org.artifactory.util.RepoPathUtilsTest" time="0"/>
+  <testcase name="getAncestorParent" classname="org.artifactory.util.RepoPathUtilsTest" time="0"/>
+</testsuite>
