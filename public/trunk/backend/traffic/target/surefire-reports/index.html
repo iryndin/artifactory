@@ -1,0 +1,3250 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+  <title>TestNG reports</title>
+
+    <link type="text/css" href="testng-reports.css" rel="stylesheet" />  
+    <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="testng-reports.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['table']});
+      google.setOnLoadCallback(drawTable);
+      var suiteTableInitFunctions = new Array();
+      var suiteTableData = new Array();
+    </script>
+    <!--
+      <script type="text/javascript" src="jquery-ui/js/jquery-ui-1.8.16.custom.min.js"></script>
+     -->
+  </head>
+
+  <body>
+    <div class="top-banner-root">
+      <span class="top-banner-title-font">Test results</span>
+      <br/>
+      <span class="top-banner-font-1">8 suites</span>
+    </div> <!-- top-banner-root -->
+    <div class="navigator-root">
+      <div class="navigator-suite-header">
+        <span>All suites</span>
+        <a href="#" class="collapse-all-link" title="Collapse/expand all the suites">
+          <img class="collapse-all-icon" src="collapseall.gif">
+          </img> <!-- collapse-all-icon -->
+        </a> <!-- collapse-all-link -->
+      </div> <!-- navigator-suite-header -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.TrafficActionTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.TrafficActionTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.TrafficActionTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.TrafficActionTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.TrafficActionTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.TrafficActionTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.TrafficActionTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.TrafficActionTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.TrafficActionTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">3 methods,   3 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.TrafficActionTest" class="hide-methods passed suite-org.artifactory.traffic.TrafficActionTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.TrafficActionTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.TrafficActionTest" class="show-methods passed suite-org.artifactory.traffic.TrafficActionTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.TrafficActionTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.TrafficActionTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.TrafficActionTest" title="org.artifactory.traffic.TrafficActionTest" hash-for-method="testDownloadAction">testDownloadAction</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.TrafficActionTest" title="org.artifactory.traffic.TrafficActionTest" hash-for-method="testRequestAction">testRequestAction</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.TrafficActionTest" title="org.artifactory.traffic.TrafficActionTest" hash-for-method="testUploadAction">testUploadAction</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.TrafficActionTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.read.TrafficReaderTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.read.TrafficReaderTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">7 methods,   7 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" class="hide-methods passed suite-org.artifactory.traffic.read.TrafficReaderTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.read.TrafficReaderTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" class="show-methods passed suite-org.artifactory.traffic.read.TrafficReaderTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.read.TrafficReaderTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.read.TrafficReaderTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testEntriesStream">testEntriesStream</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testEntriesWithinRange">testEntriesWithinRange</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testInvalidDates">testInvalidDates</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testNonExistingBaseDir">testNonExistingBaseDir</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testNullDates">testNullDates</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testNullDir">testNullDir</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" title="org.artifactory.traffic.read.TrafficReaderTest" hash-for-method="testOutOfRange">testOutOfRange</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.read.TrafficReaderTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.TrafficTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.TrafficTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.TrafficTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.TrafficTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.TrafficTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.TrafficTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.TrafficTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.TrafficTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.TrafficTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">1 method,   1 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.TrafficTest" class="hide-methods passed suite-org.artifactory.traffic.TrafficTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.TrafficTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.TrafficTest" class="show-methods passed suite-org.artifactory.traffic.TrafficTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.TrafficTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.TrafficTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.TrafficTest" title="org.artifactory.traffic.TrafficTest" hash-for-method="testTrafficLog">testTrafficLog</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.TrafficTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.read.TrafficStreamParserTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.read.TrafficStreamParserTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">5 methods,   5 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" class="hide-methods passed suite-org.artifactory.traffic.read.TrafficStreamParserTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.read.TrafficStreamParserTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" class="show-methods passed suite-org.artifactory.traffic.read.TrafficStreamParserTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.read.TrafficStreamParserTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.read.TrafficStreamParserTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" title="org.artifactory.traffic.read.TrafficStreamParserTest" hash-for-method="testInvalidDates">testInvalidDates</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" title="org.artifactory.traffic.read.TrafficStreamParserTest" hash-for-method="testNullDates">testNullDates</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" title="org.artifactory.traffic.read.TrafficStreamParserTest" hash-for-method="testNullReader">testNullReader</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" title="org.artifactory.traffic.read.TrafficStreamParserTest" hash-for-method="testOutOfRange">testOutOfRange</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" title="org.artifactory.traffic.read.TrafficStreamParserTest" hash-for-method="testWithinRange">testWithinRange</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.read.TrafficStreamParserTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">4 methods,   4 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="hide-methods passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="show-methods passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" title="org.artifactory.traffic.entry.TrafficEntryBuilderTest" hash-for-method="testEmptyEntry">testEmptyEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" title="org.artifactory.traffic.entry.TrafficEntryBuilderTest" hash-for-method="testEntryNoData">testEntryNoData</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" title="org.artifactory.traffic.entry.TrafficEntryBuilderTest" hash-for-method="testNullEntry">testNullEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" title="org.artifactory.traffic.entry.TrafficEntryBuilderTest" hash-for-method="testValidEntry">testValidEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.entry.RequestEntryTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.entry.RequestEntryTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">4 methods,   4 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" class="hide-methods passed suite-org.artifactory.traffic.entry.RequestEntryTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.entry.RequestEntryTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" class="show-methods passed suite-org.artifactory.traffic.entry.RequestEntryTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.entry.RequestEntryTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.entry.RequestEntryTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" title="org.artifactory.traffic.entry.RequestEntryTest" hash-for-method="requestEntryToString">requestEntryToString</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" title="org.artifactory.traffic.entry.RequestEntryTest" hash-for-method="stringToRequestEntry">stringToRequestEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" title="org.artifactory.traffic.entry.RequestEntryTest" hash-for-method="testInvalidContentLength">testInvalidContentLength</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" title="org.artifactory.traffic.entry.RequestEntryTest" hash-for-method="testInvalidReturnCode">testInvalidReturnCode</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.entry.RequestEntryTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.entry.TransferEntryTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.entry.TransferEntryTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">3 methods,   3 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" class="hide-methods passed suite-org.artifactory.traffic.entry.TransferEntryTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.entry.TransferEntryTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" class="show-methods passed suite-org.artifactory.traffic.entry.TransferEntryTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.entry.TransferEntryTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.entry.TransferEntryTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" title="org.artifactory.traffic.entry.TransferEntryTest" hash-for-method="stringToUploadEntry">stringToUploadEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" title="org.artifactory.traffic.entry.TransferEntryTest" hash-for-method="testInvalidUploadEntryContentLength">testInvalidUploadEntryContentLength</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" title="org.artifactory.traffic.entry.TransferEntryTest" hash-for-method="uploadEntryToString">uploadEntryToString</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.entry.TransferEntryTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+      <div class="suite">
+        <div class="rounded-window">
+          <div class="suite-header light-rounded-window-top">
+            <a href="#" class="navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+              <span class="suite-name border-passed">org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+            </a> <!-- navigator-link -->
+          </div> <!-- suite-header light-rounded-window-top -->
+          <div class="navigator-suite-content">
+            <div class="suite-section-title">
+              <span>Info</span>
+            </div> <!-- suite-section-title -->
+            <div class="suite-section-content">
+              <ul>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="test-xml-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>[unset file name]</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="testlist-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span class="test-stats">1 test</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="group-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>0 groups</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="times-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>Times</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="reporter-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>Reporter output</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="ignored-methods-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>Ignored methods</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+                <li>
+                  <a href="#" class="navigator-link " panel-name="chronological-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                    <span>Chronological view</span>
+                  </a> <!-- navigator-link  -->
+                </li>
+              </ul>
+            </div> <!-- suite-section-content -->
+            <div class="result-section">
+              <div class="suite-section-title">
+                <span>Results</span>
+              </div> <!-- suite-section-title -->
+              <div class="suite-section-content">
+                <ul>
+                  <li>
+                    <span class="method-stats">7 methods,   7 passed</span>
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="hide-methods passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest"> (hide)</a> <!-- hide-methods passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+                      <a href="#" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="show-methods passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest"> (show)</a> <!-- show-methods passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+                    </span>
+                    <div class="method-list-content passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testEmptyUploadEntry">testEmptyUploadEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testInvalidDownloadEntryDateFormat">testInvalidDownloadEntryDateFormat</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testInvalidRequestEntryDate">testInvalidRequestEntryDate</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testLongUploadEntry">testLongUploadEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testNoDataRequestEntry">testNoDataRequestEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testNullDownloadEntry">testNullDownloadEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" title="org.artifactory.traffic.entry.BaseEntryBehaviorTest" hash-for-method="testShortDownloadEntry">testShortDownloadEntry</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+                  </li>
+                </ul>
+              </div> <!-- suite-section-content -->
+            </div> <!-- result-section -->
+          </div> <!-- navigator-suite-content -->
+        </div> <!-- rounded-window -->
+      </div> <!-- suite -->
+    </div> <!-- navigator-root -->
+    <div class="wrapper">
+      <div class="main-panel-root">
+        <div panel-name="suite-org.artifactory.traffic.TrafficActionTest" class="panel org.artifactory.traffic.TrafficActionTest">
+          <div class="suite-org.artifactory.traffic.TrafficActionTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.TrafficActionTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testDownloadAction">
+                  </a> <!-- testDownloadAction -->
+                  <span class="method-name">testDownloadAction</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testRequestAction">
+                  </a> <!-- testRequestAction -->
+                  <span class="method-name">testRequestAction</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testUploadAction">
+                  </a> <!-- testUploadAction -->
+                  <span class="method-name">testUploadAction</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.TrafficActionTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.TrafficActionTest -->
+        <div panel-name="suite-org.artifactory.traffic.read.TrafficReaderTest" class="panel org.artifactory.traffic.read.TrafficReaderTest">
+          <div class="suite-org.artifactory.traffic.read.TrafficReaderTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.read.TrafficReaderTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testEntriesStream">
+                  </a> <!-- testEntriesStream -->
+                  <span class="method-name">testEntriesStream</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testEntriesWithinRange">
+                  </a> <!-- testEntriesWithinRange -->
+                  <span class="method-name">testEntriesWithinRange</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidDates">
+                  </a> <!-- testInvalidDates -->
+                  <span class="method-name">testInvalidDates</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNonExistingBaseDir">
+                  </a> <!-- testNonExistingBaseDir -->
+                  <span class="method-name">testNonExistingBaseDir</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullDates">
+                  </a> <!-- testNullDates -->
+                  <span class="method-name">testNullDates</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullDir">
+                  </a> <!-- testNullDir -->
+                  <span class="method-name">testNullDir</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testOutOfRange">
+                  </a> <!-- testOutOfRange -->
+                  <span class="method-name">testOutOfRange</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.read.TrafficReaderTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.read.TrafficReaderTest -->
+        <div panel-name="suite-org.artifactory.traffic.TrafficTest" class="panel org.artifactory.traffic.TrafficTest">
+          <div class="suite-org.artifactory.traffic.TrafficTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.TrafficTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testTrafficLog">
+                  </a> <!-- testTrafficLog -->
+                  <span class="method-name">testTrafficLog</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.TrafficTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.TrafficTest -->
+        <div panel-name="suite-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel org.artifactory.traffic.read.TrafficStreamParserTest">
+          <div class="suite-org.artifactory.traffic.read.TrafficStreamParserTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.read.TrafficStreamParserTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidDates">
+                  </a> <!-- testInvalidDates -->
+                  <span class="method-name">testInvalidDates</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullDates">
+                  </a> <!-- testNullDates -->
+                  <span class="method-name">testNullDates</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullReader">
+                  </a> <!-- testNullReader -->
+                  <span class="method-name">testNullReader</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testOutOfRange">
+                  </a> <!-- testOutOfRange -->
+                  <span class="method-name">testOutOfRange</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testWithinRange">
+                  </a> <!-- testWithinRange -->
+                  <span class="method-name">testWithinRange</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.read.TrafficStreamParserTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.read.TrafficStreamParserTest -->
+        <div panel-name="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+          <div class="suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testEmptyEntry">
+                  </a> <!-- testEmptyEntry -->
+                  <span class="method-name">testEmptyEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testEntryNoData">
+                  </a> <!-- testEntryNoData -->
+                  <span class="method-name">testEntryNoData</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullEntry">
+                  </a> <!-- testNullEntry -->
+                  <span class="method-name">testNullEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testValidEntry">
+                  </a> <!-- testValidEntry -->
+                  <span class="method-name">testValidEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.entry.TrafficEntryBuilderTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+        <div panel-name="suite-org.artifactory.traffic.entry.RequestEntryTest" class="panel org.artifactory.traffic.entry.RequestEntryTest">
+          <div class="suite-org.artifactory.traffic.entry.RequestEntryTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.entry.RequestEntryTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="requestEntryToString">
+                  </a> <!-- requestEntryToString -->
+                  <span class="method-name">requestEntryToString</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="stringToRequestEntry">
+                  </a> <!-- stringToRequestEntry -->
+                  <span class="method-name">stringToRequestEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidContentLength">
+                  </a> <!-- testInvalidContentLength -->
+                  <span class="method-name">testInvalidContentLength</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidReturnCode">
+                  </a> <!-- testInvalidReturnCode -->
+                  <span class="method-name">testInvalidReturnCode</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.entry.RequestEntryTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.entry.RequestEntryTest -->
+        <div panel-name="suite-org.artifactory.traffic.entry.TransferEntryTest" class="panel org.artifactory.traffic.entry.TransferEntryTest">
+          <div class="suite-org.artifactory.traffic.entry.TransferEntryTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.entry.TransferEntryTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="stringToUploadEntry">
+                  </a> <!-- stringToUploadEntry -->
+                  <span class="method-name">stringToUploadEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidUploadEntryContentLength">
+                  </a> <!-- testInvalidUploadEntryContentLength -->
+                  <span class="method-name">testInvalidUploadEntryContentLength</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="uploadEntryToString">
+                  </a> <!-- uploadEntryToString -->
+                  <span class="method-name">uploadEntryToString</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.entry.TransferEntryTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.entry.TransferEntryTest -->
+        <div panel-name="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+          <div class="suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="testEmptyUploadEntry">
+                  </a> <!-- testEmptyUploadEntry -->
+                  <span class="method-name">testEmptyUploadEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidDownloadEntryDateFormat">
+                  </a> <!-- testInvalidDownloadEntryDateFormat -->
+                  <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testInvalidRequestEntryDate">
+                  </a> <!-- testInvalidRequestEntryDate -->
+                  <span class="method-name">testInvalidRequestEntryDate</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testLongUploadEntry">
+                  </a> <!-- testLongUploadEntry -->
+                  <span class="method-name">testLongUploadEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNoDataRequestEntry">
+                  </a> <!-- testNoDataRequestEntry -->
+                  <span class="method-name">testNoDataRequestEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testNullDownloadEntry">
+                  </a> <!-- testNullDownloadEntry -->
+                  <span class="method-name">testNullDownloadEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="testShortDownloadEntry">
+                  </a> <!-- testShortDownloadEntry -->
+                  <span class="method-name">testShortDownloadEntry</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-org.artifactory.traffic.entry.BaseEntryBehaviorTest-class-passed -->
+        </div> <!-- panel org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+        <div panel-name="test-xml-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.TrafficActionTest&quot;&gt;
+  &lt;test name=&quot;Command line test a1b98bfc-dbdb-4015-b631-3a51fd28abd5&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.TrafficActionTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test a1b98bfc-dbdb-4015-b631-3a51fd28abd5 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.TrafficActionTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.read.TrafficReaderTest&quot;&gt;
+  &lt;test name=&quot;Command line test 6687413a-c18c-4e0d-b059-b684ab1bfb55&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.read.TrafficReaderTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test 6687413a-c18c-4e0d-b059-b684ab1bfb55 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.read.TrafficReaderTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.TrafficTest&quot;&gt;
+  &lt;test name=&quot;Command line test fc1dbce2-e020-49c5-a42c-a13c13711826&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.TrafficTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test fc1dbce2-e020-49c5-a42c-a13c13711826 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.TrafficTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.read.TrafficStreamParserTest&quot;&gt;
+  &lt;test name=&quot;Command line test 22c900b2-bb04-405b-831f-1765fa52f3de&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.read.TrafficStreamParserTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test 22c900b2-bb04-405b-831f-1765fa52f3de --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.read.TrafficStreamParserTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.entry.TrafficEntryBuilderTest&quot;&gt;
+  &lt;test name=&quot;Command line test adcad718-ac57-415d-a47d-34aeecd59236&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.entry.TrafficEntryBuilderTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test adcad718-ac57-415d-a47d-34aeecd59236 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.entry.TrafficEntryBuilderTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.entry.RequestEntryTest&quot;&gt;
+  &lt;test name=&quot;Command line test 3e8ae575-ca79-4586-a881-121386cc6ee4&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.entry.RequestEntryTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test 3e8ae575-ca79-4586-a881-121386cc6ee4 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.entry.RequestEntryTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.entry.TransferEntryTest&quot;&gt;
+  &lt;test name=&quot;Command line test 0fa46fdd-2583-4098-811a-758312d67796&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.entry.TransferEntryTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test 0fa46fdd-2583-4098-811a-758312d67796 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.entry.TransferEntryTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="test-xml-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
+&lt;suite thread-count=&quot;1&quot; verbose=&quot;0&quot; name=&quot;org.artifactory.traffic.entry.BaseEntryBehaviorTest&quot;&gt;
+  &lt;test name=&quot;Command line test da5b8b6e-0afc-49f9-9896-8652d0ca5ce9&quot;&gt;
+    &lt;classes&gt;
+      &lt;class name=&quot;org.artifactory.traffic.entry.BaseEntryBehaviorTest&quot;/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt; &lt;!-- Command line test da5b8b6e-0afc-49f9-9896-8652d0ca5ce9 --&gt;
+&lt;/suite&gt; &lt;!-- org.artifactory.traffic.entry.BaseEntryBehaviorTest --&gt;
+            </pre>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.TrafficActionTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test a1b98bfc-dbdb-4015-b631-3a51fd28abd5 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.read.TrafficReaderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test 6687413a-c18c-4e0d-b059-b684ab1bfb55 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.TrafficTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test fc1dbce2-e020-49c5-a42c-a13c13711826 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.read.TrafficStreamParserTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test 22c900b2-bb04-405b-831f-1765fa52f3de (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test adcad718-ac57-415d-a47d-34aeecd59236 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.entry.RequestEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test 3e8ae575-ca79-4586-a881-121386cc6ee4 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.entry.TransferEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test 0fa46fdd-2583-4098-811a-758312d67796 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="testlist-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Tests for org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <ul>
+              <li>
+                <span class="test-name">Command line test da5b8b6e-0afc-49f9-9896-8652d0ca5ce9 (1 class)</span>
+              </li>
+            </ul>
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.TrafficActionTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.read.TrafficReaderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.TrafficTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.read.TrafficStreamParserTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.entry.RequestEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.entry.TransferEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="group-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Groups for org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.TrafficActionTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.TrafficActionTest');
+function tableData_org.artifactory.traffic.TrafficActionTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(3);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testRequestAction')
+data.setCell(0, 2, 'org.artifactory.traffic.TrafficActionTest')
+data.setCell(0, 3, 1);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'testDownloadAction')
+data.setCell(1, 2, 'org.artifactory.traffic.TrafficActionTest')
+data.setCell(1, 3, 1);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testUploadAction')
+data.setCell(2, 2, 'org.artifactory.traffic.TrafficActionTest')
+data.setCell(2, 3, 0);
+window.suiteTableData['org.artifactory.traffic.TrafficActionTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.TrafficActionTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 2 ms</span>
+              <div id="times-div-org.artifactory.traffic.TrafficActionTest">
+              </div> <!-- times-div-org.artifactory.traffic.TrafficActionTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.read.TrafficReaderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.read.TrafficReaderTest');
+function tableData_org.artifactory.traffic.read.TrafficReaderTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(7);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testEntriesStream')
+data.setCell(0, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(0, 3, 21);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'testEntriesWithinRange')
+data.setCell(1, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(1, 3, 3);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testNullDates')
+data.setCell(2, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(2, 3, 1);
+data.setCell(3, 0, 3)
+data.setCell(3, 1, 'testOutOfRange')
+data.setCell(3, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(3, 3, 1);
+data.setCell(4, 0, 4)
+data.setCell(4, 1, 'testNullDir')
+data.setCell(4, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(4, 3, 0);
+data.setCell(5, 0, 5)
+data.setCell(5, 1, 'testInvalidDates')
+data.setCell(5, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(5, 3, 0);
+data.setCell(6, 0, 6)
+data.setCell(6, 1, 'testNonExistingBaseDir')
+data.setCell(6, 2, 'org.artifactory.traffic.read.TrafficReaderTest')
+data.setCell(6, 3, 0);
+window.suiteTableData['org.artifactory.traffic.read.TrafficReaderTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.read.TrafficReaderTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 26 ms</span>
+              <div id="times-div-org.artifactory.traffic.read.TrafficReaderTest">
+              </div> <!-- times-div-org.artifactory.traffic.read.TrafficReaderTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.TrafficTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.TrafficTest');
+function tableData_org.artifactory.traffic.TrafficTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(1);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testTrafficLog')
+data.setCell(0, 2, 'org.artifactory.traffic.TrafficTest')
+data.setCell(0, 3, 4);
+window.suiteTableData['org.artifactory.traffic.TrafficTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.TrafficTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 4 ms</span>
+              <div id="times-div-org.artifactory.traffic.TrafficTest">
+              </div> <!-- times-div-org.artifactory.traffic.TrafficTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.read.TrafficStreamParserTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.read.TrafficStreamParserTest');
+function tableData_org.artifactory.traffic.read.TrafficStreamParserTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(5);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testWithinRange')
+data.setCell(0, 2, 'org.artifactory.traffic.read.TrafficStreamParserTest')
+data.setCell(0, 3, 13);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'testInvalidDates')
+data.setCell(1, 2, 'org.artifactory.traffic.read.TrafficStreamParserTest')
+data.setCell(1, 3, 1);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testOutOfRange')
+data.setCell(2, 2, 'org.artifactory.traffic.read.TrafficStreamParserTest')
+data.setCell(2, 3, 1);
+data.setCell(3, 0, 3)
+data.setCell(3, 1, 'testNullReader')
+data.setCell(3, 2, 'org.artifactory.traffic.read.TrafficStreamParserTest')
+data.setCell(3, 3, 0);
+data.setCell(4, 0, 4)
+data.setCell(4, 1, 'testNullDates')
+data.setCell(4, 2, 'org.artifactory.traffic.read.TrafficStreamParserTest')
+data.setCell(4, 3, 0);
+window.suiteTableData['org.artifactory.traffic.read.TrafficStreamParserTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.read.TrafficStreamParserTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 15 ms</span>
+              <div id="times-div-org.artifactory.traffic.read.TrafficStreamParserTest">
+              </div> <!-- times-div-org.artifactory.traffic.read.TrafficStreamParserTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.entry.TrafficEntryBuilderTest');
+function tableData_org.artifactory.traffic.entry.TrafficEntryBuilderTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(4);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testNullEntry')
+data.setCell(0, 2, 'org.artifactory.traffic.entry.TrafficEntryBuilderTest')
+data.setCell(0, 3, 1);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'testEmptyEntry')
+data.setCell(1, 2, 'org.artifactory.traffic.entry.TrafficEntryBuilderTest')
+data.setCell(1, 3, 1);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testEntryNoData')
+data.setCell(2, 2, 'org.artifactory.traffic.entry.TrafficEntryBuilderTest')
+data.setCell(2, 3, 0);
+data.setCell(3, 0, 3)
+data.setCell(3, 1, 'testValidEntry')
+data.setCell(3, 2, 'org.artifactory.traffic.entry.TrafficEntryBuilderTest')
+data.setCell(3, 3, 0);
+window.suiteTableData['org.artifactory.traffic.entry.TrafficEntryBuilderTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.entry.TrafficEntryBuilderTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 2 ms</span>
+              <div id="times-div-org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+              </div> <!-- times-div-org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.entry.RequestEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.entry.RequestEntryTest');
+function tableData_org.artifactory.traffic.entry.RequestEntryTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(4);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'requestEntryToString')
+data.setCell(0, 2, 'org.artifactory.traffic.entry.RequestEntryTest')
+data.setCell(0, 3, 3);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'stringToRequestEntry')
+data.setCell(1, 2, 'org.artifactory.traffic.entry.RequestEntryTest')
+data.setCell(1, 3, 1);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testInvalidReturnCode')
+data.setCell(2, 2, 'org.artifactory.traffic.entry.RequestEntryTest')
+data.setCell(2, 3, 0);
+data.setCell(3, 0, 3)
+data.setCell(3, 1, 'testInvalidContentLength')
+data.setCell(3, 2, 'org.artifactory.traffic.entry.RequestEntryTest')
+data.setCell(3, 3, 0);
+window.suiteTableData['org.artifactory.traffic.entry.RequestEntryTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.entry.RequestEntryTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 4 ms</span>
+              <div id="times-div-org.artifactory.traffic.entry.RequestEntryTest">
+              </div> <!-- times-div-org.artifactory.traffic.entry.RequestEntryTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.entry.TransferEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.entry.TransferEntryTest');
+function tableData_org.artifactory.traffic.entry.TransferEntryTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(3);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'stringToUploadEntry')
+data.setCell(0, 2, 'org.artifactory.traffic.entry.TransferEntryTest')
+data.setCell(0, 3, 167);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'uploadEntryToString')
+data.setCell(1, 2, 'org.artifactory.traffic.entry.TransferEntryTest')
+data.setCell(1, 3, 2);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testInvalidUploadEntryContentLength')
+data.setCell(2, 2, 'org.artifactory.traffic.entry.TransferEntryTest')
+data.setCell(2, 3, 0);
+window.suiteTableData['org.artifactory.traffic.entry.TransferEntryTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.entry.TransferEntryTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 169 ms</span>
+              <div id="times-div-org.artifactory.traffic.entry.TransferEntryTest">
+              </div> <!-- times-div-org.artifactory.traffic.entry.TransferEntryTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="times-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Times for org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="times-div">
+              <script type="text/javascript">
+suiteTableInitFunctions.push('tableData_org.artifactory.traffic.entry.BaseEntryBehaviorTest');
+function tableData_org.artifactory.traffic.entry.BaseEntryBehaviorTest() {
+var data = new google.visualization.DataTable();
+data.addColumn('number', 'Number');
+data.addColumn('string', 'Method');
+data.addColumn('string', 'Class');
+data.addColumn('number', 'Time (ms)');
+data.addRows(7);
+data.setCell(0, 0, 0)
+data.setCell(0, 1, 'testLongUploadEntry')
+data.setCell(0, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(0, 3, 56);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'testEmptyUploadEntry')
+data.setCell(1, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(1, 3, 20);
+data.setCell(2, 0, 2)
+data.setCell(2, 1, 'testInvalidDownloadEntryDateFormat')
+data.setCell(2, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(2, 3, 0);
+data.setCell(3, 0, 3)
+data.setCell(3, 1, 'testShortDownloadEntry')
+data.setCell(3, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(3, 3, 0);
+data.setCell(4, 0, 4)
+data.setCell(4, 1, 'testNullDownloadEntry')
+data.setCell(4, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(4, 3, 0);
+data.setCell(5, 0, 5)
+data.setCell(5, 1, 'testNoDataRequestEntry')
+data.setCell(5, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(5, 3, 0);
+data.setCell(6, 0, 6)
+data.setCell(6, 1, 'testInvalidRequestEntryDate')
+data.setCell(6, 2, 'org.artifactory.traffic.entry.BaseEntryBehaviorTest')
+data.setCell(6, 3, 0);
+window.suiteTableData['org.artifactory.traffic.entry.BaseEntryBehaviorTest']= { tableData: data, tableDiv: 'times-div-org.artifactory.traffic.entry.BaseEntryBehaviorTest'}
+return data;
+}
+              </script>
+              <span class="suite-total-time">Total running time: 76 ms</span>
+              <div id="times-div-org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+              </div> <!-- times-div-org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+            </div> <!-- times-div -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.TrafficActionTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.read.TrafficReaderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.TrafficTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.read.TrafficStreamParserTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.entry.TrafficEntryBuilderTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.entry.RequestEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.entry.TransferEntryTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="reporter-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Reporter output for org.artifactory.traffic.entry.BaseEntryBehaviorTest</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="ignored-methods-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">0 ignored methods</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.TrafficActionTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.read.TrafficReaderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.TrafficTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.read.TrafficStreamParserTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.entry.TrafficEntryBuilderTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.entry.RequestEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.entry.TransferEntryTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+        <div panel-name="chronological-org.artifactory.traffic.entry.BaseEntryBehaviorTest" class="panel">
+          <div class="main-panel-header rounded-window-top">
+            <span class="header-content">Methods in chronological order</span>
+          </div> <!-- main-panel-header rounded-window-top -->
+          <div class="main-panel-content rounded-window-bottom">
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.BaseEntryBehaviorTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyUploadEntry</span>
+                <span class="method-start">0 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDownloadEntryDateFormat</span>
+                <span class="method-start">20 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidRequestEntryDate</span>
+                <span class="method-start">21 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testLongUploadEntry</span>
+                <span class="method-start">22 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNoDataRequestEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDownloadEntry</span>
+                <span class="method-start">79 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testShortDownloadEntry</span>
+                <span class="method-start">80 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.RequestEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">requestEntryToString</span>
+                <span class="method-start">109 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">stringToRequestEntry</span>
+                <span class="method-start">112 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidContentLength</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidReturnCode</span>
+                <span class="method-start">113 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TrafficEntryBuilderTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testEmptyEntry</span>
+                <span class="method-start">118 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntryNoData</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullEntry</span>
+                <span class="method-start">119 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testValidEntry</span>
+                <span class="method-start">120 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.entry.TransferEntryTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">stringToUploadEntry</span>
+                <span class="method-start">125 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidUploadEntryContentLength</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">uploadEntryToString</span>
+                <span class="method-start">292 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficReaderTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">297 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testEntriesStream</span>
+                <span class="method-start">341 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testEntriesWithinRange</span>
+                <span class="method-start">362 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNonExistingBaseDir</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">365 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDir</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">366 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.read.TrafficStreamParserTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testInvalidDates</span>
+                <span class="method-start">371 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullDates</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testNullReader</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testOutOfRange</span>
+                <span class="method-start">372 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testWithinRange</span>
+                <span class="method-start">373 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficActionTest</div> <!-- chronological-class-name -->
+              <div class="test-method">
+                <span class="method-name">testDownloadAction</span>
+                <span class="method-start">389 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testRequestAction</span>
+                <span class="method-start">390 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">testUploadAction</span>
+                <span class="method-start">391 ms</span>
+              </div> <!-- test-method -->
+            </div> <!-- chronological-class -->
+            <div class="chronological-class">
+              <div class="chronological-class-name">org.artifactory.traffic.TrafficTest</div> <!-- chronological-class-name -->
+              <div class="configuration-class before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">393 ms</span>
+              </div> <!-- configuration-class before -->
+              <div class="test-method">
+                <span class="method-name">testTrafficLog</span>
+                <span class="method-start">400 ms</span>
+              </div> <!-- test-method -->
+          </div> <!-- main-panel-content rounded-window-bottom -->
+        </div> <!-- panel -->
+      </div> <!-- main-panel-root -->
+    </div> <!-- wrapper -->
+  </body>
+</html>

@@ -1,0 +1,1024 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="34" passed="34">
+  <reporter-output>
+  </reporter-output>
+  <suite name="org.artifactory.traffic.TrafficActionTest" duration-ms="2" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test a1b98bfc-dbdb-4015-b631-3a51fd28abd5" duration-ms="2" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.TrafficActionTest">
+        <test-method status="PASS" signature="testDownloadAction()[pri:0, instance:org.artifactory.traffic.TrafficActionTest@2fc6d169]" name="testDownloadAction" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDownloadAction -->
+        <test-method status="PASS" signature="testRequestAction()[pri:0, instance:org.artifactory.traffic.TrafficActionTest@2fc6d169]" name="testRequestAction" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRequestAction -->
+        <test-method status="PASS" signature="testUploadAction()[pri:0, instance:org.artifactory.traffic.TrafficActionTest@2fc6d169]" name="testUploadAction" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadAction -->
+      </class> <!-- org.artifactory.traffic.TrafficActionTest -->
+    </test> <!-- Command line test a1b98bfc-dbdb-4015-b631-3a51fd28abd5 -->
+  </suite> <!-- org.artifactory.traffic.TrafficActionTest -->
+  <suite name="org.artifactory.traffic.read.TrafficReaderTest" duration-ms="70" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test 6687413a-c18c-4e0d-b059-b684ab1bfb55" duration-ms="70" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.read.TrafficReaderTest">
+        <test-method status="PASS" signature="setUp()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="setUp" is-config="true" duration-ms="44" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="testEntriesStream()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testEntriesStream" duration-ms="21" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEntriesStream -->
+        <test-method status="PASS" signature="testEntriesWithinRange()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testEntriesWithinRange" duration-ms="3" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEntriesWithinRange -->
+        <test-method status="PASS" signature="testInvalidDates()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testInvalidDates" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Traffic start date cannot be after end date.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Traffic start date cannot be after end date.
+	at org.artifactory.traffic.read.TrafficReader.validateDateRange(TrafficReader.java:294)
+	at org.artifactory.traffic.read.TrafficReader.getEntries(TrafficReader.java:86)
+	at org.artifactory.traffic.read.TrafficReaderTest.testInvalidDates(TrafficReaderTest.java:106)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidDates -->
+        <test-method status="PASS" signature="testNullDates()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testNullDates" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Traffic dates cannot be null.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Traffic dates cannot be null.
+	at org.artifactory.traffic.read.TrafficReader.validateDateRange(TrafficReader.java:291)
+	at org.artifactory.traffic.read.TrafficReader.getEntries(TrafficReader.java:86)
+	at org.artifactory.traffic.read.TrafficReaderTest.testNullDates(TrafficReaderTest.java:92)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullDates -->
+        <test-method status="PASS" signature="testNonExistingBaseDir()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testNonExistingBaseDir" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Log directory must be valid.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Log directory must be valid.
+	at org.artifactory.traffic.read.TrafficReader.<init>(TrafficReader.java:66)
+	at org.artifactory.traffic.read.TrafficReaderTest.testNonExistingBaseDir(TrafficReaderTest.java:81)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNonExistingBaseDir -->
+        <test-method status="PASS" signature="testOutOfRange()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testOutOfRange" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testOutOfRange -->
+        <test-method status="PASS" signature="testNullDir()[pri:0, instance:org.artifactory.traffic.read.TrafficReaderTest@6a8de742]" name="testNullDir" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Log directory must be valid.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Log directory must be valid.
+	at org.artifactory.traffic.read.TrafficReader.<init>(TrafficReader.java:66)
+	at org.artifactory.traffic.read.TrafficReaderTest.testNullDir(TrafficReaderTest.java:71)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullDir -->
+      </class> <!-- org.artifactory.traffic.read.TrafficReaderTest -->
+    </test> <!-- Command line test 6687413a-c18c-4e0d-b059-b684ab1bfb55 -->
+  </suite> <!-- org.artifactory.traffic.read.TrafficReaderTest -->
+  <suite name="org.artifactory.traffic.TrafficTest" duration-ms="11" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test fc1dbce2-e020-49c5-a42c-a13c13711826" duration-ms="11" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.TrafficTest">
+        <test-method status="PASS" signature="setUp()[pri:0, instance:org.artifactory.traffic.TrafficTest@3efd065d]" name="setUp" is-config="true" duration-ms="7" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="testTrafficLog()[pri:0, instance:org.artifactory.traffic.TrafficTest@3efd065d]" name="testTrafficLog" duration-ms="4" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testTrafficLog -->
+      </class> <!-- org.artifactory.traffic.TrafficTest -->
+    </test> <!-- Command line test fc1dbce2-e020-49c5-a42c-a13c13711826 -->
+  </suite> <!-- org.artifactory.traffic.TrafficTest -->
+  <suite name="org.artifactory.traffic.read.TrafficStreamParserTest" duration-ms="15" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test 22c900b2-bb04-405b-831f-1765fa52f3de" duration-ms="15" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.read.TrafficStreamParserTest">
+        <test-method status="PASS" signature="testInvalidDates()[pri:0, instance:org.artifactory.traffic.read.TrafficStreamParserTest@22c0468e]" name="testInvalidDates" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Traffic start date cannot be after end date.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Traffic start date cannot be after end date.
+	at org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:62)
+	at org.artifactory.traffic.read.TrafficStreamParserTest.testInvalidDates(TrafficStreamParserTest.java:80)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidDates -->
+        <test-method status="PASS" signature="testOutOfRange()[pri:0, instance:org.artifactory.traffic.read.TrafficStreamParserTest@22c0468e]" name="testOutOfRange" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testOutOfRange -->
+        <test-method status="PASS" signature="testNullDates()[pri:0, instance:org.artifactory.traffic.read.TrafficStreamParserTest@22c0468e]" name="testNullDates" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Traffic dates cannot be null.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Traffic dates cannot be null.
+	at org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:59)
+	at org.artifactory.traffic.read.TrafficStreamParserTest.testNullDates(TrafficStreamParserTest.java:67)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullDates -->
+        <test-method status="PASS" signature="testNullReader()[pri:0, instance:org.artifactory.traffic.read.TrafficStreamParserTest@22c0468e]" name="testNullReader" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry reader cannot be null]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry reader cannot be null
+	at org.artifactory.traffic.read.TrafficStreamParser.parse(TrafficStreamParser.java:56)
+	at org.artifactory.traffic.read.TrafficStreamParserTest.testNullReader(TrafficStreamParserTest.java:57)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullReader -->
+        <test-method status="PASS" signature="testWithinRange()[pri:0, instance:org.artifactory.traffic.read.TrafficStreamParserTest@22c0468e]" name="testWithinRange" duration-ms="13" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testWithinRange -->
+      </class> <!-- org.artifactory.traffic.read.TrafficStreamParserTest -->
+    </test> <!-- Command line test 22c900b2-bb04-405b-831f-1765fa52f3de -->
+  </suite> <!-- org.artifactory.traffic.read.TrafficStreamParserTest -->
+  <suite name="org.artifactory.traffic.entry.TrafficEntryBuilderTest" duration-ms="3" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test adcad718-ac57-415d-a47d-34aeecd59236" duration-ms="3" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.entry.TrafficEntryBuilderTest">
+        <test-method status="PASS" signature="testEmptyEntry()[pri:0, instance:org.artifactory.traffic.entry.TrafficEntryBuilderTest@5bc67c6d]" name="testEmptyEntry" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry is empty]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry is empty
+	at org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:42)
+	at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testEmptyEntry(TrafficEntryBuilderTest.java:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEmptyEntry -->
+        <test-method status="PASS" signature="testEntryNoData()[pri:0, instance:org.artifactory.traffic.entry.TrafficEntryBuilderTest@5bc67c6d]" name="testEntryNoData" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry should contain at least three elements: |]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry should contain at least three elements: |
+	at org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:47)
+	at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testEntryNoData(TrafficEntryBuilderTest.java:64)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEntryNoData -->
+        <test-method status="PASS" signature="testNullEntry()[pri:0, instance:org.artifactory.traffic.entry.TrafficEntryBuilderTest@5bc67c6d]" name="testNullEntry" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry is empty]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry is empty
+	at org.artifactory.traffic.entry.TokenizedTrafficEntryFactory.newTrafficEntry(TokenizedTrafficEntryFactory.java:42)
+	at org.artifactory.traffic.entry.TrafficEntryBuilderTest.testNullEntry(TrafficEntryBuilderTest.java:48)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullEntry -->
+        <test-method status="PASS" signature="testValidEntry()[pri:0, instance:org.artifactory.traffic.entry.TrafficEntryBuilderTest@5bc67c6d]" name="testValidEntry" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidEntry -->
+      </class> <!-- org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+    </test> <!-- Command line test adcad718-ac57-415d-a47d-34aeecd59236 -->
+  </suite> <!-- org.artifactory.traffic.entry.TrafficEntryBuilderTest -->
+  <suite name="org.artifactory.traffic.entry.RequestEntryTest" duration-ms="5" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test 3e8ae575-ca79-4586-a881-121386cc6ee4" duration-ms="5" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.entry.RequestEntryTest">
+        <test-method status="PASS" signature="requestEntryToString()[pri:0, instance:org.artifactory.traffic.entry.RequestEntryTest@213d32a]" name="requestEntryToString" duration-ms="3" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- requestEntryToString -->
+        <test-method status="PASS" signature="stringToRequestEntry()[pri:0, instance:org.artifactory.traffic.entry.RequestEntryTest@213d32a]" name="stringToRequestEntry" duration-ms="1" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stringToRequestEntry -->
+        <test-method status="PASS" signature="testInvalidReturnCode()[pri:0, instance:org.artifactory.traffic.entry.RequestEntryTest@213d32a]" name="testInvalidReturnCode" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 2a00z, 443432]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 2a00z, 443432]
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:109)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.UploadEntry.<init>(UploadEntry.java:36)
+	at org.artifactory.traffic.entry.RequestEntryTest.testInvalidReturnCode(RequestEntryTest.java:92)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidReturnCode -->
+        <test-method status="PASS" signature="testInvalidContentLength()[pri:0, instance:org.artifactory.traffic.entry.RequestEntryTest@213d32a]" name="testInvalidContentLength" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 200, 4434a3a2]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Number of entry columns does not match the entry specification.Expected: 5 got: 9 tokens: [20090319110249, REQUEST, 127.0.0.1, admin, GET, /remote-repos/antlr/antlr/2.7.6/antlr-2.7.6.jar, HTTP/1.1, 200, 4434a3a2]
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:109)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.UploadEntry.<init>(UploadEntry.java:36)
+	at org.artifactory.traffic.entry.RequestEntryTest.testInvalidContentLength(RequestEntryTest.java:101)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidContentLength -->
+      </class> <!-- org.artifactory.traffic.entry.RequestEntryTest -->
+    </test> <!-- Command line test 3e8ae575-ca79-4586-a881-121386cc6ee4 -->
+  </suite> <!-- org.artifactory.traffic.entry.RequestEntryTest -->
+  <suite name="org.artifactory.traffic.entry.TransferEntryTest" duration-ms="169" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test 0fa46fdd-2583-4098-811a-758312d67796" duration-ms="169" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.entry.TransferEntryTest">
+        <test-method status="PASS" signature="stringToUploadEntry()[pri:0, instance:org.artifactory.traffic.entry.TransferEntryTest@21e9c21c]" name="stringToUploadEntry" duration-ms="167" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- stringToUploadEntry -->
+        <test-method status="PASS" signature="uploadEntryToString()[pri:0, instance:org.artifactory.traffic.entry.TransferEntryTest@21e9c21c]" name="uploadEntryToString" duration-ms="2" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- uploadEntryToString -->
+        <test-method status="PASS" signature="testInvalidUploadEntryContentLength()[pri:0, instance:org.artifactory.traffic.entry.TransferEntryTest@21e9c21c]" name="testInvalidUploadEntryContentLength" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.NumberFormatException">
+            <message>
+              <![CDATA[For input string: "63a2"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.NumberFormatException: For input string: "63a2"
+	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
+	at java.lang.Long.parseLong(Long.java:441)
+	at java.lang.Long.parseLong(Long.java:483)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:45)
+	at org.artifactory.traffic.entry.UploadEntry.<init>(UploadEntry.java:36)
+	at org.artifactory.traffic.entry.TransferEntryTest.testInvalidUploadEntryContentLength(TransferEntryTest.java:80)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.NumberFormatException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidUploadEntryContentLength -->
+      </class> <!-- org.artifactory.traffic.entry.TransferEntryTest -->
+    </test> <!-- Command line test 0fa46fdd-2583-4098-811a-758312d67796 -->
+  </suite> <!-- org.artifactory.traffic.entry.TransferEntryTest -->
+  <suite name="org.artifactory.traffic.entry.BaseEntryBehaviorTest" duration-ms="92" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+    <groups>
+    </groups>
+    <test name="Command line test da5b8b6e-0afc-49f9-9896-8652d0ca5ce9" duration-ms="92" started-at="2014-11-27T18:03:49Z" finished-at="2014-11-27T18:03:49Z">
+      <class name="org.artifactory.traffic.entry.BaseEntryBehaviorTest">
+        <test-method status="PASS" signature="testEmptyUploadEntry()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testEmptyUploadEntry" duration-ms="20" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry is empty]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry is empty
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:100)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.UploadEntry.<init>(UploadEntry.java:36)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testEmptyUploadEntry(BaseEntryBehaviorTest.java:44)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testEmptyUploadEntry -->
+        <test-method status="PASS" signature="testInvalidDownloadEntryDateFormat()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testInvalidDownloadEntryDateFormat" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Number of entry columns does not match the entry specification.Expected: 5 got: 4 tokens: [2-00---78, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Number of entry columns does not match the entry specification.Expected: 5 got: 4 tokens: [2-00---78, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:109)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.DownloadEntry.<init>(DownloadEntry.java:36)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testInvalidDownloadEntryDateFormat(BaseEntryBehaviorTest.java:84)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidDownloadEntryDateFormat -->
+        <test-method status="PASS" signature="testInvalidRequestEntryDate()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testInvalidRequestEntryDate" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Number of entry columns does not match the entry specification.Expected: 10 got: 4 tokens: [200903a816l747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Number of entry columns does not match the entry specification.Expected: 10 got: 4 tokens: [200903a816l747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom, 632]
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:109)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.RequestEntry.<init>(RequestEntry.java:47)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testInvalidRequestEntryDate(BaseEntryBehaviorTest.java:76)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidRequestEntryDate -->
+        <test-method status="PASS" signature="testLongUploadEntry()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testLongUploadEntry" duration-ms="56" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Invalid duration token: UPLOAD]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Invalid duration token: UPLOAD
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:123)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.UploadEntry.<init>(UploadEntry.java:36)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testLongUploadEntry(BaseEntryBehaviorTest.java:68)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLongUploadEntry -->
+        <test-method status="PASS" signature="testNullDownloadEntry()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testNullDownloadEntry" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Entry is empty]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Entry is empty
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:100)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.DownloadEntry.<init>(DownloadEntry.java:36)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testNullDownloadEntry(BaseEntryBehaviorTest.java:36)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullDownloadEntry -->
+        <test-method status="PASS" signature="testNoDataRequestEntry()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testNoDataRequestEntry" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[No tokens found in entry]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: No tokens found in entry
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:106)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.RequestEntry.<init>(RequestEntry.java:47)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testNoDataRequestEntry(BaseEntryBehaviorTest.java:52)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNoDataRequestEntry -->
+        <test-method status="PASS" signature="testShortDownloadEntry()[pri:0, instance:org.artifactory.traffic.entry.BaseEntryBehaviorTest@5db18970]" name="testShortDownloadEntry" duration-ms="0" started-at="2014-11-27T20:03:49Z" finished-at="2014-11-27T20:03:49Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Number of entry columns does not match the entry specification.Expected: 5 got: 3 tokens: [20090318162747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Number of entry columns does not match the entry specification.Expected: 5 got: 3 tokens: [20090318162747, UPLOAD, libs-releases-local:antlr/antlr/2.7.7/antlr-2.7.7.pom]
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.parseEntry(TokenizedTrafficEntry.java:109)
+	at org.artifactory.traffic.entry.TokenizedTrafficEntry.<init>(TokenizedTrafficEntry.java:53)
+	at org.artifactory.traffic.entry.TransferEntry.<init>(TransferEntry.java:43)
+	at org.artifactory.traffic.entry.DownloadEntry.<init>(DownloadEntry.java:36)
+	at org.artifactory.traffic.entry.BaseEntryBehaviorTest.testShortDownloadEntry(BaseEntryBehaviorTest.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testShortDownloadEntry -->
+      </class> <!-- org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+    </test> <!-- Command line test da5b8b6e-0afc-49f9-9896-8652d0ca5ce9 -->
+  </suite> <!-- org.artifactory.traffic.entry.BaseEntryBehaviorTest -->
+</testng-results>
