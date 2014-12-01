@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="152" passed="152">
+  <reporter-output>
+  </reporter-output>
+  <suite name="org.artifactory.repo.remote.browse.RemoteItemTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test b29831d7-7c8b-4370-8cb3-1025e6f03c24" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.repo.remote.browse.RemoteItemTest">
+        <test-method status="PASS" signature="getNameFromDirectory()[pri:0, instance:org.artifactory.repo.remote.browse.RemoteItemTest@5a2c25b4]" name="getNameFromDirectory" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getNameFromDirectory -->
+        <test-method status="PASS" signature="getNameFromFile()[pri:0, instance:org.artifactory.repo.remote.browse.RemoteItemTest@5a2c25b4]" name="getNameFromFile" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getNameFromFile -->
+        <test-method status="PASS" signature="nullUrl()[pri:0, instance:org.artifactory.repo.remote.browse.RemoteItemTest@5a2c25b4]" name="nullUrl" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.NullPointerException">
+            <message>
+              <![CDATA[URL cannot be null]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.NullPointerException: URL cannot be null
+	at org.artifactory.repo.remote.browse.RemoteItem.<init>(RemoteItem.java:58)
+	at org.artifactory.repo.remote.browse.RemoteItem.<init>(RemoteItem.java:53)
+	at org.artifactory.repo.remote.browse.RemoteItemTest.nullUrl(RemoteItemTest.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.NullPointerException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- nullUrl -->
+      </class> <!-- org.artifactory.repo.remote.browse.RemoteItemTest -->
+    </test> <!-- Command line test b29831d7-7c8b-4370-8cb3-1025e6f03c24 -->
+  </suite> <!-- org.artifactory.repo.remote.browse.RemoteItemTest -->
+  <suite name="org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 9b10ccbb-1ebc-43ea-b199-04c9d9da9e94" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testSpringArtifacts()[pri:0, instance:org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@2c2815d3]" name="testSpringArtifacts" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringArtifacts -->
+        <test-method status="PASS" signature="testSpringBundles()[pri:0, instance:org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@2c2815d3]" name="testSpringBundles" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundles -->
+        <test-method status="PASS" signature="testSpringDistMilestone()[pri:0, instance:org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@2c2815d3]" name="testSpringDistMilestone" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringDistMilestone -->
+        <test-method status="PASS" signature="testSpringDistSnapshot()[pri:0, instance:org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@2c2815d3]" name="testSpringDistSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringDistSnapshot -->
+        <test-method status="PASS" signature="testSpringDistRelease()[pri:0, instance:org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest@2c2815d3]" name="testSpringDistRelease" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringDistRelease -->
+      </class> <!-- org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest -->
+    </test> <!-- Command line test 9b10ccbb-1ebc-43ea-b199-04c9d9da9e94 -->
+  </suite> <!-- org.artifactory.api.module.SpringMaven23ModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.module.GradleModuleInfoUtilsTest" duration-ms="14" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 2cf8274d-033a-4c33-ac1b-50d8c98e1b19" duration-ms="14" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.GradleModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testIntegration()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testIntegration" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIntegration -->
+        <test-method status="PASS" signature="testIntegrationChecksum()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testIntegrationChecksum" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIntegrationChecksum -->
+        <test-method status="PASS" signature="testIntegrationChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testIntegrationChecksumWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIntegrationChecksumWithClassifier -->
+        <test-method status="PASS" signature="testIntegrationWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testIntegrationWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIntegrationWithClassifier -->
+        <test-method status="PASS" signature="testRelease()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testRelease" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRelease -->
+        <test-method status="PASS" signature="testReleaseChecksum()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testReleaseChecksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseChecksum -->
+        <test-method status="PASS" signature="testReleaseChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testReleaseChecksumWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseChecksumWithClassifier -->
+        <test-method status="PASS" signature="testReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testReleaseWithClassifier" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongIntegrationChecksum()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongIntegrationChecksum" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongIntegrationChecksum -->
+        <test-method status="PASS" signature="testSuperLongIntegration()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongIntegration" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongIntegration -->
+        <test-method status="PASS" signature="testSuperLongIntegrationChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongIntegrationChecksumWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongIntegrationChecksumWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongIntegrationWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongIntegrationWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongIntegrationWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongRelease()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongRelease" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongRelease -->
+        <test-method status="PASS" signature="testSuperLongReleaseChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongReleaseChecksumWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseChecksumWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongReleaseChecksum()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongReleaseChecksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseChecksum -->
+        <test-method status="PASS" signature="testSuperLongReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.GradleModuleInfoUtilsTest@8bcd7ee]" name="testSuperLongReleaseWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseWithClassifier -->
+      </class> <!-- org.artifactory.api.module.GradleModuleInfoUtilsTest -->
+    </test> <!-- Command line test 2cf8274d-033a-4c33-ac1b-50d8c98e1b19 -->
+  </suite> <!-- org.artifactory.api.module.GradleModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.search.artifact.ArtifactSearchControlsTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test c73a19e7-ec09-4271-aab6-00c23eb6fd33" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.artifact.ArtifactSearchControlsTest">
+        <test-method status="PASS" signature="emptyControls()[pri:0, instance:org.artifactory.api.search.artifact.ArtifactSearchControlsTest@3d08db0b]" name="emptyControls" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- emptyControls -->
+        <test-method status="PASS" signature="wildcardsOnlyControls()[pri:0, instance:org.artifactory.api.search.artifact.ArtifactSearchControlsTest@3d08db0b]" name="wildcardsOnlyControls" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- wildcardsOnlyControls -->
+      </class> <!-- org.artifactory.api.search.artifact.ArtifactSearchControlsTest -->
+    </test> <!-- Command line test c73a19e7-ec09-4271-aab6-00c23eb6fd33 -->
+  </suite> <!-- org.artifactory.api.search.artifact.ArtifactSearchControlsTest -->
+  <suite name="org.artifactory.api.search.property.PropertySearchControlsTest" duration-ms="10" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 773b0771-b491-4837-bf6a-0fd85d60e856" duration-ms="10" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.property.PropertySearchControlsTest">
+        <test-method status="PASS" signature="isWildcardsOnly()[pri:0, instance:org.artifactory.api.search.property.PropertySearchControlsTest@147597d]" name="isWildcardsOnly" duration-ms="9" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isWildcardsOnly -->
+      </class> <!-- org.artifactory.api.search.property.PropertySearchControlsTest -->
+    </test> <!-- Command line test 773b0771-b491-4837-bf6a-0fd85d60e856 -->
+  </suite> <!-- org.artifactory.api.search.property.PropertySearchControlsTest -->
+  <suite name="org.artifactory.api.module.SpringIvyModuleInfoUtilsTest" duration-ms="5" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 3a782bfa-9789-430e-9909-670c601a8da1" duration-ms="5" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.SpringIvyModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testSpringBundlesExternal()[pri:0, instance:org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@4bfe2bf3]" name="testSpringBundlesExternal" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundlesExternal -->
+        <test-method status="PASS" signature="testSpringBundlesMilestone()[pri:0, instance:org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@4bfe2bf3]" name="testSpringBundlesMilestone" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundlesMilestone -->
+        <test-method status="PASS" signature="testSpringBundlesRelease()[pri:0, instance:org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@4bfe2bf3]" name="testSpringBundlesRelease" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundlesRelease -->
+        <test-method status="PASS" signature="testSpringBundlesSnapshot1()[pri:0, instance:org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@4bfe2bf3]" name="testSpringBundlesSnapshot1" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundlesSnapshot1 -->
+        <test-method status="PASS" signature="testSpringBundlesSnapshot2()[pri:0, instance:org.artifactory.api.module.SpringIvyModuleInfoUtilsTest@4bfe2bf3]" name="testSpringBundlesSnapshot2" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSpringBundlesSnapshot2 -->
+      </class> <!-- org.artifactory.api.module.SpringIvyModuleInfoUtilsTest -->
+    </test> <!-- Command line test 3a782bfa-9789-430e-9909-670c601a8da1 -->
+  </suite> <!-- org.artifactory.api.module.SpringIvyModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.mime.NamingUtilsTest" duration-ms="25" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 71168343-47bd-4492-a9aa-ffb7ff7aef95" duration-ms="25" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.mime.NamingUtilsTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="readMimeTypes" is-config="true" duration-ms="18" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testIsMetadata()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="testIsMetadata" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIsMetadata -->
+        <test-method status="PASS" signature="testIsMetadataChecksum()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="testIsMetadataChecksum" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIsMetadataChecksum -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testIsViewable()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="testIsViewable" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIsViewable -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testIsProperties()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="testIsProperties" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIsProperties -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testJavaSourceNameFromClassName()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="testJavaSourceNameFromClassName" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testJavaSourceNameFromClassName -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.api.mime.NamingUtilsTest@54c6552a]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.api.mime.NamingUtilsTest -->
+    </test> <!-- Command line test 71168343-47bd-4492-a9aa-ffb7ff7aef95 -->
+  </suite> <!-- org.artifactory.api.mime.NamingUtilsTest -->
+  <suite name="org.artifactory.api.module.ModuleInfoUtilsTest" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 0477c021-11cb-4542-8ee8-9477f3af9a3f" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.ModuleInfoUtilsTest">
+        <test-method status="PASS" signature="constructArtifactPathWithNullModuleInfo()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="constructArtifactPathWithNullModuleInfo" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unable to construct a path from a null module info object.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unable to construct a path from a null module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:110)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullModuleInfo(ModuleInfoUtilsTest.java:34)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- constructArtifactPathWithNullModuleInfo -->
+        <test-method status="PASS" signature="constructArtifactPathWithInvalidModuleInfo()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="constructArtifactPathWithInvalidModuleInfo" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unable to construct a path from an invalid module info object.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unable to construct a path from an invalid module info object.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:113)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithInvalidModuleInfo(ModuleInfoUtilsTest.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- constructArtifactPathWithInvalidModuleInfo -->
+        <test-method status="PASS" signature="constructArtifactPathWithNullRepoLayout()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="constructArtifactPathWithNullRepoLayout" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unable to construct a path from a null repository layout.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unable to construct a path from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.constructItemPath(ModuleInfoUtils.java:116)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:51)
+	at org.artifactory.api.module.ModuleInfoUtils.constructArtifactPath(ModuleInfoUtils.java:46)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.constructArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- constructArtifactPathWithNullRepoLayout -->
+        <test-method status="PASS" signature="moduleInfoFromArtifactPathWithNullArtifactPath()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromArtifactPathWithNullArtifactPath" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a blank item path.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullArtifactPath(ModuleInfoUtilsTest.java:53)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromArtifactPathWithNullArtifactPath -->
+        <test-method status="PASS" signature="moduleInfoFromArtifactPathWithBlankItemPath()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromArtifactPathWithBlankItemPath" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a blank item path.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithBlankItemPath(ModuleInfoUtilsTest.java:65)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromArtifactPathWithBlankItemPath -->
+        <test-method status="PASS" signature="moduleInfoFromArtifactPathWithNullRepoLayout()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromArtifactPathWithNullRepoLayout" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a null repository layout.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromArtifactPath(ModuleInfoUtils.java:69)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromArtifactPathWithNullRepoLayout(ModuleInfoUtilsTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromArtifactPathWithNullRepoLayout -->
+        <test-method status="PASS" signature="moduleInfoFromDescriptorPathWithNullArtifactPath()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromDescriptorPathWithNullArtifactPath" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a blank item path.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullArtifactPath(ModuleInfoUtilsTest.java:59)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromDescriptorPathWithNullArtifactPath -->
+        <test-method status="PASS" signature="moduleInfoFromDescriptorPathWithBlankItemPath()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromDescriptorPathWithBlankItemPath" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a blank item path.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a blank item path.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:316)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithBlankItemPath(ModuleInfoUtilsTest.java:71)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromDescriptorPathWithBlankItemPath -->
+        <test-method status="PASS" signature="moduleInfoFromDescriptorPathWithNullRepoLayout()[pri:0, instance:org.artifactory.api.module.ModuleInfoUtilsTest@72f08d6f]" name="moduleInfoFromDescriptorPathWithNullRepoLayout" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Cannot construct a module info object from a null repository layout.]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Cannot construct a module info object from a null repository layout.
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromItemPath(ModuleInfoUtils.java:319)
+	at org.artifactory.api.module.ModuleInfoUtils.moduleInfoFromDescriptorPath(ModuleInfoUtils.java:99)
+	at org.artifactory.api.module.ModuleInfoUtilsTest.moduleInfoFromDescriptorPathWithNullRepoLayout(ModuleInfoUtilsTest.java:83)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalArgumentException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- moduleInfoFromDescriptorPathWithNullRepoLayout -->
+      </class> <!-- org.artifactory.api.module.ModuleInfoUtilsTest -->
+    </test> <!-- Command line test 0477c021-11cb-4542-8ee8-9477f3af9a3f -->
+  </suite> <!-- org.artifactory.api.module.ModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.search.SearchControlsBaseTest" duration-ms="119" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 5ef15251-7710-41e2-98bf-4b2323fbae24" duration-ms="119" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.SearchControlsBaseTest">
+        <test-method status="PASS" signature="isWildcardsOnly()[pri:0, instance:org.artifactory.api.search.SearchControlsBaseTest@55573de0]" name="isWildcardsOnly" duration-ms="118" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isWildcardsOnly -->
+      </class> <!-- org.artifactory.api.search.SearchControlsBaseTest -->
+    </test> <!-- Command line test 5ef15251-7710-41e2-98bf-4b2323fbae24 -->
+  </suite> <!-- org.artifactory.api.search.SearchControlsBaseTest -->
+  <suite name="org.artifactory.checksum.ChecksumInfoTest" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test f49ae5b4-2414-4241-99be-c2e15814dae2" duration-ms="4" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.checksum.ChecksumInfoTest">
+        <test-method status="PASS" signature="matchDifferentOriginalAndActual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchDifferentOriginalAndActual" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchDifferentOriginalAndActual -->
+        <test-method status="PASS" signature="matchNullActual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchNullActual" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchNullActual -->
+        <test-method status="PASS" signature="matchNullOriginalAndActual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchNullOriginalAndActual" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchNullOriginalAndActual -->
+        <test-method status="PASS" signature="matchNullOriginal()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchNullOriginal" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchNullOriginal -->
+        <test-method status="PASS" signature="matchIfOriginalIsTruetedAndActualIsSet()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchIfOriginalIsTruetedAndActualIsSet" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchIfOriginalIsTruetedAndActualIsSet -->
+        <test-method status="PASS" signature="matchSameOriginalAndActual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="matchSameOriginalAndActual" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- matchSameOriginalAndActual -->
+        <test-method status="PASS" signature="validChecksumWithDifferentCaseNormalizationTest()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="validChecksumWithDifferentCaseNormalizationTest" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validChecksumWithDifferentCaseNormalizationTest -->
+        <test-method status="PASS" signature="notValidChecksumNormalizationTest()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="notValidChecksumNormalizationTest" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- notValidChecksumNormalizationTest -->
+        <test-method status="PASS" signature="trustedOriginalShouldReturnActual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="trustedOriginalShouldReturnActual" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- trustedOriginalShouldReturnActual -->
+        <test-method status="PASS" signature="wrongMd5Actual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="wrongMd5Actual" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalStateException">
+            <message>
+              <![CDATA[Actual checksum invalid f : 12345678901234567890123456789012 for type MD5]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalStateException: Actual checksum invalid f : 12345678901234567890123456789012 for type MD5
+	at org.artifactory.checksum.ChecksumInfo.<init>(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongMd5Actual(ChecksumInfoTest.java:48)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalStateException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- wrongMd5Actual -->
+        <test-method status="PASS" signature="wrongSha1Actual()[pri:0, instance:org.artifactory.checksum.ChecksumInfoTest@110b9691]" name="wrongSha1Actual" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <exception class="java.lang.IllegalStateException">
+            <message>
+              <![CDATA[Actual checksum invalid f : 1234567890123456789012345678901234567890 for type SHA-1]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalStateException: Actual checksum invalid f : 1234567890123456789012345678901234567890 for type SHA-1
+	at org.artifactory.checksum.ChecksumInfo.<init>(ChecksumInfo.java:45)
+	at org.artifactory.checksum.ChecksumInfoTest.wrongSha1Actual(ChecksumInfoTest.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:714)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
+	at org.testng.TestNG.run(TestNG.java:1057)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:91)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.executeMulti(TestNGDirectoryTestSuite.java:204)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:107)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:113)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.IllegalStateException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- wrongSha1Actual -->
+      </class> <!-- org.artifactory.checksum.ChecksumInfoTest -->
+    </test> <!-- Command line test f49ae5b4-2414-4241-99be-c2e15814dae2 -->
+  </suite> <!-- org.artifactory.checksum.ChecksumInfoTest -->
+  <suite name="org.artifactory.api.module.Maven23ModuleInfoUtilsTest" duration-ms="25" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 80692ae2-4263-461f-9748-96a6e9e210f4" duration-ms="25" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.Maven23ModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testClassifierWithDots()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testClassifierWithDots" duration-ms="6" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testClassifierWithDots -->
+        <test-method status="PASS" signature="testNonUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testNonUniqueSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNonUniqueSnapshot -->
+        <test-method status="PASS" signature="testNonUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testNonUniqueSnapshotWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNonUniqueSnapshotWithClassifier -->
+        <test-method status="PASS" signature="testRelease()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testRelease" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRelease -->
+        <test-method status="PASS" signature="testReleaseChecksum()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testReleaseChecksum" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseChecksum -->
+        <test-method status="PASS" signature="testReleaseChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testReleaseChecksumWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseChecksumWithClassifier -->
+        <test-method status="PASS" signature="testReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testReleaseWithClassifier" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongNonUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongNonUniqueSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongNonUniqueSnapshot -->
+        <test-method status="PASS" signature="testSuperLongNonUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongNonUniqueSnapshotWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongNonUniqueSnapshotWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongRelease()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongRelease" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongRelease -->
+        <test-method status="PASS" signature="testSuperLongReleaseChecksum()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongReleaseChecksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseChecksum -->
+        <test-method status="PASS" signature="testSuperLongReleaseChecksumWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongReleaseChecksumWithClassifier" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseChecksumWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongReleaseWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongUniqueSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongUniqueSnapshot -->
+        <test-method status="PASS" signature="testSuperLongUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testSuperLongUniqueSnapshotWithClassifier" duration-ms="2" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongUniqueSnapshotWithClassifier -->
+        <test-method status="PASS" signature="testUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testUniqueSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUniqueSnapshot -->
+        <test-method status="PASS" signature="testUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.Maven23ModuleInfoUtilsTest@14248f34]" name="testUniqueSnapshotWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUniqueSnapshotWithClassifier -->
+      </class> <!-- org.artifactory.api.module.Maven23ModuleInfoUtilsTest -->
+    </test> <!-- Command line test 80692ae2-4263-461f-9748-96a6e9e210f4 -->
+  </suite> <!-- org.artifactory.api.module.Maven23ModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.module.BaseModuleInfoUtilsTest" duration-ms="0" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 1ad93dc5-7fa0-4a5d-aaf2-412fcb2b7f9d" duration-ms="0" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    </test> <!-- Command line test 1ad93dc5-7fa0-4a5d-aaf2-412fcb2b7f9d -->
+  </suite> <!-- org.artifactory.api.module.BaseModuleInfoUtilsTest -->
+  <suite name="org.artifactory.api.repo.storage.RepoStorageSummaryInfoTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 4633b097-9843-4f86-b88d-d84bfb643e1d" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.repo.storage.RepoStorageSummaryInfoTest">
+        <test-method status="PASS" signature="simpleConstructor()[pri:0, instance:org.artifactory.api.repo.storage.RepoStorageSummaryInfoTest@5f203fe5]" name="simpleConstructor" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- simpleConstructor -->
+      </class> <!-- org.artifactory.api.repo.storage.RepoStorageSummaryInfoTest -->
+    </test> <!-- Command line test 4633b097-9843-4f86-b88d-d84bfb643e1d -->
+  </suite> <!-- org.artifactory.api.repo.storage.RepoStorageSummaryInfoTest -->
+  <suite name="org.artifactory.api.search.gavc.GavcSearchControlsTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test b40af123-73c4-44d4-85ea-158ea0a5983f" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.gavc.GavcSearchControlsTest">
+        <test-method status="PASS" signature="isWildcardsOnly()[pri:0, instance:org.artifactory.api.search.gavc.GavcSearchControlsTest@bf3f7e0]" name="isWildcardsOnly" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isWildcardsOnly -->
+      </class> <!-- org.artifactory.api.search.gavc.GavcSearchControlsTest -->
+    </test> <!-- Command line test b40af123-73c4-44d4-85ea-158ea0a5983f -->
+  </suite> <!-- org.artifactory.api.search.gavc.GavcSearchControlsTest -->
+  <suite name="org.artifactory.api.search.artifact.ChecksumSearchControlsTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test c73c2e3c-326a-4fb9-adb1-3ae09b5010a7" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.artifact.ChecksumSearchControlsTest">
+        <test-method status="PASS" signature="isWildcardsOnly()[pri:0, instance:org.artifactory.api.search.artifact.ChecksumSearchControlsTest@750efc01]" name="isWildcardsOnly" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isWildcardsOnly -->
+      </class> <!-- org.artifactory.api.search.artifact.ChecksumSearchControlsTest -->
+    </test> <!-- Command line test c73c2e3c-326a-4fb9-adb1-3ae09b5010a7 -->
+  </suite> <!-- org.artifactory.api.search.artifact.ChecksumSearchControlsTest -->
+  <suite name="org.artifactory.api.module.IvyModuleInfoUtilsTest" duration-ms="13" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 44865090-98af-4801-91bc-d59c11e9240a" duration-ms="13" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.IvyModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testGradleStyle()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testGradleStyle" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGradleStyle -->
+        <test-method status="PASS" signature="testLowercaseSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testLowercaseSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLowercaseSnapshot -->
+        <test-method status="PASS" signature="testLinkedInIvyModule()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testLinkedInIvyModule" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testLinkedInIvyModule -->
+        <test-method status="PASS" signature="testReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testReleaseWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testReleaseWithClassifier -->
+        <test-method status="PASS" signature="testRelease()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testRelease" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testRelease -->
+        <test-method status="PASS" signature="testSuperLongGradleStyle()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongGradleStyle" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongGradleStyle -->
+        <test-method status="PASS" signature="testSuperLongLinkedInIvyModule()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongLinkedInIvyModule" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongLinkedInIvyModule -->
+        <test-method status="PASS" signature="testSuperLongLowercaseSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongLowercaseSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongLowercaseSnapshot -->
+        <test-method status="PASS" signature="testSuperLongRelease()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongRelease" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongRelease -->
+        <test-method status="PASS" signature="testSuperLongReleaseWithClassifier()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongReleaseWithClassifier" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongReleaseWithClassifier -->
+        <test-method status="PASS" signature="testSuperLongTimezoneSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongTimezoneSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongTimezoneSnapshot -->
+        <test-method status="PASS" signature="testSuperLongUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongUniqueSnapshot" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongUniqueSnapshot -->
+        <test-method status="PASS" signature="testSuperLongUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testSuperLongUniqueSnapshotWithClassifier" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSuperLongUniqueSnapshotWithClassifier -->
+        <test-method status="PASS" signature="testTimezoneSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testTimezoneSnapshot" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testTimezoneSnapshot -->
+        <test-method status="PASS" signature="testUniqueSnapshot()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testUniqueSnapshot" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUniqueSnapshot -->
+        <test-method status="PASS" signature="testUniqueSnapshotWithClassifier()[pri:0, instance:org.artifactory.api.module.IvyModuleInfoUtilsTest@6b2b700f]" name="testUniqueSnapshotWithClassifier" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUniqueSnapshotWithClassifier -->
+      </class> <!-- org.artifactory.api.module.IvyModuleInfoUtilsTest -->
+    </test> <!-- Command line test 44865090-98af-4801-91bc-d59c11e9240a -->
+  </suite> <!-- org.artifactory.api.module.IvyModuleInfoUtilsTest -->
+  <suite name="org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest" duration-ms="268" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:02:59Z">
+    <groups>
+    </groups>
+    <test name="Command line test 43de336b-6cd3-49b5-b89a-1580fbc6dace" duration-ms="268" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:02:59Z">
+      <class name="org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="readMimeTypes" is-config="true" duration-ms="230" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="bindArtifactoryHome" is-config="true" duration-ms="18" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testInvalidPaths()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="testInvalidPaths" duration-ms="9" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidPaths -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testValidMd5Test()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="testValidMd5Test" duration-ms="1" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidMd5Test -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testValidSha1Test()[pri:0, instance:org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest@37e840fd]" name="testValidSha1Test" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidSha1Test -->
+      </class> <!-- org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest -->
+    </test> <!-- Command line test 43de336b-6cd3-49b5-b89a-1580fbc6dace -->
+  </suite> <!-- org.artifactory.addon.layouts.translate.ChecksumTranslatorFilterTest -->
+  <suite name="org.artifactory.api.rest.artifact.FileListElementTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 18eb782c-906d-4400-9704-f746548e56a8" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.rest.artifact.FileListElementTest">
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.api.rest.artifact.FileListElementTest@489993a1]" name="testDefaultConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testFullConstructor()[pri:0, instance:org.artifactory.api.rest.artifact.FileListElementTest@489993a1]" name="testFullConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFullConstructor -->
+        <test-method status="PASS" signature="testSetters()[pri:0, instance:org.artifactory.api.rest.artifact.FileListElementTest@489993a1]" name="testSetters" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSetters -->
+      </class> <!-- org.artifactory.api.rest.artifact.FileListElementTest -->
+    </test> <!-- Command line test 18eb782c-906d-4400-9704-f746548e56a8 -->
+  </suite> <!-- org.artifactory.api.rest.artifact.FileListElementTest -->
+  <suite name="org.artifactory.api.rest.search.result.PatternResultFileSetTest" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 356dfe0b-e5b8-4774-ba71-568206a2f689" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.rest.search.result.PatternResultFileSetTest">
+        <test-method status="PASS" signature="testAddMethod()[pri:0, instance:org.artifactory.api.rest.search.result.PatternResultFileSetTest@37bc2b18]" name="testAddMethod" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testAddMethod -->
+        <test-method status="PASS" signature="testSetters()[pri:0, instance:org.artifactory.api.rest.search.result.PatternResultFileSetTest@37bc2b18]" name="testSetters" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSetters -->
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.api.rest.search.result.PatternResultFileSetTest@37bc2b18]" name="testDefaultConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testFullConstructor()[pri:0, instance:org.artifactory.api.rest.search.result.PatternResultFileSetTest@37bc2b18]" name="testFullConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFullConstructor -->
+        <test-method status="PASS" signature="testNoFilesConstructor()[pri:0, instance:org.artifactory.api.rest.search.result.PatternResultFileSetTest@37bc2b18]" name="testNoFilesConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNoFilesConstructor -->
+      </class> <!-- org.artifactory.api.rest.search.result.PatternResultFileSetTest -->
+    </test> <!-- Command line test 356dfe0b-e5b8-4774-ba71-568206a2f689 -->
+  </suite> <!-- org.artifactory.api.rest.search.result.PatternResultFileSetTest -->
+  <suite name="org.artifactory.checksum.ChecksumsTypeTest" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 3e333fa8-9399-446f-889e-1fb78641dfdf" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.checksum.ChecksumsTypeTest">
+        <test-method status="PASS" signature="invalidSha256Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="invalidSha256Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidSha256Checksum -->
+        <test-method status="PASS" signature="invalidSha1Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="invalidSha1Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidSha1Checksum -->
+        <test-method status="PASS" signature="invalidMD5Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="invalidMD5Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidMD5Checksum -->
+        <test-method status="PASS" signature="nullAndEmptyAreNotValidChecksums()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="nullAndEmptyAreNotValidChecksums" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- nullAndEmptyAreNotValidChecksums -->
+        <test-method status="PASS" signature="validSha256Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="validSha256Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validSha256Checksum -->
+        <test-method status="PASS" signature="validMD5Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="validMD5Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validMD5Checksum -->
+        <test-method status="PASS" signature="wrongLengthChecksums()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="wrongLengthChecksums" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- wrongLengthChecksums -->
+        <test-method status="PASS" signature="validSha1Checksum()[pri:0, instance:org.artifactory.checksum.ChecksumsTypeTest@3fcbd2c5]" name="validSha1Checksum" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validSha1Checksum -->
+      </class> <!-- org.artifactory.checksum.ChecksumsTypeTest -->
+    </test> <!-- Command line test 3e333fa8-9399-446f-889e-1fb78641dfdf -->
+  </suite> <!-- org.artifactory.checksum.ChecksumsTypeTest -->
+  <suite name="org.artifactory.api.rest.artifact.FileListTest" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 12c6d32a-9d7a-41b4-8c96-f055cf6cae9a" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.rest.artifact.FileListTest">
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.api.rest.artifact.FileListTest@44df3a5b]" name="testDefaultConstructor" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testFullConstructor()[pri:0, instance:org.artifactory.api.rest.artifact.FileListTest@44df3a5b]" name="testFullConstructor" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFullConstructor -->
+        <test-method status="PASS" signature="testSetters()[pri:0, instance:org.artifactory.api.rest.artifact.FileListTest@44df3a5b]" name="testSetters" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSetters -->
+      </class> <!-- org.artifactory.api.rest.artifact.FileListTest -->
+    </test> <!-- Command line test 12c6d32a-9d7a-41b4-8c96-f055cf6cae9a -->
+  </suite> <!-- org.artifactory.api.rest.artifact.FileListTest -->
+  <suite name="org.artifactory.addon.layouts.translate.PathTranslationHelperTest" duration-ms="139" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 9e4bdf08-b46b-4316-b777-ea05c7e7884b" duration-ms="139" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.addon.layouts.translate.PathTranslationHelperTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="readMimeTypes" is-config="true" duration-ms="19" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="2" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testGradleToGradle()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testGradleToGradle" duration-ms="26" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGradleToGradle -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testGradleToIvy()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testGradleToIvy" duration-ms="15" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGradleToIvy -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testGradleToMaven()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testGradleToMaven" duration-ms="12" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGradleToMaven -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testIvyToGradle()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testIvyToGradle" duration-ms="9" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIvyToGradle -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testIvyToIvy()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testIvyToIvy" duration-ms="9" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIvyToIvy -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testIvyToMaven()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testIvyToMaven" duration-ms="11" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testIvyToMaven -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testMavenToGradle()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testMavenToGradle" duration-ms="10" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testMavenToGradle -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testMavenToIvy()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testMavenToIvy" duration-ms="10" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testMavenToIvy -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testMavenToMaven()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="testMavenToMaven" duration-ms="8" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testMavenToMaven -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="bindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.PathTranslationHelperTest@34322a97]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.addon.layouts.translate.PathTranslationHelperTest -->
+    </test> <!-- Command line test 9e4bdf08-b46b-4316-b777-ea05c7e7884b -->
+  </suite> <!-- org.artifactory.addon.layouts.translate.PathTranslationHelperTest -->
+  <suite name="org.artifactory.checksum.ChecksumsInfoTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test d25f2378-0969-4ddf-9fc2-c801a89de882" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.checksum.ChecksumsInfoTest">
+        <test-method status="PASS" signature="addChecksum()[pri:0, instance:org.artifactory.checksum.ChecksumsInfoTest@26edc0e0]" name="addChecksum" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- addChecksum -->
+        <test-method status="PASS" signature="copyConstructor()[pri:0, instance:org.artifactory.checksum.ChecksumsInfoTest@26edc0e0]" name="copyConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- copyConstructor -->
+      </class> <!-- org.artifactory.checksum.ChecksumsInfoTest -->
+    </test> <!-- Command line test d25f2378-0969-4ddf-9fc2-c801a89de882 -->
+  </suite> <!-- org.artifactory.checksum.ChecksumsInfoTest -->
+  <suite name="org.artifactory.api.config.ExportSettingsTest" duration-ms="15" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 382fd614-b7aa-4a38-a71c-57add30b5ed1" duration-ms="15" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.config.ExportSettingsTest">
+        <test-method status="PASS" signature="copyConstructor()[pri:0, instance:org.artifactory.api.config.ExportSettingsTest@f0f7074]" name="copyConstructor" duration-ms="14" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- copyConstructor -->
+        <test-method status="PASS" signature="fileConstructor()[pri:0, instance:org.artifactory.api.config.ExportSettingsTest@f0f7074]" name="fileConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- fileConstructor -->
+      </class> <!-- org.artifactory.api.config.ExportSettingsTest -->
+    </test> <!-- Command line test 382fd614-b7aa-4a38-a71c-57add30b5ed1 -->
+  </suite> <!-- org.artifactory.api.config.ExportSettingsTest -->
+  <suite name="org.artifactory.api.mail.MailServerConfigurationTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test e31a1513-eb95-49a8-9d40-ffa534839234" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.mail.MailServerConfigurationTest">
+        <test-method status="PASS" signature="testMainConstructor()[pri:0, instance:org.artifactory.api.mail.MailServerConfigurationTest@30609a8e]" name="testMainConstructor" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testMainConstructor -->
+      </class> <!-- org.artifactory.api.mail.MailServerConfigurationTest -->
+    </test> <!-- Command line test e31a1513-eb95-49a8-9d40-ffa534839234 -->
+  </suite> <!-- org.artifactory.api.mail.MailServerConfigurationTest -->
+  <suite name="org.artifactory.api.module.ModuleInfoBuilderTest" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test cc585bac-3744-4340-992a-fc8b708919f8" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.ModuleInfoBuilderTest">
+        <test-method status="PASS" signature="testCopyConstructor()[pri:0, instance:org.artifactory.api.module.ModuleInfoBuilderTest@4b3e427e]" name="testCopyConstructor" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCopyConstructor -->
+        <test-method status="PASS" signature="testCopyDefaultConstruct()[pri:0, instance:org.artifactory.api.module.ModuleInfoBuilderTest@4b3e427e]" name="testCopyDefaultConstruct" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCopyDefaultConstruct -->
+        <test-method status="PASS" signature="testValidParams()[pri:0, instance:org.artifactory.api.module.ModuleInfoBuilderTest@4b3e427e]" name="testValidParams" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidParams -->
+        <test-method status="PASS" signature="testNoParams()[pri:0, instance:org.artifactory.api.module.ModuleInfoBuilderTest@4b3e427e]" name="testNoParams" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNoParams -->
+        <test-method status="PASS" signature="testNullParams()[pri:0, instance:org.artifactory.api.module.ModuleInfoBuilderTest@4b3e427e]" name="testNullParams" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testNullParams -->
+      </class> <!-- org.artifactory.api.module.ModuleInfoBuilderTest -->
+    </test> <!-- Command line test cc585bac-3744-4340-992a-fc8b708919f8 -->
+  </suite> <!-- org.artifactory.api.module.ModuleInfoBuilderTest -->
+  <suite name="org.artifactory.api.module.ModuleInfoTest" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 24538001-8614-4fcb-bc00-96c0c6d70d15" duration-ms="1" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.ModuleInfoTest">
+        <test-method status="PASS" signature="testDefaultConstructor()[pri:0, instance:org.artifactory.api.module.ModuleInfoTest@496a2dd4]" name="testDefaultConstructor" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDefaultConstructor -->
+        <test-method status="PASS" signature="testMinimalInfo()[pri:0, instance:org.artifactory.api.module.ModuleInfoTest@496a2dd4]" name="testMinimalInfo" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testMinimalInfo -->
+        <test-method status="PASS" signature="testPartialInfo()[pri:0, instance:org.artifactory.api.module.ModuleInfoTest@496a2dd4]" name="testPartialInfo" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testPartialInfo -->
+        <test-method status="PASS" signature="testFullInfo()[pri:0, instance:org.artifactory.api.module.ModuleInfoTest@496a2dd4]" name="testFullInfo" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFullInfo -->
+      </class> <!-- org.artifactory.api.module.ModuleInfoTest -->
+    </test> <!-- Command line test 24538001-8614-4fcb-bc00-96c0c6d70d15 -->
+  </suite> <!-- org.artifactory.api.module.ModuleInfoTest -->
+  <suite name="org.artifactory.api.common.MultiStatusHolderTest" duration-ms="11" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test c5245997-c489-4528-b9a6-aa60da921b28" duration-ms="11" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.common.MultiStatusHolderTest">
+        <test-method status="PASS" signature="initStatusHolders()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="initStatusHolders" is-config="true" duration-ms="2" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initStatusHolders -->
+        <test-method status="PASS" signature="mergeTwoStatusHolders()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="mergeTwoStatusHolders" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- mergeTwoStatusHolders -->
+        <test-method status="PASS" signature="mergeWithEmptyStatusHolder()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="mergeWithEmptyStatusHolder" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- mergeWithEmptyStatusHolder -->
+        <test-method status="PASS" signature="initStatusHolders()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="initStatusHolders" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initStatusHolders -->
+        <test-method status="PASS" signature="initStatusHolders()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="initStatusHolders" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initStatusHolders -->
+        <test-method status="PASS" signature="initStatusHolders()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="initStatusHolders" is-config="true" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initStatusHolders -->
+        <test-method status="PASS" signature="mergeWithErrorOverride()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="mergeWithErrorOverride" duration-ms="0" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- mergeWithErrorOverride -->
+        <test-method status="PASS" signature="mergeWithSingleStatusHolder()[pri:0, instance:org.artifactory.api.common.MultiStatusHolderTest@2ee08dfa]" name="mergeWithSingleStatusHolder" duration-ms="6" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- mergeWithSingleStatusHolder -->
+      </class> <!-- org.artifactory.api.common.MultiStatusHolderTest -->
+    </test> <!-- Command line test c5245997-c489-4528-b9a6-aa60da921b28 -->
+  </suite> <!-- org.artifactory.api.common.MultiStatusHolderTest -->
+  <suite name="org.artifactory.api.search.archive.ArchiveSearchControlsTest" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test dd5ad1e1-6f2a-4c05-a5e0-73eecd364c6b" duration-ms="2" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.search.archive.ArchiveSearchControlsTest">
+        <test-method status="PASS" signature="isWildcardsOnly()[pri:0, instance:org.artifactory.api.search.archive.ArchiveSearchControlsTest@50c2e9d1]" name="isWildcardsOnly" duration-ms="2" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- isWildcardsOnly -->
+      </class> <!-- org.artifactory.api.search.archive.ArchiveSearchControlsTest -->
+    </test> <!-- Command line test dd5ad1e1-6f2a-4c05-a5e0-73eecd364c6b -->
+  </suite> <!-- org.artifactory.api.search.archive.ArchiveSearchControlsTest -->
+  <suite name="org.artifactory.api.module.CustomModuleInfoUtilsTest" duration-ms="7" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+    <groups>
+    </groups>
+    <test name="Command line test 2266a414-3d4e-49a6-8dda-fe8f24119623" duration-ms="7" started-at="2014-11-27T18:03:00Z" finished-at="2014-11-27T18:03:00Z">
+      <class name="org.artifactory.api.module.CustomModuleInfoUtilsTest">
+        <test-method status="PASS" signature="testArtifactModuleToModule()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testArtifactModuleToModule" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testArtifactModuleToModule -->
+        <test-method status="PASS" signature="testArtifactPathToModule()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testArtifactPathToModule" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testArtifactPathToModule -->
+        <test-method status="PASS" signature="testCustom1()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testCustom1" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCustom1 -->
+        <test-method status="PASS" signature="testCustom2()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testCustom2" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCustom2 -->
+        <test-method status="PASS" signature="testDescriptorPathToModule()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testDescriptorPathToModule" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDescriptorPathToModule -->
+        <test-method status="PASS" signature="testDescriptorPathToModuleWithConstantExtension()[pri:0, instance:org.artifactory.api.module.CustomModuleInfoUtilsTest@7ea4461e]" name="testDescriptorPathToModuleWithConstantExtension" duration-ms="1" started-at="2014-11-27T20:03:00Z" finished-at="2014-11-27T20:03:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDescriptorPathToModuleWithConstantExtension -->
+      </class> <!-- org.artifactory.api.module.CustomModuleInfoUtilsTest -->
+    </test> <!-- Command line test 2266a414-3d4e-49a6-8dda-fe8f24119623 -->
+  </suite> <!-- org.artifactory.api.module.CustomModuleInfoUtilsTest -->
+  <suite name="org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest" duration-ms="22" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:02:59Z">
+    <groups>
+    </groups>
+    <test name="Command line test d2f8bd22-d405-4538-9520-61fa7d6ff790" duration-ms="22" started-at="2014-11-27T18:02:59Z" finished-at="2014-11-27T18:02:59Z">
+      <class name="org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest">
+        <test-method status="PASS" signature="readMimeTypes()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="readMimeTypes" is-config="true" duration-ms="19" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- readMimeTypes -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="testInvalidPaths()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="testInvalidPaths" duration-ms="1" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidPaths -->
+        <test-method status="PASS" signature="bindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="bindArtifactoryHome" is-config="true" duration-ms="1" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- bindArtifactoryHome -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+        <test-method status="PASS" signature="testValidMetadataTest()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="testValidMetadataTest" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidMetadataTest -->
+        <test-method status="PASS" signature="unbindArtifactoryHome()[pri:0, instance:org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest@5d8f794f]" name="unbindArtifactoryHome" is-config="true" duration-ms="0" started-at="2014-11-27T20:02:59Z" finished-at="2014-11-27T20:02:59Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- unbindArtifactoryHome -->
+      </class> <!-- org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest -->
+    </test> <!-- Command line test d2f8bd22-d405-4538-9520-61fa7d6ff790 -->
+  </suite> <!-- org.artifactory.addon.layouts.translate.MetadataTranslatorFilterTest -->
+</testng-results>
