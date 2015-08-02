@@ -1,0 +1,66 @@
+<div class="search-panel-container">
+    <div collapse="Search.collapseSearchPanel">
+        <div class="search-panel" ng-style="Search.collapseStyle()">
+            <div class="pull-right back-to-browse">
+                <a href=""
+                   ng-click="Search.backToBrowse()"><span>&lsaquo;</span> Back To Browse
+                </a>
+            </div>
+            <form>
+                <div ng-switch="Search.currentSearch">
+                    <div ng-switch-when="quick">
+                        <jf-quick query="Search.query"></jf-quick>
+                    </div>
+                    <div ng-switch-when="class">
+                        <jf-class query="Search.query"></jf-class>
+                    </div>
+                    <div ng-switch-when="gavc">
+                        <jf-gavc query="Search.query"></jf-gavc>
+                    </div>
+                    <div ng-switch-when="property">
+                        <jf-property query="Search.query"></jf-property>
+                    </div>
+                    <div ng-switch-when="checksum">
+                        <jf-checksum query="Search.query"></jf-checksum>
+                    </div>
+                    <div ng-switch-when="remote">
+                        <jf-remote query="Search.query"></jf-remote>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="repo-list-dropdown"
+                     ng-if="Search.showRepoList()">
+                    <div ng-click="Search.openRepoList()"
+                         class="repo-dnd-title">
+                        <span class="icon icon-search"></span>
+                        <span ng-if="!Search.query.selectedRepositories.length">Limit to Specific Repositories</span>
+                        <span ng-if="Search.query.selectedRepositories.length==1">Searching 1 Repository</span>
+                        <span ng-if="Search.query.selectedRepositories.length>1">Searching {{Search.query.selectedRepositories.length}} Repositories</span>
+                    </div>
+                </div>
+                <div class="form-group" collapse="Search.isOpenRepoList">
+                    <div class="form-group-cell double">
+                        <jf-drag-drop
+                                ng-if="Search.repoList"
+                                exclude-list="Search.repoList"
+                                include-list="Search.query.selectedRepositories"
+                                include-display-field="repoKey"
+                                exclude-display-field="repoKey"
+                                headers="{leftTitle:'Available Repositories', rightTitle:'Selected Repositories'}">
+                        </jf-drag-drop>
+                    </div>
+                </div>
+            </form>
+
+            <div class="search-results-title">
+                {{Search.resultsMsg}}
+            </div>
+
+            <jf-grid
+                    grid-options="Search.gridOptions"
+                    filter-field="name">
+            </jf-grid>
+        </div>
+    </div>
+</div>
