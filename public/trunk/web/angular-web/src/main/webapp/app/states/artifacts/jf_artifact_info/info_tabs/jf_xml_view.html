@@ -1,0 +1,15 @@
+<jf-panel jf-panel-heading="XML Content"
+          ng-if="jfXmlView.xmlViewData.fileContent">
+
+    <a clip-copy="jfXmlView.xmlViewData.fileContent"
+       jf-tooltip="Copy to Clipboard"
+       class="copy-to-clip code-mirror-copy icon icon-copy-to-clipboard"></a>
+
+    <jf-code-mirror mime-type="text/xml"
+                    height="500px"
+                    model="jfXmlView.xmlViewData.fileContent">
+    </jf-code-mirror>
+</jf-panel>
+
+
+
