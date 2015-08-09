@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.yum.YumAddon;
+import org.artifactory.addon.YumAddon;
 import org.artifactory.api.config.ImportSettingsImpl;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.maven.MavenMetadataService;
@@ -30,7 +30,6 @@ import org.artifactory.api.repo.exception.RepoRejectException;
 import org.artifactory.checksum.ChecksumType;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.fs.FolderInfo;
 import org.artifactory.fs.MetadataEntryInfo;
@@ -192,7 +191,7 @@ public class DbRepoImportHandler extends DbRepoImportExportBase {
                     rootRepoPath, progressAccumulator.getSuccessfulItemsCount(), status);
 
             LocalRepoDescriptor descriptor = repo.getDescriptor();
-            if (descriptor.getType().equals(RepoType.YUM) && descriptor.isCalculateYumMetadata()) {
+            if (descriptor.isCalculateYumMetadata()) {
                 AddonsManager addonsManager = StorageContextHelper.get().beanForType(AddonsManager.class);
                 addonsManager.addonByType(YumAddon.class).requestAsyncRepositoryYumMetadataCalculation(descriptor);
             }

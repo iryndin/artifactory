@@ -3,7 +3,15 @@ package org.artifactory.storage.db.aql.service.optimizer;
 import org.artifactory.aql.model.AqlField;
 import org.artifactory.aql.model.AqlFieldEnum;
 import org.artifactory.aql.model.AqlOperatorEnum;
-import org.artifactory.storage.db.aql.sql.builder.query.aql.*;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.AqlQuery;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.AqlQueryElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.CloseParenthesisAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.MspAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.OpenParenthesisAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.OperatorQueryElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.PropertyCriteria;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.ResultFilterAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.SimpleCriteria;
 import org.artifactory.storage.db.aql.sql.builder.query.sql.SqlTable;
 
 import java.util.List;
@@ -39,12 +47,15 @@ public abstract class OptimizationStrategy {
      * OperatorQueryElement - or                =             o
      * MspAqlElement                            =             m
      * ResultFilterAqlElement                   =             r
+     *
+     * @param aqlElements
+     * @return
      */
     private String transformToCharacterRepresentation(AqlQuery aqlQuery) {
         List<AqlQueryElement> aqlElements = aqlQuery.getAqlElements();
         StringBuilder builder = new StringBuilder();
         for (AqlQueryElement aqlElement : aqlElements) {
-            if (aqlElement instanceof ComplexPropertyCriteria) {
+            if (aqlElement instanceof PropertyCriteria) {
                 builder.append("p");
             }
             if (aqlElement instanceof OpenParenthesisAqlElement) {
@@ -59,9 +70,9 @@ public abstract class OptimizationStrategy {
             if (aqlElement instanceof MspAqlElement) {
                 builder.append("m");
             }
-            if (aqlElement instanceof SimpleCriteria || aqlElement instanceof SimplePropertyCriteria) {
-                AqlField field = (AqlField) ((Criteria) aqlElement).getVariable1();
-                SqlTable table1 = ((Criteria) aqlElement).getTable1();
+            if (aqlElement instanceof SimpleCriteria) {
+                AqlField field = (AqlField) ((SimpleCriteria) aqlElement).getVariable1();
+                SqlTable table1 = ((SimpleCriteria) aqlElement).getTable1();
                 if (table1.getId() >= 100) {
                     if (AqlFieldEnum.propertyKey == field.getFieldEnum()) {
                         builder.append("k");

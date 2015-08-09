@@ -31,7 +31,6 @@ import org.artifactory.descriptor.config.MutableCentralConfigDescriptor;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.util.CollectionUtils;
 import org.artifactory.webapp.wicket.page.config.repos.CachingDescriptorHelper;
@@ -109,7 +108,7 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
     }
 
     private void processP2Configuration(VirtualRepoDescriptor virtualRepo, CachingDescriptorHelper helper) {
-        if(virtualRepo.getP2() == null || !virtualRepo.getType().equals(RepoType.P2)) {
+        if (!virtualRepo.isP2Support()) {
             helper.syncAndSaveVirtualRepositories(false, false);
             return;
         }
@@ -162,7 +161,9 @@ public class VirtualRepoPanel extends RepoConfigCreateUpdatePanel<VirtualRepoDes
 
     private void handleIsModifiedRemote(CachingDescriptorHelper helper, P2Repository p2Repository) {
         RemoteRepoDescriptor remoteRepoDescriptor = (RemoteRepoDescriptor) p2Repository.getDescriptor();
+
         // replace remote repository configuration
+        remoteRepoDescriptor.setP2Support(true);
         helper.getModelMutableDescriptor().getRemoteRepositoriesMap().put(remoteRepoDescriptor.getKey(),
                 remoteRepoDescriptor);
     }

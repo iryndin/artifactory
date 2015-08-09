@@ -36,18 +36,38 @@ public abstract class AqlAdapter {
     public static final OperatorQueryElement or = new OperatorQueryElement(AqlOperatorEnum.or);
 
     /**
-     * Create Simple Property criteria: A property criteria is actually two criterias on the same property table
-     * Example "key" "$matches" "license*"
-     * The above criteria is being converted to the following SQL query
-     * node_props.key equals 'license' and node_props.value like 'GPL'
+     * This is ugly hack that force AQL ITEMS queries to return (by default) on files by
+     * Injecting extra  (type=file) filter to the query.
+     *
+     * @param context
      */
-    public static Criteria createSimplePropertyCriteria(List<AqlDomainEnum> subDomains, AqlFieldEnum aqlField,
-            String name2,
-            AqlComparatorEnum comparatorEnum, AdapterContext context) {
-        Pair<AqlVariable, AqlVariable> variables = new Pair(new AqlField(aqlField), new AqlValue(aqlField.type, name2));
-        Pair<SqlTable, SqlTable> tables = resolveTableForSimpleCriteria(variables, context);
-        return new SimplePropertyCriteria(subDomains, variables.getFirst(), tables.getFirst(), comparatorEnum.signature,
-                variables.getSecond(), tables.getSecond());
+    protected void injectDefaultValues(AdapterContext context) {
+        AqlQuery aqlQuery = context.getAqlQuery();
+        AqlDomainEnum domain = aqlQuery.getDomain();
+        // Check if the user Item type in his criterias
+        boolean shouldAddDefailtItemTypeCriteria = shouldAddDefailtItemTypeCriteria(aqlQuery, domain);
+        // If the user is not using criterias with type, then add criteria to set the default type = "file"
+        if (shouldAddDefailtItemTypeCriteria) {
+            ArrayList<AqlDomainEnum> subDomains = Lists.newArrayList(domain);
+            Criteria criteria = createSimpleCriteria(subDomains, itemType, file.signature, equals, context);
+            addCriteria(context, criteria);
+        }
+    }
+
+    private boolean shouldAddDefailtItemTypeCriteria(AqlQuery aqlQuery, AqlDomainEnum domain) {
+        if (domain == AqlDomainEnum.items) {
+            for (AqlQueryElement aqlQueryElement : aqlQuery.getAqlElements()) {
+                if (aqlQueryElement instanceof SimpleCriteria) {
+                    SimpleCriteria criteria = (SimpleCriteria) aqlQueryElement;
+                    if (((AqlField) criteria.getVariable1()).getFieldEnum() == itemType) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -55,14 +75,20 @@ public abstract class AqlAdapter {
      * Example "license" "$matches" "GPL"
      * The above criteria is being converted to the following SQL query
      * node_props.key equals 'license' and node_props.value like 'GPL'
+     *
+     * @param name1
+     * @param name2
+     * @param comparatorEnum
+     * @param tableReference
+     * @return
      */
-    public static Criteria createComplexPropertyCriteria(List<AqlDomainEnum> subDomains, String name1, String name2,
+    public static Criteria createPropertyCriteria(List<AqlDomainEnum> subDomains, String name1, String name2,
             AqlComparatorEnum comparatorEnum,
             AdapterContext tableReference) {
         AqlVariable variable1 = AqlFieldResolver.resolve(name1, AqlVariableTypeEnum.string);
         AqlVariable variable2 = AqlFieldResolver.resolve(name2, AqlVariableTypeEnum.string);
         Pair<SqlTable, SqlTable> tables = resolveTableForPropertyCriteria(tableReference);
-        return new ComplexPropertyCriteria(subDomains, variable1, tables.getFirst(),
+        return new PropertyCriteria(subDomains, variable1, tables.getFirst(),
                 comparatorEnum.signature, variable2, tables.getSecond());
     }
 
@@ -71,6 +97,11 @@ public abstract class AqlAdapter {
      * Field Comparator Value
      * Example the "artifact_repo" "$matches" "libs-release-local"
      * The above criteria is being converted to the following SQL query * node.repo like 'libs-release-local'
+     *
+     * @param name2
+     * @param comparatorEnum
+     * @param context
+     * @return
      */
     public static Criteria createSimpleCriteria(List<AqlDomainEnum> subDomains, AqlFieldEnum aqlField, String name2,
             AqlComparatorEnum comparatorEnum, AdapterContext context) {
@@ -137,6 +168,17 @@ public abstract class AqlAdapter {
         }
         SqlTable table = new SqlTable(SqlTableEnum.node_props, propertyAqlElement.getTableId());
         return new Pair<>(table, table);
+    }
+
+    /**
+     * Adds criteria to the AqlQuery and its leading operator if needed
+     *
+     * @param context
+     * @param criteria
+     */
+    protected void addCriteria(AdapterContext context, Criteria criteria) {
+        addOperatorToAqlQueryElements(context);
+        context.addAqlQueryElements(criteria);
     }
 
     /**
@@ -211,51 +253,5 @@ public abstract class AqlAdapter {
                 currentAqlQueryElments.get(currentAqlQueryElments.size() - 1) instanceof CloseParenthesisAqlElement)) {
             context.addAqlQueryElements(getOperator(context));
         }
-    }
-
-    /**
-     * This is ugly hack that force AQL ITEMS queries to return (by default) on files by
-     * Injecting extra  (type=file) filter to the query.
-     *
-     * @param context
-     */
-    protected void injectDefaultValues(AdapterContext context) {
-        AqlQuery aqlQuery = context.getAqlQuery();
-        AqlDomainEnum domain = aqlQuery.getDomain();
-        // Check if the user Item type in his criterias
-        boolean shouldAddDefailtItemTypeCriteria = shouldAddDefailtItemTypeCriteria(aqlQuery, domain);
-        // If the user is not using criterias with type, then add criteria to set the default type = "file"
-        if (shouldAddDefailtItemTypeCriteria) {
-            ArrayList<AqlDomainEnum> subDomains = Lists.newArrayList(domain);
-            Criteria criteria = createSimpleCriteria(subDomains, itemType, file.signature, equals, context);
-            addCriteria(context, criteria);
-        }
-    }
-
-    private boolean shouldAddDefailtItemTypeCriteria(AqlQuery aqlQuery, AqlDomainEnum domain) {
-        if (domain == AqlDomainEnum.items) {
-            for (AqlQueryElement aqlQueryElement : aqlQuery.getAqlElements()) {
-                if (aqlQueryElement instanceof SimpleCriteria) {
-                    SimpleCriteria criteria = (SimpleCriteria) aqlQueryElement;
-                    if (((AqlField) criteria.getVariable1()).getFieldEnum() == itemType) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Adds criteria to the AqlQuery and its leading operator if needed
-     *
-     * @param context
-     * @param criteria
-     */
-    protected void addCriteria(AdapterContext context, Criteria criteria) {
-        addOperatorToAqlQueryElements(context);
-        context.addAqlQueryElements(criteria);
     }
 }

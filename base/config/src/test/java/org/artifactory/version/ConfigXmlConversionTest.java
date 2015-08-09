@@ -21,7 +21,6 @@ package org.artifactory.version;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
@@ -56,11 +55,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.artifactory.common.ConstantValues.substituteRepoKeys;
@@ -79,17 +76,11 @@ public class ConfigXmlConversionTest /** Don't extend ArtHomeBoundTest */
     public void convert100() throws Exception {
         ArtifactoryHomeStub artifactory = new ArtifactoryHomeStub();
         ArtifactoryHome.bind(artifactory);
-
-        Properties propTest = new Properties();
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rdp-releases", "third-party-releases");
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rdp-snapshots", "third-party-snapshots");
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rd-party", "third-party");
-        // load the repo key substitute
-        Map<String, String> subs = (Map<String, String>) TestUtils.invokeStaticMethod(
-                ArtifactorySystemProperties.class, "fillRepoKeySubstitute",
-                new Class[]{Properties.class}, new Object[]{propTest});
-        assertEquals(subs.size(), 3);
-        TestUtils.setField(artifactory.getArtifactoryProperties(), "substituteRepoKeys", subs);
+        artifactory.setProperty(substituteRepoKeys.getPropertyName() + "3rdp-releases", "third-party-releases")
+                .setProperty(substituteRepoKeys.getPropertyName() + "3rdp-snapshots", "third-party-snapshots");
+        artifactory.setProperty(substituteRepoKeys.getPropertyName() + "3rd-party", "third-party");
+        //load the repo key substitute
+        TestUtils.invokeMethodNoArgs(artifactory.getArtifactoryProperties(), "fillRepoKeySubstitute");
 
         // convert the default config
         CentralConfigDescriptor cc = transform("/config/install/config.1.0.0.xml", v100);
@@ -248,11 +239,7 @@ public class ConfigXmlConversionTest /** Don't extend ArtHomeBoundTest */
         if (!"nt-proxy".equals(proxy.getKey())) {
             proxy = proxies.get(1);
         }
-        try {
-            assertEquals(proxy.getNtHost(), InetAddress.getLocalHost().getHostName(), "Wrong hostname");
-        } catch (UnknownHostException e) {
-            // in some cases (missing entry /etc/hosts) getLocalHost throws exception. prefer to ignore here
-        }
+        assertEquals(proxy.getNtHost(), InetAddress.getLocalHost().getHostName(), "Wrong hostname");
     }
 
     public void convert140DefaultProxy() throws Exception {

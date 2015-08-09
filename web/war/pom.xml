@@ -24,17 +24,13 @@
     <parent>
         <groupId>org.artifactory</groupId>
         <artifactId>artifactory-web-parent</artifactId>
-        <version>4.0.0</version>
+        <version>3.9.3</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.artifactory</groupId>
             <artifactId>artifactory-web-application</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-angular-web</artifactId>
         </dependency>
     </dependencies>
 

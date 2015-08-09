@@ -19,11 +19,10 @@
 package org.artifactory.repo.interceptor;
 
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.bower.BowerAddon;
+import org.artifactory.addon.BowerAddon;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.md.Properties;
 import org.artifactory.repo.RepoPath;
@@ -90,7 +89,7 @@ public class BowerMetadataInterceptor extends StorageInterceptorAdapter implemen
             if (isBowerFile(repoPath.getPath())) {
                 String repoKey = repoPath.getRepoKey();
                 RepoDescriptor repoDescriptor = repositoryService.localOrCachedRepoDescriptorByKey(repoKey);
-                return ((repoDescriptor != null) && repoDescriptor.getType().equals(RepoType.Bower));
+                return ((repoDescriptor != null) && repoDescriptor.isEnableBowerSupport());
             }
         }
 

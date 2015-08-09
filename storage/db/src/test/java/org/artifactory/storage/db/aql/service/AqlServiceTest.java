@@ -373,7 +373,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactsWithCanonicalAndOperatorsAndArtifactsFieldsAndPropertyKeyMatchingAndNorEqual() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"$or\" : [{\"$and\" : [{\"repo\" : \"repo1\"},{\"$and\" : [{\"@build.name\" : {\"$ne\" : \"an\"}},{\"@jungle\": {\"$ne\" : \"*\"}}]}]},{\"path\" : {\"$match\" : \"x*\"}}]})");
-        assertSize(queryResult, 13);
+        assertSize(queryResult, 2);
         assertItem(queryResult, "repo1", ".", ".", folder);
         assertItem(queryResult, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
     }
@@ -382,7 +382,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactsWithCanonicalAndOrOperatorsAndArtifactsFieldsUsingNotEquals() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"$or\" : [{\"$and\" : [{\"repo\" : \"repo1\"},{\"$or\" : [{\"@yossis\" : {\"$ne\" : \"ant\"}},{\"@jungle\": {\"$eq\" : \"*\"}}]}]},{\"path\" : {\"$match\" : \"x*\"}}]})");
-        assertSize(queryResult, 14);
+        assertSize(queryResult, 2);
         assertItem(queryResult, "repo1", "org", "yossis", folder);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
     }
@@ -464,7 +464,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactWithPropertyNotMatches() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"@build.name\"  : {\"$nmatch\" : \"*GPL\"}})");
-        assertSize(queryResult, 11);
+        assertSize(queryResult, 1);
     }
 
     @Test(enabled = false)
@@ -492,20 +492,6 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void artifactWithLimit() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"@build.name\"  : {\"$nmatch\" : \"*\"}}).limit(2)");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void artifactWithNotMatch() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"@build.name\"  : {\"$nmatch\" : \"antd\"},\"type\":\"any\"}).limit(2)");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void artifactWithNotMatch1() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"@build.name\"  : {\"$nmatch\" : \"*\"},\"type\":\"any\"}).limit(2)");
         assertSize(queryResult, 2);
     }
 
@@ -663,35 +649,6 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
                 "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$match\":\"*\"}})");
         assertSize(queryResult, 3);
         assertBuild(queryResult, "bb", "1");
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties1() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$nmatch\":\"*\"}})");
-        assertSize(queryResult, 0);
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties2() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@build.number\" :{\"$nmatch\":\"*\"}})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties3() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$nmatch\":\"67\"}})");
-        assertSize(queryResult, 3);
-    }
-
-
-    @Test
-    public void findBuildWithNotMatchItemProperties4() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@build.number\" :{\"$nmatch\":\"67\"}})");
-        assertSize(queryResult, 3);
     }
 
     /*build artifacts*/

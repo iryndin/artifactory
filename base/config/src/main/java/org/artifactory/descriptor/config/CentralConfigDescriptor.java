@@ -59,8 +59,6 @@ public interface CentralConfigDescriptor extends Descriptor {
 
     List<ProxyDescriptor> getProxies();
 
-    ProxyDescriptor getProxy(String proxyKey);
-
     String getDateFormat();
 
     int getFileUploadMaxSizeMb();

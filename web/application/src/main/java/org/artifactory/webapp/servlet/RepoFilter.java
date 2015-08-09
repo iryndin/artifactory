@@ -40,7 +40,7 @@ import org.artifactory.request.RepoRequests;
 import org.artifactory.security.HttpAuthenticationDetails;
 import org.artifactory.util.HttpUtils;
 import org.artifactory.util.PathUtils;
-import org.artifactory.util.UiRequestUtils;
+import org.artifactory.webapp.wicket.page.browse.listing.ArtifactListPage;
 import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +73,10 @@ public class RepoFilter extends DelayedFilterBase {
         String nonUiPathPrefixes = filterConfig.getInitParameter("nonUiPathPrefixes");
         String uiPathPrefixes = filterConfig.getInitParameter("UiPathPrefixes");
         List<String> nonUiPrefixes = PathUtils.delimitedListToStringList(nonUiPathPrefixes, ",");
-        UiRequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
         RequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
         List<String> uiPrefixes = PathUtils.delimitedListToStringList(uiPathPrefixes, ",");
         uiPrefixes.add(HttpUtils.WEBAPP_URL_PATH_PREFIX);
         RequestUtils.setUiPathPrefixes(uiPrefixes);
-        UiRequestUtils.setUiPathPrefixes(uiPrefixes);
     }
 
     @Override
@@ -99,11 +97,6 @@ public class RepoFilter extends DelayedFilterBase {
             String servletPath) throws IOException, ServletException {
         if (log.isDebugEnabled()) {
             log.debug("Entering request {}.", requestDebugString(request));
-        }
-        if (request.getRequestURI().endsWith("treebrowser")){
-            ArtifactoryRequest artifactoryRequest = new HttpArtifactoryRequest(request);
-            request.setAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH, artifactoryRequest.getRepoPath());
-            request.setAttribute(ATTR_ARTIFACTORY_REQUEST_PROPERTIES, artifactoryRequest.getProperties());
         }
         boolean repoRequest = servletPath != null && RequestUtils.isRepoRequest(request, true);
         if (repoRequest && servletPath.startsWith("/" + ArtifactoryRequest.LIST_BROWSING_PATH)
@@ -318,10 +311,8 @@ public class RepoFilter extends DelayedFilterBase {
         request.setAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH, artifactoryRequest.getRepoPath());
         request.setAttribute(ATTR_ARTIFACTORY_REQUEST_PROPERTIES, artifactoryRequest.getProperties());
 
-      /*  RequestDispatcher dispatcher =
-                request.getRequestDispatcher("/" + HttpUtils.WEBAPP_URL_PATH_PREFIX + "/" + ArtifactListPage.PATH);*/
         RequestDispatcher dispatcher =
-                request.getRequestDispatcher("/ui/nativeBrowser");
+                request.getRequestDispatcher("/" + HttpUtils.WEBAPP_URL_PATH_PREFIX + "/" + ArtifactListPage.PATH);
         dispatcher.forward(request, response);
     }
 

@@ -59,7 +59,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipInputStream;
 
 /**
  * User: freds Date: Jul 21, 2008 Time: 8:07:50 PM
@@ -406,8 +405,6 @@ public interface RepositoryService extends ImportableExportable {
      */
     Tree<ZipEntryInfo> zipEntriesToTree(RepoPath zipPath) throws IOException;
 
-
-    ZipInputStream zipInputStream(RepoPath zipPath) throws IOException;
     /**
      * Returns the latest modified item of the given file or folder (recursively)
      *

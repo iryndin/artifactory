@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -170,6 +171,11 @@ public class ArtifactoryRequestTest extends ArtifactoryHomeBoundTest {
 
             @Override
             public Enumeration getHeaders(String headerName) {
+                return null;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
                 return null;
             }
 

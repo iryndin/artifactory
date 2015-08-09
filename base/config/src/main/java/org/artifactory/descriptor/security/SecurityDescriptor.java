@@ -79,55 +79,16 @@ public class SecurityDescriptor implements Descriptor {
     @XmlElement(name = "debianSettings", required = false)
     private DebianSettings debianSettings;
 
-    public static boolean equalLdapLists(@Nullable List<LdapSetting> l1, @Nullable List<LdapSetting> l2) {
-        if (l1 == l2) {
-            return true;
-        }
-        if (l1 == null || l2 == null) {
-            return false;
-        }
-        if (l1.size() != l2.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < l1.size(); i++) {
-            if (!l1.get(i).identicalConfiguration(l2.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean equalLdapGroupLists(@Nullable List<LdapGroupSetting> l1,
-            @Nullable List<LdapGroupSetting> l2) {
-        if (l1 == l2) {
-            return true;
-        }
-        if (l1 == null || l2 == null) {
-            return false;
-        }
-        if (l1.size() != l2.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < l1.size(); i++) {
-            if (!l1.get(i).identicalConfiguration(l2.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public boolean isAnonAccessEnabled() {
         return anonAccessEnabled;
     }
 
-    public void setAnonAccessEnabled(boolean anonAccessEnabled) {
-        this.anonAccessEnabled = anonAccessEnabled;
-    }
-
     public boolean isAnonAccessToBuildInfosDisabled() {
         return anonAccessToBuildInfosDisabled;
+    }
+
+    public void setAnonAccessEnabled(boolean anonAccessEnabled) {
+        this.anonAccessEnabled = anonAccessEnabled;
     }
 
     public void setAnonAccessToBuildInfosDisabled(boolean anonAccessToBuildInfosDisabled) {
@@ -166,15 +127,6 @@ public class SecurityDescriptor implements Descriptor {
         return ldapGroupSettings;
     }
 
-    private void setLdapGroupSettings(LdapGroupSetting ldapGroupSetting) {
-        if (!ldapGroupSettings.isEmpty()) {
-            int indexOfLdapGroupSetting = ldapGroupSettings.indexOf(ldapGroupSetting);
-            if (indexOfLdapGroupSetting != -1) {
-                ldapGroupSettings.set(indexOfLdapGroupSetting, ldapGroupSetting);
-            }
-        }
-    }
-
     public void setLdapGroupSettings(List<LdapGroupSetting> ldapGroupSettings) {
         if (ldapGroupSettings != null) {
             this.ldapGroupSettings = ldapGroupSettings;
@@ -205,6 +157,7 @@ public class SecurityDescriptor implements Descriptor {
             }
         }
     }
+
 
     public void ldapGroupSettingChanged(LdapGroupSetting ldapGroupSetting) {
         LdapGroupSetting groupSettings = getLdapGroupSettings(ldapGroupSetting.getName());
@@ -253,6 +206,15 @@ public class SecurityDescriptor implements Descriptor {
             }
         }
         return null;
+    }
+
+    private void setLdapGroupSettings(LdapGroupSetting ldapGroupSetting) {
+        if (!ldapGroupSettings.isEmpty()) {
+            int indexOfLdapGroupSetting = ldapGroupSettings.indexOf(ldapGroupSetting);
+            if (indexOfLdapGroupSetting != -1) {
+                ldapGroupSettings.set(indexOfLdapGroupSetting, ldapGroupSetting);
+            }
+        }
     }
 
     public LdapSetting removeLdap(String ldapKey) {
@@ -312,10 +274,6 @@ public class SecurityDescriptor implements Descriptor {
     @Nonnull
     public PasswordSettings getPasswordSettings() {
         return passwordSettings;
-    }
-
-    public void setPasswordSettings(PasswordSettings passwordSettings) {
-        this.passwordSettings = passwordSettings;
     }
 
     public HttpSsoSettings getHttpSsoSettings() {
@@ -409,5 +367,44 @@ public class SecurityDescriptor implements Descriptor {
         result = 31 * result + (samlSettings != null ? samlSettings.hashCode() : 0);
         result = 31 * result + (debianSettings != null ? debianSettings.hashCode() : 0);
         return result;
+    }
+
+    public static boolean equalLdapLists(@Nullable List<LdapSetting> l1, @Nullable List<LdapSetting> l2) {
+        if (l1 == l2) {
+            return true;
+        }
+        if (l1 == null || l2 == null) {
+            return false;
+        }
+        if (l1.size() != l2.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < l1.size(); i++) {
+            if (!l1.get(i).identicalConfiguration(l2.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean equalLdapGroupLists(@Nullable List<LdapGroupSetting> l1,
+            @Nullable List<LdapGroupSetting> l2) {
+        if (l1 == l2) {
+            return true;
+        }
+        if (l1 == null || l2 == null) {
+            return false;
+        }
+        if (l1.size() != l2.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < l1.size(); i++) {
+            if (!l1.get(i).identicalConfiguration(l2.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

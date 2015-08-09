@@ -49,8 +49,8 @@ import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.exception.NotFoundException;
 import org.artifactory.rest.common.exception.RestException;
 import org.artifactory.rest.common.list.StringList;
-import org.artifactory.rest.common.util.BintrayRestHelper;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.resource.bintray.BintrayRestHelper;
+import org.artifactory.rest.util.RestUtils;
 import org.artifactory.sapi.common.RepositoryRuntimeException;
 import org.artifactory.util.DoesNotExistException;
 import org.jfrog.build.api.Build;
@@ -91,7 +91,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.transform;
-import static org.artifactory.rest.common.util.RestUtils.getServletContextUrl;
+import static org.artifactory.rest.util.RestUtils.getServletContextUrl;
 
 /**
  * A resource to manage the build actions

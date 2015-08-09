@@ -71,11 +71,7 @@ public class AdapterContext {
         return aqlQuery.getResultFields();
     }
 
-    public void setLimit(long limit) {
+    public void setLimit(int limit) {
         aqlQuery.setLimit(limit);
-    }
-
-    public void setOffset(long offset) {
-        aqlQuery.setOffset(offset);
     }
 }

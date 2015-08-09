@@ -891,9 +891,11 @@ public abstract class RemoteRepoBase<T extends RemoteRepoDescriptor> extends Rea
     @Nonnull
     public List<RemoteItem> listRemoteResources(String directoryPath) {
         assert !isOffline() : "Should never be called in offline mode";
+
         if (!isRemoteRepoListingAllowed(directoryPath)) {
             return Collections.emptyList();
         }
+
         List<RemoteItem> cachedUrls = remoteResourceCache.get(directoryPath);
         if (CollectionUtils.notNullOrEmpty(cachedUrls)) {
             return cachedUrls;

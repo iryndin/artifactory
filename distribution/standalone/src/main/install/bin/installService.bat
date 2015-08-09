@@ -29,7 +29,7 @@ set PR_DISPLAYNAME=Artifactory
 set PR_DESCRIPTION=Artifactory Binary Repository
 set STARTUP_TYPE=auto
 
-set "JOPTS=-Xms512m;-Xmx2g;-Xss256k;-XX:+UseG1GC"
+set "JOPTS=-Xms512m;-Xmx2g;-Xss256k;-XX:PermSize=128m;-XX:MaxPermSize=256m;-XX:+UseG1GC"
 set "PR_LOGPATH=%ARTIFACTORY_HOME%\logs"
 set "PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_HOME%\bin\tomcat-juli.jar"
 set PR_STDOUTPUT=auto

@@ -30,19 +30,6 @@ public class ForwardElement implements ParserElement {
     }
 
     @Override
-    public List<String> next() {
-        List<String> list = Lists.newArrayList();
-        for (ParserElement element : elements) {
-            List<String> next = element.next();
-            if (next.size() > 0) {
-                list.addAll(next);
-                return list;
-            }
-        }
-        return list;
-    }
-
-    @Override
     public ParserElementResultContainer[] peelOff(String queryRemainder, AqlParserContext context) {
         List<ParserElement> tempElements = Lists.newArrayList(elements);
         ParserElementResultContainer[] results = peelOffRecursive(tempElements, new ParserElementResultContainer(
@@ -54,10 +41,6 @@ public class ForwardElement implements ParserElement {
             ParserElementResultContainer query,
             AqlParserContext context) {
         ParserElement element = elements.remove(0);
-        // In order to support next letter prediction we should collect elements that successfully reached to the end of string
-        if (query.getQueryRemainder().isEmpty()) {
-            context.addElement(element);
-        }
         ParserElementResultContainer[] results = element.peelOff(query.getQueryRemainder(), context);
         if (results.length > 0) {
             if (elements.size() == 0) {

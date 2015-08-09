@@ -48,7 +48,7 @@ public interface WatchAddon extends Addon {
      */
     ITab getWatchersTab(String tabTitle, RepoPath repoPath);
 
-    /**Wat
+    /**
      * Returns the Watching Since label
      *
      * @param labelId      ID to give to constructed label

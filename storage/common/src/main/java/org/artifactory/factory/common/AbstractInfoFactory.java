@@ -22,11 +22,9 @@ import org.artifactory.factory.InfoFactory;
 import org.artifactory.md.MutableMetadataInfo;
 import org.artifactory.mime.NamingUtils;
 import org.artifactory.model.common.RepoPathImpl;
-import org.artifactory.model.xstream.security.ImmutableAclInfo;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.sapi.security.SecurityConstants;
 import org.artifactory.security.AceInfo;
-import org.artifactory.security.AclInfo;
 import org.artifactory.security.MutableAceInfo;
 import org.artifactory.security.MutableAclInfo;
 import org.artifactory.security.MutableGroupInfo;
@@ -101,8 +99,11 @@ public abstract class AbstractInfoFactory implements InfoFactory {
     }
 
     @Override
-    public AclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy) {
-        return new ImmutableAclInfo(permissionTarget, aces, updatedBy);
+    public MutableAclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy) {
+        MutableAclInfo acl = createAcl(permissionTarget);
+        acl.setAces(aces);
+        acl.setUpdatedBy(updatedBy);
+        return acl;
     }
 
     @Override

@@ -29,8 +29,7 @@ public class AqlStreamResultImpl extends AqlRestResult implements Cloneable {
     private static final String QUERY_PREFIX = "\n{\n\"results\" : [ ";
     private static final String NUMBER_OF_ROWS = "<NUMBER_OF_ROWS>";
     private static final String QUERY_POSTFIX = " ],\n\"range\" : " + NUMBER_OF_ROWS + "\n}\n";
-    private final long limit;
-    private final long offset;
+    private final int limit;
     private final Map<AqlFieldEnum, String> dbFieldNames;
     private final AqlDomainEnum domain;
     private int rowsCount;
@@ -45,7 +44,6 @@ public class AqlStreamResultImpl extends AqlRestResult implements Cloneable {
         this.resultSet = lazyResult.getResultSet();
         this.resultFields = lazyResult.getFields();
         this.limit = lazyResult.getLimit();
-        this.offset = lazyResult.getOffset();
         this.domain = lazyResult.getDomain();
         dbFieldNames = lazyResult.getDbFieldNames();
         buffer.push(QUERY_PREFIX.getBytes());
@@ -158,6 +156,9 @@ public class AqlStreamResultImpl extends AqlRestResult implements Cloneable {
     /**
      * Reads single row By the ResultSet from the database and convert it into Json row
      *
+     * @return
+     * @throws IOException
+     * @throws SQLException
      */
     private String appendRowFields() throws IOException, SQLException {
         Iterator<DomainSensitiveField> iterator = resultFields.iterator();
@@ -204,7 +205,7 @@ public class AqlStreamResultImpl extends AqlRestResult implements Cloneable {
     }
 
     private String generateRangeJson() throws IOException {
-        Range range = new Range(offset, rowsCount, rowsCount, limit);
+        Range range = new Range(0, rowsCount, rowsCount, limit);
         ObjectMapper mapper = new ObjectMapper();
         mapper.getSerializationConfig().withSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         mapper.setVisibility(JsonMethod.ALL, JsonAutoDetect.Visibility.NONE);

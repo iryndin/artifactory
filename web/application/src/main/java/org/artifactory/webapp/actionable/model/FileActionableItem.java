@@ -34,7 +34,6 @@ import org.artifactory.addon.wicket.PypiWebAddon;
 import org.artifactory.addon.wicket.WatchAddon;
 import org.artifactory.addon.wicket.YumWebAddon;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.fs.StatsInfo;
 import org.artifactory.ivy.IvyNaming;
@@ -172,7 +171,7 @@ public class FileActionableItem extends RepoAwareActionableItemBase implements F
             tabs.add(rpmInfoTab);
         }
 
-        if (getRepo().getType().equals(RepoType.NuGet) && isNuPkgFile()) {
+        if (getRepo().isEnableNuGetSupport() && isNuPkgFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             NuGetWebAddon nuGetWebAddon = addonsProvider.addonByType(NuGetWebAddon.class);
             try {
@@ -190,7 +189,7 @@ public class FileActionableItem extends RepoAwareActionableItemBase implements F
 
         addPypiPackageInfoTab(tabs);
 
-        if (getRepo().getType().equals(RepoType.Gems) && isGemFile()) {
+        if (getRepo().isEnableGemsSupport() && isGemFile()) {
             tabs.add(new AbstractTab(Model.of("RubyGems")) {
                 //transient otherwise [ERROR] (o.a.w.s.j.JavaSerializer:94) ... java.io.NotSerializableException ...
                 final transient GemsWebAddon gemsWebAddon = getAddonsProvider().addonByType(GemsWebAddon.class);
@@ -202,28 +201,28 @@ public class FileActionableItem extends RepoAwareActionableItemBase implements F
             });
         }
 
-        if (getRepo().getType().equals(RepoType.Npm) && isNpmFile()) {
+        if (getRepo().isEnableNpmSupport() && isNpmFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             NpmWebAddon npmWebAddon = addonsProvider.addonByType(NpmWebAddon.class);
             ITab npmInfoTab = npmWebAddon.getNpmInfoTab("Npm Info", getFileInfo());
             tabs.add(npmInfoTab);
         }
 
-        if (getRepo().getType().equals(RepoType.Bower) && isBowerFile()) {
+        if (getRepo().isEnableBowerSupport() && isBowerFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             BowerWebAddon bowerWebAddon = addonsProvider.addonByType(BowerWebAddon.class);
             ITab bowerInfoTab = bowerWebAddon.getBowerInfoTab("Bower Info", getFileInfo());
             tabs.add(bowerInfoTab);
         }
 
-        if (getRepo().getType().equals(RepoType.Docker) && isDockerJsonFile()) {
+        if (getRepo().isEnableDockerSupport() && isDockerJsonFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             DockerWebAddon dockerWebAddon = addonsProvider.addonByType(DockerWebAddon.class);
             ITab dockerInfoTab = dockerWebAddon.getDockerInfoTab("Docker Info", getFileInfo());
             tabs.add(dockerInfoTab);
         }
 
-        if (getRepo().getType().equals(RepoType.Docker) && isDockerAncestryFile()) {
+        if (getRepo().isEnableDockerSupport() && isDockerAncestryFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             DockerWebAddon dockerWebAddon = addonsProvider.addonByType(DockerWebAddon.class);
             ITab dockerAncestryTab = dockerWebAddon.getDockerAncestryTab("Docker Ancestry", getFileInfo());
@@ -232,7 +231,7 @@ public class FileActionableItem extends RepoAwareActionableItemBase implements F
     }
 
     private void addPypiPackageInfoTab(List<ITab> tabs) {
-        if (getRepo().getType().equals(RepoType.Pypi) && isPypiFile()) {
+        if (getRepo().isEnablePypiSupport() && isPypiFile()) {
             AddonsManager addonsProvider = getAddonsProvider();
             PypiWebAddon pypiWebAddon = addonsProvider.addonByType(PypiWebAddon.class);
             try {

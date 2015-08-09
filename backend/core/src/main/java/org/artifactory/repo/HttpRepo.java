@@ -44,6 +44,7 @@ import org.artifactory.addon.plugin.download.AfterRemoteDownloadAction;
 import org.artifactory.addon.plugin.download.BeforeRemoteDownloadAction;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.exception.FileExpectedException;
+import org.artifactory.api.request.InternalArtifactoryRequest;
 import org.artifactory.api.storage.StorageUnit;
 import org.artifactory.checksum.ChecksumInfo;
 import org.artifactory.checksum.ChecksumType;
@@ -92,6 +93,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -310,7 +312,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         RemoteRequestCtx remoteRequestCtx = new RemoteRequestCtx();
         pluginAddon.execPluginActions(BeforeRemoteDownloadAction.class, remoteRequestCtx, requestForPlugins, repoPath);
         HttpGet method = new HttpGet(HttpUtils.encodeQuery(fullUrl));
-        Map<String, String> headers = Maps.newHashMap();
+        Map<String, String> headers = Maps.newHashMap(whiteListHeaders(requestContext));
         headers.putAll(remoteRequestCtx.getHeaders());
         notifyInterceptorsOnBeforeRemoteHttpMethodExecution(method, headers);
         RepoRequests.logToContext("Executing GET request to %s", fullUrl);
@@ -337,6 +339,30 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
         final InputStream is = response.getEntity().getContent();
         verifyContentEncoding(response);
         return new MyRemoteResourceStreamHandle(response, fullUrl, requestForPlugins, pluginAddon, repoPath, is);
+    }
+
+    /**
+    * Collects InternalArtifactoryRequest headers (explicitly allowed for delegation)
+    * to the remote server,
+    *
+    * @see {@link org.artifactory.api.request.InternalArtifactoryRequest#getDelegationAllowedHeaders()}
+    *
+    * @param requestContext
+     *
+    * @return Map<String, String>
+    */
+    private Map<String, String> whiteListHeaders(RequestContext requestContext) {
+        Map<String, String> whiteListedHeaders = Maps.newHashMap();
+        Request request = requestContext.getRequest();
+        if (request instanceof InternalArtifactoryRequest) {
+            Set<String> set = ((InternalArtifactoryRequest)request).getDelegationAllowedHeaders();
+            for (Map.Entry<String, String> header :
+                    requestContext.getRequest().getHeaders().entrySet()) {
+                if (set.contains(header.getKey()))
+                    whiteListedHeaders.put(header.getKey(), header.getValue());
+            }
+        }
+        return whiteListedHeaders;
     }
 
     private void verifyContentEncoding(HttpResponse response) throws IOException {

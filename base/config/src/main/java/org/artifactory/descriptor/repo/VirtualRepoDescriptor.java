@@ -97,6 +97,10 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
         this.pomRepositoryReferencesCleanupPolicy = pomRepositoryReferencesCleanupPolicy;
     }
 
+    public boolean isP2Support() {
+        return p2 != null && p2.isEnabled();
+    }
+
     public P2Configuration getP2() {
         return p2;
     }

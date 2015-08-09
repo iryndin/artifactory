@@ -165,7 +165,7 @@ public class ModuleLicenseModel extends RepoAwareActionableItemBase {
         }
         //Both licenses not found (or extracted was not searched) - mark model as not found
         if ((license.isNotFound() && extractedLicense.isNotFound())
-                || (license.isNotFound() && extractedLicense.isNotSearched())) {
+                || (license.isNotFound() && extractedLicense.isNotSearhced())) {
             hasConflicts = true;
             isNotFound = true;
         } else {
@@ -185,7 +185,7 @@ public class ModuleLicenseModel extends RepoAwareActionableItemBase {
      * true if property-based and extracted licenses are inconsistent, in case the extracted license was searched for
      */
     private boolean hasMismatchingLicenses() {
-        return !extractedLicense.isNotSearched() && !license.equals(extractedLicense);
+        return !extractedLicense.isNotSearhced() && !license.equals(extractedLicense);
     }
 
     /**

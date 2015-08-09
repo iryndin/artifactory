@@ -28,11 +28,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -55,10 +53,6 @@ public class ArtifactoryRestExceptionMapper implements ExceptionMapper<WebApplic
 
     @Autowired
     private BasicAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Context
-    UriInfo uriInfo;
-
 
     @Override
     public Response toResponse(WebApplicationException exception) {
@@ -110,13 +104,10 @@ public class ArtifactoryRestExceptionMapper implements ExceptionMapper<WebApplic
     }
 
     private Response createUnauthorizedResponseWithChallenge() {
-        Response.ResponseBuilder responseBuilder = Response.status(HttpStatus.SC_UNAUTHORIZED)
+        return Response.status(HttpStatus.SC_UNAUTHORIZED)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(new ErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
-        // ui related request do not require chanllange message
-        if (!(uriInfo.getBaseUri().getPath().indexOf("/ui/") != -1)) {
-            responseBuilder.header("WWW-Authenticate", "Basic realm=\"" + authenticationEntryPoint.getRealmName() + "\"");
-        }
-        return responseBuilder.build();
+                .entity(new ErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                .header("WWW-Authenticate", "Basic realm=\"" + authenticationEntryPoint.getRealmName() + "\"")
+                .build();
     }
 }

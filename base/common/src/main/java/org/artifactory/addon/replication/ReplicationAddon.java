@@ -69,12 +69,8 @@ public interface ReplicationAddon extends Addon {
     void validateTargetLicense(ReplicationBaseDescriptor descriptor,RealRepoDescriptor repoDescriptor,int numOfReplicationConfigured)
             throws IOException;
 
-    /**
-     * When a local replication is removed, or changes it's url call this method to get rid of it's (now) unused properties
-     */
-    void cleanupLocalReplicationProperties(LocalReplicationDescriptor replication);
-
     public enum Overwrite {
         never, force
     }
+
 }

@@ -21,7 +21,6 @@ package org.artifactory.descriptor.property;
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.util.AlreadyExistsException;
 import org.artifactory.util.DoesNotExistException;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -39,7 +38,6 @@ public class Property implements Descriptor {
     private String name;
     private boolean closedPredefinedValues;
     private boolean multipleChoice;
-    //private String propertyType;
 
     @XmlElementWrapper(name = "predefinedValues")
     @XmlElement(name = "predefinedValue", required = false)
@@ -80,7 +78,6 @@ public class Property implements Descriptor {
         return predefinedValues;
     }
 
-    @JsonIgnore
     public String getFormattedValues() {
         StringBuilder builder = new StringBuilder();
         for (PredefinedValue predefinedValue : predefinedValues) {
@@ -155,31 +152,6 @@ public class Property implements Descriptor {
             return PropertyType.MULTI_SELECT;
         }
         return PropertyType.SINGLE_SELECT;
-    }
-
-    public void setPropertyType(String propertyType) {
-        switch (propertyType) {
-            case "ANY_VALUE": {
-                closedPredefinedValues = false;
-                multipleChoice = false;
-                break;
-            }
-            case "MULTI_SELECT": {
-                closedPredefinedValues = true;
-                multipleChoice = true;
-                break;
-            }
-            case "SINGLE_SELECT": {
-                closedPredefinedValues = true;
-                multipleChoice = false;
-                break;
-            }
-            default: {
-                closedPredefinedValues = false;
-                multipleChoice = false;
-                break;
-            }
-        }
     }
 
     @Override

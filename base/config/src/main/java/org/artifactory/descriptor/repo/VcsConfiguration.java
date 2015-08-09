@@ -1,6 +1,7 @@
 package org.artifactory.descriptor.repo;
 
 import org.artifactory.descriptor.Descriptor;
+import org.artifactory.descriptor.repo.vcs.VcsType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;

@@ -18,8 +18,8 @@
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
-           targetNamespace="http://artifactory.jfrog.org/xsd/1.6.0"
-           xmlns="http://artifactory.jfrog.org/xsd/1.6.0"
+           targetNamespace="http://artifactory.jfrog.org/xsd/1.5.13"
+           xmlns="http://artifactory.jfrog.org/xsd/1.5.13"
            elementFormDefault="qualified">
 
     <xs:element name="config" type="CentralConfigType"/>
@@ -346,7 +346,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="suppressPomConsistencyChecks" type="xs:boolean" default="true" minOccurs="0">
+                    <xs:element name="suppressPomConsistencyChecks" type="xs:boolean" default="false" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
                                 Whether the repository should suppress POM consistency checks.
@@ -401,7 +401,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="type" type="xs:string" minOccurs="1"/>
             <xs:element name="description" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -443,6 +442,55 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="enableNuGetSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Handle NuGet requests for hosted NuGet libraries.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableGemsSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable RubyGems support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableNpmSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable NodeJs NPM support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableBowerSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Bower support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableDebianSupport" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable support for Debian packages in this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enablePypiSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Python Package Index (PyPI) support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableDockerSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Docker support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="dockerApiVersion" default="V1" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -455,6 +503,20 @@
                         <xs:enumeration value="V2"/>
                     </xs:restriction>
                 </xs:simpleType>
+            </xs:element>
+            <xs:element name="enableVagrantSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Vagrant boxes support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableGitLfsSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Git LFS support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
@@ -747,6 +809,13 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="enableVcsSupport" type="xs:boolean" default="false" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation source="description">
+                                Proxy and cache tarballs from a VCS endpoint.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                     <xs:element name="vcs" type="VcsType" minOccurs="0"/>
             </xs:sequence>
             </xs:extension>
@@ -821,6 +890,13 @@
 
     <xs:complexType name="P2ConfigurationType">
         <xs:sequence>
+            <xs:element name="enabled" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable P2 repository aggregation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="urls" type="P2UrlsType" maxOccurs="1" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -1123,10 +1199,10 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="includedRepositories" minOccurs="0">
+            <xs:element name="excludedRepositories" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        A set of repository references to index.
+                        A set of repository references to exclude from indexing.
                     </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>

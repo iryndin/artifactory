@@ -40,12 +40,12 @@ public class LocalRepoDescriptorTest {
         assertEquals(localRepo.getMaxUniqueSnapshots(), 0, "Max unique snapshot should be 0 by default");
         assertEquals(localRepo.getSnapshotVersionBehavior(), SnapshotVersionBehavior.UNIQUE,
                 "SnapshotVersionBehavior should be non-unique by default");
-        assertTrue(localRepo.isSuppressPomConsistencyChecks(), "Default should suppress pom consistency checks");
+        assertFalse(localRepo.isSuppressPomConsistencyChecks(), "Default should not supress pom consistency checks");
         assertNotNull(localRepo.getPropertySets(), "Property sets list should not be null");
         assertEquals(localRepo.getChecksumPolicyType(), LocalRepoChecksumPolicyType.CLIENT,
                 "Client checksum should be the default");
         assertEquals(localRepo.getYumRootDepth(), 0, "The default YUM calculation depth should be zero.");
-        assertNotEquals(localRepo.getType(), RepoType.YUM, "YUM calculation should be off by default.");
-        assertNotEquals(localRepo.getType(), RepoType.NuGet, "NuGet should be off by default.");
+        assertFalse(localRepo.isCalculateYumMetadata(), "YUM calculation should be off by default.");
+        assertFalse(localRepo.isEnableNuGetSupport(), "NuGet should be off by default.");
     }
 }

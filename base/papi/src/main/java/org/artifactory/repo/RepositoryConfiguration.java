@@ -27,8 +27,6 @@ public interface RepositoryConfiguration {
 
     String getKey();
 
-    String getPackageType();
-
     String getType();
 
     String getDescription();

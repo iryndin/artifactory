@@ -29,34 +29,46 @@ import javax.xml.bind.annotation.XmlType;
         "fetchJarsEagerly", "fetchSourcesEagerly", "retrievalCachePeriodSecs", "assumedOfflinePeriodSecs",
         "missedRetrievalCachePeriodSecs", "checksumPolicyType",
         "unusedArtifactsCleanupPeriodHours", "shareConfiguration", "synchronizeProperties", "listRemoteFolderItems",
-        "remoteRepoLayout", "rejectInvalidJars", "nuget", "pypi", "bower", "p2OriginalUrl", "vcs"},
+        "remoteRepoLayout", "rejectInvalidJars", "p2Support", "nuget", "pypi", "bower", "p2OriginalUrl", "enableVcsSupport", "vcs"},
         namespace = Descriptor.NS)
 public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
 
-    @XmlElement(defaultValue = "true", required = false)
-    protected boolean storeArtifactsLocally = true;
-    @XmlElement(defaultValue = "false", required = false)
-    protected boolean fetchJarsEagerly = false;
-    @XmlElement(defaultValue = "false", required = false)
-    protected boolean fetchSourcesEagerly = false;
-    @XmlElement(defaultValue = "false", required = false)
-    protected boolean shareConfiguration = false;
     @XmlElement(required = true)
     private String url;
+
     @XmlElement(defaultValue = "false", required = false)
     private boolean hardFail;
+
     @XmlElement(defaultValue = "false", required = false)
     private boolean offline;
+
+    @XmlElement(defaultValue = "true", required = false)
+    protected boolean storeArtifactsLocally = true;
+
+    @XmlElement(defaultValue = "false", required = false)
+    protected boolean fetchJarsEagerly = false;
+
+    @XmlElement(defaultValue = "false", required = false)
+    protected boolean fetchSourcesEagerly = false;
+
     @XmlElement(defaultValue = "43200", required = false)
     private long retrievalCachePeriodSecs = 43200;//12hrs
+
     @XmlElement(defaultValue = "300", required = false)
     private long assumedOfflinePeriodSecs = 300;   //5 minutes
+
     @XmlElement(defaultValue = "7200", required = false)
     private long missedRetrievalCachePeriodSecs = 7200;//2 hours
+
     @XmlElement(name = "remoteRepoChecksumPolicyType", defaultValue = "generate-if-absent", required = false)
     private ChecksumPolicyType checksumPolicyType = ChecksumPolicyType.GEN_IF_ABSENT;
+
     @XmlElement(defaultValue = "0", required = false)
     private int unusedArtifactsCleanupPeriodHours = 0;
+
+    @XmlElement(defaultValue = "false", required = false)
+    protected boolean shareConfiguration = false;
+
     @XmlElement(defaultValue = "false", required = false)
     private boolean synchronizeProperties;
 
@@ -70,12 +82,17 @@ public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
     @XmlElement(defaultValue = "false", required = false)
     private boolean rejectInvalidJars;
 
+    @XmlElement(defaultValue = "false", required = false)
+    private boolean p2Support;
+
     @XmlElement(required = false)
     private String p2OriginalUrl;
 
     private NuGetConfiguration nuget;
 
     private PypiConfiguration pypi;
+
+    private boolean enableVcsSupport;
 
     private VcsConfiguration vcs;
 
@@ -209,6 +226,14 @@ public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
         this.rejectInvalidJars = rejectInvalidJars;
     }
 
+    public boolean isP2Support() {
+        return p2Support;
+    }
+
+    public void setP2Support(boolean p2Support) {
+        this.p2Support = p2Support;
+    }
+
     public String getP2OriginalUrl() {
         return p2OriginalUrl;
     }
@@ -231,6 +256,14 @@ public abstract class RemoteRepoDescriptor extends RealRepoDescriptor {
 
     public void setPypi(PypiConfiguration pypi) {
         this.pypi = pypi;
+    }
+
+    public boolean isEnableVcsSupport() {
+        return enableVcsSupport;
+    }
+
+    public void setEnableVcsSupport(boolean enableVcsSupport) {
+        this.enableVcsSupport = enableVcsSupport;
     }
 
     public VcsConfiguration getVcs() {

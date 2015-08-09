@@ -2,15 +2,12 @@ package org.artifactory.maven;
 
 import org.artifactory.api.maven.MavenMetadataService;
 import org.artifactory.api.security.SecurityService;
-import org.artifactory.descriptor.repo.RepoLayout;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.repo.InternalRepoPathFactory;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.storage.fs.service.TasksService;
-import org.artifactory.util.RepoLayoutUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +26,7 @@ import java.util.concurrent.Semaphore;
 @Service
 public class MavenMetadataServiceImpl implements MavenMetadataService {
     private static final Logger log = LoggerFactory.getLogger(MavenMetadataServiceImpl.class);
-    // a semaphore to guard against parallel maven plugins metadata calculations
-    private final Semaphore pluginsMDSemaphore = new Semaphore(1);
-    // queue of repository keys that requires maven metadata plugins calculation
-    private final Queue<String> pluginsMDQueue = new ConcurrentLinkedQueue<>();
+
     @Autowired
     private InternalRepositoryService repoService;
     @Autowired
@@ -40,9 +34,10 @@ public class MavenMetadataServiceImpl implements MavenMetadataService {
     @Autowired
     private SecurityService securityService;
 
-    private static MavenMetadataService getTransactionalMe() {
-        return InternalContextHelper.get().beanForType(MavenMetadataService.class);
-    }
+    // a semaphore to guard against parallel maven plugins metadata calculations
+    private final Semaphore pluginsMDSemaphore = new Semaphore(1);
+    // queue of repository keys that requires maven metadata plugins calculation
+    private final Queue<String> pluginsMDQueue = new ConcurrentLinkedQueue<>();
 
     @Override
     public void calculateMavenMetadataAsync(RepoPath baseFolderPath, boolean recursive) {
@@ -58,9 +53,10 @@ public class MavenMetadataServiceImpl implements MavenMetadataService {
 
     @Override
     public void calculateMavenMetadata(RepoPath baseFolderPath, boolean recursive) {
+        log.trace("Calculate maven metadata on {}", baseFolderPath);
         LocalRepo localRepo;
         if (baseFolderPath == null) {
-            log.debug("Couldn't find repo for null repo path.");
+            log.debug("Cannot calculate Maven metadata for a null path ");
             return;
         }
         localRepo = repoService.localRepositoryByKey(baseFolderPath.getRepoKey());
@@ -68,27 +64,17 @@ public class MavenMetadataServiceImpl implements MavenMetadataService {
             log.debug("Couldn't find local non-cache repository for path '{}'.", baseFolderPath);
             return;
         }
-        log.trace("Calculate maven metadata on {}", baseFolderPath);
-        RepoLayout repoLayout = localRepo.getDescriptor().getRepoLayout();
-        RepoType type = localRepo.getDescriptor().getType();
-        // Do not calculate maven metadata if type == null or type doesn't belong to the maven group (Maven, Ivy, Gradle) or repoLayout not equals MAVEN_2_DEFAULT
-        if (type != null && !(type.isMavenGroup() || RepoLayoutUtils.MAVEN_2_DEFAULT.equals(repoLayout))) {
-            log.debug(
-                    "Skipping maven metadata calculation since repoType '{}' doesn't belong to neither Maven, Ivy, Gradle" +
-                            " repositories types.", baseFolderPath.getRepoKey());
-            return;
-        }
+
         if (!localRepo.itemExists(baseFolderPath.getPath())) {
             log.debug("Couldn't find path '{}'.", baseFolderPath);
             return;
         }
 
         new MavenMetadataCalculator(baseFolderPath, recursive).calculate();
+
         // Calculate maven plugins metadata asynchronously
         getTransactionalMe().calculateMavenPluginsMetadataAsync(localRepo.getKey());
     }
-
-    // get all folders marked for maven metadata calculation and execute the metadata calculation
 
     @Override
     public void calculateMavenPluginsMetadataAsync(String repoKey) {
@@ -129,11 +115,17 @@ public class MavenMetadataServiceImpl implements MavenMetadataService {
         }
     }
 
+    // get all folders marked for maven metadata calculation and execute the metadata calculation
+
     private LocalRepo localRepositoryByKeyFailIfNull(RepoPath localRepoPath) {
         LocalRepo localRepo = repoService.localRepositoryByKey(localRepoPath.getRepoKey());
         if (localRepo == null) {
             throw new IllegalArgumentException("Couldn't find local non-cache repository for path " + localRepoPath);
         }
         return localRepo;
+    }
+
+    private static MavenMetadataService getTransactionalMe() {
+        return InternalContextHelper.get().beanForType(MavenMetadataService.class);
     }
 }

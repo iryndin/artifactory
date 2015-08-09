@@ -188,7 +188,7 @@ public class StorageSummaryTable extends TitledPanel {
 
             totalStorageSummary = new RepoStorageSummaryInfo("TOTAL",
                     RepositoryType.NA, storageSummary.getTotalFolders(), storageSummary.getTotalFiles(),
-                    storageSummary.getTotalSize(), "n/a");
+                    storageSummary.getTotalSize());
 
             setSort("usedSpace", SortOrder.DESCENDING);
         }

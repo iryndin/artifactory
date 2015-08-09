@@ -61,9 +61,16 @@ import java.util.StringTokenizer;
  * @author yoavl
  */
 public abstract class HttpUtils {
-    public static final String WEBAPP_URL_PATH_PREFIX = "wicket";
-    public static final String ANGULAR_WEBAPP = "webapp";
-    public static final String ANGULAR_BASE_WEBAPP  = "/artifactory/web/";
+    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+
+    private static String userAgent;
+
+    //Indicates whether Artifactory is working with servlet API v2.4
+    private static final boolean SERVLET_24;
+
+    private static String VM_HOST_ID;
+    public static final String WEBAPP_URL_PATH_PREFIX = "webapp";
+
     /**
      * Determine if we are running with servlet API v2.4 or v2.5
      */
@@ -81,11 +88,6 @@ public abstract class HttpUtils {
             SERVLET_24 = (contextPathGetter == null);
         }
     }
-    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
-    //Indicates whether Artifactory is working with servlet API v2.4
-    private static final boolean SERVLET_24;
-    private static String userAgent;
-    private static String VM_HOST_ID;
 
     private HttpUtils() {
         // utility class

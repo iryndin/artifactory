@@ -19,16 +19,6 @@
 
 package org.artifactory.rest.resource.search.types;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.api.rest.constant.SearchRestConstants;
 import org.artifactory.api.rest.search.result.LastDownloadRestResult;
@@ -38,10 +28,20 @@ import org.artifactory.api.search.stats.StatsSearchResult;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.rest.common.exception.NotFoundException;
 import org.artifactory.rest.common.list.StringList;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.artifactory.sapi.common.RepositoryRuntimeException;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
 
 import static org.artifactory.api.rest.constant.SearchRestConstants.NOT_FOUND;
 

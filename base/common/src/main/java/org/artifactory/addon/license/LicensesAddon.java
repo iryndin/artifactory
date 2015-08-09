@@ -18,19 +18,12 @@
 
 package org.artifactory.addon.license;
 
-import com.google.common.collect.Multimap;
 import org.artifactory.addon.Addon;
-import org.artifactory.api.license.LicenseInfo;
-import org.artifactory.api.license.LicenseModuleModel;
-import org.artifactory.api.license.LicensesInfo;
-import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.repo.RealRepoDescriptor;
-import org.artifactory.repo.RepoPath;
 import org.artifactory.sapi.common.ExportSettings;
 import org.artifactory.sapi.common.ImportSettings;
 import org.jfrog.build.api.Build;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -38,12 +31,6 @@ import java.util.Set;
  * @author Tomer Cohen
  */
 public interface LicensesAddon extends Addon {
-
-    String LICENSES_PROP_NAME = "licenses"; //Represents the license's id
-    String LICENSES_PROP_FULL_NAME = PropertySet.ARTIFACTORY_RESERVED_PROP_SET + "." + LICENSES_PROP_NAME;
-    String LICENSES_UNKNOWN_PREFIX = "unknown";
-    String LICENSES_UNKNOWN_PROP_NAME = LICENSES_PROP_NAME + "." + LICENSES_UNKNOWN_PREFIX + ".name"; //Represents the license's name (for unknown licenses)
-    String LICENSES_UNKNOWN_PROP_FULL_NAME = PropertySet.ARTIFACTORY_RESERVED_PROP_SET + "." + LICENSES_UNKNOWN_PROP_NAME;
 
     /**
      * Perform license calculation on build artifacts. Depending on the {@link Build#buildAgent} this method will
@@ -72,33 +59,5 @@ public interface LicensesAddon extends Addon {
 
     List findLicensesInRepos(Set<String> repoKeys, LicenseStatus status);
 
-    LicensesInfo getArtifactsLicensesInfo();
-
-    String writeLicenseXML(LicensesInfo licensesInfo);
-
-    void addLicenseInfo(LicenseInfo licensesInfo);
-
-    void updateLicenseInfo(LicenseInfo licensesInfo);
-
-    void deleteLicenseInfo(LicenseInfo licensesInfo);
-
-    LicenseInfo getLicenseByName(String licenseName);
-
     void reloadLicensesCache();
-
-    Multimap<RepoPath, LicenseModuleModel> licensePopulateSynchronously(Build build, boolean autoDiscover);
-
-    String generateLicenseCsv(Collection<LicenseModuleModel> models);
-
-    boolean setLicensePropsOnPath(RepoPath path, Set<LicenseInfo> licenses);
-
-    /**
-     * Used by the UI to scan path for licenses - returns all licenses for path, property-based and descriptor-retrieved
-     */
-    Set<LicenseInfo> scanPathForLicenses(RepoPath path);
-
-    /**
-     * Used by the UI to retrieve property-based licenses to show
-     */
-    Set<LicenseInfo> getPathLicensesByProps(RepoPath path);
 }

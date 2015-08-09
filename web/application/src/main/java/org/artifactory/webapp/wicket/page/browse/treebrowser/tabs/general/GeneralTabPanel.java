@@ -38,7 +38,6 @@ import org.artifactory.api.module.ModuleInfoBuilder;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.common.wicket.behavior.CssClass;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.webapp.actionable.RepoAwareActionableItem;
 import org.artifactory.webapp.actionable.model.LocalRepoActionableItem;
@@ -73,40 +72,40 @@ public class GeneralTabPanel extends Panel {
             //TODO [mamo]: make it generic, let addon contribute ui sections
             AddonsManager addonsManager = ContextHelper.get().beanForType(AddonsManager.class);
             GemsWebAddon gemsWebAddon = addonsManager.addonByType(GemsWebAddon.class);
-            if (!gemsWebAddon.isDefault() && repoItem.getRepo().getType().equals(RepoType.Gems)) {
+            if (!gemsWebAddon.isDefault() && repoItem.getRepo().isEnableGemsSupport()) {
                 distributionManagement.add(gemsWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(), repoItem.getRepoPath()));
             }
 
             NpmWebAddon npmWebAddon = addonsManager.addonByType(NpmWebAddon.class);
-            if (!npmWebAddon.isDefault() && repoItem.getRepo().getType().equals(RepoType.Npm)) {
+            if (!npmWebAddon.isDefault() && repoItem.getRepo().isEnableNpmSupport()) {
                 distributionManagement.add(
                         npmWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(),
                                 repoItem.getRepoPath()));
             }
 
             NuGetWebAddon nuGetWebAddon = addonsManager.addonByType(NuGetWebAddon.class);
-            if (!nuGetWebAddon.isDefault() && repoItem.getRepo().getType().equals(RepoType.NuGet)) {
+            if (!nuGetWebAddon.isDefault() && repoItem.getRepo().isEnableNuGetSupport()) {
                 distributionManagement.add(
                         nuGetWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(),
                                 repoItem.getRepoPath()));
             }
 
             DebianWebAddon debianWebAddon = addonsManager.addonByType(DebianWebAddon.class);
-            if (!debianWebAddon.isDefault() && repoItem.getRepo().getType().equals(RepoType.Debian)) {
+            if (!debianWebAddon.isDefault() && repoItem.getRepo().isEnableDebianSupport()) {
                 distributionManagement.add(
                         debianWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(),
                                 repoItem.getRepoPath()));
             }
 
             PypiWebAddon pypiWebAddon = addonsManager.addonByType(PypiWebAddon.class);
-            if (!pypiWebAddon.isDefault() && repoItem.getRepo().getType().equals(RepoType.Pypi)) {
+            if (!pypiWebAddon.isDefault() && repoItem.getRepo().isEnablePypiSupport()) {
                 distributionManagement.add(
                         pypiWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(),
                                 repoItem.getRepoPath()));
             }
 
             GitLfsWebAddon lfsWebAddon = addonsManager.addonByType(GitLfsWebAddon.class);
-            if (!lfsWebAddon.isDefault() && RepoType.GitLfs.equals(repoItem.getRepo().getType())) {
+            if (!lfsWebAddon.isDefault() && repoItem.getRepo().isEnableGitLfsSupport()) {
                 distributionManagement.add(
                         lfsWebAddon.buildDistributionManagementPanel(distributionManagement.newChildId(),
                                 repoItem.getRepoPath()));

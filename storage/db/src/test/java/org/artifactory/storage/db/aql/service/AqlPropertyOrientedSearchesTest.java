@@ -41,47 +41,6 @@ public class AqlPropertyOrientedSearchesTest extends DbBaseTest {
     }
 
     @Test
-    public void valueEquals() {
-        AqlEagerResult results = aqlService.executeQueryEager(
-                "items.find({\"@*\":{\"$eq\": \"red\"}})"
-        );
-
-        List<AqlBaseItem> items = results.getResults();
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0).getName(), "ant-1.5.jar");
-    }
-
-    @Test
-    public void keyEquals() {
-        AqlEagerResult results = aqlService.executeQueryEager(
-                "items.find({\"@color\":{\"$eq\": \"*\"}}).sort({\"$asc\" : [\"name\"]})"
-        );
-        List<AqlBaseItem> items = results.getResults();
-        assertEquals(items.size(), 2);
-        assertEquals(items.get(0).getName(), "ant-1.5.jar");
-    }
-
-    @Test
-    public void defaultKeyEquals() {
-        AqlEagerResult results = aqlService.executeQueryEager(
-                "items.find({\"@color\":\"*\"}).sort({\"$asc\" : [\"name\"]})"
-        );
-        List<AqlBaseItem> items = results.getResults();
-        assertEquals(items.size(), 2);
-        assertEquals(items.get(0).getName(), "ant-1.5.jar");
-    }
-
-    @Test
-    public void defaultValueEquals() {
-        AqlEagerResult results = aqlService.executeQueryEager(
-                "items.find({\"@*\":\"red\"})"
-        );
-        List<AqlBaseItem> items = results.getResults();
-        assertEquals(items.size(), 1);
-        assertEquals(items.get(0).getName(), "ant-1.5.jar");
-    }
-
-    @Test
     public void noSuchPropertyKey() {
         AqlEagerResult results = aqlService.executeQueryEager(
                 "items.find({\"@nosuchkey\":{\"$match\": \"*\"}})"
@@ -154,7 +113,7 @@ public class AqlPropertyOrientedSearchesTest extends DbBaseTest {
         AqlEagerResult results = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"@role\":{\"$ne\": \"manager\"}})"
         );
-        Assertions.assertThat(results.getResults()).hasSize(10);   // all items
+        Assertions.assertThat(results.getResults()).hasSize(1);   // all items
     }
 
     @Test

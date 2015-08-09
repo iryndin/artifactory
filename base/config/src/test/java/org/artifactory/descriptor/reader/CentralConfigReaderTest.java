@@ -19,7 +19,6 @@
 package org.artifactory.descriptor.reader;
 
 import org.apache.commons.io.FileUtils;
-import org.artifactory.common.property.ArtifactorySystemProperties;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
 import org.artifactory.jaxb.JaxbHelper;
@@ -33,7 +32,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -47,10 +45,7 @@ import static org.testng.Assert.*;
  * @author Tomer Cohen
  */
 @Test
-
 public class CentralConfigReaderTest extends ArtifactoryHomeBoundTest {
-
-    private String failureMessage;
 
     public void readV7Config() throws Exception {
         File oldConfigFile = ResourceUtils.getResourceAsFile("/config/install/config.1.4.7.xml");
@@ -60,17 +55,14 @@ public class CentralConfigReaderTest extends ArtifactoryHomeBoundTest {
         Assert.assertEquals(descriptorOrderedMap.size(), 12, "Should contain 12 remote repository");
     }
 
+    private String failureMessage;
+
     public void readAllConfigFiles() throws Exception {
-        Properties propTest = new Properties();
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rdp-releases", "third-party-releases");
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rdp-snapshots", "third-party-snapshots");
-        propTest.setProperty(substituteRepoKeys.getPropertyName() + "3rd-party", "third-party");
+        getBound().setProperty(substituteRepoKeys.getPropertyName() + "3rdp-releases", "third-party-releases")
+                .setProperty(substituteRepoKeys.getPropertyName() + "3rdp-snapshots", "third-party-snapshots")
+                .setProperty(substituteRepoKeys.getPropertyName() + "3rd-party", "third-party");
         // load the repo key substitute
-        Map<String, String> subs = (Map<String, String>) TestUtils.invokeStaticMethod(
-                ArtifactorySystemProperties.class, "fillRepoKeySubstitute",
-                new Class[]{Properties.class}, new Object[]{propTest});
-        assertEquals(subs.size(), 3);
-        TestUtils.setField(getBound().getArtifactoryProperties(), "substituteRepoKeys", subs);
+        TestUtils.invokeMethodNoArgs(getBound().getArtifactoryProperties(), "fillRepoKeySubstitute");
         File backupDirs = ResourceUtils.getResourceAsFile("/config");
         Collection<File> oldArtifactoryConfigs = FileUtils.listFiles(backupDirs, new String[]{"xml"}, true);
         assertTrue(oldArtifactoryConfigs.size() > 10, "Where are all my test files??");
@@ -105,7 +97,6 @@ public class CentralConfigReaderTest extends ArtifactoryHomeBoundTest {
                         "Null value returned from config reader for file " + configFile.getAbsolutePath());
                 assertTrue(configVersion.isCurrent(), "Artifactory config version is not up to date");
             } catch (Throwable t) {
-                t.printStackTrace();
                 failureMessage = "Failed to convert " + configFile + ": " + t.getMessage();
             }
         }

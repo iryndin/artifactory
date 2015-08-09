@@ -114,14 +114,14 @@ public class AclImpl implements MutableAclInfo {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof AclInfo)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        AclInfo info = (AclInfo) o;
+        AclImpl info = (AclImpl) o;
 
-        return !(permissionTarget != null ? !permissionTarget.equals(info.getPermissionTarget()) :
-                info.getPermissionTarget() != null);
+        return !(permissionTarget != null ? !permissionTarget.equals(info.permissionTarget) :
+                info.permissionTarget != null);
     }
 
     @Override

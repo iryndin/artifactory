@@ -103,14 +103,7 @@ public interface InfoFactory {
 
     MutableAclInfo createAcl(PermissionTargetInfo permissionTarget);
 
-    /**
-     * Return an immutable ACL
-     * @param permissionTarget
-     * @param aces
-     * @param updatedBy
-     * @return
-     */
-    AclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy);
+    MutableAclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy);
 
     Tree<ZipEntryInfo> createZipEntriesTree();
 
@@ -137,5 +130,5 @@ public interface InfoFactory {
 
     MutableMetadataInfo createMetadata(RepoPath repoPath, String metadataName);
 
-    RepoPath createRepoPath(String repoKey, String path, boolean folder);
+    RepoPath createRepoPath(String repoKey, String path, boolean file);
 }

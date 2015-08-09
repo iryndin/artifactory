@@ -57,8 +57,7 @@ public class BuildTabActionableItem extends ActionableItemBase {
         this.moduleId = moduleId;
 
         getActions().add(new GoToBuildAction(buildRun, moduleId));
-        viewJsonAction = new
-                ViewBuildJsonAction(textContentViewer, buildRun);
+        viewJsonAction = new ViewBuildJsonAction(textContentViewer, buildRun);
         getActions().add(viewJsonAction);
         String ciServerUrl = buildRun.getCiUrl();
         if (StringUtils.isNotBlank(ciServerUrl)) {

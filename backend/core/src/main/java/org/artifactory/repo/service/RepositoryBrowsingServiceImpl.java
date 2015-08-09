@@ -248,7 +248,7 @@ public class RepositoryBrowsingServiceImpl implements RepositoryBrowsingService 
             log.trace("Remote repo not found:'{}'", repoKey);
             throw new IllegalArgumentException("Remote repo not found: " + repoKey);
         }
-        log.debug("Getting Remote Repo '{}' Browsable Children", repoKey);
+        log.debug("getting Remote Repo '{}' Browsable Children", repoKey);
         // include remote resources based on the flag and the offline mode
         boolean includeRemoteResources = criteria.isIncludeRemoteResources() &&
                 repo.isListRemoteFolderItems() && repo.accepts(repoPath);

@@ -234,10 +234,7 @@ public class AclServiceImpl implements AclStoreService {
             anyAnyAcl = InfoFactoryHolder.get().createAcl(anyAnyTarget, anyAnyAces, currentUsername);
             createAcl(anyAnyAcl);
         } else {
-            MutableAclInfo acl = InfoFactoryHolder.get().createAcl(anyAnyAcl.getPermissionTarget());
-            acl.setAces(anyAnyAces);
-            acl.setUpdatedBy(currentUsername);
-            updateAcl(acl);
+            updateAcl(InfoFactoryHolder.get().createAcl(anyAnyAcl.getPermissionTarget(), anyAnyAces, currentUsername));
         }
 
         // create or update read and deploy permissions on all remote repos
@@ -255,10 +252,8 @@ public class AclServiceImpl implements AclStoreService {
             anyRemoteAcl = InfoFactoryHolder.get().createAcl(anyRemoteTarget, anyRemoteAces, currentUsername);
             createAcl(anyRemoteAcl);
         } else {
-            MutableAclInfo acl = InfoFactoryHolder.get().createAcl(anyRemoteAcl.getPermissionTarget());
-            acl.setAces(anyRemoteAces);
-            acl.setUpdatedBy(currentUsername);
-            updateAcl(acl);
+            updateAcl(InfoFactoryHolder.get().createAcl(
+                    anyRemoteAcl.getPermissionTarget(), anyRemoteAces, currentUsername));
         }
     }
 

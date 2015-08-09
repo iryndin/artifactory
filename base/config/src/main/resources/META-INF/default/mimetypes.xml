@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Artifactory is a binaries repository manager.
-  ~ Copyright (C) 2015 JFrog Ltd.
+  ~ Copyright (C) 2012 JFrog Ltd.
   ~
   ~ Artifactory is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Lesser General Public License as published by
@@ -72,8 +72,8 @@
          DO NOT change them unless you really know what you are doing
     -->
     <mimetype type="application/xml" extensions="xml, xsl, xsi" viewable="true" syntax="xml" css="xml"/>
-    <mimetype type="application/x-maven-pom+xml" extensions="pom" viewable="true" syntax="xml" css="pom"/>
-    <mimetype type="application/x-ivy+xml" extensions="ivy" viewable="true" syntax="xml" css="xml"/>
+    <mimetype type="application/x-maven-pom+xml" extensions="pom" viewable="true" syntax="xml" index="true" css="pom"/>
+    <mimetype type="application/x-ivy+xml" extensions="ivy" viewable="true" syntax="xml" index="true" css="xml"/>
     <mimetype type="application/x-nuspec+xml" extensions="nuspec" viewable="true" syntax="xml" css="xml"/>
     <mimetype type="application/x-java-jnlp-file" extensions="jnlp" viewable="true" syntax="xml" css="jnlp"/>
     <mimetype type="application/x-checksum" extensions="sha1, md5" viewable="true" syntax="plain"/>

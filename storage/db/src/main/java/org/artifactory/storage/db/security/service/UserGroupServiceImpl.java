@@ -20,9 +20,13 @@ package org.artifactory.storage.db.security.service;
 
 import org.artifactory.api.security.GroupNotFoundException;
 import org.artifactory.api.security.UserInfoBuilder;
-import org.artifactory.common.Info;
 import org.artifactory.factory.InfoFactoryHolder;
-import org.artifactory.security.*;
+import org.artifactory.security.GroupInfo;
+import org.artifactory.security.MutableGroupInfo;
+import org.artifactory.security.MutableUserInfo;
+import org.artifactory.security.SaltedPassword;
+import org.artifactory.security.UserGroupInfo;
+import org.artifactory.security.UserInfo;
 import org.artifactory.storage.StorageException;
 import org.artifactory.storage.db.DbService;
 import org.artifactory.storage.db.security.dao.UserGroupsDao;
@@ -38,7 +42,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Date: 8/27/12
@@ -146,23 +154,6 @@ public class UserGroupServiceImpl implements UserGroupStoreService {
         } catch (SQLException e) {
             throw new StorageException("Could not execute get all users query", e);
         }
-    }
-
-    @Override
-    public Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction) {
-        Collection<Info> infoCollection;
-        try {
-            infoCollection = userGroupsDao.getUsersGroupsPaging(includeAdmins, orderBy,
-                    startOffset, limit, direction);
-        } catch (SQLException e) {
-            throw new StorageException("Failed to get users  group ");
-        }
-        return infoCollection;
-    }
-
-    public long getAllUsersGroupsCount(boolean includeAdmins) {
-        return userGroupsDao.getAllUsersGroupsCount(includeAdmins);
     }
 
     @Override

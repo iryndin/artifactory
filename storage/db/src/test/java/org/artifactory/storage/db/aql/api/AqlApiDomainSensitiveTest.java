@@ -269,23 +269,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 include(AqlApiItem.property().key(), AqlApiItem.property().value()).
                 sortBy(propertyKey).asc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 31);
-    }
-
-    @Test(enabled = true)
-    public void doNotHaveProperty() throws AqlException {
-        // return only the properties with the key 'yossis' from repository 'repo1'
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        and(
-                                AqlApiItem.type().equal("any"),
-                                AqlApiItem.property().key().notMatches("*")
-                        )
-                ).
-                include(AqlApiItem.property().key(), AqlApiItem.property().value()).
-                sortBy(propertyKey).asc();
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 21);
+        assertSize(result, 10);
     }
 
 
@@ -350,7 +334,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 //or(
                 AqlApiItem.artifact().module().build().name().matches("ba")
                 //)
-        ).limit(2000);
+        );
         AqlLazyResult aqlLazyResult = aqlService.executeQueryLazy(item);
         AqlStreamResultImpl streamResult = new AqlStreamResultImpl(aqlLazyResult);
 
@@ -371,7 +355,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
         Assert.assertTrue(string.contains("\"actual_sha1\" : \"acab88fc2a043c2479a6de676a2f8179e9ea2167\""));
         Assert.assertTrue(string.contains("\"path\" : \"org/yossis/tools\""));
         Assert.assertTrue(string.contains("\"total\" : 1"));
-        Assert.assertTrue(!string.contains("\"limit\" : 20000"));
+        Assert.assertTrue(!string.contains("\"limit\" :"));
     }
 
     @Test(enabled = true)
@@ -432,36 +416,6 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
             assertThat(artifact.getSize()).isGreaterThan(43434);
         }
     }
-
-    @Test
-    public void findArtifactsBiggerThanWithOffset() throws AqlException {
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        AqlApiItem.size().greater(43434)
-                )
-                .offset(4);
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 1);
-        for (AqlItem artifact : result.getResults()) {
-            assertThat(artifact.getSize()).isGreaterThan(43434);
-        }
-    }
-
-    @Test
-    public void findArtifactsBiggerThanWithOffsetAndLimit() throws AqlException {
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        AqlApiItem.size().greater(43434)
-                )
-                .limit(1)
-                .offset(1);
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 1);
-        for (AqlItem artifact : result.getResults()) {
-            assertThat(artifact.getSize()).isGreaterThan(43434);
-        }
-    }
-
 
     @Test
     public void findArtifactsUsinfInclude() throws AqlException {

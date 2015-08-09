@@ -61,10 +61,10 @@ public class ArtifactoryBasicAuthenticationEntryPoint extends BasicAuthenticatio
     private void sendErrorResponseToClient(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException {
         if (isIvyRequest(request,authException)){
-            sendErrorResponse(request, response, authException, HttpServletResponse.SC_FORBIDDEN);
+            sendErrorResponse(response, authException,HttpServletResponse.SC_FORBIDDEN);
         }
         else {
-            sendErrorResponse(request, response, authException, HttpServletResponse.SC_UNAUTHORIZED);
+            sendErrorResponse(response, authException,HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
@@ -75,13 +75,10 @@ public class ArtifactoryBasicAuthenticationEntryPoint extends BasicAuthenticatio
      * @param responseStatusCode - http response status code
      * @throws IOException
      */
-    private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException, int responseStatusCode)
+    private void sendErrorResponse(HttpServletResponse response, AuthenticationException authException,int responseStatusCode)
             throws IOException {
-        if (request.getRequestURI().indexOf("/ui/") == -1) {
-            response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"");
-        }
-        HttpUtils.sendErrorResponse(response, responseStatusCode, authException.getMessage());
+        response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"");
+        HttpUtils.sendErrorResponse(response,responseStatusCode, authException.getMessage());
     }
 
     @Override

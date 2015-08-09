@@ -115,37 +115,5 @@ public class AqlOrAndPropertiesOptimizationTest extends AqlAbstractServiceTest {
         assertSize(queryResult, 0);
     }
 
-    @Test
-    public void derbyPreferMarchThanEqual() {
-        long start = System.nanoTime();
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"$or\":[" +
-                        "{\"path\" : \"test\"}," +
-                        "{\"@aaaaaaaaaaaaa\" : \"test\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"path\" : \"test\"}," +
-                        "{\"@bbbbbbbbbbbbb\" : \"file\"}," +
-                        "{\"@ccccccccccccc\" : \"c\"}," +
-                        "{\"@ddddddddddddd\" : \"d\"}," +
-                        "{\"@eeeeeeeeeeeee\" : \"e\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"@jjjjjjjjjjjjj\" : \"j\"}," +
-                        "{\"path\" : \"j\"}" +
-                        "]})");
-        long end = System.nanoTime();
-        Assert.assertTrue(end - start < 5 * 1000 * 1000 * 1000);
-        assertSize(queryResult, 0);
-    }
 
 }

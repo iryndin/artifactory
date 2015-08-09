@@ -37,7 +37,6 @@ import java.util.Map;
  *
  * @author Yossi Shaul
  */
-// TODO: [by dan] delete this when wicket dies
 public interface P2WebAddon extends Addon {
     /**
      * Returns the tab panel for P2 configuration of a virtual repository.

@@ -19,8 +19,6 @@
 package org.artifactory.repo.remote.browse;
 
 import com.google.common.collect.Lists;
-import com.google.common.net.InternetDomainName;
-import org.artifactory.common.ConstantValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +34,14 @@ import java.util.regex.Pattern;
  * the one used at ibiblio, and with Apache 2.0.53 server listing, as the one on mirrors.sunsite.dk.
  */
 public class HtmlRepositoryBrowser extends RemoteRepositoryBrowser {
-    private final InternetDomainName bintrayDomain;
     private static final Logger log = LoggerFactory.getLogger(HtmlRepositoryBrowser.class);
 
     private static final Pattern PATTERN = Pattern.compile(
-            "<a[^>]*href=[\"|']([^\"']*)[\"|'][^>]*>(?:<[^>]+>)*?([^<>]+?)(?:<[^>]+>)*?</a>",
+            "<a[^>]*href=\"([^\"]*)\"[^>]*>(?:<[^>]+>)*?([^<>]+?)(?:<[^>]+>)*?</a>",
             Pattern.CASE_INSENSITIVE);
 
     public HtmlRepositoryBrowser(HttpExecutor client) {
         super(client);
-        bintrayDomain = getBintrayDomain();
     }
 
     @Override
@@ -101,10 +97,6 @@ public class HtmlRepositoryBrowser extends RemoteRepositoryBrowser {
                 href = href.substring("./".length());
             }
 
-            if (href.startsWith("#") && isBintray(baseUrl.getHost())) {
-                href = href.substring(1);
-            }
-
             // exclude those where they do not match
             // href will never be truncated, text may be truncated by apache
             if (text.endsWith("..>")) {
@@ -138,21 +130,5 @@ public class HtmlRepositoryBrowser extends RemoteRepositoryBrowser {
         }
 
         return items;
-    }
-
-    private boolean isBintray(String url) {
-        return bintrayDomain.equals(InternetDomainName.from(url).topPrivateDomain());
-    }
-
-    private InternetDomainName getBintrayDomain() {
-        String bintrayHost;
-        try {
-            bintrayHost = new URL(ConstantValues.bintrayUrl.getString()).getHost();
-        } catch (MalformedURLException e) {
-            log.error(String.format("Failed to parse bintray URL '%s' falling back to bintray.com",
-                    ConstantValues.bintrayUrl.getString()));
-            bintrayHost = "bintray.com";
-        }
-        return InternetDomainName.from(bintrayHost);
     }
 }

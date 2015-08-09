@@ -18,76 +18,34 @@
 
 package org.artifactory.addon;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.http.HttpStatus;
-import org.artifactory.addon.blackduck.BlackDuckAddon;
-import org.artifactory.addon.blackduck.ExternalComponentInfo;
-import org.artifactory.addon.bower.BowerAddon;
-import org.artifactory.addon.bower.BowerMetadataInfo;
-import org.artifactory.addon.build.ArtifactBuildAddon;
-import org.artifactory.addon.crowd.CrowdAddon;
-import org.artifactory.addon.debian.DebianAddon;
-import org.artifactory.addon.filteredresources.FilteredResourcesAddon;
-import org.artifactory.addon.gems.ArtifactGemsInfo;
-import org.artifactory.addon.gems.GemsAddon;
 import org.artifactory.addon.ha.HaCommonAddon;
 import org.artifactory.addon.ha.message.HaMessage;
 import org.artifactory.addon.ha.message.HaMessageTopic;
 import org.artifactory.addon.ha.semaphore.JVMSemaphoreWrapper;
 import org.artifactory.addon.ha.semaphore.SemaphoreWrapper;
-import org.artifactory.addon.ldapgroup.LdapUserGroupAddon;
 import org.artifactory.addon.license.LicenseStatus;
 import org.artifactory.addon.license.LicensesAddon;
-import org.artifactory.addon.npm.NpmAddon;
-import org.artifactory.addon.npm.NpmMetadataInfo;
-import org.artifactory.addon.nuget.UiNuGetAddon;
-import org.artifactory.addon.pypi.PypiAddon;
-import org.artifactory.addon.pypi.PypiPkgMetadata;
 import org.artifactory.addon.replication.LocalReplicationSettings;
 import org.artifactory.addon.replication.RemoteReplicationSettings;
 import org.artifactory.addon.replication.ReplicationAddon;
-import org.artifactory.addon.saml.SamlSsoAddon;
-import org.artifactory.addon.search.ArtifactSearchAddon;
-import org.artifactory.addon.watch.ArtifactWatchAddon;
-import org.artifactory.addon.webstart.ArtifactWebstartAddon;
-import org.artifactory.addon.yum.ArtifactRpmMetadata;
-import org.artifactory.addon.yum.YumAddon;
 import org.artifactory.api.bintray.docker.BintrayPushRequest;
-import org.artifactory.api.build.GeneralBuild;
-import org.artifactory.api.build.ModuleArtifact;
-import org.artifactory.api.build.ModuleDependency;
-import org.artifactory.api.build.PublishedModule;
-import org.artifactory.api.build.diff.BuildsDiffBaseFileModel;
-import org.artifactory.api.build.diff.BuildsDiffPropertyModel;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.common.MoveMultiStatusHolder;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.context.ContextHelper;
-import org.artifactory.api.governance.BlackDuckApplicationInfo;
-import org.artifactory.api.governance.GovernanceRequestInfo;
-import org.artifactory.api.license.LicenseInfo;
-import org.artifactory.api.license.LicenseModuleModel;
-import org.artifactory.api.license.LicensesInfo;
 import org.artifactory.api.request.ArtifactoryResponse;
-import org.artifactory.api.rest.build.diff.BuildsDiff;
 import org.artifactory.api.rest.compliance.FileComplianceInfo;
 import org.artifactory.api.rest.replication.ReplicationStatus;
-import org.artifactory.api.search.ItemSearchResult;
-import org.artifactory.api.search.SavedSearchResults;
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.build.ArtifactoryBuildArtifact;
-import org.artifactory.build.BuildRun;
+import org.artifactory.api.rest.replication.ReplicationStatusType;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.config.ConfigurationException;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
-import org.artifactory.descriptor.external.BlackDuckSettingsDescriptor;
 import org.artifactory.descriptor.property.Property;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.replication.LocalReplicationDescriptor;
@@ -101,15 +59,10 @@ import org.artifactory.descriptor.repo.RepoLayout;
 import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.descriptor.security.ldap.LdapSetting;
 import org.artifactory.descriptor.security.ldap.SearchPattern;
-import org.artifactory.descriptor.security.ldap.group.LdapGroupPopulatorStrategies;
-import org.artifactory.descriptor.security.ldap.group.LdapGroupSetting;
-import org.artifactory.descriptor.security.sso.CrowdSettings;
 import org.artifactory.factory.InfoFactoryHolder;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.fs.RepoResource;
-import org.artifactory.fs.WatchersInfo;
 import org.artifactory.md.Properties;
-import org.artifactory.nuget.NuMetaData;
 import org.artifactory.repo.HttpRepo;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RemoteRepo;
@@ -130,7 +83,6 @@ import org.artifactory.sapi.fs.VfsItem;
 import org.artifactory.schedule.Task;
 import org.artifactory.security.MutableUserInfo;
 import org.artifactory.security.UserGroupInfo;
-import org.artifactory.storage.db.servers.model.ArtifactoryServer;
 import org.artifactory.storage.fs.lock.FsItemsVault;
 import org.artifactory.storage.fs.lock.FsItemsVaultCacheImpl;
 import org.artifactory.storage.fs.lock.map.JVMLockingMap;
@@ -138,10 +90,8 @@ import org.artifactory.storage.fs.lock.map.LockingMap;
 import org.artifactory.storage.fs.lock.provider.JVMLockProvider;
 import org.artifactory.storage.fs.lock.provider.LockProvider;
 import org.artifactory.util.HttpUtils;
-import org.artifactory.util.Pair;
 import org.artifactory.util.RepoLayoutUtils;
 import org.jfrog.build.api.Build;
-import org.jfrog.build.api.Dependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextSource;
@@ -153,17 +103,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.security.Key;
-import java.security.KeyStore;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -177,9 +120,7 @@ import java.util.concurrent.Semaphore;
 @Component
 public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAddon, PropertiesAddon, LayoutsCoreAddon,
         FilteredResourcesAddon, ReplicationAddon, YumAddon, NuGetAddon, RestCoreAddon, CrowdAddon, BlackDuckAddon,
-        GemsAddon, HaAddon, NpmAddon, BowerAddon, DebianAddon, PypiAddon, DockerAddon, VagrantAddon, GitLfsAddon,
-        ArtifactWatchAddon, ArtifactBuildAddon, UiNuGetAddon, LdapUserGroupAddon,
-        ArtifactWebstartAddon, ArtifactSearchAddon, SamlSsoAddon {
+        GemsAddon, HaAddon, NpmAddon, BowerAddon, DebianAddon, PypiAddon, DockerAddon, VagrantAddon, GitLfsAddon {
 
     private static final Logger log = LoggerFactory.getLogger(CoreAddonsImpl.class);
 
@@ -206,15 +147,6 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     @Override
     public void addExternalGroups(String userName, Set<UserGroupInfo> groups) {
         // nop
-    }
-
-    @Override
-    public Set findCrowdExtGroups(String username, CrowdSettings currentCrowdSettings) {
-        return null;
-    }
-
-    @Override
-    public void testCrowdConnection(CrowdSettings crowdSettings) throws Exception {
     }
 
     @Override
@@ -279,61 +211,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public LicensesInfo getArtifactsLicensesInfo() {
-        return null;
-    }
-
-    @Override
-    public String writeLicenseXML(LicensesInfo licensesInfo) {
-        return null;
-    }
-
-    @Override
-    public void addLicenseInfo(LicenseInfo licensesInfo) {
-
-    }
-
-    @Override
-    public void updateLicenseInfo(LicenseInfo licensesInfo) {
-    }
-
-    @Override
-    public void deleteLicenseInfo(LicenseInfo licensesInfo) {
-
-    }
-
-    @Override
-    public LicenseInfo getLicenseByName(String licenseName) {
-        return new LicenseInfo();
-    }
-
-    @Override
     public void reloadLicensesCache() {
-    }
-
-    @Override
-    public Multimap<RepoPath, LicenseModuleModel> licensePopulateSynchronously(Build build, boolean autoDiscover) {
-        return HashMultimap.create();
-    }
-
-    @Override
-    public String generateLicenseCsv(Collection<LicenseModuleModel> models) {
-        return null;
-    }
-
-    @Override
-    public boolean setLicensePropsOnPath(RepoPath path, Set<LicenseInfo> licenses) {
-        return false;
-    }
-
-    @Override
-    public Set<LicenseInfo> scanPathForLicenses(RepoPath path) {
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public Set<LicenseInfo> getPathLicensesByProps(RepoPath path) {
-        return null;
     }
 
     @Override
@@ -390,27 +268,6 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public String getGeneratedSettingsUsernameTemplate() {
-        return "${security.getCurrentUsername()}";
-    }
-
-    @Override
-    public String getGeneratedSettingsUserCredentialsTemplate(boolean escape) {
-        AuthorizationService authorizationService = ContextHelper.get().getAuthorizationService();
-
-        if (authorizationService.isAnonymous() || authorizationService.isTransientUser()) {
-            return "";
-        }
-
-        StringBuilder credentialsTemplateBuilder = new StringBuilder("${security.getE");
-        if (escape) {
-            credentialsTemplateBuilder.append("scapedE");
-        }
-        return credentialsTemplateBuilder.append(
-                "ncryptedPassword()!\"*** Insert encrypted password here ***\"}").toString();
-    }
-
-    @Override
     public String filterResource(Request request, Properties contextProperties, Reader reader) throws Exception {
         try {
             return IOUtils.toString(reader);
@@ -430,8 +287,8 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
             throw new ConfigurationException("Could not find any repository layouts.");
         }
 
-        if (repoLayouts.size() != 10) {
-            throw new ConfigurationException("There should be 10 default repository layouts.");
+        if (repoLayouts.size() != 4) {
+            throw new ConfigurationException("There should be 4 default repository layouts.");
         }
 
         assertLayoutsExistsAndEqual(repoLayouts, RepoLayoutUtils.MAVEN_2_DEFAULT, RepoLayoutUtils.IVY_DEFAULT,
@@ -445,7 +302,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public void performCrossLayoutMoveOrCopy(MoveMultiStatusHolder status, MoverConfig moverConfig,
-                                             LocalRepo sourceRepo, LocalRepo targetLocalRepo, VfsItem sourceItem) {
+            LocalRepo sourceRepo, LocalRepo targetLocalRepo, VfsItem sourceItem) {
         throw new UnsupportedOperationException(
                 "Cross layout move or copy operations require the Repository Layouts addon.");
     }
@@ -457,7 +314,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public String translateArtifactPath(RepoLayout sourceRepoLayout, RepoLayout targetRepoLayout, String path,
-                                        @Nullable BasicStatusHolder multiStatusHolder) {
+            @Nullable BasicStatusHolder multiStatusHolder) {
         return path;
     }
 
@@ -493,21 +350,21 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public void scheduleImmediateLocalReplicationTask(LocalReplicationDescriptor replicationDescriptor,
-                                                      BasicStatusHolder statusHolder) {
+            BasicStatusHolder statusHolder) {
         statusHolder.error("Error: the replication addon is required for this operation.", HttpStatus.SC_BAD_REQUEST,
                 log);
     }
 
     @Override
     public void scheduleImmediateRemoteReplicationTask(RemoteReplicationDescriptor replicationDescriptor,
-                                                       BasicStatusHolder statusHolder) {
+            BasicStatusHolder statusHolder) {
         statusHolder.error("Error: the replication addon is required for this operation.", HttpStatus.SC_BAD_REQUEST,
                 log);
     }
 
     @Override
     public ReplicationStatus getReplicationStatus(RepoPath repoPath) {
-        return null;
+        return new ReplicationStatus(ReplicationStatusType.ERROR, "Error");
     }
 
     @Override
@@ -528,7 +385,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public void validateTargetIsDifferentInstance(ReplicationBaseDescriptor descriptor,
-                                                  RealRepoDescriptor repoDescriptor) throws IOException {
+            RealRepoDescriptor repoDescriptor) throws IOException {
     }
 
     @Override
@@ -538,12 +395,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public void validateTargetLicense(ReplicationBaseDescriptor descriptor, RealRepoDescriptor repoDescriptor,
-                                      int numOfReplicationConfigured) {
-    }
-
-    @Override
-    public void cleanupLocalReplicationProperties(LocalReplicationDescriptor replication) {
-
+            int numOfReplicationConfigured) {
     }
 
     private BasicStatusHolder getReplicationRequiredStatusHolder() {
@@ -566,46 +418,12 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public ArtifactRpmMetadata getRpmMetadata(FileInfo fileInfo) {
-        return null;
-    }
-
-    @Override
     public void recalculateAll(LocalRepoDescriptor localRepoDescriptor, String password, boolean delayed) {
     }
 
     @Override
     public String getPublicKeyDownloadTarget() {
         return "";
-    }
-
-    @Override
-    public void onInstallKey(String key, boolean isPublic) throws Exception {
-
-    }
-
-    @Override
-    public void removeKey(boolean isPublic) {
-    }
-
-    @Override
-    public boolean hasPrivateKey() {
-        return false;
-    }
-
-    @Override
-    public boolean hasPublicKey() {
-        return false;
-    }
-
-    @Override
-    public boolean verifyPassPhrase(String phrase) {
-        return false;
-    }
-
-    @Override
-    public void savePassPhrase(String password) {
-
     }
 
     @Override
@@ -640,7 +458,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     @Nonnull
     @Override
     public RemoteRepo createRemoteRepo(InternalRepositoryService repoService, RemoteRepoDescriptor repoDescriptor,
-                                       boolean offlineMode, RemoteRepo oldRemoteRepo) {
+            boolean offlineMode, RemoteRepo oldRemoteRepo) {
         return new HttpRepo((HttpRepoDescriptor) repoDescriptor, repoService, offlineMode, oldRemoteRepo);
     }
 
@@ -652,7 +470,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
 
     @Override
     public InternalRequestContext getDynamicVersionContext(Repo repo, InternalRequestContext originalRequestContext,
-                                                           boolean isRemote) {
+            boolean isRemote) {
         return originalRequestContext;
     }
 
@@ -682,92 +500,12 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public void testConnection(BlackDuckSettingsDescriptor blackDuckSettingsDescriptor) throws Exception {
-
-    }
-
-    @Override
-    public ExternalComponentInfo getBlackduckInfo(RepoPath repoPath) {
-        return null;
-    }
-
-    @Override
-    public boolean queryCodeCenterForPath(RepoPath path) {
-        return false;
-    }
-
-    @Override
-    public String getComponentExternalIdFromProperty(RepoPath repoPath) {
-        return null;
-    }
-
-    @Override
-    public String getComponentIdFromProperty(RepoPath repoPath) {
-        return null;
-    }
-
-    @Override
-    public void clearComponentIdProperty(RepoPath repoPath) {
-
-    }
-
-    @Override
-    public void setComponentExternalIdProperty(RepoPath repoPath, String updatedComponentId) {
-
-    }
-
-    @Override
-    public boolean isEnableIntegration() {
-        return false;
-    }
-
-    @Override
-    public Collection<GovernanceRequestInfo> getGovernanceRequestInfos(Build build, String appName, String appVersion, Set<String> scopes) {
-        return null;
-    }
-
-    @Override
-    public BlackDuckApplicationInfo blackDuckApplicationInfo(String appInfo, String versionInfo) {
-        return null;
-    }
-
-    @Override
-    public String updateRequest(Build build, GovernanceRequestInfo requestInfo) {
-        return null;
-    }
-
-    @Override
-    public boolean isSupportedPackageType(RepoPath path) {
-        return false;
-    }
-
-    @Override
-    public Set<String> getPathLicensesFromProperties(RepoPath path) {
-        return null;
-    }
-
-    @Override
-    public String getLicenseUrl(String license) {
-        return "";
-    }
-
-    @Override
     public void reindexAsync(String repoKey) {
 
     }
 
     @Override
-    public NpmMetadataInfo getNpmMetaDataInfo(FileInfo fileInfo) {
-        return null;
-    }
-
-    @Override
     public void afterRepoInit(String repoKey) {
-    }
-
-    @Override
-    public ArtifactGemsInfo getGemsInfo(String repoKey, String path) {
-        return null;
     }
 
     @Override
@@ -812,11 +550,6 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public boolean artifactoryServerHasHeartbeat(ArtifactoryServer artifactoryServer) {
-        return false;
-    }
-
-    @Override
     public void propagateTaskToPrimary(Task Task) {
     }
 
@@ -851,11 +584,6 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public List<ArtifactoryServer> getAllArtifactoryServers() {
-        return new ArrayList<>();
-    }
-
-    @Override
     public void addNpmPackage(FileInfo info) {
 
     }
@@ -873,16 +601,6 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     @Override
     public void reindex(LocalRepoDescriptor descriptor, boolean async) {
 
-    }
-
-    @Override
-    public PypiPkgMetadata getPypiMetadata(RepoPath packagePath) {
-        return null;
-    }
-
-    @Override
-    public boolean isPypiFile(FileInfo fileInfo) {
-        return false;
     }
 
     @Override
@@ -906,212 +624,7 @@ public class CoreAddonsImpl implements WebstartAddon, LdapGroupAddon, LicensesAd
     }
 
     @Override
-    public BowerMetadataInfo getBowerMetadata(FileInfo fileInfo) {
-        return null;
-    }
-
-    @Override
     public void pushTagToBintray(String repoKey, BintrayPushRequest request) {
-    }
 
-    @Override
-    public Map<RepoPath, WatchersInfo> getAllWatchers(RepoPath repoPath) {
-        return null;
-    }
-
-    @Override
-    public void removeWatcher(RepoPath repoPath, String watchUser) {
-
-    }
-
-    @Override
-    public void addWatcher(RepoPath repoPath, String watcherUsername) {
-
-    }
-
-    @Override
-    public boolean isUserWatchingRepo(RepoPath repoPath, String userName) {
-        return false;
-    }
-
-    @Override
-    public Pair<RepoPath, WatchersInfo> getNearestWatchDefinition(RepoPath repoPath, String userName) {
-        return null;
-    }
-
-    @Override
-    public WatchersInfo getWatchers(RepoPath repoPath) {
-        return null;
-    }
-
-    @Override
-    public Set<ArtifactoryBuildArtifact> getBuildArtifactsFileInfos(Build build) {
-        return null;
-    }
-
-    @Override
-    public Map<Dependency, FileInfo> getBuildDependenciesFileInfos(Build build) {
-        return null;
-    }
-
-    @Override
-    public Set<BuildRun> getLatestBuildsPaging(String offset, String orderBy, String direction, String limit) {
-        return null;
-    }
-
-    @Override
-    public List<GeneralBuild> getBuildForNamePaging(String buildName, String orderBy, String direction, String offset, String limit) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public int getBuildForNameTotalCount(String buildName) throws SQLException {
-        return 0;
-    }
-
-    @Override
-    public Build getBuild(BuildRun buildRun) {
-        return null;
-    }
-
-    @Override
-    public BuildRun getBuildRun(String buildName, String buildNumber, String buildStarted) {
-        return null;
-    }
-
-    @Override
-    public Build getLatestBuildByNameAndNumber(String buildName, String BuildNumber) {
-        return null;
-    }
-
-    @Override
-    public List<PublishedModule> getPublishedModules(String buildName, String date, String orderBy, String direction, String offset, String limit) {
-        return null;
-    }
-
-    @Override
-    public int getPublishedModulesCounts(String buildName, String date) {
-        return 0;
-    }
-
-    @Override
-    public List<ModuleArtifact> getModuleArtifact(String buildName ,String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public int getModuleArtifactCount(String buildNumber, String moduleId, String date) {
-        return 0;
-    }
-
-    @Override
-    public List<ModuleDependency> getModuleDependency(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        return null;
-    }
-
-    @Override
-    public int getModuleDependencyCount(String buildNumber, String moduleId, String date) {
-        return 0;
-    }
-
-    @Override
-    public void deleteAllBuilds(String name) {
-
-    }
-
-    @Override
-    public BuildsDiff getBuildsDiff(Build firstBuild, Build secondBuild, String baseStorageInfoUri) {
-        return null;
-    }
-
-    @Override
-    public List<BuildsDiffBaseFileModel> compareArtifacts(Build build, Build secondBuild) {
-        return null;
-    }
-
-    @Override
-    public List<BuildsDiffBaseFileModel> compareDependencies(Build build, Build secondBuild) {
-        return null;
-    }
-
-    @Override
-    public List<BuildsDiffPropertyModel> compareProperties(Build build, Build secondBuild) {
-        return null;
-    }
-
-    @Override
-    public NuMetaData getNutSpecMetaData(RepoPath nuGetRepoPath) {
-        return null;
-    }
-
-    @Override
-    public Set refreshLdapGroups(String userName, LdapGroupSetting ldapGroupSetting, BasicStatusHolder statusHolder) {
-        return null;
-    }
-
-    @Override
-    public int importLdapGroupsToArtifactory(List ldapGroups, LdapGroupPopulatorStrategies strategy) {
-        return 0;
-    }
-
-    @Override
-    public KeyStore loadKeyStore(File keyStoreFile, String password) {
-        return null;
-    }
-
-    @Override
-    public Key getAliasKey(KeyStore keyStore, String alias, String password) {
-        return null;
-    }
-
-    @Override
-    public void addKeyPair(File file, String pairName, String keyStorePassword, String alias, String privateKeyPassword) throws IOException {
-
-    }
-
-    @Override
-    public boolean keyStoreExist() {
-        return false;
-    }
-
-    @Override
-    public List<String> getKeyPairNames() {
-        return null;
-    }
-
-    @Override
-    public boolean removeKeyPair(String keyPairName) {
-        return false;
-    }
-
-    @Override
-    public void setKeyStorePassword(String password) {
-
-    }
-
-    @Override
-    public void removeKeyStorePassword() {
-    }
-
-    @Override
-    public SavedSearchResults getSearchResults(String name, List<? extends ItemSearchResult> itemSearchResults,
-            boolean completeVersion) {
-        return null;
-    }
-
-    @Override
-    public String getSamlLoginIdentityProviderUrl(HttpServletRequest request) {
-        return null;
-    }
-
-    @Override
-    public void createCertificate(String certificate) throws Exception {
-
-    }
-
-    @Override
-    public Boolean isSamlAuthentication(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        return false;
     }
 }
-

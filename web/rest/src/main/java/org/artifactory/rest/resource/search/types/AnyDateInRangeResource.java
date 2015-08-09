@@ -19,16 +19,6 @@
 
 package org.artifactory.rest.resource.search.types;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.api.rest.search.common.RestDateFieldName;
 import org.artifactory.api.rest.search.result.DynamicItemSearchResult;
@@ -40,9 +30,19 @@ import org.artifactory.fs.ItemInfo;
 import org.artifactory.fs.StatsInfo;
 import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.list.StringList;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
 
 import static org.artifactory.api.rest.constant.SearchRestConstants.*;
 

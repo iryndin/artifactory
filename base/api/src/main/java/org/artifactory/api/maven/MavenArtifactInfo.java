@@ -28,7 +28,6 @@ import org.artifactory.mime.MavenNaming;
 import org.artifactory.mime.NamingUtils;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.util.PathUtils;
-import org.codehaus.jackson.annotate.JsonTypeName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,27 +43,18 @@ import java.util.StringTokenizer;
  *
  * @author Tomer Cohen
  */
-@JsonTypeName("maven")
 public class MavenArtifactInfo implements UnitInfo {
     private static final Logger log = LoggerFactory.getLogger(MavenArtifactInfo.class);
     public static final String ROOT = "artifactory-maven-artifact";
     public static final String POM = "pom";
     public static final String JAR = "jar";
     public static final String XML = "xml";
-    private String artifactType = "maven";
+
     private String artifactId;
     private String groupId;
     private String version;
     private String classifier;
     private String type;
-
-    public String getArtifactType() {
-        return artifactType;
-    }
-
-    public void setArtifactType(String artifactType) {
-        this.artifactType = artifactType;
-    }
 
     public MavenArtifactInfo(String groupId, String artifactId, String version) {
         this(groupId, artifactId, version, NA, NA);
@@ -168,10 +158,6 @@ public class MavenArtifactInfo implements UnitInfo {
     @Override
     public boolean isValid() {
         return hasGroupId() && hasArtifactId() && hasVersion();
-    }
-
-    @Override
-    public void setPath(String path) {
     }
 
     @Override

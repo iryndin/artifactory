@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.JdkVersion;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -53,6 +54,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -148,7 +150,9 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
             throw new IllegalStateException("Artifactory home not initialized.");
         }
 
-        if (artifactoryHome.getArtifactoryProperties().getBooleanProperty(ConstantValues.supportUrlSessionTracking)) {
+        if (artifactoryHome.getArtifactoryProperties().getBooleanProperty(
+                ConstantValues.supportUrlSessionTracking.getPropertyName(),
+                ConstantValues.supportUrlSessionTracking.getDefValue())) {
             getLogger().debug("Skipping setting session tracking mode to COOKIE, enableURLSessionId flag it on.");
             return;
         }
@@ -189,6 +193,8 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
         CompoundVersionDetails runningVersionDetails = versionProvider.getRunning();
 
         logAsciiArt(log, artifactoryHome, runningVersionDetails);
+
+        warnIfJava7WithLoopPredicate(log);
 
         ApplicationContext context;
         try {
@@ -326,4 +332,34 @@ public class ArtifactoryContextConfigListener implements ServletContextListener 
                         String.format(" Revision: %-38s|___/\n", versionDetails.getRevision());
         return msg;
     }
+
+    /**
+     * @return True if the current jvm version Java 7 and the loop predicate hotspot optimization is on. This was fixed
+     * in JDK 1.7.0_01.
+     */
+    private void warnIfJava7WithLoopPredicate(Logger log) {
+        if ("1.7.0".equals(JdkVersion.getJavaVersion())) {
+            try {
+                List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+                for (String argument : arguments) {
+                    if (argument.contains("-XX:-UseLoopPredicate")) {
+                        return;
+                    }
+                }
+                String message = "\n\n" +
+                        "********************************************************************************************\n" +
+                        "*** It looks like you are running Artifactory with Java 7.                               ***\n" +
+                        "*** Due to critical Hotspot bugs in some of the first Java 7 releases (bug ids: 7070134, ***\n" +
+                        "*** 7044738 & 7068051), it is HIGHLY RECOMMENDED to run Artifactory with the following   ***\n" +
+                        "*** JVM Hotspot flag, to avoid JVM crashes and/or index corruption:                      ***\n" +
+                        "*** -XX:-UseLoopPredicate                                                                ***\n" +
+                        "********************************************************************************************\n";
+                log.warn(message);
+            } catch (Exception e) {
+                log.warn("Could not check for Java 7 loop predicate jvm arg ({}).", e.getMessage());
+                log.debug("Could not check for Java 7 loop predicate jvm arg.", e);
+            }
+        }
+    }
+
 }

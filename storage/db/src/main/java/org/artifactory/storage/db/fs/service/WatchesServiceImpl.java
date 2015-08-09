@@ -85,18 +85,6 @@ public class WatchesServiceImpl implements WatchesService, InternalWatchesServic
     }
 
     @Override
-    public boolean isUserWatchingRepoPath(RepoPath repoPath,String userName){
-        boolean isUserWatchingRepoPath = false;
-         Collection<Watch> nodeWatches = getWatchersFromCache(repoPath);
-        for (Watch nodeWatch : nodeWatches) {
-            if (nodeWatch.getUsername().equals(userName)) {
-                isUserWatchingRepoPath = true;
-            }
-        }
-        return isUserWatchingRepoPath;
-    }
-
-    @Override
     public boolean hasWatches(RepoPath repoPath) {
         return getWatchersCache().containsKey(repoPath);
     }

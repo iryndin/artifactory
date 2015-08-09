@@ -29,18 +29,6 @@ public class ForkParserElement implements ParserElement {
     }
 
     @Override
-    public List<String> next() {
-        List<String> list = Lists.newArrayList();
-        for (ParserElement element : elements) {
-            List<String> next = element.next();
-            if (next.size() > 0) {
-                list.addAll(next);
-            }
-        }
-        return list;
-    }
-
-    @Override
     public ParserElementResultContainer[] peelOff(String queryRemainder, AqlParserContext context) {
         List<ParserElementResultContainer> results = Lists.newArrayList();
         for (ParserElement element : elements) {

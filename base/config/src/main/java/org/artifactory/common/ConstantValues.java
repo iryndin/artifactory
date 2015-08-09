@@ -37,7 +37,6 @@ public enum ConstantValues {
     supportUrlSessionTracking("servlet.supportUrlSessionTracking", FALSE),
     disabledAddons("addons.disabled", ""),
     addonsInfoUrl("addons.info.url", "http://service.jfrog.org/artifactory/addons/info/%s"),
-    addonsConfigureUrl("addons.info.url", "http://www.jfrog.com/confluence/display/RTF/%s"),
     springConfigDir("spring.configDir"),
     asyncCorePoolSize("async.corePoolSize", 4 * Runtime.getRuntime().availableProcessors()),
     asyncPoolTtlSecs("async.poolTtlSecs", 60),
@@ -97,7 +96,6 @@ public enum ConstantValues {
     pluginScriptsRefreshIntervalSecs("plugin.scripts.refreshIntervalSecs", 0),
     aolPluginSupport("plugin.aol.support", FALSE),
     aolDedicatedServer("aol.dedicated.server", FALSE),
-    aolDisplayAccountManagementLink("aol.displayAccountManagementLink", TRUE),
     uiChroot("ui.chroot"),
     artifactoryLicenseDir("licenseDir"),
     fileRollerMaxFilesToRetain("file.roller.maxFileToRetain", 10),
@@ -163,6 +161,7 @@ public enum ConstantValues {
     archiveIndexerTaskIntervalSecs("archive.indexer.intervalSecs", 60),
     inMemoryNuGetRemoteCaches("nuget.inMemoryRemoteCaches", TRUE),
     nuGetRequireAuthentication("nuget.forceAuthentication", FALSE),
+    dockerForceAuthentication("docker.forceAuthentication", FALSE),
     haHeartbeatIntervalSecs("ha.heartbeat.intervalSecs", 5),
     haHeartbeatStaleIntervalSecs("ha.heartbeat.staleSecs", 30),
     haMembersIntroductionIntervalSecs("ha.membersIntroduction.intervalSecs", 30),
@@ -201,7 +200,7 @@ public enum ConstantValues {
     }
 
     public String getString() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(propertyName, defValue);
     }
 
     public int getInt() {
@@ -209,15 +208,15 @@ public enum ConstantValues {
     }
 
     public long getLong() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getLongProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getLongProperty(propertyName, defValue);
     }
 
     public boolean getBoolean() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getBooleanProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getBooleanProperty(propertyName, defValue);
     }
 
     public boolean isSet() {
-        return ArtifactoryHome.get().getArtifactoryProperties().hasProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(propertyName, null) != null;
     }
 
     private static class Seconds {

@@ -18,7 +18,6 @@
 
 package org.artifactory.storage.security.service;
 
-import org.artifactory.common.Info;
 import org.artifactory.sapi.common.Lock;
 import org.artifactory.security.GroupInfo;
 import org.artifactory.security.MutableGroupInfo;
@@ -26,7 +25,6 @@ import org.artifactory.security.MutableUserInfo;
 import org.artifactory.security.UserInfo;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -139,22 +137,4 @@ public interface UserGroupStoreService {
     boolean adminUserExists();
 
     boolean userExists(String username);
-
-    /**
-     * get user groups paging
-     *
-     * @param includeAdmins include admin
-     * @return list
-     */
-    Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction);
-
-    /**
-     * get all users and groups count
-     *
-     * @param includeAdmins include admin
-     * @return num of records
-     */
-     long getAllUsersGroupsCount(boolean includeAdmins);
-
 }

@@ -15,7 +15,15 @@ import org.artifactory.aql.model.DomainSensitiveField;
 import org.artifactory.storage.db.aql.sql.builder.links.TableLink;
 import org.artifactory.storage.db.aql.sql.builder.links.TableLinkBrowser;
 import org.artifactory.storage.db.aql.sql.builder.links.TableLinkRelation;
-import org.artifactory.storage.db.aql.sql.builder.query.aql.*;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.AqlQuery;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.AqlQueryElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.CloseParenthesisAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.Criteria;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.OpenParenthesisAqlElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.OperatorQueryElement;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.PropertyCriteria;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.SimpleCriteria;
+import org.artifactory.storage.db.aql.sql.builder.query.aql.SortDetails;
 import org.artifactory.storage.db.aql.sql.builder.query.sql.SqlTable;
 import org.artifactory.storage.db.aql.sql.model.AqlFieldExtensionEnum;
 import org.artifactory.storage.db.aql.sql.model.SqlTableEnum;
@@ -39,51 +47,6 @@ import static org.artifactory.storage.db.aql.sql.model.AqlFieldExtensionEnum.get
  */
 public abstract class BasicSqlGenerator {
     public final Map<SqlTableEnum, Map<SqlTableEnum, List<TableLinkRelation>>> tableRouteMap;
-    Function<DomainSensitiveField, DomainSensitiveTable> toTables = new Function<DomainSensitiveField, DomainSensitiveTable>() {
-        @Nullable
-        @Override
-        public DomainSensitiveTable apply(@Nullable DomainSensitiveField input) {
-            if (input == null) {
-                return null;
-            }
-            AqlFieldExtensionEnum extension = getExtensionFor(input.getField());
-            List<SqlTableEnum> tables = generateTableListFromSubDomainAndField(input.getSubDomains());
-            SqlTable table = tablesLinksMap.get(extension.table).getTable();
-            return new DomainSensitiveTable(table, tables);
-        }
-    };
-    Function<AqlQueryElement, DomainSensitiveTable> firstTableFromCriteria = new Function<AqlQueryElement, DomainSensitiveTable>() {
-        @Nullable
-        @Override
-        public DomainSensitiveTable apply(@Nullable AqlQueryElement input) {
-            SqlTable table = input != null ? ((Criteria) input).getTable1() : null;
-            if (table != null) {
-                List<SqlTableEnum> tables = generateTableListFromSubDomainAndField(((Criteria) input).getSubDomains());
-                return new DomainSensitiveTable(table, tables);
-            }
-            return null;
-        }
-    };
-    Predicate<DomainSensitiveTable> notNull = new Predicate<DomainSensitiveTable>() {
-        @Override
-        public boolean apply(@Nullable DomainSensitiveTable input) {
-            return input != null;
-        }
-    };
-    Predicate<AqlQueryElement> criteriasOnly = new Predicate<AqlQueryElement>() {
-
-        @Override
-        public boolean apply(@Nullable AqlQueryElement input) {
-            return input instanceof Criteria;
-        }
-    };
-    Function<DomainSensitiveTable, SqlTableEnum> toTableEnum = new Function<DomainSensitiveTable, SqlTableEnum>() {
-        @Nullable
-        @Override
-        public SqlTableEnum apply(@Nullable DomainSensitiveTable input) {
-            return input != null ? input.getTable().getTable() : null;
-        }
-    };
 
     /**
      * The constructor scans the table schema and creates a map that contains the shortest route between to tables
@@ -177,7 +140,7 @@ public abstract class BasicSqlGenerator {
             List<TableLinkRelation> relations = tableRouteMap.get(from.getTableEnum()).get(to.getTableEnum());
             generateJoinTables(relations, usedTables, join, joinTypeEnum, table.getTable());
         }
-        return join.toString()+ " ";
+        return join.toString();
     }
 
     /**
@@ -194,8 +157,7 @@ public abstract class BasicSqlGenerator {
         StringBuilder condition = new StringBuilder();
         List<Object> params = Lists.newArrayList();
         for (AqlQueryElement aqlQueryElement : aqlQuery.getAqlElements()) {
-            if (aqlQueryElement instanceof ComplexPropertyCriteria || aqlQueryElement instanceof SimpleCriteria
-                    || aqlQueryElement instanceof SimplePropertyCriteria) {
+            if (aqlQueryElement instanceof PropertyCriteria || aqlQueryElement instanceof SimpleCriteria) {
                 Criteria criteria = (Criteria) aqlQueryElement;
                 condition.append(criteria.toSql(params));
             }
@@ -210,7 +172,7 @@ public abstract class BasicSqlGenerator {
                 condition.append(")");
             }
         }
-        return new Pair(condition.toString()+" ", params);
+        return new Pair(condition.toString(), params);
     }
 
     private List<TableLinkRelation> findShortestPathBetween(TableLink from, TableLink to) {
@@ -279,9 +241,10 @@ public abstract class BasicSqlGenerator {
     public String sort(AqlQuery aqlQuery) {
         SortDetails sortDetails = aqlQuery.getSort();
         if (sortDetails == null || sortDetails.getFields().size() == 0) {
-            return null;
+            return "";
         }
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" ORDER BY ");
         List<AqlFieldEnum> fields = sortDetails.getFields();
         Iterator<AqlFieldEnum> iterator = fields.iterator();
         while (iterator.hasNext()) {
@@ -292,8 +255,6 @@ public abstract class BasicSqlGenerator {
             stringBuilder.append(" ").append(sortDetails.getSortType().getSqlName());
             if (iterator.hasNext()) {
                 stringBuilder.append(",");
-            }else {
-                stringBuilder.append(" ");
             }
         }
         return stringBuilder.toString();
@@ -323,6 +284,32 @@ public abstract class BasicSqlGenerator {
     }
 
     protected abstract SqlTableEnum getMainTable();
+
+    Function<DomainSensitiveField, DomainSensitiveTable> toTables = new Function<DomainSensitiveField, DomainSensitiveTable>() {
+        @Nullable
+        @Override
+        public DomainSensitiveTable apply(@Nullable DomainSensitiveField input) {
+            if (input == null) {
+                return null;
+            }
+            AqlFieldExtensionEnum extension = getExtensionFor(input.getField());
+            List<SqlTableEnum> tables = generateTableListFromSubDomainAndField(input.getSubDomains());
+            SqlTable table = tablesLinksMap.get(extension.table).getTable();
+            return new DomainSensitiveTable(table, tables);
+        }
+    };
+    Function<AqlQueryElement, DomainSensitiveTable> firstTableFromCriteria = new Function<AqlQueryElement, DomainSensitiveTable>() {
+        @Nullable
+        @Override
+        public DomainSensitiveTable apply(@Nullable AqlQueryElement input) {
+            SqlTable table = input != null ? ((Criteria) input).getTable1() : null;
+            if (table != null) {
+                List<SqlTableEnum> tables = generateTableListFromSubDomainAndField(((Criteria) input).getSubDomains());
+                return new DomainSensitiveTable(table, tables);
+            }
+            return null;
+        }
+    };
 
     private List<SqlTableEnum> generateTableListFromSubDomainAndField(List<AqlDomainEnum> subDomains) {
         List<SqlTableEnum> result = Lists.newArrayList();
@@ -359,4 +346,26 @@ public abstract class BasicSqlGenerator {
         }
         return null;
     }
+
+    Predicate<DomainSensitiveTable> notNull = new Predicate<DomainSensitiveTable>() {
+        @Override
+        public boolean apply(@Nullable DomainSensitiveTable input) {
+            return input != null;
+        }
+    };
+
+    Predicate<AqlQueryElement> criteriasOnly = new Predicate<AqlQueryElement>() {
+
+        @Override
+        public boolean apply(@Nullable AqlQueryElement input) {
+            return input instanceof Criteria;
+        }
+    };
+    Function<DomainSensitiveTable, SqlTableEnum> toTableEnum = new Function<DomainSensitiveTable, SqlTableEnum>() {
+        @Nullable
+        @Override
+        public SqlTableEnum apply(@Nullable DomainSensitiveTable input) {
+            return input != null ? input.getTable().getTable() : null;
+        }
+    };
 }

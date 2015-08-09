@@ -27,6 +27,7 @@ import org.artifactory.util.PathUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * @author Noam Y. Tenne
@@ -129,6 +130,11 @@ public class TranslatedArtifactoryRequest implements ArtifactoryRequest {
     @Override
     public Enumeration getHeaders(String headerName) {
         return originalRequest.getHeaders(headerName);
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return originalRequest.getHeaders();
     }
 
     @Override

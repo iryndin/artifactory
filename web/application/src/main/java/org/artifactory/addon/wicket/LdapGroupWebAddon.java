@@ -100,8 +100,8 @@ public interface LdapGroupWebAddon extends Addon {
     Label getLdapActiveWarning(String wicketId);
 
     /**
-     * Get the LDAP lists defined in the system, in the pro version of Artifactory the panel is re-orderable such
-     * that a certain order can be defined as to which LDAP will be queried first, moreover, the pro version
+     * Get the LDAP lists defined in the system, in the powerpack version of Artifactory the panel is re-orderable such
+     * that a certain order can be defined as to which LDAP will be queried first, moreover, the powerpack version
      * allows for <b>multiple enabled</b> LDAP definitions.
      *
      * @param wicketId The wicket ID of the panel.
@@ -110,7 +110,7 @@ public interface LdapGroupWebAddon extends Addon {
     WebMarkupContainer getLdapListPanel(String wicketId);
 
     /**
-     * Save the LDAP configurations, in the pro version of Artifactory several <b>multiple enabled</b> LDAP
+     * Save the LDAP configurations, in the powerpack version of Artifactory several <b>multiple enabled</b> LDAP
      * definitions will be saved.
      *
      * @param configDescriptor The config descriptor to be saved.

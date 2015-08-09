@@ -46,7 +46,6 @@ import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.replication.RemoteReplicationDescriptor;
 import org.artifactory.descriptor.repo.HttpRepoDescriptor;
 import org.artifactory.descriptor.repo.RemoteRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.security.crypto.CryptoHelper;
 import org.artifactory.util.HttpClientConfigurator;
 import org.artifactory.util.HttpClientUtils;
@@ -255,7 +254,7 @@ public class HttpRepoPanel extends RepoConfigCreateUpdatePanel<HttpRepoDescripto
         HttpRequestBase testMethod = null;
         HttpRepoDescriptor repo = getRepoDescriptor();
 
-        if (repo.getType().equals(RepoType.Gems)) {
+        if (repo.isEnableGemsSupport()) {
             GemsWebAddon gemsAddon = addons.addonByType(GemsWebAddon.class);
             testMethod = gemsAddon.getRemoteRepoTestMethod(url, repo);
         }

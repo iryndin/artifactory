@@ -19,7 +19,7 @@
 package org.artifactory.security.crowd;
 
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.crowd.CrowdAddon;
+import org.artifactory.addon.CrowdAddon;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.security.RealmAwareAuthenticationProvider;
 import org.artifactory.security.UserGroupInfo;

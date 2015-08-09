@@ -42,13 +42,6 @@ public interface AddonsManager {
     boolean isLicenseInstalled();
 
     /**
-     * check if addon is supported
-     * @param addonType - add on type to check
-     * @return if true - addon is supported
-     */
-    boolean isAddonSupported(AddonType addonType);
-
-    /**
      * Indicates whether there's a valid HA or Trial license installed.
      *
      * @return True if the license is either HA or Trial.
@@ -126,6 +119,4 @@ public interface AddonsManager {
     ArtifactoryRunningMode getArtifactoryRunningMode();
 
     boolean isPartnerLicense();
-
-    FooterMessage getLicenseFooterMessage();
 }

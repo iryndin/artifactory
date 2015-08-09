@@ -18,11 +18,6 @@
 
 package org.artifactory.rest.resource.maven;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.rest.RestAddon;
 import org.artifactory.api.maven.MavenMetadataService;
@@ -32,11 +27,20 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.rest.common.list.StringList;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * A resource for manually running maven indexer

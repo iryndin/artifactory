@@ -106,11 +106,6 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     }
 
     @Override
-    public boolean isAddonSupported(AddonType addonType) {
-        return false;
-    }
-
-    @Override
     public boolean isHaLicensed() {
         return false;
     }
@@ -161,7 +156,7 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     }
 
     @Override
-    public FooterMessage getLicenseFooterMessage() {
+    public String getLicenseFooterMessage() {
         return null;
     }
 
@@ -190,6 +185,7 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     public boolean isPartnerLicense() {
         return false;
     }
+
 
     @Override
     public void interceptResponse(ArtifactoryResponse response) {

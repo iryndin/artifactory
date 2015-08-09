@@ -10,7 +10,7 @@ setlocal
 rem defaults
 set ARTIFACTORY_HOME=%~dp0..
 set CATALINA_HOME=%ARTIFACTORY_HOME%\tomcat
-set JAVA_OPTIONS=-server -Xms512m -Xmx2g -Xss256k -XX:+UseG1GC
+set JAVA_OPTIONS=-server -Xms512m -Xmx2g -Xss256k -XX:PermSize=128m -XX:MaxPermSize=256m -XX:+UseG1GC
 set CATALINA_OPTS=%JAVA_OPTIONS% -Dartifactory.home="%ARTIFACTORY_HOME%" -Dfile.encoding=UTF8 -Djruby.compile.invokedynamic=false
 
 if not "%JAVA_HOME%" == "" goto javaOk

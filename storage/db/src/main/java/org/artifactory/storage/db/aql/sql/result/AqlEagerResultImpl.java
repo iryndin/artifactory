@@ -26,7 +26,7 @@ public class AqlEagerResultImpl<T extends AqlRowResult> implements AqlEagerResul
     private List<Map<AqlFieldEnum, Object>> rows = Lists.newArrayList();
 
     public AqlEagerResultImpl(ResultSet resultSet, SqlQuery sqlQuery) throws SQLException {
-        long limit = sqlQuery.getLimit();
+        int limit = sqlQuery.getLimit();
         while (resultSet.next() && rows.size() < limit) {
             Map<AqlFieldEnum, Object> map = Maps.newHashMap();
             for (DomainSensitiveField field : sqlQuery.getResultFields()) {

@@ -33,11 +33,12 @@ public interface YumWebAddon extends Addon {
 
     /**
      * Assemble the YUM section of the local repository configuration and add it to the given form
-     *  @param form     Local repository configuration form
-     * @param descriptor  Key of edited/created repository
+     *
+     * @param form     Local repository configuration form
+     * @param repoKey  Key of edited/created repository
      * @param isCreate True if in configuration create mode, false if in edit mode
      */
-    void createAndAddLocalRepoYumSection(Form<LocalRepoDescriptor> form, LocalRepoDescriptor descriptor, boolean isCreate);
+    void createAndAddLocalRepoYumSection(Form<LocalRepoDescriptor> form, String repoKey, boolean isCreate);
 
     @Nullable
     ITab getRpmInfoTab(String tabTitle, FileInfo fileInfo);

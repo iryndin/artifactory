@@ -52,12 +52,12 @@ public class RemoteRepoDescriptorTest {
         assertTrue(remote.isStoreArtifactsLocally());
         assertFalse(remote.isFetchJarsEagerly());
         assertFalse(remote.isFetchSourcesEagerly());
-        assertTrue(remote.isSuppressPomConsistencyChecks(),
+        assertFalse(remote.isSuppressPomConsistencyChecks(),
                 "Default should not supress pom consistency checks");
         assertEquals(remote.getUnusedArtifactsCleanupPeriodHours(), 0);
         assertFalse(remote.isShareConfiguration());
         assertNotNull(remote.getPropertySets(), "Property sets list should not be null");
         assertFalse(remote.isRejectInvalidJars());
-        assertNotEquals(remote.getType(), RepoType.NuGet, "NuGet should be off by default.");
+        assertFalse(remote.isEnableNuGetSupport(), "NuGet should be off by default.");
     }
 }

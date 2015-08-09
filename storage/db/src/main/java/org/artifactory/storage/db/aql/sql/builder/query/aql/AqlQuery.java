@@ -16,8 +16,7 @@ public class AqlQuery {
     private SortDetails sort;
     private List<AqlQueryElement> aqlElements = Lists.newArrayList();
     private AqlDomainEnum domain;
-    private long limit = Long.MAX_VALUE;
-    private long offset = 0;
+    private int limit = Integer.MAX_VALUE;
 
     public List<DomainSensitiveField> getResultFields() {
         return resultFields;
@@ -25,10 +24,6 @@ public class AqlQuery {
 
     public SortDetails getSort() {
         return sort;
-    }
-
-    public void setSort(SortDetails sort) {
-        this.sort = sort;
     }
 
     public List<AqlQueryElement> getAqlElements() {
@@ -39,23 +34,19 @@ public class AqlQuery {
         return domain;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setSort(SortDetails sort) {
+        this.sort = sort;
+    }
+
     public void setDomain(AqlDomainEnum domain) {
         this.domain = domain;
     }
 
-    public long getLimit() {
-        return limit;
-    }
-
-    public void setLimit(long limit) {
+    public void setLimit(int limit) {
         this.limit = limit;
-    }
-
-    public long getOffset() {
-        return offset;
-    }
-
-    public void setOffset(long offset) {
-        this.offset = offset;
     }
 }

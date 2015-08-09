@@ -37,7 +37,7 @@ public class VirtualRepoDescriptorTest {
         assertNull(virtualRepo.getRepoLayout());
         assertNull(virtualRepo.getKeyPair());
         assertTrue(virtualRepo.getRepositories().isEmpty());
-        assertNotEquals(virtualRepo.getType(), RepoType.NuGet, "NuGet should be off by default.");
+        assertFalse(virtualRepo.isEnableNuGetSupport(), "NuGet should be off by default.");
     }
 
     public void identicalCache() {

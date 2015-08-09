@@ -72,12 +72,4 @@ public interface WatchesService {
     @Nonnull
     List<WatcherRepoPathInfo> loadWatches();
 
-    /**
-     * check if user is currently watching this repo path
-     * @param repoPath - repo path
-     * @param userName - user Name
-     * @return if true , user is watching
-     */
-    boolean isUserWatchingRepoPath(RepoPath repoPath,String userName);
-
 }

@@ -53,6 +53,8 @@ public interface BintrayService {
     String PATH_PACKAGES = "packages";
     String PATH_USERS = "users";
 
+    final static BintrayItemInfo ITEM_NOT_FOUND = new BintrayItemInfo();
+    final static BintrayItemInfo ITEM_RETRIEVAL_ERROR = new BintrayItemInfo();
     final static BintrayPackageInfo PACKAGE_NOT_FOUND = new BintrayPackageInfo();
     final static BintrayPackageInfo PACKAGE_IN_PROCESS = new BintrayPackageInfo();
     final static BintrayPackageInfo PACKAGE_RETRIEVAL_ERROR = new BintrayPackageInfo();

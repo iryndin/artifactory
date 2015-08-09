@@ -17,8 +17,7 @@ import java.util.Map;
  * @author Gidi Shabat
  */
 public class AqlLazyResultImpl implements AqlLazyResult {
-    private final long limit;
-    private final long offset;
+    private final int limit;
     private final List<DomainSensitiveField> fields;
     private ResultSet resultSet;
     private Map<AqlFieldEnum, String> dbFieldNames;
@@ -28,7 +27,6 @@ public class AqlLazyResultImpl implements AqlLazyResult {
     public AqlLazyResultImpl(ResultSet resultSet, SqlQuery sqlQuery, AqlPermissionProvider aqlPermissionProvider) {
         this.aqlPermissionProvider = aqlPermissionProvider;
         limit = sqlQuery.getLimit();
-        offset = sqlQuery.getOffset();
         fields = sqlQuery.getResultFields();
         this.resultSet = resultSet;
         dbFieldNames = Maps.newHashMap();
@@ -55,13 +53,8 @@ public class AqlLazyResultImpl implements AqlLazyResult {
     }
 
     @Override
-    public long getLimit() {
+    public int getLimit() {
         return limit;
-    }
-
-    @Override
-    public long getOffset() {
-        return offset;
     }
 
     @Override

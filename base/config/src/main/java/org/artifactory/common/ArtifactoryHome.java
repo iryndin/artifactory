@@ -44,10 +44,12 @@ public class ArtifactoryHome {
     public static final String SYS_PROP = "artifactory.home";
     public static final String SERVLET_CTX_ATTR = "artifactory.home.obj";
     public static final String STORAGE_PROPS_FILE_NAME = "storage.properties";
-    public static final String MISSION_CONTROL_FILE_NAME = "mission.control.properties";
+    private static final String ENV_VAR = "ARTIFACTORY_HOME";
     public static final String ARTIFACTORY_CONVERTER_OBJ = "artifactory.converter.manager.obj";
     public static final String ARTIFACTORY_VERSION_PROVIDER_OBJ = "artifactory.version.provider.obj";
     public static final String ARTIFACTORY_CONFIG_FILE = "artifactory.config.xml";
+    private static final String ARTIFACTORY_CONFIG_LATEST_FILE = "artifactory.config.latest.xml";
+    private static final String ARTIFACTORY_CONFIG_IMPORT_FILE = "artifactory.config.import.xml";
     public static final String ARTIFACTORY_CONFIG_BOOTSTRAP_FILE = "artifactory.config.bootstrap.xml";
     public static final String ARTIFACTORY_SYSTEM_PROPERTIES_FILE = "artifactory.system.properties";
     public static final String ARTIFACTORY_PROPERTIES_FILE = "artifactory.properties";
@@ -55,15 +57,15 @@ public class ArtifactoryHome {
     public static final String MIME_TYPES_FILE_NAME = "mimetypes.xml";
     public static final String ARTIFACTORY_HA_NODE_PROPERTIES_FILE = "ha-node.properties";
     public static final String CLUSTER_PROPS_FILE = "cluster.properties";
-    private static final String ENV_VAR = "ARTIFACTORY_HOME";
-    private static final String ARTIFACTORY_CONFIG_LATEST_FILE = "artifactory.config.latest.xml";
-    private static final String ARTIFACTORY_CONFIG_IMPORT_FILE = "artifactory.config.import.xml";
+
     private static final InheritableThreadLocal<ArtifactoryHome> current = new InheritableThreadLocal<>();
-    private final File homeDir;
+
     private MimeTypes mimeTypes;
     private ArtifactorySystemProperties artifactorySystemProperties;
     private HaNodeProperties HaNodeProperties;
     private ClusterProperties clusterProperties;
+
+    private final File homeDir;
     private File etcDir;
     private File dataDir;
     private File logDir;
@@ -96,34 +98,6 @@ public class ArtifactoryHome {
         }
         this.homeDir = homeDir;
         create();
-    }
-
-    private static void checkWritableDirectory(File dir) {
-        if (!dir.exists() || !dir.isDirectory() || !dir.canWrite()) {
-            String message = "Directory '" + dir.getAbsolutePath() + "' is not writable!";
-            System.out.println(ArtifactoryHome.class.getName() + " - Warning: " + message);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    public static boolean isBound() {
-        return current.get() != null;
-    }
-
-    public static ArtifactoryHome get() {
-        ArtifactoryHome home = current.get();
-        if (home == null) {
-            throw new IllegalStateException("Artifactory home is not bound to the current thread.");
-        }
-        return home;
-    }
-
-    public static void bind(ArtifactoryHome props) {
-        current.set(props);
-    }
-
-    public static void unbind() {
-        current.remove();
     }
 
     public File getHomeDir() {
@@ -512,12 +486,36 @@ public class ArtifactoryHome {
         return new File(getHaAwareEtcDir(), MIME_TYPES_FILE_NAME);
     }
 
-    public File getStoragePropertiesFile() {
-        return new File(getHaAwareEtcDir(), STORAGE_PROPS_FILE_NAME);
+    private static void checkWritableDirectory(File dir) {
+        if (!dir.exists() || !dir.isDirectory() || !dir.canWrite()) {
+            String message = "Directory '" + dir.getAbsolutePath() + "' is not writable!";
+            System.out.println(ArtifactoryHome.class.getName() + " - Warning: " + message);
+            throw new IllegalArgumentException(message);
+        }
     }
 
-    public File getMissionControlPropertiesFile() {
-        return new File(getEtcDir(), MISSION_CONTROL_FILE_NAME);
+    public static boolean isBound() {
+        return current.get() != null;
+    }
+
+    public static ArtifactoryHome get() {
+        ArtifactoryHome home = current.get();
+        if (home == null) {
+            throw new IllegalStateException("Artifactory home is not bound to the current thread.");
+        }
+        return home;
+    }
+
+    public static void bind(ArtifactoryHome props) {
+        current.set(props);
+    }
+
+    public static void unbind() {
+        current.remove();
+    }
+
+    public File getStoragePropertiesFile() {
+        return new File(getHaAwareEtcDir(), STORAGE_PROPS_FILE_NAME);
     }
 
     public File getArtifactoryConfigFile() {

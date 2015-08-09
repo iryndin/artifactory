@@ -23,14 +23,13 @@ import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.TaskDescriptor;
 import org.artifactory.descriptor.repo.RepoBaseDescriptor;
 
-import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import java.util.SortedSet;
 
-@XmlType(name = "IndexerType", propOrder = {"enabled", "cronExp", "includedRepositories"},
+@XmlType(name = "IndexerType", propOrder = {"enabled", "cronExp", "excludedRepositories"},
         namespace = Descriptor.NS)
 public class IndexerDescriptor implements TaskDescriptor {
 
@@ -41,9 +40,9 @@ public class IndexerDescriptor implements TaskDescriptor {
     private String cronExp;
 
     @XmlIDREF
-    @XmlElementWrapper(name = "includedRepositories")
+    @XmlElementWrapper(name = "excludedRepositories")
     @XmlElement(name = "repositoryRef", type = RepoBaseDescriptor.class, required = false)
-    private SortedSet<? extends RepoBaseDescriptor> includedRepositories;
+    private SortedSet<? extends RepoBaseDescriptor> excludedRepositories;
 
     public IndexerDescriptor() {
         // By Default index once a day at 05:23AM
@@ -66,20 +65,17 @@ public class IndexerDescriptor implements TaskDescriptor {
         this.cronExp = cronExp;
     }
 
-    @Nullable
-    public SortedSet<? extends RepoBaseDescriptor> getIncludedRepositories() {
-        return includedRepositories;
+    public SortedSet<? extends RepoBaseDescriptor> getExcludedRepositories() {
+        return excludedRepositories;
     }
 
-    public void setIncludedRepositories(
-            SortedSet<? extends RepoBaseDescriptor> includedRepositories) {
-        this.includedRepositories = includedRepositories;
+    public void setExcludedRepositories(SortedSet<? extends RepoBaseDescriptor> excludedRepositories) {
+        this.excludedRepositories = excludedRepositories;
     }
 
-    public void removeIncludedRepository(RepoBaseDescriptor repoBaseDescriptor) {
-        if (includedRepositories != null) {
-            includedRepositories.remove(repoBaseDescriptor);
-        }
+    @SuppressWarnings({"SuspiciousMethodCalls"})
+    public boolean removeExcludedRepository(RepoBaseDescriptor repoBaseDescriptor) {
+        return excludedRepositories.remove(repoBaseDescriptor);
     }
 
     @Override
@@ -110,8 +106,8 @@ public class IndexerDescriptor implements TaskDescriptor {
         if(cronExp != null ? !cronExp.equals(that.cronExp) : that.cronExp != null) {
             return false;
         }
-        if (includedRepositories != null ? !includedRepositories.equals(that.includedRepositories) :
-                that.includedRepositories != null) {
+        if (excludedRepositories != null ? !excludedRepositories.equals(that.excludedRepositories) :
+                that.excludedRepositories != null) {
             return false;
         }
 
@@ -122,7 +118,7 @@ public class IndexerDescriptor implements TaskDescriptor {
     public int hashCode() {
         int result = (enabled ? 1 : 0);
         result = 31 * result + (cronExp != null ? cronExp.hashCode() : 0);
-        result = 31 * result + (includedRepositories != null ? includedRepositories.hashCode() : 0);
+        result = 31 * result + (excludedRepositories != null ? excludedRepositories.hashCode() : 0);
         return result;
     }
 }

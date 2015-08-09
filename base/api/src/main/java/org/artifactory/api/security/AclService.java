@@ -19,10 +19,13 @@
 package org.artifactory.api.security;
 
 import org.artifactory.sapi.common.Lock;
-import org.artifactory.security.*;
+import org.artifactory.security.AclInfo;
+import org.artifactory.security.ArtifactoryPermission;
+import org.artifactory.security.MutableAclInfo;
+import org.artifactory.security.PermissionTargetInfo;
+import org.artifactory.security.UserInfo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: freds Date: Aug 5, 2008 Time: 8:46:40 PM
@@ -103,29 +106,5 @@ public interface AclService {
      * @param acl
      * @return a new MutableAclInfo with its permission target's repo keys modified to omit the '-cache' suffix
      */
-    MutableAclInfo convertNewAclCachedRepoKeysToRemote(MutableAclInfo acl);
-
-    /**
-     * return map permissions
-     *
-     * @param username
-     * @return
-     */
-    Map<PermissionTargetInfo, AceInfo> getUserPermissionByPrincipal(String username);
-
-    /**
-     * get groups related permissions
-     *
-     * @param groups - groups to get permissions for
-     * @return -map of permissions and groups access rights
-     */
-    Map<PermissionTargetInfo, AceInfo> getGroupsPermissions(List<String> groups);
-
-    /**
-     * get user related permissions
-     *
-     * @param userName - userName to get permissions for
-     * @return -map of permissions and user access rights
-     */
-    Map<PermissionTargetInfo, AceInfo> getUserPermissions(String userName);
+    public MutableAclInfo convertNewAclCachedRepoKeysToRemote(MutableAclInfo acl);
 }

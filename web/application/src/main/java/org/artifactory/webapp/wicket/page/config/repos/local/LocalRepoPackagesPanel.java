@@ -43,7 +43,7 @@ public class LocalRepoPackagesPanel extends Panel {
         Form<LocalRepoDescriptor> form = new SecureForm<>("form", new CompoundPropertyModel<>(descriptor));
         add(form);
 
-        addonsManager.addonByType(YumWebAddon.class).createAndAddLocalRepoYumSection(form, descriptor,
+        addonsManager.addonByType(YumWebAddon.class).createAndAddLocalRepoYumSection(form, descriptor.getKey(),
                 isCreate);
         addonsManager.addonByType(NuGetWebAddon.class).createAndAddRepoConfigNuGetSection(form, descriptor, isCreate);
 

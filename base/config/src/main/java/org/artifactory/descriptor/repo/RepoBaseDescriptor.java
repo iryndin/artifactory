@@ -27,17 +27,16 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "RepoType", propOrder = {"key", "type", "description", "notes", "includesPattern", "excludesPattern",
-        "repoLayout", "dockerApiVersion"},
+@XmlType(name = "RepoType", propOrder = {"key", "description", "notes", "includesPattern", "excludesPattern",
+        "repoLayout", "enableNuGetSupport", "enableGemsSupport", "enableNpmSupport", "enableBowerSupport",
+        "enableDebianSupport", "enablePypiSupport", "enableDockerSupport", "dockerApiVersion", "enableVagrantSupport",
+        "enableGitLfsSupport"},
         namespace = Descriptor.NS)
 public abstract class RepoBaseDescriptor implements RepoDescriptor {
 
     @XmlID
     @XmlElement(required = true)
     private String key;
-
-    @XmlElement(required = true)
-    private RepoType type = RepoType.Generic;
 
     @XmlElement(required = false)
     private String description;
@@ -55,8 +54,26 @@ public abstract class RepoBaseDescriptor implements RepoDescriptor {
     @XmlElement(name = "repoLayoutRef")
     private RepoLayout repoLayout;
 
+    private boolean enableNuGetSupport;
+
+    private boolean enableGemsSupport;
+
+    private boolean enableNpmSupport;
+
+    private boolean enableBowerSupport;
+
+    private boolean enableDebianSupport;
+
+    private boolean enablePypiSupport;
+
+    private boolean enableDockerSupport;
+
     @XmlElement(defaultValue = "V1", required = false)
     private DockerApiVersion dockerApiVersion = DockerApiVersion.V1;
+
+    private boolean enableVagrantSupport;
+
+    private boolean enableGitLfsSupport;
 
     @Override
     public String getKey() {
@@ -65,15 +82,6 @@ public abstract class RepoBaseDescriptor implements RepoDescriptor {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    @Override
-    public RepoType getType() {
-        return type;
-    }
-
-    public void setType(RepoType type) {
-        this.type = type;
     }
 
     @Override
@@ -122,12 +130,93 @@ public abstract class RepoBaseDescriptor implements RepoDescriptor {
     }
 
     @Override
+    public boolean isEnableNuGetSupport() {
+        return enableNuGetSupport;
+    }
+
+    public void setEnableNuGetSupport(boolean enableNuGetSupport) {
+        this.enableNuGetSupport = enableNuGetSupport;
+    }
+
+    @Override
+    public boolean isEnableGemsSupport() {
+        return enableGemsSupport;
+    }
+
+    public void setEnableGemsSupport(boolean enableGemsSupport) {
+        this.enableGemsSupport = enableGemsSupport;
+    }
+
+    @Override
+    public boolean isEnableNpmSupport() {
+        return enableNpmSupport;
+    }
+
+    public void setEnableNpmSupport(boolean enableNpmSupport) {
+        this.enableNpmSupport = enableNpmSupport;
+    }
+
+    @Override
+    public boolean isEnableBowerSupport() {
+        return enableBowerSupport;
+    }
+
+    public void setEnableBowerSupport(boolean enableBowerSupport) {
+        this.enableBowerSupport = enableBowerSupport;
+    }
+
+    @Override
+    public boolean isEnableDebianSupport() {
+        return enableDebianSupport;
+    }
+
+    public void setEnableDebianSupport(boolean enableDebianSupport) {
+        this.enableDebianSupport = enableDebianSupport;
+    }
+
+    @Override
+    public boolean isEnablePypiSupport() {
+        return enablePypiSupport;
+    }
+
+    public void setEnablePypiSupport(boolean enablePypiSupport) {
+        this.enablePypiSupport = enablePypiSupport;
+    }
+
+    @Override
+    public boolean isEnableDockerSupport() {
+        return enableDockerSupport;
+    }
+
+    public void setEnableDockerSupport(boolean enableDockerSupport) {
+        this.enableDockerSupport = enableDockerSupport;
+    }
+
+    @Override
     public DockerApiVersion getDockerApiVersion() {
         return dockerApiVersion;
     }
 
     public void setDockerApiVersion(String dockerApiVersion) {
         this.dockerApiVersion = DockerApiVersion.valueOf(dockerApiVersion);
+    }
+
+    @Override
+    public boolean isEnableVagrantSupport() {
+        return enableVagrantSupport;
+    }
+
+    public void setEnableVagrantSupport(boolean enableVagrantSupport) {
+        this.enableVagrantSupport = enableVagrantSupport;
+    }
+
+    @Override
+    public boolean isEnableGitLfsSupport() {
+        return enableGitLfsSupport;
+    }
+
+    public void setEnableGitLfsSupport(boolean enableGitLfsSupport) {
+        this.enableGitLfsSupport = enableGitLfsSupport;
     }
 
     @Override

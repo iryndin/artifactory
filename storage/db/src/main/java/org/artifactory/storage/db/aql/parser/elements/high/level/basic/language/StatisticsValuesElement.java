@@ -8,8 +8,8 @@ import org.artifactory.storage.db.aql.parser.elements.low.level.LazyParserElemen
 
 import java.util.List;
 
+import static org.artifactory.aql.model.AqlDomainEnum.buildProperties;
 import static org.artifactory.aql.model.AqlDomainEnum.items;
-import static org.artifactory.aql.model.AqlDomainEnum.statistics;
 import static org.artifactory.storage.db.aql.parser.AqlParser.dot;
 import static org.artifactory.storage.db.aql.parser.AqlParser.itemValues;
 
@@ -35,6 +35,6 @@ public class StatisticsValuesElement extends LazyParserElement implements Domain
 
     @Override
     public AqlDomainEnum getDomain() {
-        return statistics;
+        return buildProperties;
     }
 }

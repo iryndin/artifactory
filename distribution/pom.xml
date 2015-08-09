@@ -21,10 +21,9 @@
     <parent>
         <groupId>org.artifactory</groupId>
         <artifactId>artifactory-parent</artifactId>
-        <version>4.0.0</version>
+        <version>3.9.3</version>
     </parent>
 
-    <groupId>org.artifactory.oss</groupId>
     <artifactId>artifactory-distribution-parent</artifactId>
     <packaging>pom</packaging>
     <name>Artifactory Distribution Parent</name>

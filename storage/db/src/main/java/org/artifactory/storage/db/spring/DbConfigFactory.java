@@ -24,15 +24,12 @@ import org.artifactory.api.context.ContextHelper;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.db.DbType;
-import org.artifactory.storage.db.util.JdbcHelper;
-import org.artifactory.storage.db.util.querybuilder.*;
 import org.artifactory.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jndi.JndiObjectFactoryBean;
@@ -43,8 +40,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A Spring {@link org.springframework.context.annotation.Configuration} to initialized database beans.
@@ -53,9 +48,11 @@ import java.sql.SQLException;
  */
 @Configuration
 public class DbConfigFactory implements BeanFactoryAware {
+    private static final Logger log = LoggerFactory.getLogger(DbConfigFactory.class);
+
     public static final String BEAN_PREFIX = "bean:";
     public static final String JNDI_PREFIX = "jndi:";
-    private static final Logger log = LoggerFactory.getLogger(DbConfigFactory.class);
+
     private BeanFactory beanFactory;
 
     @Bean(name = "dataSource")
@@ -155,41 +152,5 @@ public class DbConfigFactory implements BeanFactoryAware {
         try (InputStream pis = ResourceUtils.getResource("/META-INF/default/db/derby.properties")) {
             FileUtils.copyInputStreamToFile(pis, targetStorageFile);
         }
-    }
-
-    /**
-     * create  a query builder instance per db type
-     *
-     * @return query builder instance
-     */
-    @Bean(name = "queryBuilder", autowire = Autowire.BY_TYPE)
-    public IQueryBuilder createSqlBuilder() throws SQLException {
-        JdbcHelper jdbcHelper = beanFactory.getBean(JdbcHelper.class);
-        StorageProperties storageProperties = beanFactory.getBean(StorageProperties.class);
-        String productName = storageProperties.getDbType().toString();
-        Connection connection = jdbcHelper.getDataSource().getConnection();
-        connection.close();
-        IQueryBuilder queryBuilder;
-        switch (productName) {
-            case "oracle":
-                queryBuilder = new OracleQueryBuilder();
-                break;
-            case "mssql":
-                queryBuilder = new SqlServerQueryBuilder();
-                break;
-            case "derby":
-                queryBuilder = new DerbyQueryBuilder();
-                break;
-            case "postgresql":
-                queryBuilder = new PostgresqlQueryBuilder();
-                break;
-            case "mysql":
-                queryBuilder = new MysqlQueryBuilder();
-                break;
-            default:
-                queryBuilder = new DerbyQueryBuilder();
-                break;
-        }
-        return queryBuilder;
     }
 }

@@ -32,12 +32,25 @@ import java.util.List;
  *
  * @author Fred Simon
  */
-@XmlType(name = "P2ConfigurationType", propOrder = {"urls"}, namespace = Descriptor.NS)
+@XmlType(name = "P2ConfigurationType",
+        propOrder = {"enabled", "urls"},
+        namespace = Descriptor.NS)
 public class P2Configuration implements Descriptor {
+
+    @XmlElement(defaultValue = "false")
+    private boolean enabled = false;
 
     @XmlElementWrapper(name = "urls")
     @XmlElement(name = "url", type = String.class, required = false)
     private List<String> urls = new ArrayList<>();
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public List<String> getUrls() {
         return urls;

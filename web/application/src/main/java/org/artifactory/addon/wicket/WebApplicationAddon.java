@@ -43,8 +43,6 @@ import java.util.Map;
  * @author Tomer Cohen
  */
 public interface WebApplicationAddon extends Addon {
-    String SUPER_USER_NAME = "super";
-
     /**
      * @param wicketId The link's wicket id
      * @return An link to an external authentication page.
@@ -90,6 +88,10 @@ public interface WebApplicationAddon extends Addon {
      */
     String getVersionInfo();
 
+    /**
+     * @return Artifactory version string for list browsing
+     */
+    String getListBrowsingVersion();
 
     String getPageTitle(BasePage page);
 

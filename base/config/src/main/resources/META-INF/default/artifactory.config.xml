@@ -19,9 +19,9 @@
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://artifactory.jfrog.org/xsd/1.6.0"
-        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.6.0
-        http://www.jfrog.org/xsd/artifactory-v1_6_0.xsd">
+        xmlns="http://artifactory.jfrog.org/xsd/1.5.13"
+        xsi:schemaLocation="http://artifactory.jfrog.org/xsd/1.5.13
+        http://www.jfrog.org/xsd/artifactory-v1_5_13.xsd">
 <!--
     enable/disable anonymous downloads
     -->
@@ -64,7 +64,6 @@
     <localRepositories>
         <localRepository>
             <key>libs-release-local</key>
-            <type>maven</type>
             <description>Local repository for in-house libraries</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>true</handleReleases>
@@ -72,7 +71,6 @@
         </localRepository>
         <localRepository>
             <key>libs-snapshot-local</key>
-            <type>maven</type>
             <description>Local repository for in-house snapshots</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>false</handleReleases>
@@ -80,7 +78,6 @@
         </localRepository>
         <localRepository>
             <key>plugins-release-local</key>
-            <type>maven</type>
             <description>Local repository for plugins</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>true</handleReleases>
@@ -88,7 +85,6 @@
         </localRepository>
         <localRepository>
             <key>plugins-snapshot-local</key>
-            <type>maven</type>
             <description>Local repository for plugins snapshots</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>false</handleReleases>
@@ -96,7 +92,6 @@
         </localRepository>
         <localRepository>
             <key>ext-release-local</key>
-            <type>maven</type>
             <description>Local repository for third party libraries</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>true</handleReleases>
@@ -104,7 +99,6 @@
         </localRepository>
         <localRepository>
             <key>ext-snapshot-local</key>
-            <type>maven</type>
             <description>Local repository for third party snapshots</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>false</handleReleases>
@@ -115,7 +109,6 @@
     <remoteRepositories>
         <remoteRepository>
             <key>jcenter</key>
-            <type>maven</type>
             <description>Bintray Central Java repository</description>
             <repoLayoutRef>maven-2-default</repoLayoutRef>
             <handleReleases>true</handleReleases>
@@ -131,7 +124,6 @@
         -->
         <virtualRepository>
             <key>remote-repos</key>
-            <type>maven</type>
             <artifactoryRequestsCanRetrieveRemoteArtifacts>true</artifactoryRequestsCanRetrieveRemoteArtifacts>
             <repositories>
                 <repositoryRef>jcenter</repositoryRef>
@@ -139,7 +131,6 @@
         </virtualRepository>
         <virtualRepository>
             <key>libs-release</key>
-            <type>maven</type>
             <repositories>
                 <repositoryRef>libs-release-local</repositoryRef>
                 <repositoryRef>ext-release-local</repositoryRef>
@@ -148,7 +139,6 @@
         </virtualRepository>
         <virtualRepository>
             <key>plugins-release</key>
-            <type>maven</type>
             <repositories>
                 <repositoryRef>plugins-release-local</repositoryRef>
                 <repositoryRef>ext-release-local</repositoryRef>
@@ -157,7 +147,6 @@
         </virtualRepository>
         <virtualRepository>
             <key>libs-snapshot</key>
-            <type>maven</type>
             <repositories>
                 <repositoryRef>libs-snapshot-local</repositoryRef>
                 <repositoryRef>ext-snapshot-local</repositoryRef>
@@ -166,7 +155,6 @@
         </virtualRepository>
         <virtualRepository>
             <key>plugins-snapshot</key>
-            <type>maven</type>
             <repositories>
                 <repositoryRef>plugins-snapshot-local</repositoryRef>
                 <repositoryRef>ext-snapshot-local</repositoryRef>
@@ -207,49 +195,6 @@
             <descriptorPathPattern>[org]/[type]s/[module]-[baseRev](-[fileItegRev]).pom</descriptorPathPattern>
             <folderIntegrationRevisionRegExp>.+</folderIntegrationRevisionRegExp>
             <fileIntegrationRevisionRegExp>.+</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>nuget-default</name>
-            <artifactPathPattern>[orgPath]/[module]/[module].[baseRev](-[fileItegRev]).nupkg</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>false</distinctiveDescriptorPathPattern>
-            <folderIntegrationRevisionRegExp>.*</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>.*</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>npm-default</name>
-            <artifactPathPattern>[orgPath]/[module]/[module]-[baseRev](-[fileItegRev]).tgz</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>false</distinctiveDescriptorPathPattern>
-            <folderIntegrationRevisionRegExp>.*</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>.*</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>bower-default</name>
-            <artifactPathPattern>[orgPath]/[module]/[module]-[baseRev](-[fileItegRev]).[ext]</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>false</distinctiveDescriptorPathPattern>
-            <folderIntegrationRevisionRegExp>.*</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>.*</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>vcs-default</name>
-            <artifactPathPattern>[orgPath]/[module]/[refs&lt;tags|branches&gt;]/[baseRev]/[module]-[baseRev](-[fileItegRev])(-[classifier]).[ext]</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>false</distinctiveDescriptorPathPattern>
-            <folderIntegrationRevisionRegExp>.*</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>[a-zA-Z0-9]{40}</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>sbt-default</name>
-            <artifactPathPattern>[org]/[module]/(scala_[scalaVersion&lt;.+&gt;])/(sbt_[sbtVersion&lt;.+&gt;])/[baseRev]/[type]s/[module](-[classifier]).[ext]</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>true</distinctiveDescriptorPathPattern>
-            <descriptorPathPattern>[org]/[module]/(scala_[scalaVersion&lt;.+&gt;])/(sbt_[sbtVersion&lt;.+&gt;])/[baseRev]/[type]s/ivy.xml</descriptorPathPattern>
-            <folderIntegrationRevisionRegExp>\d{14}</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>\d{14}</fileIntegrationRevisionRegExp>
-        </repoLayout>
-        <repoLayout>
-            <name>simple-default</name>
-            <artifactPathPattern>[orgPath]/[module]/[module]-[baseRev](-[fileItegRev]).[ext]</artifactPathPattern>
-            <distinctiveDescriptorPathPattern>false</distinctiveDescriptorPathPattern>
-            <folderIntegrationRevisionRegExp>.*</folderIntegrationRevisionRegExp>
-            <fileIntegrationRevisionRegExp>.*</fileIntegrationRevisionRegExp>
         </repoLayout>
     </repoLayouts>
     <gcConfig>

@@ -9,9 +9,7 @@ public class FilterElement extends DomainSensitiveParserElement {
 
     @Override
     protected ParserElement init() {
-        return fork(provide(CriteriaEqualsKeyPropertyElement.class), provide(CriteriaEqualsValuePropertyElement.class),
-                provide(CriteriaKeyPropertyElement.class), provide(CriteriaValuePropertyElement.class),
-                provide(EqualsCriteriaElement.class), provide(DefaultCriteriaElement.class),
+        return fork(provide(EqualsCriteriaElement.class), provide(DefaultCriteriaElement.class),
                 provide(CriteriaEqualsPropertyElement.class), provide(CriteriaDefaultPropertyElement.class),
                 provide(FunctionExtensionElement.class));
     }

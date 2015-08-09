@@ -29,7 +29,7 @@ public class ArtifactoryRestRequest {
         this.httpHeaders = requestBuilder.httpHeaders;
         this.imodel = requestBuilder.imodel;
         this.models = requestBuilder.imodels;
-        this.uiRestCall = uriInfo.getBaseUri().getPath().indexOf("/ui/") != -1;
+        this.uiRestCall = uriInfo.getBaseUri().getPath().equals("/artifactory/ui/");
     }
 
     /**

@@ -34,7 +34,7 @@ public final class Module implements Serializable {
 
     private org.jfrog.build.api.Module module;
 
-    public Module(@Nonnull org.jfrog.build.api.Module module) {
+    Module(@Nonnull org.jfrog.build.api.Module module) {
         this.module = module;
     }
 

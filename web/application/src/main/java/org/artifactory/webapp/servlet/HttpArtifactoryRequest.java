@@ -34,6 +34,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpArtifactoryRequest extends ArtifactoryRequestBase {
 
@@ -121,6 +123,18 @@ public class HttpArtifactoryRequest extends ArtifactoryRequestBase {
     @Override
     public Enumeration getHeaders(String headerName) {
         return httpRequest.getHeaders(headerName);
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        String headerName;
+        Map<String, String> headers = new HashMap<>();
+        Enumeration enumeration = httpRequest.getHeaderNames();
+        while (enumeration != null && enumeration.hasMoreElements()) {
+            headerName = (String)enumeration.nextElement();
+            headers.put(headerName, httpRequest.getHeader(headerName));
+        }
+        return headers;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.artifactory.storage.db.aql.sql.builder.query.aql;
 
 import org.artifactory.aql.AqlException;
-import org.artifactory.aql.AqlFieldResolver;
 import org.artifactory.aql.model.AqlComparatorEnum;
 import org.artifactory.aql.model.AqlDomainEnum;
 import org.artifactory.aql.model.AqlField;
@@ -104,212 +103,63 @@ public abstract class Criteria implements AqlQueryElement {
         String index1 = table1 != null && variable1 instanceof AqlField ? table1.getAlias() : "";
         switch (comparatorEnum) {
             case equals: {
-                return generateEqualsQuery(variable1, variable2, params, param, index1);
+                if (param != null) {
+                    params.add(param);
+                    return " " + index1 + toSql(variable1) + " = " + toSql(variable2);
+                } else {
+                    return " " + index1 + toSql(variable1) + " is null";
+                }
             }
             case matches: {
-                return generateMatchQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                if (variable2 instanceof AqlField) {
+                    throw new AqlToSqlQueryBuilderException(
+                            "Illegal syntax the 'match' operator is allowed only with 'value' in right side of the criteria.");
+                }
+                return " " + index1 + toSql(variable1) + " like " + toSql(variable2);
             }
             case notMatches: {
-                return generateNotMatchQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                if (variable2 instanceof AqlField) {
+                    throw new AqlToSqlQueryBuilderException(
+                            "Illegal syntax the 'not match' operator is allowed only with 'value' in right side of the criteria.");
+                }
+                return "(" + index1 + toSql(variable1) + " not like " + toSql(variable2) + " or " + index1 + toSql(
+                        variable1) + " is null)";
             }
             case less: {
-                return generateLessThanQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                return " " + index1 + toSql(variable1) + " < " + toSql(variable2);
             }
             case greater: {
-                return generateGreaterThanQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                return " " + index1 + toSql(variable1) + " > " + toSql(variable2);
             }
             case greaterEquals: {
-                return generateGreaterEqualQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                return " " + index1 + toSql(variable1) + " >= " + toSql(variable2);
             }
             case lessEquals: {
-                return generateLessEqualsQuery(variable1, variable2, params, param, index1);
+                validateNotNullParam(param);
+                params.add(param);
+                return " " + index1 + toSql(variable1) + " <= " + toSql(variable2);
             }
             case notEquals: {
-                return generateNotEqualsQuery(variable1, variable2, params, param, index1);
+                if (param != null) {
+                    params.add(param);
+                    return "(" + index1 + toSql(variable1) + " != " + toSql(variable2) + " or " + index1 + toSql(
+                            variable1) + " is null)";
+                } else {
+                    return " " + index1 + toSql(variable1) + " is not null";
+                }
             }
             default:
                 throw new IllegalStateException("Should not reach to the point of code");
-        }
-    }
-
-    //
-    public String createSqlComplexPropertyCriteria(AqlComparatorEnum comparatorEnum, AqlVariable variable1,
-            SqlTable table1,
-            AqlVariable variable2, List<Object> params) {
-        AqlVariable key = AqlFieldResolver.resolve(AqlFieldEnum.propertyKey.signature);
-        AqlVariable value = AqlFieldResolver.resolve(AqlFieldEnum.propertyValue.signature);
-        Object param1 = resolveParam(params, variable1);
-        Object param2 = resolveParam(params, variable2);
-        String index1 = table1 != null ? table1.getAlias() : "";
-        switch (comparatorEnum) {
-            case equals: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateEqualsQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case matches: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateMatchQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case notMatches: {
-                params.add(param1);
-                params.add(param2);
-                return "(" + index1 + "node_id is null or not exists (select 1 from node_props where "+index1 + "node_id =node_id and prop_key = " + toSql(
-                        variable1) + " and prop_value like  " + toSql(variable2) + "))";
-            }
-            case less: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateLessThanQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case greater: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateGreaterThanQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case greaterEquals: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateGreaterEqualQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case lessEquals: {
-                return "(" + generateEqualsQuery(key, variable1, params, param1, index1) + " and " +
-                        generateLessEqualsQuery(value, variable2, params, param2, index1) + ")";
-            }
-            case notEquals: {
-                params.add(param1);
-                params.add(param2);
-                return "(" + index1 + "node_id is null or not exists (select 1 from node_props where "+ index1 + "node_id = node_id and prop_key = " + toSql(
-                        variable1) + " and prop_value = " + toSql(variable2) + "))";
-            }
-            default:
-                throw new IllegalStateException("Should not reach to the point of code");
-        }
-    }
-
-    private String generateNotEqualsQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        if (param != null) {
-            params.add(param);
-            return "(" + index1 + toSql(variable1) + " != " + toSql(variable2) + " or " + index1 + toSql(
-                    variable1) + " is null)";
-        } else {
-            return " " + index1 + toSql(variable1) + " is not null";
-        }
-    }
-
-    public String createSqlPropertyCriteria(AqlComparatorEnum comparatorEnum, AqlVariable variable1, SqlTable table1,
-            AqlVariable variable2, List<Object> params) {
-        Object param = resolveParam(params, variable2);
-        String index1 = table1 != null && variable1 instanceof AqlField ? table1.getAlias() : "";
-        switch (comparatorEnum) {
-            case equals: {
-                return generateEqualsQuery(variable1, variable2, params, param, index1);
-            }
-            case matches: {
-                return generateMatchQuery(variable1, variable2, params, param, index1);
-            }
-            case notMatches: {
-                return generatePropertyNotMatchQuery(variable1, variable2, params, param, index1);
-            }
-            case less: {
-                return generateLessThanQuery(variable1, variable2, params, param, index1);
-            }
-            case greater: {
-                return generateGreaterThanQuery(variable1, variable2, params, param, index1);
-            }
-            case greaterEquals: {
-                return generateGreaterEqualQuery(variable1, variable2, params, param, index1);
-            }
-            case lessEquals: {
-                return generateLessEqualsQuery(variable1, variable2, params, param, index1);
-            }
-            case notEquals: {
-                return generatePropertyNotEqualsQuery(variable1, variable2, params, param, index1);
-            }
-            default:
-                throw new IllegalStateException("Should not reach to the point of code");
-        }
-    }
-
-    private String generateLessEqualsQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        return " " + index1 + toSql(variable1) + " <= " + toSql(variable2);
-    }
-
-    private String generateGreaterEqualQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        return " " + index1 + toSql(variable1) + " >= " + toSql(variable2);
-    }
-
-    private String generateGreaterThanQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        return " " + index1 + toSql(variable1) + " > " + toSql(variable2);
-    }
-
-    private String generateLessThanQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        return " " + index1 + toSql(variable1) + " < " + toSql(variable2);
-    }
-
-    private String generateNotMatchQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        if (variable2 instanceof AqlField) {
-            throw new AqlToSqlQueryBuilderException(
-                    "Illegal syntax the 'not match' operator is allowed only with 'value' in right side of the criteria.");
-        }
-        return "(" + index1 + toSql(variable1) + " not like " + toSql(variable2) + " or " + index1 + toSql(
-                variable1) + " is null)";
-    }
-
-    private String generateMatchQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params, Object param,
-            String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        if (variable2 instanceof AqlField) {
-            throw new AqlToSqlQueryBuilderException(
-                    "Illegal syntax the 'match' operator is allowed only with 'value' in right side of the criteria.");
-        }
-        return " " + index1 + toSql(variable1) + " like " + toSql(variable2);
-    }
-
-    private String generateEqualsQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params, Object param,
-            String index1) {
-        if (param != null) {
-            params.add(param);
-            return " " + index1 + toSql(variable1) + " = " + toSql(variable2);
-        } else {
-            return " " + index1 + toSql(variable1) + " is null";
-        }
-    }
-
-    private String generatePropertyNotMatchQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        validateNotNullParam(param);
-        params.add(param);
-        if (variable2 instanceof AqlField) {
-            throw new AqlToSqlQueryBuilderException(
-                    "Illegal syntax the 'not match' operator is allowed only with 'value' in right side of the criteria.");
-        }
-        return "(" + index1 + "node_id is null or not exists (select 1 from node_props where "+index1 + "node_id = node_id and " + toSql(
-                variable1) + " like " + toSql(variable2) + "))";
-    }
-
-    private String generatePropertyNotEqualsQuery(AqlVariable variable1, AqlVariable variable2, List<Object> params,
-            Object param, String index1) {
-        if (param != null) {
-            params.add(param);
-            return "(" + index1 + "node_id is null or not exists (select 1 from node_props where "+index1 + "node_id = node_id and " + toSql(
-                    variable1) + " = " + toSql(variable2) + "))";
-        } else {
-            return "(" + index1 + "node_id is null or not exists ( select 1 from node_props where " + index1 + "node_id = node_id and " + toSql(
-                    variable1) + " is  null))";
         }
     }
 

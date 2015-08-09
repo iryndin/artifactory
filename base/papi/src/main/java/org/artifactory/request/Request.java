@@ -24,6 +24,7 @@ import org.artifactory.repo.RepoPath;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Map;
 
 public interface Request {
 
@@ -51,6 +52,8 @@ public interface Request {
     String getHeader(String headerName);
 
     Enumeration getHeaders(String headerName);
+
+    Map<String, String> getHeaders();
 
     String getServletContextUrl();
 

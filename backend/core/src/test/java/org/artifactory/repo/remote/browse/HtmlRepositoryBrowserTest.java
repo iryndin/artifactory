@@ -25,9 +25,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.artifactory.test.ArtifactoryHomeBoundTest;
 import org.artifactory.util.ResourceUtils;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -42,12 +41,12 @@ import static org.testng.Assert.assertEquals;
  * @author Tomer Cohen
  */
 @Test
-public class HtmlRepositoryBrowserTest extends ArtifactoryHomeBoundTest {
+public class HtmlRepositoryBrowserTest {
 
     private HtmlRepositoryBrowser urlLister;
     private String baseUrl;
 
-    @BeforeMethod
+    @BeforeClass
     public void setUp() {
         final CloseableHttpClient hc = HttpClients.createDefault();
         HttpExecutor httpExecutor = new HttpExecutor() {
@@ -98,14 +97,6 @@ public class HtmlRepositoryBrowserTest extends ArtifactoryHomeBoundTest {
         assertEquals(children.get(2).getUrl(), baseUrl + "/multi3/");
     }
 
-    public void listAllFromBintrayListBrowsingHtml() throws IOException {
-        baseUrl = "http://jcenter.bintray.com";
-        File html = ResourceUtils.getResourceAsFile(testResourcesPath + "/bintray.html");
-        List<RemoteItem> children = urlLister.parseHtml(Files.toString(html, Charsets.UTF_8), baseUrl);
-        assertEquals(children.size(), 1, "Found: " + children);
-        assertEquals(children.get(0).getUrl(), baseUrl + "/ojdbc/");
-    }
-
     private File createValidHtml(File source) throws IOException {
         File tempFile = File.createTempFile("artifactory", "html");
         String fileContent = FileUtils.readFileToString(source);
@@ -116,18 +107,5 @@ public class HtmlRepositoryBrowserTest extends ArtifactoryHomeBoundTest {
 
     private static final String testResourcesPath = "/org/artifactory/repo/remote/browse/html";
 
-    public void listAllFromArtifactoryListBrowsingHtmlWithSingleQuotes() throws IOException {
-        File html = ResourceUtils.getResourceAsFile(testResourcesPath + "/hrefExample.html");
-        List<RemoteItem> children = urlLister.parseHtml(Files.toString(html, Charsets.UTF_8), baseUrl);
-        assertEquals(children.size(), 4, "Found: " + children);
-        assertEquals(children.get(0).getUrl(), baseUrl + "/file.jar");
-        assertEquals(children.get(0).getName(), "file.jar");
-        assertEquals(children.get(1).getUrl(), baseUrl + "/file1");
-        assertEquals(children.get(1).getName(), "file1");
-        assertEquals(children.get(2).getUrl(), baseUrl + "/file2");
-        assertEquals(children.get(2).getName(), "file2");
-        assertEquals(children.get(3).getUrl(), baseUrl + "/index.html");
-        assertEquals(children.get(3).getName(), "index.html");
-    }
 
 }

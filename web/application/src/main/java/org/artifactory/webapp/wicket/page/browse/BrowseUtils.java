@@ -1,24 +1,37 @@
 package org.artifactory.webapp.wicket.page.browse;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.artifactory.api.repo.BaseBrowsableItem;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Yoav Luft
- * @author Yossi Shaul
  */
 public class BrowseUtils {
-
     /**
-     * @return A filtered list without the checksum items (md5 and sha1).
+     * Creates a new list of items without items with the suffixes "sha1" or "md5"
+     *
+     * @param items
+     * @return
      */
-    public static List<BaseBrowsableItem> filterChecksums(Collection<BaseBrowsableItem> items) {
-        List<BaseBrowsableItem> filtered = items.stream().filter(i -> i != null && i.getName() != null &&
-                !i.getName().endsWith(".sha1") && !i.getName().endsWith(".sha1"))
-                .collect(Collectors.toList());
-        return filtered;
+    public static List<BaseBrowsableItem> filterChecksums(Collection<? extends BaseBrowsableItem> items) {
+        return Lists.newLinkedList(Iterables.filter(items,
+                new Predicate<BaseBrowsableItem>() {
+                    @Override
+                    public boolean apply(@Nullable BaseBrowsableItem input) {
+                        if (input == null || input.getName() == null
+                                || input.getName().endsWith(".sha1")
+                                || input.getName().endsWith(".md5")) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }));
     }
 }

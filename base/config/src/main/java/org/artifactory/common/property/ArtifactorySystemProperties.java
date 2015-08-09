@@ -27,17 +27,30 @@ import org.artifactory.log.BootstrapLogger;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author yoavl
  */
 public class ArtifactorySystemProperties {
+
+    /**
+     * The combined properties of System, artifactory.system.properties file and artifactory.properties file. All system
+     * properties starting with 'artifactory.' will be included.
+     */
+    private Properties artifactoryProperties = new Properties();
+    /**
+     * Caching parseLong values from the properties above
+     */
+    private Map<String, Long> artifactoryLongProperties = new HashMap<>();
+    private Map<String, Boolean> artifactoryBooleanProperties = new HashMap<>();
+
+    /**
+     * A map of substitute repo keys (oldKey:newKey) for supporting old repository keys (that are invalid xml ids).
+     */
+    private Map<String, String> substituteRepoKeys = new HashMap<>();
 
     private static final ImmutableMap<String, PropertyMapper> DEPRECATED =
             ImmutableMap.<String, PropertyMapper>builder()
@@ -56,111 +69,15 @@ public class ArtifactorySystemProperties {
                     .put("bintray.system.api.key", new MovedToConfigPropertyMapper
                             ("The bintray config section in the admin page"))
                     .build();
-    /**
-     * The combined properties of System, artifactory.system.properties file and artifactory.properties file. All system
-     * properties starting with 'artifactory.' will be included.
-     */
-    private Properties nonEnumArtifactoryProperties = new Properties();
-    private EnumMap<ConstantValues, String> artifactoryProperties = new EnumMap<>(ConstantValues.class);
-
-    /**
-     * Caching parseLong values from the properties above
-     */
-    private EnumMap<ConstantValues, Long> artifactoryLongProperties = new EnumMap<>(ConstantValues.class);
-    private EnumMap<ConstantValues, Boolean> artifactoryBooleanProperties = new EnumMap<>(ConstantValues.class);
-    /**
-     * A map of substitute repo keys (oldKey:newKey) for supporting old repository keys (that are invalid xml ids).
-     */
-    private Map<String, String> substituteRepoKeys = new HashMap<>();
-
-    private static void loadSystemProperties(Properties result) {
-        Properties properties = System.getProperties();
-        for (Object key : properties.keySet()) {
-            String sKey = (String) key;
-            if (sKey.startsWith(ConstantValues.SYS_PROP_PREFIX)) {
-                result.put(sKey, properties.getProperty(sKey));
-            }
-        }
-    }
-
-    private static void validateConstants(Properties artProps) {
-        String chrootPropertyName = ConstantValues.uiChroot.getPropertyName();
-        String chroot = (String) artProps.get(chrootPropertyName);
-        if (StringUtils.isNotBlank(chroot)) {
-            if (!new File(chroot).exists()) {
-                artProps.remove(chrootPropertyName);
-                BootstrapLogger.error("Selected chroot '" + chroot + "' does not exist. Ignoring property value!");
-            }
-        }
-    }
-
-    private static void handleDeprecatedProps(Properties artProps) {
-        //Test the deprecated props against the current props
-        Properties autoReplaced = new Properties();
-        for (Object key : artProps.keySet()) {
-            String prop = (String) key;
-            if (DEPRECATED.containsKey(prop)) {
-                PropertyMapper mapper = DEPRECATED.get(prop);
-                String newProp = mapper.getNewPropertyName();
-                String suggestion = newProp == null ? "this property is no longer in use." :
-                        "please use: '" + newProp + "' instead.";
-                BootstrapLogger.warn(
-                        "Usage of deprecated artifactory system property detected: '" + prop + "' - " + suggestion);
-                //Check if property can be automatically replaced
-                String value = (String) artProps.get(prop);
-                String newValue = mapper.map(value);
-                if (newProp == null) {
-                    newProp = prop;
-                }
-                if (newValue != null) {
-                    autoReplaced.put(newProp, newValue);
-                    BootstrapLogger.warn(
-                            "Deprecated artifactory system property '" + prop + "=" + value + "' auto-replaced with '" +
-                                    newProp + "=" + newValue + "'.");
-                }
-            }
-        }
-        artProps.putAll(autoReplaced);
-    }
-
-    private static Map<String, String> fillRepoKeySubstitute(Properties artProps) {
-        Map<String, String> result = new HashMap<>();
-        String prefix = ConstantValues.substituteRepoKeys.getPropertyName();
-        for (Object o : artProps.keySet()) {
-            String key = (String) o;
-            if (key.startsWith(prefix)) {
-                String oldRepoKey = key.substring(prefix.length());
-                String newRepoKey = (String) artProps.get(key);
-                result.put(oldRepoKey, newRepoKey);
-            }
-        }
-        // Remove the keys used
-        for (String key : result.keySet()) {
-            artProps.remove(prefix + key);
-        }
-        return result;
-    }
-
-    public String getProperty(ConstantValues key) {
-        String result = artifactoryProperties.get(key);
-        if (result == null) {
-            return key.getDefValue();
-        }
-        return result;
-    }
-
-    public boolean hasProperty(ConstantValues key) {
-        return artifactoryProperties.containsKey(key);
-    }
 
     public String getProperty(String key, @Nullable String defaultValue) {
-        return nonEnumArtifactoryProperties.getProperty(key, defaultValue);
+        return artifactoryProperties.getProperty(key, defaultValue);
     }
 
-    public Long getLongProperty(ConstantValues key) {
+    public Long getLongProperty(String key, String defaultValue) {
         Long result = artifactoryLongProperties.get(key);
         if (result == null) {
-            String strValue = getProperty(key);
+            String strValue = artifactoryProperties.getProperty(key, defaultValue);
             if (strValue == null) {
                 result = 0l;
             } else {
@@ -171,10 +88,10 @@ public class ArtifactorySystemProperties {
         return result;
     }
 
-    public Boolean getBooleanProperty(ConstantValues key) {
+    public Boolean getBooleanProperty(String key, String defaultValue) {
         Boolean result = artifactoryBooleanProperties.get(key);
         if (result == null) {
-            String strValue = getProperty(key);
+            String strValue = artifactoryProperties.getProperty(key, defaultValue);
             if (strValue == null) {
                 result = Boolean.FALSE;
             } else {
@@ -222,7 +139,6 @@ public class ArtifactorySystemProperties {
         // Override with System properties
         loadSystemProperties(combinedProperties);
 
-        Set<String> setAsSystemProp = new HashSet<>();
         //Cleanup all non-artifactory system properties and set them as system properties
         for (Object key : combinedProperties.keySet()) {
             String propName = (String) key;
@@ -230,34 +146,78 @@ public class ArtifactorySystemProperties {
             if (!propName.startsWith(ConstantValues.SYS_PROP_PREFIX)) {
                 // TODO: mainly for derby db properties, find another way of doing it
                 System.setProperty(propName, propValue);
-                setAsSystemProp.add(propName);
             }
         }
-        for (String key : setAsSystemProp) {
-            combinedProperties.remove(key);
-        }
-
-        substituteRepoKeys = fillRepoKeySubstitute(combinedProperties);
-
-        //Test for deprecated properties and warn
-        handleDeprecatedProps(combinedProperties);
-
-        validateConstants(combinedProperties);
-
-        // Use the EnumMap as much as possible
-        EnumMap<ConstantValues, String> newArtifactoryProperties = new EnumMap<>(ConstantValues.class);
-        for (ConstantValues constVal : ConstantValues.values()) {
-            Object val = combinedProperties.remove(constVal.getPropertyName());
-            if (val != null) {
-                newArtifactoryProperties.put(constVal, (String) val);
-            }
-        }
-        artifactoryProperties = newArtifactoryProperties;
-        // TODO: Print a message when combined props is not empty as this should not happen.
-        // It's probably a typo! But it's used for special security access values not declared in ConstantValues
-        nonEnumArtifactoryProperties = combinedProperties;
+        artifactoryProperties = combinedProperties;
         artifactoryBooleanProperties.clear();
         artifactoryLongProperties.clear();
+        fillRepoKeySubstitute();
+
+        //Test for deprecated properties and warn
+        handleDeprecatedProps();
+
+        validateConstants();
+    }
+
+    private void validateConstants() {
+        String chrootPropertyName = ConstantValues.uiChroot.getPropertyName();
+        String chroot = (String) artifactoryProperties.get(chrootPropertyName);
+        if (StringUtils.isNotBlank(chroot)) {
+            if (!new File(chroot).exists()) {
+                artifactoryProperties.remove(chrootPropertyName);
+                BootstrapLogger.error("Selected chroot '" + chroot + "' does not exist. Ignoring property value!");
+            }
+        }
+    }
+
+    private void handleDeprecatedProps() {
+        //Test the deprecated props against the current props
+        Properties autoReplaced = new Properties();
+        for (Object key : artifactoryProperties.keySet()) {
+            String prop = (String) key;
+            if (DEPRECATED.containsKey(prop)) {
+                PropertyMapper mapper = DEPRECATED.get(prop);
+                String newProp = mapper.getNewPropertyName();
+                String suggestion = newProp == null ? "this property is no longer in use." :
+                        "please use: '" + newProp + "' instead.";
+                BootstrapLogger.warn(
+                        "Usage of deprecated artifactory system property detected: '" + prop + "' - " + suggestion);
+                //Check if property can be automatically replaced
+                String value = (String) artifactoryProperties.get(prop);
+                String newValue = mapper.map(value);
+                if (newValue != null) {
+                    autoReplaced.put(newProp, newValue);
+                    BootstrapLogger.warn(
+                            "Deprecated artifactory system property '" + prop + "=" + value + "' auto-replaced with '" +
+                                    newProp + "=" + newValue + "'.");
+                }
+            }
+        }
+        artifactoryProperties.putAll(autoReplaced);
+    }
+
+    private static void loadSystemProperties(Properties result) {
+        Properties properties = System.getProperties();
+        for (Object key : properties.keySet()) {
+            String sKey = (String) key;
+            if (sKey.startsWith(ConstantValues.SYS_PROP_PREFIX)) {
+                result.put(sKey, properties.getProperty(sKey));
+            }
+        }
+    }
+
+    private void fillRepoKeySubstitute() {
+        Map<String, String> result = new HashMap<>();
+        String prefix = ConstantValues.substituteRepoKeys.getPropertyName();
+        for (Object o : artifactoryProperties.keySet()) {
+            String key = (String) o;
+            if (key.startsWith(prefix)) {
+                String oldRepoKey = key.substring(prefix.length());
+                String newRepoKey = (String) artifactoryProperties.get(key);
+                result.put(oldRepoKey, newRepoKey);
+            }
+        }
+        substituteRepoKeys = result;
     }
 
     /**
@@ -266,11 +226,8 @@ public class ArtifactorySystemProperties {
      * @return Properties - The copy of the artifactoryProperties object
      */
     public Properties getPropertiesCopy() {
-        Properties propertiesCopy = new Properties();
-        for (Map.Entry<ConstantValues, String> entry : artifactoryProperties.entrySet()) {
-            propertiesCopy.put(entry.getKey().getPropertyName(), entry.getValue());
-        }
-        propertiesCopy.putAll(nonEnumArtifactoryProperties);
+        Properties propertiesCopy = new Properties(artifactoryProperties);
+        propertiesCopy.putAll(artifactoryProperties);
         return propertiesCopy;
     }
 
@@ -281,37 +238,27 @@ public class ArtifactorySystemProperties {
      * @param value        Property value
      */
     public void setProperty(String propertyName, String value) {
-        ConstantValues key = null;
-        for (ConstantValues val : ConstantValues.values()) {
-            if (val.getPropertyName().equals(propertyName)) {
-                key = val;
-                break;
-            }
+        //Update the caches too
+        if (artifactoryLongProperties.containsKey(propertyName)) {
+            artifactoryLongProperties.put(propertyName, Long.valueOf(value));
+        } else if (artifactoryBooleanProperties.containsKey(propertyName)) {
+            artifactoryBooleanProperties.put(propertyName, Boolean.valueOf(value));
         }
-        if (key != null) {
-            artifactoryProperties.put(key, value);
-            //Update the caches too. Only ConstantValues have a cache entry
-            if (artifactoryLongProperties.containsKey(key)) {
-                artifactoryLongProperties.put(key, Long.valueOf(value));
-            }
-            if (artifactoryBooleanProperties.containsKey(key)) {
-                artifactoryBooleanProperties.put(key, Boolean.valueOf(value));
-            }
-        } else {
-            nonEnumArtifactoryProperties.put(propertyName, value);
-        }
+        artifactoryProperties.setProperty(propertyName, value);
     }
 
     /**
      * Removes the value of the given key
      *
-     * @param key Property constant values enum entry
+     * @param propertyName Property key
      * @return the prev value or null
      */
-    public String removeProperty(ConstantValues key) {
-        artifactoryBooleanProperties.remove(key);
-        artifactoryLongProperties.remove(key);
-        return artifactoryProperties.remove(key);
+    public String removeProperty(String propertyName) {
+        return (String) artifactoryProperties.remove(propertyName);
+    }
+
+    public String getProperty(ConstantValues property) {
+        return getProperty(property.getPropertyName(), property.getDefValue());
     }
 
 }

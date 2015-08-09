@@ -20,7 +20,6 @@ package org.artifactory.security;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.codec.binary.Base64;
@@ -43,7 +42,6 @@ import org.artifactory.api.security.UserInfoBuilder;
 import org.artifactory.api.security.ldap.LdapService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ConstantValues;
-import org.artifactory.common.Info;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.config.ConfigurationException;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
@@ -52,7 +50,6 @@ import org.artifactory.descriptor.security.SecurityDescriptor;
 import org.artifactory.descriptor.security.ldap.LdapSetting;
 import org.artifactory.descriptor.security.sso.HttpSsoSettings;
 import org.artifactory.factory.InfoFactoryHolder;
-import org.artifactory.model.xstream.security.ImmutableAclInfo;
 import org.artifactory.repo.InternalRepoPathFactory;
 import org.artifactory.repo.LocalCacheRepo;
 import org.artifactory.repo.LocalRepo;
@@ -321,7 +318,7 @@ public class SecurityServiceImpl implements InternalSecurityService {
 
     private boolean isAnonBuildInfoAccessDisabled() {
         SecurityDescriptor security = centralConfig.getDescriptor().getSecurity();
-        return security.isAnonAccessToBuildInfosDisabled();
+        return  security.isAnonAccessToBuildInfosDisabled();
     }
 
     @Override
@@ -467,18 +464,6 @@ public class SecurityServiceImpl implements InternalSecurityService {
     @Override
     public List<UserInfo> getAllUsers(boolean includeAdmins) {
         return userGroupStoreService.getAllUsers(includeAdmins);
-    }
-
-    @Override
-    public Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction) {
-        return userGroupStoreService.getUsersGroupsPaging(includeAdmins, orderBy,
-                startOffset, limit, direction);
-    }
-
-    @Override
-    public long getAllUsersGroupsCount(boolean includeAdmins) {
-        return userGroupStoreService.getAllUsersGroupsCount(includeAdmins);
     }
 
     @Override
@@ -991,67 +976,6 @@ public class SecurityServiceImpl implements InternalSecurityService {
     }
 
     @Override
-    public Map<PermissionTargetInfo, AceInfo> getUserPermissionByPrincipal(String username) {
-        Map<PermissionTargetInfo, AceInfo> aceInfoMap = Maps.newHashMap();
-        UserInfo user = userGroupStoreService.findUser(username);
-        if (user == null) {
-            return Maps.newHashMap();
-        }
-        Set<ArtifactorySid> sids = getUserEffectiveSids(new SimpleUser(user));
-        List<AclInfo> acls = getAllAcls();
-        for (AclInfo acl : acls) {
-            addSidsPermissions(aceInfoMap, sids, acl);
-        }
-        return aceInfoMap;
-    }
-
-    public Map<PermissionTargetInfo, AceInfo> getGroupsPermissions(List<String> groups) {
-        Map<PermissionTargetInfo, AceInfo> aceInfoMap = Maps.newHashMap();
-        List<AclInfo> acls = getAllAcls();
-        for (AclInfo acl : acls) {
-            for (AceInfo ace : acl.getAces()) {
-                if (ace.isGroup() && groups.contains(ace.getPrincipal())) {
-                    aceInfoMap.put(acl.getPermissionTarget(), ace);
-                }
-            }
-        }
-        return aceInfoMap;
-    }
-
-
-    public Map<PermissionTargetInfo, AceInfo> getUserPermissions(String userName) {
-        Map<PermissionTargetInfo, AceInfo> aceInfoMap = Maps.newHashMap();
-        List<AclInfo> acls = getAllAcls();
-        for (AclInfo acl : acls) {
-            for (AceInfo ace : acl.getAces()) {
-                if (!ace.isGroup() && userName.equals(ace.getPrincipal())) {
-                    aceInfoMap.put(acl.getPermissionTarget(), ace);
-                }
-            }
-        }
-        return aceInfoMap;
-    }
-
-
-    /**
-     * add artifactory sids permissions to map
-     *
-     * @param aceInfoMap - permission target and principal info map
-     * @param sids       -permissions related sids
-     * @param acl        - permissions acls
-     */
-    private void addSidsPermissions(Map<PermissionTargetInfo, AceInfo> aceInfoMap, Set<ArtifactorySid> sids,
-            AclInfo acl) {
-        for (AceInfo ace : acl.getAces()) {
-            //Check that we match the sids
-            if (sids.contains(new ArtifactorySid(ace.getPrincipal(), ace.isGroup()))) {
-                aceInfoMap.put(acl.getPermissionTarget(), ace);
-            }
-        }
-    }
-
-
-    @Override
     public boolean userHasPermissionsOnRepositoryRoot(String repoKey) {
         Repo repo = repositoryService.repositoryByKey(repoKey);
         if (repo == null) {
@@ -1252,12 +1176,6 @@ public class SecurityServiceImpl implements InternalSecurityService {
             RepoPath repoPath, ArtifactoryPermission permission, Set<ArtifactorySid> sids) {
         Collection<AclInfo> acls = aclStoreService.getAllAcls();
         for (AclInfo acl : acls) {
-            if (!(acl instanceof ImmutableAclInfo)) {
-                RuntimeException runtimeException = new RuntimeException(
-                        "Checking for permission on " + acl
-                                + " should use only immutable security objects not " + acl.getClass());
-                log.error(runtimeException.getMessage(), runtimeException);
-            }
             if (!hasAceInAcl(acl, sids)) {
                 // If no ACE skip path analysis
                 continue;
@@ -1291,7 +1209,6 @@ public class SecurityServiceImpl implements InternalSecurityService {
         }
         return false;
     }
-
 
     @Override
     public void exportTo(ExportSettings settings) {
@@ -1628,18 +1545,20 @@ public class SecurityServiceImpl implements InternalSecurityService {
         for (String repoKey : repoKeys) {
             String repoKeyCacheOmitted;
 
-            if (repoKey.contains(LocalCacheRepoDescriptor.PATH_SUFFIX)) {
+            if(repoKey.contains(LocalCacheRepoDescriptor.PATH_SUFFIX)) {
                 repoKeyCacheOmitted = repoKey.substring(0,
                         repoKey.lastIndexOf(LocalCacheRepoDescriptor.PATH_SUFFIX.charAt(0)));
-            } else {
+            }
+            else {
                 altered.add(repoKey);
                 continue;
             }
             VirtualRepo globalVirtualRepo = repositoryService.getGlobalVirtualRepo();
             if ((globalVirtualRepo.getLocalCacheRepositoriesMap().containsKey(repoKey))
-                    || (globalVirtualRepo.getRemoteRepositoriesMap().containsKey(repoKeyCacheOmitted))) {
+                 || (globalVirtualRepo.getRemoteRepositoriesMap().containsKey(repoKeyCacheOmitted))) {
                 altered.add(repoKeyCacheOmitted);
-            } else {
+            }
+            else{
                 altered.add(repoKey); //Its Possible that someone named their local repo '*-cache'
             }
         }

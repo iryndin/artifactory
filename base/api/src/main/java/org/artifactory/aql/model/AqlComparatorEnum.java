@@ -21,9 +21,4 @@ public enum AqlComparatorEnum {
         }
         return null;
     }
-
-    public boolean isNegative() {
-        return this == notMatches || this == notEquals;
-
-    }
 }

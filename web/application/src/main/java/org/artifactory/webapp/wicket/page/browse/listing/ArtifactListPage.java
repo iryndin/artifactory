@@ -29,7 +29,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.CoreAddons;
+import org.artifactory.addon.wicket.WebApplicationAddon;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.BaseBrowsableItem;
 import org.artifactory.api.repo.BrowsableItemCriteria;
@@ -161,7 +161,7 @@ public class ArtifactListPage extends WebPage {
     }
 
     private void addAddress(HttpServletRequest request) {
-        final String version = addonsManager.addonByType(CoreAddons.class).getListBrowsingVersion();
+        final String version = addonsManager.addonByType(WebApplicationAddon.class).getListBrowsingVersion();
         final String serverName = request.getServerName();
         String address = String.format("%s Server at %s Port %s", version, serverName, request.getServerPort());
         add(new Label("address", address));
@@ -200,7 +200,7 @@ public class ArtifactListPage extends WebPage {
      */
     private List<? extends BaseBrowsableItem> getBrowsableItemsList(RepoPath repoPath, Properties requestProps,
             RootNodesFilterResult rootNodesFilterResult, boolean updateRootNodesFilterFlag) {
-        List<BaseBrowsableItem> items = Lists.newArrayList();
+        List<? extends BaseBrowsableItem> items = Lists.newArrayList();
         BrowsableItemCriteria.Builder builder = new BrowsableItemCriteria.Builder(repoPath).
                 requestProperties(requestProps);
         boolean includeChecksums = !ConstantValues.uiHideChecksums.getBoolean();

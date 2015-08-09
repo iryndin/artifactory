@@ -24,8 +24,11 @@ import org.artifactory.factory.InfoFactoryHolder;
 import org.artifactory.repo.RepoPath;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An internal resource request that is sent by Artifactory itself to the DownloadService asking for a resource.
@@ -54,10 +57,13 @@ public class InternalArtifactoryRequest extends ArtifactoryRequestBase {
 
     private Map<String, String> headers = Maps.newHashMap();
 
+    private final Set<String> delegationAllowedHeaders;
+
     public InternalArtifactoryRequest(RepoPath repoPath) {
         String repoKey = processMatrixParamsIfExist(repoPath.getRepoKey());
         String path = processMatrixParamsIfExist(repoPath.getPath());
         setRepoPath(InfoFactoryHolder.get().createRepoPath(repoKey, path));
+        delegationAllowedHeaders = new HashSet<>();
     }
 
     @Override
@@ -124,8 +130,24 @@ public class InternalArtifactoryRequest extends ArtifactoryRequestBase {
         return new IteratorEnumeration(headers.values().iterator());
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
     public void addHeader(String key, String value) {
         this.headers.put(key, value);
+    }
+
+    /**
+     * Adds http header eligible for remote host delegation, for more details
+     * @see {@link org.artifactory.api.request.InternalArtifactoryRequest#getDelegationAllowedHeaders()}
+     *
+     * @param key header name
+     * @param value header value
+     */
+    public void addHeaderEligibleForDelegation(String key, String value) {
+        delegationAllowedHeaders.add(key);
+        addHeader(key, value);
     }
 
     public void addHeaders(Map<String, String> headers) {
@@ -230,5 +252,24 @@ public class InternalArtifactoryRequest extends ArtifactoryRequestBase {
         } else {
             return super.getParameterValues(name);
         }
+    }
+
+    /**
+     * A list of headers that can be delegated to the
+     * remote host,
+     *
+     * This is white-list filtering that used for preventing from
+     * unauthorized headers leaking to the external request
+     * towards destination server.
+     *
+     * Service willing to allow certain header being delegated
+     * to remote host, should explicitly mark it as eligible
+     * for that by registering it in DelegationAllowedHeaders set
+     * via {@link org.artifactory.api.request.InternalArtifactoryRequest#addHeaderEligibleForDelegation(String, String)}
+     *
+     * @return Set<String>
+     */
+    public Set<String> getDelegationAllowedHeaders() {
+        return Collections.unmodifiableSet(delegationAllowedHeaders);
     }
 }

@@ -6,7 +6,6 @@ import org.artifactory.aql.model.AqlPermissionProvider;
 import org.artifactory.aql.result.AqlEagerResult;
 import org.artifactory.aql.result.AqlLazyResult;
 import org.artifactory.aql.result.rows.AqlRowResult;
-import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.db.aql.dao.AqlDao;
 import org.artifactory.storage.db.aql.parser.AqlParser;
 import org.artifactory.storage.db.aql.parser.ParserElementResultContainer;
@@ -37,9 +36,6 @@ public class AqlServiceImpl implements AqlService {
 
     @Autowired
     private AqlDao aqlDao;
-    @Autowired
-    private StorageProperties storageProperties;
-
     private AqlParser parser;
     private ParserToAqlAdapter parserToAqlAdapter;
     private AqlApiToAqlAdapter aqlApiToAqlAdapter;
@@ -58,7 +54,7 @@ public class AqlServiceImpl implements AqlService {
         parserToAqlAdapter = new ParserToAqlAdapter();
         sqlQueryBuilder = new SqlQueryBuilder();
         aqlApiToAqlAdapter = new AqlApiToAqlAdapter();
-        optimizer = new AqlQueryOptimizer(storageProperties.getDbType());
+        optimizer = new AqlQueryOptimizer();
         validator = new AqlQueryValidator();
         restrictor = new AqlQueryRestrictor();
     }

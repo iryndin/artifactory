@@ -18,6 +18,19 @@
 
 package org.artifactory.rest.resource.license;
 
+import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.BlackDuckAddon;
+import org.artifactory.api.repo.RepositoryService;
+import org.artifactory.api.rest.compliance.FileComplianceInfo;
+import org.artifactory.api.rest.constant.ComplianceConstants;
+import org.artifactory.api.security.AuthorizationService;
+import org.artifactory.repo.RepoPath;
+import org.artifactory.rest.util.RestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,19 +38,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.blackduck.BlackDuckAddon;
-import org.artifactory.api.repo.RepositoryService;
-import org.artifactory.api.rest.compliance.FileComplianceInfo;
-import org.artifactory.api.rest.constant.ComplianceConstants;
-import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.repo.RepoPath;
-import org.artifactory.rest.common.util.RestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * @author mamo

@@ -187,7 +187,7 @@ public class CentralConfigReadWriteTest {
         assertFalse(backups.get(0).isEnabled());
 
         Map<String, LocalRepoDescriptor> localRepos = cc.getLocalRepositoriesMap();
-        assertTrue(localRepos.get("local1").isSuppressPomConsistencyChecks());
+        assertFalse(localRepos.get("local1").isSuppressPomConsistencyChecks());
         assertTrue(cc.getLocalRepositoriesMap().get("local2").isSuppressPomConsistencyChecks());
 
         assertEquals(cc.getProxies().size(), 1);

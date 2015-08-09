@@ -24,7 +24,6 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
-    <baseDirectory>artifactory-oss-${project.version}</baseDirectory>
     <fileSets>
         <!-- Removing the default annoying permissions of 777 -->
         <fileSet>
@@ -128,7 +127,6 @@
                 <exclude>conf/server.xml</exclude>
                 <exclude>conf/logging.properties</exclude>
                 <exclude>conf/web.xml</exclude>
-                <exclude>conf/tomcat-users.xsd</exclude>
                 <exclude>logs</exclude>
                 <exclude>temp/safeToDelete.tmp</exclude>
                 <exclude>webapps/**</exclude>
@@ -138,10 +136,8 @@
                 <exclude>conf/context.xml</exclude>
                 <exclude>lib/catalina-ant.jar</exclude>
                 <exclude>lib/catalina-ha.jar</exclude>
-                <exclude>lib/catalina-storeconfig.jar</exclude>
                 <exclude>lib/catalina-tribes.jar</exclude>
                 <exclude>lib/ecj-*.jar</exclude>
-                <exclude>lib/jsp-api.jar</exclude>
                 <exclude>lib/jasper-el.jar</exclude>
                 <exclude>lib/jasper.jar</exclude>
                 <exclude>lib/jsp-api.jar</exclude>
@@ -150,7 +146,8 @@
                 <exclude>lib/tomcat-i18n-fr.jar</exclude>
                 <exclude>lib/tomcat-i18n-ja.jar</exclude>
                 <exclude>lib/tomcat-jdbc.jar</exclude>
-                <exclude>lib/tomcat-websocket.jar</exclude>
+                <exclude>lib/jsp-api.jar</exclude>
+                <exclude>lib/tomcat7-websocket.jar</exclude>
                 <exclude>lib/websocket-api.jar</exclude>
             </excludes>
             <directoryMode>755</directoryMode>

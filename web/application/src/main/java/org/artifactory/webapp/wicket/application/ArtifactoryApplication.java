@@ -154,9 +154,9 @@ public class ArtifactoryApplication extends AuthenticatedWebApplication implemen
             // use configuration from the servlet context since properties are not bound to the thread when this method is called
             ArtifactoryHome artifactoryHome = getArtifactoryContext().getArtifactoryHome();
             ArtifactorySystemProperties artifactorySystemProperties = artifactoryHome.getArtifactoryProperties();
-            /*if (Boolean.parseBoolean(artifactorySystemProperties.getProperty(ConstantValues.dev))) {
+            if (Boolean.parseBoolean(artifactorySystemProperties.getProperty(ConstantValues.dev))) {
                 modes.add(ConstantValues.dev);
-            }*/
+            }
             if (Boolean.parseBoolean(artifactorySystemProperties.getProperty(ConstantValues.test))) {
                 modes.add(ConstantValues.test);
             }

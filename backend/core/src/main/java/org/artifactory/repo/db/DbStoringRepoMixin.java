@@ -26,7 +26,7 @@ import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.SnapshotVersion;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.filteredresources.FilteredResourcesAddon;
+import org.artifactory.addon.FilteredResourcesAddon;
 import org.artifactory.addon.HaAddon;
 import org.artifactory.addon.PropertiesAddon;
 import org.artifactory.addon.RestCoreAddon;

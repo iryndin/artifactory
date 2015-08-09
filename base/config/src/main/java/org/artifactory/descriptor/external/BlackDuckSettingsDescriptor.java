@@ -20,7 +20,6 @@ package org.artifactory.descriptor.external;
 
 import org.artifactory.descriptor.Descriptor;
 import org.artifactory.descriptor.repo.ProxyDescriptor;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -48,7 +47,6 @@ public class BlackDuckSettingsDescriptor implements Descriptor {
 
     @XmlIDREF
     @XmlElement(name = "proxyRef")
-    @JsonProperty("proxyRef")
     private ProxyDescriptor proxy;
 
     public boolean isEnableIntegration() {

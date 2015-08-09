@@ -19,7 +19,6 @@
 package org.artifactory.descriptor.security;
 
 import org.artifactory.descriptor.Descriptor;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
  * @author Yossi Shaul
  */
 @XmlType(name = "PasswordSettingsType", namespace = Descriptor.NS)
-@JsonIgnoreProperties(value = {"encryptionEnabled","encryptionRequired"})
 public class PasswordSettings implements Descriptor {
 
     @XmlElement(defaultValue = "supported", required = false)
