@@ -1,8 +1,0 @@
-<div class="constant-messages-container" ng-if="jfMessages.getMessages()">
-    <div class="constant-message"
-         ng-class="{error: message.type==='error',warning: message.type==='warning',info: message.type==='info'}"
-         ng-repeat="message in jfMessages.getMessages()">
-
-        <span ng-bind-html="message.message"></span>
-    </div>
-</div>
