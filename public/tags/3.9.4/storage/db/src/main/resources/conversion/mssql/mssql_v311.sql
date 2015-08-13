@@ -1,1 +1,0 @@
-ALTER TABLE node_props ALTER COLUMN prop_value VARCHAR(4000);
