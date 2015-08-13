@@ -1,0 +1,28 @@
+<div class="tree-browser-header">
+    <div class="tree-browser-header-tabs">
+        <a class="tree-browser-tab" ng-class="{active: Browsers.stateParams.browser === 'tree'}"
+           ng-click="Browsers.switchBrowser('tree')">Tree</a>
+        <a class="tree-browser-tab" ng-class="{active: Browsers.stateParams.browser === 'simple'}"
+           ng-click="Browsers.switchBrowser('simple')">Simple</a>
+        <a class="icon icon-filter" jf-tooltip="Filter" ng-click="Browsers.showFilter()"></a>
+
+    </div>
+    <div class="tree-browser-header-hide">
+        <div class="hide-empty-folders">
+            <jf-checkbox text="Compress Empty Folders">
+                <input type="checkbox"
+                       ng-change="Browsers.toggleCompactFolders()"
+                       ng-model="Browsers.compactFolders">
+            </jf-checkbox>
+        </div>
+    </div>
+</div>
+<div class="tree-browser-container">
+    <jf-tree-search></jf-tree-search>
+    <div ng-if="Browsers.stateParams.browser === 'tree'">
+        <jf-tree-browser></jf-tree-browser>
+    </div>
+    <div ng-if="Browsers.stateParams.browser === 'simple'">
+        <jf-simple-browser></jf-simple-browser>
+    </div>
+</div>
