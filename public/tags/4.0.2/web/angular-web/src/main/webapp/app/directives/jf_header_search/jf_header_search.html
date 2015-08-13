@@ -1,0 +1,15 @@
+<form ng-submit="jfHeaderSearch.search()" class="pull-left header-separator">
+    <div class="search-wrapper">
+        <div class="icon-search-container"
+             data-ic-class="search-trigger">
+                        <span class="header-search-btn" ng-click="jfHeaderSearch.search()">
+                            <img src="images/search.png" />
+                        </span>
+            <input type="text"
+                   class="search-input"
+                   data-ic-class="search-input"
+                   placeholder="Search..."
+                   ng-model="jfHeaderSearch.query.query"/>
+        </div>
+    </div>
+</form>
