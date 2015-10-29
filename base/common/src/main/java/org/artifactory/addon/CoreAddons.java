@@ -52,6 +52,17 @@ public interface CoreAddons extends Addon {
     boolean isAolAdmin(UserInfo userInfo);
 
     /**
+     * Check if a certain username is the AOL administrator of the current server, by checking that via the AOL
+     * dashboard.
+     * Use {@link org.artifactory.addon.CoreAddons#isAolAdmin(org.artifactory.security.UserInfo)} whenever possible to
+     * improve performance.
+     *
+     * @param username The user to check if its deletion is allowed.
+     * @return True if the user is the AOL admin user
+     */
+    boolean isAolAdmin(String username);
+
+    /**
      * @return True if the AOL addon is activated
      */
     boolean isAol();
@@ -64,24 +75,5 @@ public interface CoreAddons extends Addon {
 
     void validateTargetHasDifferentLicenseKeyHash(String targetLicenseHash, List<String> addons);
 
-    /**
-     * Validates that given licenseHash is different from license installed on this instance,
-     * unless artifactoryId and current instance artifactoryId are equal (e.g same Artifactory)
-     *
-     * @param licenseHash license to check
-     * @param artifactoryId artifactory id of the checked license
-     */
-    boolean validateTargetHasDifferentLicense(String licenseHash, String artifactoryId);
-
-    void validateMultiPushReplicationSupportedForTargetLicense(String targetLicenseKey,
-            boolean isMultiPushConfigureForThisRepo, String targetUrl);
-
-    String getBuildNum();
-
-    /**
-     * @return Artifactory version string for list browsing
-     */
-    String getListBrowsingVersion();
-
-    String getArtifactoryUrl();
+    void validateMultiPushReplicationSupportedForTargetLicense(String targetLicenseKey,boolean isMultiPushConfigureForThisRepo,String targetUrl);
 }

@@ -67,8 +67,11 @@ public class VersionResource {
         VersionInfo versionInfo = centralConfigService.getVersionInfo();
         List<String> addonNames = addonsManager.getEnabledAddonNames();
 
-        // Add the license to the JSON result object only for Artifactory Pro
-        String licenseKeyHash = addonsManager.getLicenseKeyHash();
+        // Add the license to the JSON result object only for Artifactory Pro and user with deploy permissions
+        String licenseKeyHash = null;
+        if (authorizationService.hasPermission(ArtifactoryPermission.DEPLOY)) {
+            licenseKeyHash = addonsManager.getLicenseKeyHash();
+        }
 
         // By assigning null we prevent the field from appearing in the result (our parser ignores nulls)
         String license = "".equals(licenseKeyHash) ? null : licenseKeyHash;

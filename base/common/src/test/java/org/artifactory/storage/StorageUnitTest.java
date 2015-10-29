@@ -33,8 +33,6 @@ public class StorageUnitTest {
 
     private static final long twoGbInBytes = 2147483648L;
     private static final long twoAndAHalfGigsInBytes = 2684354560L;
-    private static final long twoAndAHalfTbsInBytes = twoAndAHalfGigsInBytes * 1024L;
-    private static final long twoAndAHalfPbsInBytes = twoAndAHalfTbsInBytes * 1024L;
     private static final long twoMbInBytes = 2097152L;
 
     public void convertBytesToGb() {
@@ -58,9 +56,6 @@ public class StorageUnitTest {
     }
 
     public void bytesToReadableFormat() {
-        String someBytes = StorageUnit.toReadableString(234L);
-        assertEquals(someBytes, "234 bytes");
-
         String megabytes = StorageUnit.toReadableString(twoMbInBytes);
         assertEquals(megabytes, "2.00 MB");
 
@@ -69,12 +64,6 @@ public class StorageUnitTest {
 
         String twoAndAHalfGigs = StorageUnit.toReadableString(twoAndAHalfGigsInBytes);
         assertEquals(twoAndAHalfGigs, "2.50 GB");
-
-        String twoAndAHalfTbs = StorageUnit.toReadableString(twoAndAHalfTbsInBytes);
-        assertEquals(twoAndAHalfTbs, "2.50 TB");
-
-        String twoAndAHalfPbs = StorageUnit.toReadableString(twoAndAHalfPbsInBytes);
-        assertEquals(twoAndAHalfPbs, "2,560.00 TB");
     }
 
     public void readableFormatToBytes() {
@@ -95,7 +84,5 @@ public class StorageUnitTest {
         assertEquals(StorageUnit.fromReadableString("12G"), 12884901888L);
         assertEquals(StorageUnit.fromReadableString("3gb"), 3221225472L);
         assertEquals(StorageUnit.fromReadableString("32GB"), 34359738368L);
-        assertEquals(StorageUnit.fromReadableString("1.67Tb"), 1836184418385L);
-        assertEquals(StorageUnit.fromReadableString("12T"), 13194139533312L);
     }
 }

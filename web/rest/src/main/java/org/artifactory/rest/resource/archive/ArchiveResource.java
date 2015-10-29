@@ -20,22 +20,15 @@ package org.artifactory.rest.resource.archive;
 
 import com.sun.jersey.spi.CloseableService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.addon.rest.RestAddon;
-import org.artifactory.api.archive.ArchiveType;
-import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.rest.build.artifacts.BuildArtifactsRequest;
 import org.artifactory.api.rest.constant.ArchiveRestConstants;
 import org.artifactory.api.rest.constant.BuildRestConstants;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.mime.MimeType;
 import org.artifactory.mime.NamingUtils;
-import org.artifactory.repo.RepoPath;
-import org.artifactory.repo.RepoPathFactory;
-import org.artifactory.rest.ErrorResponse;
 import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.exception.NotFoundException;
 import org.artifactory.rest.resource.ci.BuildResource;
@@ -48,19 +41,14 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -133,53 +121,6 @@ public class ArchiveResource {
             log.error("Failed to create builds artifacts archive: " + e.getMessage(), e);
             throw new NotFoundException("Failed to create builds artifacts archive");
         }
-    }
-
-    @GET
-    @Path(ArchiveRestConstants.PATH_DOWNLOAD_REPO_PATH)
-    public Response downloadFolder(@PathParam("repoKey") String repoKey, @PathParam("path") String path,
-            @QueryParam("archiveType") String archiveTypeString) throws Exception {
-        return downloadFolderOrRepo(repoKey, path, archiveTypeString);
-    }
-
-    @GET
-    @Path(ArchiveRestConstants.PATH_DOWNLOAD_REPO_ROOT)
-    public Response downloadFolderOrRepo(@PathParam("repoKey") String repoKey,
-            @QueryParam("archiveType") String archiveTypeString) throws Exception {
-        return downloadFolderOrRepo(repoKey, "", archiveTypeString);
-    }
-
-    private Response downloadFolderOrRepo(String repoKey, String path, String archiveTypeString) throws Exception {
-        RepoPath pathToDownload = RepoPathFactory.create(repoKey, path);
-        ArchiveType archiveType;
-        try {
-            archiveType = ArchiveType.fromValue(archiveTypeString);
-        } catch (IllegalArgumentException iae) {
-            throw new BadRequestException(iae.getMessage());
-        }
-        BasicStatusHolder status = new BasicStatusHolder();
-        InputStream toWrite = addonsManager.addonByType(RestAddon.class)
-                .downloadFolderOrRepo(pathToDownload, archiveType, status);
-        if (status.isError()) {
-            int statusCode = status.getLastError().getStatusCode();
-            return Response.status(statusCode).entity(new ErrorResponse(statusCode, status.getLastError().getMessage()))
-                    .type(MediaType.APPLICATION_JSON).build();
-        } else if (toWrite == null) {
-            //This will get caught by the GlobalExceptionMapper and return an 'unexpected error' message.
-            throw new Exception();
-        }
-        return Response.status(HttpStatus.SC_OK).type(MediaType.WILDCARD).entity((StreamingOutput)
-                        out -> {
-                            try {
-                                IOUtils.copy(toWrite, out);
-                            } finally {
-                                log.debug("Closing folder download stream");
-                                IOUtils.closeQuietly(out);
-                                IOUtils.closeQuietly(toWrite);
-                            }
-                        }
-        ).build();
-
     }
 
     private void markForDeletionAtResponseEnd(final File buildArtifactsArchive) {

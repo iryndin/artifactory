@@ -43,7 +43,6 @@ import org.artifactory.storage.db.security.entity.Ace;
 import org.artifactory.storage.db.security.entity.Acl;
 import org.artifactory.storage.db.security.entity.Group;
 import org.artifactory.storage.db.security.entity.PermissionTarget;
-import org.artifactory.storage.db.security.entity.User;
 import org.artifactory.storage.security.service.AclStoreService;
 import org.artifactory.util.AlreadyExistsException;
 import org.slf4j.Logger;
@@ -244,10 +243,7 @@ public class AclServiceImpl implements AclStoreService {
             anyAnyAcl = InfoFactoryHolder.get().createAcl(anyAnyTarget, anyAnyAces, currentUsername);
             createAcl(anyAnyAcl);
         } else {
-            MutableAclInfo acl = InfoFactoryHolder.get().createAcl(anyAnyAcl.getPermissionTarget());
-            acl.setAces(anyAnyAces);
-            acl.setUpdatedBy(currentUsername);
-            updateAcl(acl);
+            updateAcl(InfoFactoryHolder.get().createAcl(anyAnyAcl.getPermissionTarget(), anyAnyAces, currentUsername));
         }
 
         // create or update read and deploy permissions on all remote repos
@@ -265,10 +261,8 @@ public class AclServiceImpl implements AclStoreService {
             anyRemoteAcl = InfoFactoryHolder.get().createAcl(anyRemoteTarget, anyRemoteAces, currentUsername);
             createAcl(anyRemoteAcl);
         } else {
-            MutableAclInfo acl = InfoFactoryHolder.get().createAcl(anyRemoteAcl.getPermissionTarget());
-            acl.setAces(anyRemoteAces);
-            acl.setUpdatedBy(currentUsername);
-            updateAcl(acl);
+            updateAcl(InfoFactoryHolder.get().createAcl(
+                    anyRemoteAcl.getPermissionTarget(), anyRemoteAces, currentUsername));
         }
     }
 
@@ -323,78 +317,6 @@ public class AclServiceImpl implements AclStoreService {
 
     private Map<String, AclInfo> getAclsMap() {
         return aclsCache.get();
-    }
-
-    public static class AclsCache {
-        private ReentrantLock cacheLock = new ReentrantLock();
-        private long timeout;
-        private final AclCacheLoader cacheLoader;
-        private AtomicInteger aclsDbVersion = new AtomicInteger(
-                1);  // promoted on each DB change (permission change/add/delete)
-        private volatile int aclsMapVersion = 0; // promoted each time we load the map from DB
-        private volatile Map<String, AclInfo> aclsMap;
-
-        public AclsCache(long timeout,AclCacheLoader cacheLoader) {
-            this.timeout = timeout;
-            this.cacheLoader = cacheLoader;
-        }
-
-        /**
-         * Call this method each permission update/change/delete in DB.
-         */
-        public int promoteAclsDbVersion() {
-            return aclsDbVersion.incrementAndGet();
-        }
-
-        /**
-         * Returns permissions map.
-         */
-        public Map<String, AclInfo> get() {
-            Map<String, AclInfo> tempMap = aclsMap;
-            if (aclsDbVersion.get() > aclsMapVersion) {
-                // Need to update aclsMap (new version in aclsDbVersion).
-                // Try to acquire acl lock
-                boolean lockAcquired = tryToWaitForAclLock();
-                if ( ! lockAcquired) {
-                    // Timeout occurred : Return the current aclMap without waiting to thew new map which is being reloaded.
-                    log.debug("Acl lock timeout occurred returning current aclMap instead the one that is being loaded");
-                    return aclsMap;
-                }else {
-                    // Lock was successfully acquired, now we can start reloading the map
-                    try {
-                        tempMap = aclsMap;
-                        // Double check after cacheLoader synchronization.
-                        if (aclsDbVersion.get() > aclsMapVersion) {
-                            // The map will be valid for version the current aclsDbVersion.
-                            int startingVersion = aclsDbVersion.get();
-                            tempMap = cacheLoader.call();
-                            aclsMap = tempMap;
-                            aclsMapVersion = startingVersion;
-                        }
-                    } finally {
-                        cacheLock.unlock();
-                    }
-                }
-            }
-            return tempMap;
-        }
-
-        private boolean tryToWaitForAclLock() {
-            boolean acquireLock=false;
-            try {
-                acquireLock = cacheLock.tryLock(timeout, TimeUnit.MILLISECONDS);
-                if( ! acquireLock && aclsMap==null){
-                    log.debug("Blocking thread while acl map is being processed for the first time");
-                    acquireLock=tryToWaitForAclLock();
-                }
-            } catch (InterruptedException e) {
-                if( aclsMap==null){
-                    log.debug("Blocking thread while acl map is being processed for the first time");
-                    acquireLock=tryToWaitForAclLock();
-                }
-            }
-            return acquireLock;
-        }
     }
 
     public static class AclCacheLoader implements Callable<Map<String, AclInfo>> {
@@ -452,6 +374,77 @@ public class AclServiceImpl implements AclStoreService {
                 throw new StorageException("Could not load all Access Control List from DB due to:" + e.getMessage(),
                         e);
             }
+        }
+    }
+
+    private static class AclsCache {
+        private ReentrantLock cacheLock = new ReentrantLock();
+        private long timeout;
+        private AtomicInteger aclsDbVersion = new AtomicInteger(1);  // promoted on each DB change (permission change/add/delete)
+        private volatile int aclsMapVersion = 0; // promoted each time we load the map from DB
+        private volatile Map<String, AclInfo> aclsMap;
+        private final AclCacheLoader cacheLoader;
+
+        public AclsCache(long timeout,AclCacheLoader cacheLoader) {
+            this.timeout = timeout;
+            this.cacheLoader = cacheLoader;
+        }
+
+        /**
+         * Call this method each permission update/change/delete in DB.
+         */
+        public int promoteAclsDbVersion() {
+            return aclsDbVersion.incrementAndGet();
+        }
+
+        /**
+         * Returns permissions map.
+         */
+        public Map<String, AclInfo> get() {
+            Map<String, AclInfo> tempMap = aclsMap;
+            if (aclsDbVersion.get() > aclsMapVersion) {
+                // Need to update aclsMap (new version in aclsDbVersion).
+                // Try to acquire acl lock
+                boolean lockAcquired = tryToWaitForAclLock();
+                if ( ! lockAcquired) {
+                    // Timeout occurred : Return the current aclMap without waiting to thew new map which is being reloaded.
+                    log.debug("Acl lock timeout occurred returning current aclMap instead the one that is being loaded");
+                    return aclsMap;
+                }else {
+                    // Lock was successfully acquired, now we can start reloading the map
+                    try {
+                        tempMap = aclsMap;
+                        // Double check after cacheLoader synchronization.
+                        if (aclsDbVersion.get() > aclsMapVersion) {
+                            // The map will be valid for version the current aclsDbVersion.
+                            int startingVersion = aclsDbVersion.get();
+                            tempMap = cacheLoader.call();
+                            aclsMap = tempMap;
+                            aclsMapVersion = startingVersion;
+                        }
+                    }finally {
+                        cacheLock.unlock();
+                    }
+                }
+            }
+            return tempMap;
+        }
+
+        private boolean tryToWaitForAclLock() {
+            boolean acquireLock=false;
+            try {
+                acquireLock = cacheLock.tryLock(timeout, TimeUnit.MILLISECONDS);
+                if( ! acquireLock && aclsMap==null){
+                    log.debug("Blocking thread while acl map is being processed for the first time");
+                    acquireLock=tryToWaitForAclLock();
+                }
+            } catch (InterruptedException e) {
+                if( aclsMap==null){
+                    log.debug("Blocking thread while acl map is being processed for the first time");
+                    acquireLock=tryToWaitForAclLock();
+                }
+            }
+            return acquireLock;
         }
     }
 }

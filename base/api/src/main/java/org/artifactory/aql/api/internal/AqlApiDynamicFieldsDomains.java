@@ -116,27 +116,6 @@ public class AqlApiDynamicFieldsDomains {
             this.domains.addAll(domains);
         }
 
-        public AqlApiItemDynamicFieldsDomains<T> item() {
-            ArrayList<AqlDomainEnum> tempDomains = Lists.newArrayList(domains);
-            tempDomains.add(AqlDomainEnum.items);
-            return new AqlApiItemDynamicFieldsDomains(tempDomains);
-        }
-
-        public AqlApiArchiveEntryDynamicFieldsDomains<T> entry() {
-            ArrayList<AqlDomainEnum> tempDomains = Lists.newArrayList(domains);
-            tempDomains.add(AqlDomainEnum.entries);
-            return new AqlApiArchiveEntryDynamicFieldsDomains(tempDomains);
-        }
-
-    }
-
-    public static class AqlApiArchiveEntryDynamicFieldsDomains<T extends AqlBase> {
-        private List<AqlDomainEnum> domains = Lists.newArrayList();
-
-        public AqlApiArchiveEntryDynamicFieldsDomains(List<AqlDomainEnum> domains) {
-            this.domains.addAll(domains);
-        }
-
         public AqlApiComparator<T> name() {
             return new AqlApiComparator(AqlFieldEnum.archiveEntryName, domains);
         }
@@ -145,10 +124,10 @@ public class AqlApiDynamicFieldsDomains {
             return new AqlApiComparator(AqlFieldEnum.archiveEntryPath, domains);
         }
 
-        public AqlApiArchiveDynamicFieldsDomains<T> archive() {
+        public AqlApiItemDynamicFieldsDomains<T> item() {
             ArrayList<AqlDomainEnum> tempDomains = Lists.newArrayList(domains);
-            tempDomains.add(AqlDomainEnum.archives);
-            return new AqlApiArchiveDynamicFieldsDomains(tempDomains);
+            tempDomains.add(AqlDomainEnum.items);
+            return new AqlApiItemDynamicFieldsDomains(tempDomains);
         }
 
     }
@@ -268,7 +247,7 @@ public class AqlApiDynamicFieldsDomains {
         }
 
         public AqlApiComparator<T> name() {
-            return new AqlApiComparator(AqlFieldEnum.moduleName, domains);
+            return new AqlApiComparator(AqlFieldEnum.buildModuleName, domains);
         }
 
         public AqlApiBuildDynamicFieldsDomains<T> build() {
@@ -508,10 +487,6 @@ public class AqlApiDynamicFieldsDomains {
 
         private static String convertDateToString(DateTime date) {
             return ISODateTimeFormat.dateTime().print(date);
-        }
-
-        public static List<AqlDomainEnum> resolve(AqlApiComparator aqlApiComparator) {
-            return aqlApiComparator.domains;
         }
     }
 }

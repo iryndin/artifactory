@@ -1,14 +1,10 @@
 package org.artifactory.aql.result;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.artifactory.aql.AqlException;
 import org.artifactory.aql.model.AqlDomainEnum;
 import org.artifactory.aql.model.AqlItemTypeEnum;
 import org.artifactory.aql.model.AqlPermissionProvider;
 import org.artifactory.aql.util.AqlUtils;
 import org.artifactory.repo.RepoPath;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -20,7 +16,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Gidi Shabat
@@ -42,7 +37,7 @@ public abstract class AqlRestResult implements Closeable {
                     String itemRepo = resultSet.getString("repo");
                     String itemPath = resultSet.getString("node_path");
                     String itemName = resultSet.getString("node_name");
-                    RepoPath repoPath = AqlUtils.fromAql(itemRepo, itemPath, itemName);
+                    RepoPath repoPath = AqlUtils.repoPathFromAql(itemRepo, itemPath, itemName);
                     return permissionProvider.canRead(repoPath);
                 } catch (Exception e) {
                     log.error("AQL minimal field expectation error: repo, path and name");
@@ -58,7 +53,7 @@ public abstract class AqlRestResult implements Closeable {
         } else {
             if (AqlDomainEnum.items == domain) {
                 try {
-                    RepoPath repoPath = AqlUtils.fromAql(repo, path, name);
+                    RepoPath repoPath = AqlUtils.repoPathFromAql(repo, path, name);
                     return permissionProvider.canRead(repoPath);
                 } catch (Exception e) {
                     log.error("AQL minimal field expectation error: repo, path and name");
@@ -72,149 +67,112 @@ public abstract class AqlRestResult implements Closeable {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonPropertyOrder(value = {"itemRepo", "itemPath", "itemName", "itemType", "itemSize", "itemCreated", "itemCreatedBy", "itemModified", "itemModifiedBy", "itemUpdated", "itemDepth"}, alphabetic = true)
-    public static class Row {
-        @JsonIgnore
-        public Map<String, Row> subDomains;
-        @JsonIgnore
-        public AqlDomainEnum domain;
-        @JsonIgnore
-        public Long statId;
-        @JsonIgnore
-        public Long itemId;
-        @JsonIgnore
-        public Long propertyId;
-        @JsonIgnore
-        public Long buildId;
-        @JsonIgnore
-        public Long buildPropertyId;
-        @JsonIgnore
-        public Long builsArtifactId;
-        @JsonIgnore
-        public Long modulePropertyId;
-        @JsonIgnore
-        public Long moduleId;
-        @JsonIgnore
-        public Long buildDependencyId;
-        @JsonIgnore
-        public Long archiveEntryPathId;
-        @JsonIgnore
-        public Long archiveEntryNameId;
-
-
-
+    protected class Row {
         @JsonProperty("repo")
-        public String itemRepo;
+        protected String itemRepo;
         @JsonProperty("path")
-        public String itemPath;
+        protected String itemPath;
         @JsonProperty("name")
-        public String itemName;
+        protected String itemName;
         @JsonProperty("size")
-        public Long itemSize;
+        protected Long itemSize;
         @JsonProperty("depth")
-        public Integer itemDepth;
+        protected Integer itemDepth;
+        @JsonProperty("id")
+        protected Integer itemNodeId;
         @JsonProperty("modified")
-        public String itemModified;
+        protected String itemModified;
         @JsonProperty("created")
-        public String itemCreated;
+        protected String itemCreated;
         @JsonProperty("updated")
-        public String itemUpdated;
+        protected String itemUpdated;
         @JsonProperty("created_by")
-        public String itemCreatedBy;
+        protected String itemCreatedBy;
         @JsonProperty("modified_by")
-        public String itemModifiedBy;
+        protected String itemModifiedBy;
         @JsonProperty("type")
-        public AqlItemTypeEnum itemType;
+        protected AqlItemTypeEnum itemType;
         @JsonProperty("original_md5")
-        public String itemOriginalMd5;
+        protected String itemOriginalMd5;
         @JsonProperty("actual_md5")
-        public String itemActualMd5;
+        protected String itemActualMd5;
         @JsonProperty("original_sha1")
-        public String itemOriginalSha1;
+        protected String itemOriginalSha1;
         @JsonProperty("actual_sha1")
-        public String itemActualSha1;
+        protected String itemActualSha1;
+
         @JsonProperty("downloaded")
-        public String statDownloaded;
+        protected String statDownloaded;
         @JsonProperty("downloads")
-        public Integer statDownloads;
+        protected Integer statDownloads;
         @JsonProperty("downloaded_by")
-        public String statDownloadedBy;
+        protected String statDownloadedBy;
+
         @JsonProperty("key")
-        public String propertyKey;
+        protected String propertyKey;
         @JsonProperty("value")
-        public String propertyValue;
-        @JsonProperty("entry.name")
-        public String archiveEntryName;
-        @JsonProperty("entry.path")
-        public String archiveEntryPath;
-        @JsonProperty("module.name")
-        public String moduleName;
-        @JsonProperty("module.property.key")
-        public String modulePropertyKey;
-        @JsonProperty("module.property.value")
-        public String modulePropertyValue;
-        @JsonProperty("dependency.name")
-        public String buildDependencyName;
-        @JsonProperty("dependency.scope")
-        public String buildDependencyScope;
-        @JsonProperty("dependency.type")
-        public String buildDependencyType;
-        @JsonProperty("dependency.sha1")
-        public String buildDependencySha1;
-        @JsonProperty("dependency.md5")
-        public String buildDependencyMd5;
-        @JsonProperty("artifact.name")
-        public String buildArtifactName;
-        @JsonProperty("artifact.type")
-        public String buildArtifactType;
-        @JsonProperty("artifact.sha1")
-        public String buildArtifactSha1;
-        @JsonProperty("artifact.md5")
-        public String buildArtifactMd5;
-        @JsonProperty("build.property.key")
-        public String buildPropertyKey;
-        @JsonProperty("build.property.value")
-        public String buildPropertyValue;
-        @JsonProperty("build.url")
-        public String buildUrl;
-        @JsonProperty("build.name")
-        public String buildName;
-        @JsonProperty("build.number")
-        public String buildNumber;
-        @JsonProperty("build.created")
-        public String buildCreated;
-        @JsonProperty("build.created_by")
-        public String buildCreatedBy;
-        @JsonProperty("build.modified")
-        public String buildModified;
-        @JsonProperty("build.modified_by")
-        public String buildModifiedBy;
-        @JsonProperty("items")
-        public List<Row> items;
+        protected String propertyValue;
+
+        @JsonProperty("entry_name")
+        protected String archiveEntryName;
+        @JsonProperty("entry_path")
+        protected String archiveEntryPath;
+        @JsonProperty("module_name")
+        protected String buildModuleName;
+        @JsonProperty("dependency_name")
+        protected String buildDependencyName;
+        @JsonProperty("dependency_scope")
+        protected String buildDependencyScope;
+        @JsonProperty("dependency_type")
+        protected String buildDependencyType;
+        @JsonProperty("dependency_sha1")
+        protected String buildDependencySha1;
+        @JsonProperty("dependency_md5")
+        protected String buildDependencyMd5;
+        @JsonProperty("artifact_name")
+        protected String buildArtifactName;
+        @JsonProperty("artifact_type")
+        protected String buildArtifactType;
+        @JsonProperty("artifact_sha1")
+        protected String buildArtifactSha1;
+        @JsonProperty("artifact_md5")
+        protected String buildArtifactMd5;
+        @JsonProperty("build_property_key")
+        protected String buildPropKey;
+        @JsonProperty("build_property_value")
+        protected String buildPropValue;
+        @JsonProperty("build_url")
+        protected String buildUrl;
+        @JsonProperty("build_name")
+        protected String buildName;
+        @JsonProperty("build_number")
+        protected String buildNumber;
+        @JsonProperty("build_created")
+        protected String buildCreated;
+        @JsonProperty("build_created_by")
+        protected String buildCreatedBy;
+        @JsonProperty("build_modified")
+        protected String buildModified;
+        @JsonProperty("build_modified_by")
+        protected String buildModifiedBy;
         @JsonProperty("properties")
-        public List<Row> properties;
-        @JsonProperty("stats")
-        public List<Row> statistics;
-        @JsonProperty("archives")
-        public List<Row> archives;
-        @JsonProperty("entries")
-        public List<Row> entries;
-        @JsonProperty("artifacts")
-        public List<Row> artifacts;
-        @JsonProperty("dependencies")
-        public List<Row> dependencies;
-        @JsonProperty("modules")
-        public List<Row> modules;
-        @JsonProperty("module.properties")
-        public List<Row> moduleProperties;
-        @JsonProperty("builds")
-        public List<Row> builds;
-        @JsonProperty("build.properties")
-        public List<Row> buildProperties;
+        protected List<Property> properties;
 
-
-
-        public Row(AqlDomainEnum domain) {
-            this.domain = domain;
+        public String getKey() {
+            StringBuilder builder;
+            builder = new StringBuilder();
+            builder.append(itemRepo).append(itemPath).append(itemName).append(itemSize).append(itemDepth).append(
+                    itemNodeId).append(itemModified).append(itemCreated).append(itemUpdated).append(
+                    itemCreatedBy).append(itemModifiedBy).append(itemType).append(itemOriginalMd5).append(
+                    itemActualMd5).append(itemOriginalSha1).append(itemActualSha1).append(
+                    statDownloaded).append(statDownloads).append(statDownloadedBy).append(archiveEntryName).append(
+                    archiveEntryPath).append(buildModuleName).append(buildDependencyName).append(
+                    buildDependencyScope).append(buildDependencyType).append(buildDependencySha1).append(
+                    buildDependencyMd5).append(buildArtifactName).append(buildArtifactType).append(
+                    buildArtifactSha1).append(buildArtifactMd5).append(buildPropKey).append(buildPropValue).append(
+                    buildUrl).append(buildName).append(buildNumber).append(buildCreated).append(buildCreatedBy).append(
+                    buildModified).append(buildModifiedBy);
+            return builder.toString();
         }
 
         public void put(String fieldName, Object value) {
@@ -223,152 +181,42 @@ public abstract class AqlRestResult implements Closeable {
                 declaredField.setAccessible(true);
                 declaredField.set(this, value);
             } catch (Exception e) {
-                log.error("Failed to fill Aql result "+fieldName+": with value:"+value);
+                log.error("Failed to fill Aql result Object.");
             }
         }
+    }
 
-        public void merge(Row row) {
-            merge( row,this);
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonPropertyOrder(value = {"propertyKey", "propertyValue"}, alphabetic = true)
+    protected class Property {
+        public void put(String fieldName, Object value) throws Exception {
+            Field declaredField = getClass().getDeclaredField(fieldName);
+            declaredField.setAccessible(true);
+            declaredField.set(this, value);
         }
 
-        private boolean merge(Row source, Row target) {
-            boolean containsData = mapFields(source, target);
-            boolean childContainsData = false;
-            if (source.subDomains != null) {
-                for (String id : source.subDomains.keySet()) {
-                    Row sourceSubRow = source.subDomains.get(id);
-                    if (target.subDomains == null) {
-                        target.subDomains = Maps.newHashMap();
-                    }
-                    Row targetSubRow = target.subDomains.get(id);
-                    if (targetSubRow == null) {
-                        targetSubRow = new Row(sourceSubRow.getDomain());
-                        target.subDomains.put(id, targetSubRow);
-                    }
-                    childContainsData = merge(sourceSubRow, targetSubRow);
-                    if (!childContainsData) {
-                        target.subDomains.remove(id);
-                    }
-                }
-            }
-            return containsData || childContainsData;
-        }
-
-        private boolean mapFields(Row source, Row target) {
-            boolean containsData = false;
-            try {
-                Field[] declaredFields = source.getClass().getFields();
-                for (Field declaredField : declaredFields) {
-                    if (!declaredField.getName().equals("subDomains") && !declaredField.getName().equals("domain")) {
-                        Object value = declaredField.get(source);
-                        //Special behaviour for archive domain, since archive domain is built by two tables and doesn't have real key
-                        containsData = true;
-                        declaredField.set(target, value);
-                    }
-                }
-            } catch (IllegalAccessException e) {
-                throw new AqlException("failed to map result fields");
-            }
-            return containsData;
-        }
-
-        public Row build() {
-            if (subDomains != null) {
-                for (Row row : subDomains.values()) {
-                    row.build();
-                    AqlDomainEnum domainEnum = row.getDomain();
-                    switch (domainEnum) {
-                        case items: {
-                            if (this.items == null) {
-                                this.items = Lists.newArrayList();
-                            }
-                            this.items.add(row);
-                            break;
-                        }
-                        case properties: {
-                            if (this.properties == null) {
-                                this.properties = Lists.newArrayList();
-                            }
-                            this.properties.add(row);
-                            break;
-                        }
-                        case statistics: {
-                            if (this.statistics == null) {
-                                this.statistics = Lists.newArrayList();
-                            }
-                            this.statistics.add(row);
-                            break;
-                        }
-                        case archives: {
-                            if (this.archives == null) {
-                                this.archives = Lists.newArrayList();
-                            }
-                            this.archives.add(row);
-                            break;
-                        }
-                        case entries: {
-                            if (this.entries == null) {
-                                this.entries = Lists.newArrayList();
-                            }
-                            this.entries.add(row);
-                            break;
-                        }
-                        case artifacts: {
-                            if (this.artifacts == null) {
-                                this.artifacts = Lists.newArrayList();
-                            }
-                            this.artifacts.add(row);
-                            break;
-                        }
-                        case dependencies: {
-                            if (this.dependencies == null) {
-                                this.dependencies = Lists.newArrayList();
-                            }
-                            this.dependencies.add(row);
-                            break;
-                        }
-                        case modules: {
-                            if (this.modules == null) {
-                                this.modules = Lists.newArrayList();
-                            }
-                            this.modules.add(row);
-                            break;
-                        }
-                        case moduleProperties: {
-                            if (this.moduleProperties == null) {
-                                this.moduleProperties = Lists.newArrayList();
-                            }
-                            this.moduleProperties.add(row);
-                            break;
-                        }
-                        case builds: {
-                            if (this.builds == null) {
-                                this.builds = Lists.newArrayList();
-                            }
-                            this.builds.add(row);
-                            break;
-                        }
-                        case buildProperties: {
-                            if (this.buildProperties == null) {
-                                this.buildProperties = Lists.newArrayList();
-                            }
-                            this.buildProperties.add(row);
-                            break;
-                        }
-                    }
-                }
-            }
-            return this;
-        }
-
-        public AqlDomainEnum getDomain() {
-            return domain;
-        }
+        @JsonProperty("key")
+        protected String propertyKey;
+        @JsonProperty("value")
+        protected String propertyValue;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonPropertyOrder(value = {"start", "end", "total"}, alphabetic = true)
     protected class Range {
+
+        public Range(long start, long end, long limited) {
+            this.start = start;
+            this.end = end;
+            this.limited = Integer.MAX_VALUE == limited ? null : limited;
+        }
+
+        public Range(long start, long end, long total, long limited) {
+            this.start = start;
+            this.end = end;
+            this.total = total;
+            this.limited = Integer.MAX_VALUE == limited ? null : limited;
+        }
 
         @JsonProperty("start_pos")
         protected Long start;
@@ -376,20 +224,8 @@ public abstract class AqlRestResult implements Closeable {
         protected Long end;
         @JsonProperty("total")
         protected Long total;
+
         @JsonProperty("limit")
         protected Long limited;
-
-        public Range(long start, long end, long limited) {
-            this.start = start;
-            this.end = end;
-            this.limited = Long.MAX_VALUE == limited ? null : limited;
-        }
-
-        public Range(long start, long end, long total, long limited) {
-            this.start = start;
-            this.end = end;
-            this.total = total;
-            this.limited = Long.MAX_VALUE == limited ? null : limited;
-        }
     }
 }

@@ -6,6 +6,8 @@ import org.artifactory.storage.db.aql.sql.model.SqlTableEnum;
 
 import java.util.List;
 
+import static org.artifactory.storage.db.aql.sql.builder.query.sql.type.AqlTableGraph.tablesLinksMap;
+
 /**
  * The class contains tweaking information and optimizations for Statistics queries.
  *
@@ -15,7 +17,7 @@ public class StatisticsSqlGenerator extends BasicSqlGenerator {
 
     @Override
     protected List<TableLink> getExclude() {
-        return Lists.newArrayList();
+        return Lists.newArrayList(tablesLinksMap.get(SqlTableEnum.build_dependencies));
     }
 
     @Override

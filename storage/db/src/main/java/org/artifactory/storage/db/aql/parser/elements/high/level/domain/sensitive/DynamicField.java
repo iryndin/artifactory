@@ -17,9 +17,6 @@ public class DynamicField extends DomainSensitiveParserElement {
             case archives: {
                 return AqlParser.archiveFields;
             }
-            case entries: {
-                return AqlParser.entriesFields;
-            }
             case properties: {
                 return AqlParser.propertiesFields;
             }
@@ -37,9 +34,6 @@ public class DynamicField extends DomainSensitiveParserElement {
             }
             case modules: {
                 return AqlParser.buildModuleFields;
-            }
-            case moduleProperties: {
-                return AqlParser.buildModulePropertiesFields;
             }
             case buildProperties: {
                 return AqlParser.buildPropertiesFields;

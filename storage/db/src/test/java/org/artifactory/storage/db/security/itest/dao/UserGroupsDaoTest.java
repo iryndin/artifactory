@@ -22,11 +22,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import org.artifactory.storage.db.security.dao.UserGroupsDao;
-import org.artifactory.storage.db.security.dao.UserPropertiesDao;
 import org.artifactory.storage.db.security.entity.Group;
 import org.artifactory.storage.db.security.entity.User;
 import org.artifactory.storage.db.security.entity.UserGroup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -43,9 +41,6 @@ import static org.testng.Assert.*;
  * @author freds
  */
 public class UserGroupsDaoTest extends SecurityBaseDaoTest {
-
-    @Autowired
-    protected UserPropertiesDao userPropsDao;
 
     @BeforeClass
     public void setup() {
@@ -370,18 +365,6 @@ public class UserGroupsDaoTest extends SecurityBaseDaoTest {
         userGroupsDao.createUser(new User(5L, "u1", "1pass", null, "1@mail.com", false, false, false, null));
     }
 
-    @Test(expectedExceptions = {SQLException.class})
-    public void testCreateUserPropNullKey() throws SQLException {
-        // TORE: [by fsi] use the error handling to verify we broke the correct constraint
-        userPropsDao.addUserProperty(2L, null, "F");
-    }
-
-    @Test(expectedExceptions = {SQLException.class})
-    public void testCreateUserPropNoUser() throws SQLException {
-        // TORE: [by fsi] use the error handling to verify we broke the correct constraint
-        userPropsDao.addUserProperty(3456L, "test.fail", "F");
-    }
-
     public void testFindUserById() throws SQLException {
         assertUser1(userGroupsDao.findUserById(1L), 0);
         assertUser2(userGroupsDao.findUserById(2L), 0);
@@ -396,35 +379,6 @@ public class UserGroupsDaoTest extends SecurityBaseDaoTest {
         assertNull(userGroupsDao.findUserByName("does not exists"));
     }
 
-    public void testFindUserProperties() throws SQLException {
-        assertEquals(userPropsDao.getUserProperty("u1", "test.null"), null);
-        assertEquals(userPropsDao.getUserProperty("u1", "test.dup"), "A");
-        assertEquals(userPropsDao.getUserProperty("u2", "test.dup"), "B");
-        assertEquals(userPropsDao.getUserProperty("anonymous", "test.login"), "http://git/login");
-        assertEquals(userPropsDao.getUserProperty("anonymous", "test.logout"), "http://git/logout");
-    }
-
-    public void testFindUserByProperty() throws SQLException {
-        assertEquals(userPropsDao.getUserIdByProperty("test.dup", "A"), 1L);
-        assertEquals(userPropsDao.getUserIdByProperty("test.dup", "B"), 2L);
-        // TODO: [by fsi] support search for key only
-        //assertEquals(userPropsDao.getUserIdByProperty("test.null", null), 1L);
-        assertEquals(userPropsDao.getUserIdByProperty("test.fail", "W"), 0L);
-        assertEquals(userPropsDao.getUserIdByProperty("test.null", "DD"), 0L);
-    }
-
-    public void createUserProperty() throws SQLException {
-        // new prop
-        assertTrue(userPropsDao.addUserProperty(2L, "test.new", "W"));
-        // update and reset
-        assertTrue(userPropsDao.addUserProperty(1L, "test.null", "W"));
-        assertTrue(userPropsDao.addUserProperty(1L, "test.null", null));
-    }
-
-    public void testNoUserProperties() throws SQLException {
-        assertEquals(userPropsDao.getUserProperty("u3", "test.fail"), null);
-        assertEquals(userPropsDao.getUserProperty("u2", "test.fail"), null);
-    }
 
     public void testFindGroupById() throws SQLException {
         assertGroup1(userGroupsDao.findGroupById(1L));

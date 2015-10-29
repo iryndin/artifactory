@@ -33,7 +33,7 @@ public class RepoStorageSummaryInfoTest {
 
     @Test
     public void simpleConstructor() {
-        RepoStorageSummaryInfo rs = new RepoStorageSummaryInfo("bla", RepositoryType.LOCAL, 100, 120, 1024, "maven");
+        RepoStorageSummaryInfo rs = new RepoStorageSummaryInfo("bla", RepositoryType.LOCAL, 100, 120, 1024);
         assertEquals(rs.getRepoKey(), "bla");
         assertEquals(rs.getRepoType(), RepositoryType.LOCAL);
         assertEquals(rs.getFoldersCount(), 100);

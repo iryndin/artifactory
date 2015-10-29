@@ -34,7 +34,6 @@ public class LocalRepoDescriptor extends RealRepoDescriptor {
     private LocalRepoChecksumPolicyType checksumPolicyType = LocalRepoChecksumPolicyType.CLIENT;
 
     private boolean calculateYumMetadata;
-
     private int yumRootDepth;
 
     private String yumGroupFileNames;

@@ -21,15 +21,9 @@
     <parent>
         <groupId>org.artifactory</groupId>
         <artifactId>artifactory-parent</artifactId>
-        <version>4.2.0</version>
+        <version>3.9.5</version>
     </parent>
 
-    <properties>
-        <zipDirname>artifactory-oss</zipDirname>
-        <zipFilename>jfrog-${zipDirname}</zipFilename>
-    </properties>
-
-    <groupId>org.artifactory.oss</groupId>
     <artifactId>artifactory-distribution-parent</artifactId>
     <packaging>pom</packaging>
     <name>Artifactory Distribution Parent</name>
@@ -37,7 +31,6 @@
     <modules>
         <module>standalone</module>
         <module>rpm</module>
-        <module>deb</module>
     </modules>
 
 </project>

@@ -31,8 +31,7 @@ public enum VfsQueryFieldType {
     ARCHIVE_PATH,
     ARCHIVE_NAME,
     PROPERTY,
-    STATISTIC,
-    REMOTE_STATISTIC;
+    STATISTIC;
 
     public boolean isProperty() {
         return this == PROPERTY;
@@ -44,9 +43,5 @@ public enum VfsQueryFieldType {
 
     public boolean isStatistic() {
         return this == STATISTIC;
-    }
-
-    public boolean isRemoteStatistic() {
-        return this == REMOTE_STATISTIC;
     }
 }

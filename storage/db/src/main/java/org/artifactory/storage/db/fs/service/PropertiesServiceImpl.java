@@ -91,12 +91,6 @@ public class PropertiesServiceImpl implements PropertiesService {
         }
     }
 
-    /**
-     * Sets properties
-     *
-     * @param nodeId     Id of the node to set properties on
-     * @param properties The properties to set
-     */
     @Override
     public void setProperties(long nodeId, Properties properties) {
         try {
@@ -111,20 +105,6 @@ public class PropertiesServiceImpl implements PropertiesService {
             }
         } catch (SQLException e) {
             throw new StorageException("Failed to set properties on node: " + nodeId, e);
-        }
-    }
-
-    /**
-     * Sets properties
-     *
-     * @param repoPath   RepoPath of the node to set properties on
-     * @param properties The properties to set
-     */
-    @Override
-    public void setProperties(RepoPath repoPath, Properties properties) {
-        long nodeId = fileService.getNodeId(repoPath);
-        if (nodeId > 0) {
-           setProperties(nodeId, properties);
         }
     }
 

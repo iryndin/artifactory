@@ -18,39 +18,18 @@
 
 package org.artifactory.sapi.search;
 
-import com.google.common.base.Strings;
-
 /**
  * Date: 4/30/14 6:28 PM
  *
  * @author freds
  */
 public enum VfsDateFieldName {
-    LAST_MODIFIED("modified"),
-    CREATED("created"),
-    LAST_DOWNLOADED("last_downloaded"),
-    LAST_REMOTE_DOWNLOADED("remote_last_downloaded", "last_downloaded");
+    LAST_MODIFIED("modified"), CREATED("created"), LAST_DOWNLOADED("last_downloaded");
 
-    private final String propName;
-    private final String propActualName;
-
-    /**
-     * If different tables have same column names,
-     * we'd like to decorate propName with propNameAlias
-     * which will be used as decoration reference to the
-     * actual column name
-     *
-     * @param propNameAlias the alias to the actual propName
-     * @param propName the actual propName
-     */
-    VfsDateFieldName(String propNameAlias, String propName) {
-        this.propName = propNameAlias;
-        this.propActualName = propName;
-    }
+    public String propName;
 
     VfsDateFieldName(String propName) {
         this.propName = propName;
-        this.propActualName = null;
     }
 
     public static VfsDateFieldName byPropertyName(String fieldName) {
@@ -60,20 +39,5 @@ public enum VfsDateFieldName {
             }
         }
         return null;
-    }
-
-    public String getPropName() {
-        return propName;
-    }
-
-    /**
-     * @return Actual propName (if propNameAlias is set)
-     */
-    public String getPropActualName() {
-        return propActualName;
-    }
-
-    public boolean hasPropAlias() {
-        return !Strings.isNullOrEmpty(propActualName);
     }
 }

@@ -21,7 +21,6 @@ package org.artifactory.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang.StringUtils;
 import org.artifactory.descriptor.repo.RepoLayout;
 import org.artifactory.descriptor.repo.RepoLayoutBuilder;
 import org.artifactory.util.layouts.token.BaseTokenFilter;
@@ -29,7 +28,10 @@ import org.artifactory.util.layouts.token.OrganizationPathTokenFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,28 +45,9 @@ public abstract class RepoLayoutUtils {
      * LAYOUT PRESETS
      */
     public static final String MAVEN_2_DEFAULT_NAME = "maven-2-default";
-    public static final String MAVEN_1_DEFAULT_NAME = "maven-1-default";
     public static final String IVY_DEFAULT_NAME = "ivy-default";
     public static final String GRADLE_DEFAULT_NAME = "gradle-default";
-    public static final String NUGET_DEFAULT_NAME = "nuget-default";
-    public static final String SBT_DEFAULT_NAME = "sbt-default";
-    public static final String NPM_DEFAULT_NAME = "npm-default";
-    public static final String BOWER_DEFAULT_NAME = "bower-default";
-    public static final String VSC_DEFAULT_NAME = "vcs-default";
-    public static final String SIMPLE_DEFAULT_NAME = "simple-default";
-
-    public static List<String> DEFAULT_LAYOUTS = new LinkedList<String>() {{
-        add(MAVEN_2_DEFAULT_NAME);
-        add(MAVEN_1_DEFAULT_NAME);
-        add(IVY_DEFAULT_NAME);
-        add(GRADLE_DEFAULT_NAME);
-        add(NUGET_DEFAULT_NAME);
-        add(SBT_DEFAULT_NAME);
-        add(NPM_DEFAULT_NAME);
-        add(BOWER_DEFAULT_NAME);
-        add(VSC_DEFAULT_NAME);
-        add(SIMPLE_DEFAULT_NAME);
-    }};
+    public static final String MAVEN_1_DEFAULT_NAME = "maven-1-default";
 
     public static final RepoLayout MAVEN_2_DEFAULT = new RepoLayoutBuilder()
             .name(MAVEN_2_DEFAULT_NAME)
@@ -139,19 +122,14 @@ public abstract class RepoLayoutUtils {
     }
 
     public static boolean isReservedName(String layoutName) {
-        return DEFAULT_LAYOUTS.contains(layoutName);
+        return MAVEN_2_DEFAULT_NAME.equals(layoutName) ||
+                IVY_DEFAULT_NAME.equals(layoutName) ||
+                GRADLE_DEFAULT_NAME.equals(layoutName) ||
+                MAVEN_1_DEFAULT_NAME.equals(layoutName);
     }
 
     public static boolean isDefaultM2(RepoLayout repoLayout) {
         return MAVEN_2_DEFAULT.equals(repoLayout);
-    }
-
-    public static boolean isDefaultSimple(RepoLayout repoLayout) {
-        if (repoLayout == null) {
-            return false;
-        }
-        String name = repoLayout.getName();
-        return StringUtils.equals(name, "simple-default") || StringUtils.equals(name, "art-simple-default");
     }
 
     public static boolean isDefaultIvy(RepoLayout repoLayout) {

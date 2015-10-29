@@ -82,19 +82,11 @@ public interface HttpRepositoryConfiguration extends RepositoryConfiguration {
 
     boolean isRejectInvalidJars();
 
+    boolean isP2Support();
+
     boolean isAllowAnyHostAuth();
 
     boolean isEnableCookieManagement();
 
     boolean isEnableTokenAuthentication();
-
-    String getQueryParams();
-
-    String getBowerRegistryUrl();
-
-    String getVcsType();
-
-    String getVcsGitProvider();
-
-    String getVcsGitDownloadUrl();
 }

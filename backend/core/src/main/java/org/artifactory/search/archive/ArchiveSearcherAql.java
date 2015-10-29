@@ -25,14 +25,15 @@ import org.artifactory.api.search.archive.ArchiveSearchControls;
 import org.artifactory.api.search.archive.ArchiveSearchResult;
 import org.artifactory.aql.AqlConverts;
 import org.artifactory.aql.AqlService;
-import org.artifactory.aql.api.domain.sensitive.AqlApiItem;
+import org.artifactory.aql.api.domain.sensitive.AqlApiArchive;
 import org.artifactory.aql.result.AqlEagerResult;
-import org.artifactory.aql.result.rows.AqlArchiveEntryItem;
-import org.artifactory.aql.result.rows.AqlItem;
+import org.artifactory.aql.result.rows.AqlArchiveItem;
 import org.artifactory.search.SearcherBase;
 import org.artifactory.storage.spring.StorageContextHelper;
 
 import java.util.Set;
+
+import static org.artifactory.aql.api.internal.AqlBase.and;
 
 /**
  * Searches for archive entries inside archive files.
@@ -44,20 +45,18 @@ public class ArchiveSearcherAql extends SearcherBase<ArchiveSearchControls, Arch
 
     @Override
     public ItemSearchResults<ArchiveSearchResult> doSearch(ArchiveSearchControls controls) {
-        AqlApiItem aql = AqlApiItem.create().filter(
-                AqlApiItem.and(
-                        AqlApiItem.archive().entry().name().equal(controls.getName()),
-                        AqlApiItem.archive().entry().path().matches(controls.getPath())
-                )).include(AqlApiItem.archive().entry().name(),AqlApiItem.archive().entry().path());
+        AqlApiArchive aql = AqlApiArchive.create().filter(
+                and(
+                        AqlApiArchive.name().equal(controls.getName()),
+                        AqlApiArchive.path().matches(controls.getPath())
+                ));
 
         AqlService aqlService = StorageContextHelper.get().beanForType(AqlService.class);
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
+        AqlEagerResult<AqlArchiveItem> result = aqlService.executeQueryEager(aql);
         Set<ArchiveSearchResult> results = Sets.newLinkedHashSet();
-        for (AqlItem aqlArtifact : result.getResults()) {
+        for (AqlArchiveItem aqlArtifact : result.getResults()) {
             results.add(new ArchiveSearchResult(AqlConverts.toFileInfo.apply(aqlArtifact),
-                    ((AqlArchiveEntryItem)aqlArtifact).getEntryName(),
-                    ((AqlArchiveEntryItem)aqlArtifact).getEntryPath() + "/" +
-                            ((AqlArchiveEntryItem)aqlArtifact).getEntryName(), true));
+                    aqlArtifact.getEntryName(), aqlArtifact.getEntryPath() + "/" + aqlArtifact.getEntryName(), true));
         }
 
         return new ItemSearchResults<>(Lists.newArrayList(results));

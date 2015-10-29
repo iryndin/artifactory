@@ -46,7 +46,6 @@ import org.artifactory.fs.FileInfo;
 import org.artifactory.fs.ItemInfo;
 import org.artifactory.md.Properties;
 import org.artifactory.mime.MavenNaming;
-import org.artifactory.repo.ArtifactoryStandardUrlResolver;
 import org.artifactory.repo.InternalRepoPathFactory;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RealRepo;
@@ -59,7 +58,6 @@ import org.artifactory.storage.fs.service.PropertiesService;
 import org.artifactory.storage.fs.tree.ItemNode;
 import org.artifactory.storage.fs.tree.ItemTree;
 import org.artifactory.storage.fs.tree.TreeBrowsingCriteriaBuilder;
-import org.artifactory.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,7 +248,7 @@ public class RepositoryBrowsingServiceImpl implements RepositoryBrowsingService 
             log.trace("Remote repo not found:'{}'", repoKey);
             throw new IllegalArgumentException("Remote repo not found: " + repoKey);
         }
-        log.debug("Getting Remote Repo '{}' Browsable Children", repoKey);
+        log.debug("getting Remote Repo '{}' Browsable Children", repoKey);
         // include remote resources based on the flag and the offline mode
         boolean includeRemoteResources = criteria.isIncludeRemoteResources() &&
                 repo.isListRemoteFolderItems() && repo.accepts(repoPath);
@@ -301,7 +299,7 @@ public class RepositoryBrowsingServiceImpl implements RepositoryBrowsingService 
                 Iterables.filter(remoteItems, new RemoteOnlyBrowsableItemPredicate(children)));
         for (RemoteItem remoteItem : remoteItems) {
             // remove the remote repository base url
-            String path = StringUtils.removeStart(remoteItem.getUrl(), removeBaseUrl(repo.getUrl()));
+            String path = StringUtils.removeStart(remoteItem.getUrl(), repo.getUrl());
             RepoPath remoteRepoPath = InternalRepoPathFactory.create(repoPath.getRepoKey(), path,
                     remoteItem.isDirectory());
             RepoPath cacheRepoPath = InternalRepoPathFactory.cacheRepoPath(remoteRepoPath);
@@ -320,18 +318,6 @@ public class RepositoryBrowsingServiceImpl implements RepositoryBrowsingService 
         if (updateRootNodesFilterFlag && !children.isEmpty()){
             rootNodesFilterResult.setAllItemNodesCanRead(true);
         }
-    }
-
-    private String removeBaseUrl(String originalUrl) {
-        //If remote url ends with / it messes up the path builder, since we already add it below it's safe to remove
-        String remoteUrl = PathUtils.trimTrailingSlashes(originalUrl);
-        ArtifactoryStandardUrlResolver artifactoryStandardUrlResolver = new ArtifactoryStandardUrlResolver(remoteUrl);
-        StringBuilder baseUrlBuilder = new StringBuilder(artifactoryStandardUrlResolver.getBaseUrl())
-                .append("/").append(artifactoryStandardUrlResolver.getRepoKey());
-        if (!remoteUrl.endsWith("/")) {
-            baseUrlBuilder.append("/");
-        }
-        return baseUrlBuilder.toString();
     }
 
     @Override

@@ -205,11 +205,6 @@ public class VfsQueryDbImpl implements VfsQuery {
     }
 
     @Override
-    public VfsQuery endGroup() {
-        return endGroup(null);
-    }
-
-    @Override
     public VfsQuery endGroup(@Nullable VfsBoolType bool) {
         try {
             BaseGroupCriterion groupCriterion = groups.pop();
@@ -327,7 +322,6 @@ public class VfsQueryDbImpl implements VfsQuery {
         }
         if (defaultGroup.hasStatisticFilter()) {
             query.append(" LEFT JOIN stats ON stats.node_id = nodes.node_id");
-            query.append(" LEFT JOIN stats_remote ON stats_remote.node_id = nodes.node_id");
         }
         query.append(" WHERE ");
         if (defaultGroup.hasPropertyFilter()) {

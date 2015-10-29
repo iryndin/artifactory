@@ -28,13 +28,11 @@ import org.artifactory.descriptor.addon.AddonSettings;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.bintray.BintrayConfigDescriptor;
 import org.artifactory.descriptor.cleanup.CleanupConfigDescriptor;
-import org.artifactory.descriptor.download.FolderDownloadConfigDescriptor;
 import org.artifactory.descriptor.external.BlackDuckSettingsDescriptor;
 import org.artifactory.descriptor.external.ExternalProvidersDescriptor;
 import org.artifactory.descriptor.gc.GcConfigDescriptor;
 import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.mail.MailServerDescriptor;
-import org.artifactory.descriptor.message.SystemMessageDescriptor;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.quota.QuotaConfigDescriptor;
 import org.artifactory.descriptor.replication.LocalReplicationDescriptor;
@@ -74,11 +72,11 @@ import java.util.Map;
 
 @XmlRootElement(name = "config")
 @XmlType(name = "CentralConfigType",
-        propOrder = {"serverName", "offlineMode", "helpLinksEnabled", "fileUploadMaxSizeMb", "dateFormat", "addons", "mailServer",
+        propOrder = {"serverName", "offlineMode", "fileUploadMaxSizeMb", "dateFormat", "addons", "mailServer",
                 "bintrayConfig", "security", "backups", "indexer", "localRepositoriesMap", "remoteRepositoriesMap",
                 "virtualRepositoriesMap", "proxies", "propertySets", "urlBase", "logo", "footer", "repoLayouts",
                 "remoteReplications", "localReplications", "gcConfig", "cleanupConfig", "virtualCacheCleanupConfig",
-                "quotaConfig", "externalProviders", "systemMessageConfig", "folderDownloadConfig"},
+                "quotaConfig", "externalProviders"},
         namespace = Descriptor.NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CentralConfigDescriptorImpl implements MutableCentralConfigDescriptor {
@@ -118,14 +116,12 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     @XmlElement
     private String serverName;
 
+
     /**
      * if this flag is set all the remote repos will work in offline mode
      */
     @XmlElement(defaultValue = "false", required = false)
     private boolean offlineMode;
-
-    @XmlElement
-    private boolean helpLinksEnabled = true;
 
     private AddonSettings addons = new AddonSettings();
 
@@ -146,12 +142,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     @XmlElement
     private String logo;
-
-    @XmlElement
-    private SystemMessageDescriptor systemMessageConfig;
-
-    @XmlElement
-    private FolderDownloadConfigDescriptor folderDownloadConfig;
 
     @XmlElement
     private String footer;
@@ -271,8 +261,8 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     }
 
     @Override
-    public void setIndexer(IndexerDescriptor mavenIndexer) {
-        this.indexer = mavenIndexer;
+    public void setIndexer(IndexerDescriptor descriptor) {
+        this.indexer = descriptor;
     }
 
     @Override
@@ -282,7 +272,7 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
 
     @Override
     public void setServerName(String serverName) {
-        this.serverName = StringUtils.stripToNull(serverName);
+        this.serverName = serverName;
     }
 
     @Override
@@ -366,10 +356,10 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         }
 
         if (removedRepo instanceof RepoBaseDescriptor) {
-            // remove from the indexer include list
+            // remove from the indexer exclude list
             IndexerDescriptor indexer = getIndexer();
             if (indexer != null) {
-                indexer.removeIncludedRepository((RepoBaseDescriptor) removedRepo);
+                indexer.removeExcludedRepository((RepoBaseDescriptor) removedRepo);
             }
         }
 
@@ -381,11 +371,12 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         }
 
         if (removedRepo instanceof LocalRepoDescriptor) {
-            List<LocalReplicationDescriptor> existingReplications = getMultiLocalReplications(removedRepo.getKey());
-            if (existingReplications != null && !existingReplications.isEmpty()) {
-                existingReplications.forEach(replication -> removeLocalReplication(replication));
+            LocalReplicationDescriptor existingReplication = getLocalReplication(removedRepo.getKey());
+            if (existingReplication != null) {
+                removeLocalReplication(existingReplication);
             }
         }
+
         return removedRepo;
     }
 
@@ -431,6 +422,13 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         String repoKey = remoteRepoDescriptor.getKey();
         repoKeyExists(repoKey, false);
         remoteRepositoriesMap.put(repoKey, remoteRepoDescriptor);
+        ProxyDescriptor defaultProxyDescriptor = defaultProxyDefined();
+        if (defaultProxyDescriptor != null) {
+            if (remoteRepoDescriptor instanceof HttpRepoDescriptor) {
+                ((HttpRepoDescriptor) remoteRepoDescriptor).setProxy(defaultProxyDescriptor);
+            }
+        }
+
         conditionallyAddToBackups(remoteRepoDescriptor);
     }
 
@@ -571,25 +569,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     }
 
     @Override
-    public SystemMessageDescriptor getSystemMessageConfig() {
-        return systemMessageConfig;
-    }
-
-    public void setSystemMessageConfig(SystemMessageDescriptor systemMessageConfig) {
-        this.systemMessageConfig = systemMessageConfig;
-    }
-
-    @Override
-    public FolderDownloadConfigDescriptor getFolderDownloadConfig() {
-        return folderDownloadConfig;
-    }
-
-    @Override
-    public void setFolderDownloadConfig(FolderDownloadConfigDescriptor folderDownloadConfig) {
-        this.folderDownloadConfig = folderDownloadConfig;
-    }
-
-    @Override
     public void addBackup(BackupDescriptor backupDescriptor) {
         String backupKey = backupDescriptor.getKey();
         if (isBackupExists(backupKey)) {
@@ -661,16 +640,6 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
     }
 
     @Override
-    public boolean isHelpLinksEnabled() {
-        return helpLinksEnabled;
-    }
-
-    @Override
-    public void setHelpLinksEnabled(boolean helpLinksEnabled) {
-        this.helpLinksEnabled = helpLinksEnabled;
-    }
-
-    @Override
     public ProxyDescriptor defaultProxyDefined() {
         for (ProxyDescriptor proxyDescriptor : proxies) {
             if (proxyDescriptor.isDefaultProxy()) {
@@ -680,8 +649,7 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return null;
     }
 
-    @Override
-    public ProxyDescriptor getProxy(String proxyKey) {
+    private ProxyDescriptor getProxy(String proxyKey) {
         for (ProxyDescriptor proxy : proxies) {
             if (proxy.getKey().equals(proxyKey)) {
                 return proxy;
@@ -690,8 +658,7 @@ public class CentralConfigDescriptorImpl implements MutableCentralConfigDescript
         return null;
     }
 
-    @Override
-    public BackupDescriptor getBackup(String backupKey) {
+    private BackupDescriptor getBackup(String backupKey) {
         for (BackupDescriptor backup : backups) {
             if (backup.getKey().equals(backupKey)) {
                 return backup;

@@ -20,6 +20,7 @@ package org.artifactory.factory.xstream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
+import com.thoughtworks.xstream.io.naming.NameCoder;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
@@ -28,11 +29,12 @@ import com.thoughtworks.xstream.security.ArrayTypePermission;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
+import javanet.staxutils.StaxUtilsXMLOutputFactory;
 import org.artifactory.model.common.RepoPathImpl;
 import org.artifactory.repo.RepoPath;
-import org.artifactory.util.PrettyStaxDriver;
 
 import javax.annotation.Nullable;
+import javax.xml.stream.XMLOutputFactory;
 import java.util.Collection;
 
 /**
@@ -133,4 +135,38 @@ public abstract class XStreamFactory {
         }
     }
 
+    /**
+     * Stax driver configured to pretty print
+     */
+    private static class PrettyStaxDriver extends StaxDriver {
+        private XMLOutputFactory outputFactory;
+
+        private PrettyStaxDriver(QNameMap qNameMap) {
+            super((qNameMap == null) ? new QNameMap() : qNameMap);
+        }
+
+        private PrettyStaxDriver(QNameMap qNameMap, NameCoder nameCoder) {
+            super((qNameMap == null) ? new QNameMap() : qNameMap, nameCoder);
+        }
+
+        @Override
+        public XMLOutputFactory getOutputFactory() {
+            if (outputFactory == null) {
+                //Decorate the original output factory - make it pretty print
+                outputFactory = new StaxUtilsXMLOutputFactory(super.getOutputFactory()) {
+                    @Override
+                    public Object getProperty(String name) throws IllegalArgumentException {
+                        //noinspection SimplifiableIfStatement
+                        if (XMLOutputFactory.IS_REPAIRING_NAMESPACES.equals(name)) {
+                            //Avoid delegating to the parent XOF, since may result in IAE (RTFACT-2193).
+                            return false;
+                        }
+                        return super.getProperty(name);
+                    }
+                };
+                outputFactory.setProperty(StaxUtilsXMLOutputFactory.INDENTING, true);
+            }
+            return outputFactory;
+        }
+    }
 }

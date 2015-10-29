@@ -2,7 +2,7 @@ package org.artifactory.storage.binstore.service.providers;
 
 import org.artifactory.binstore.BinaryInfo;
 import org.artifactory.storage.binstore.service.BinaryNotFoundException;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.annotation.BinaryProviderClassInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

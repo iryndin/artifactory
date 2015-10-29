@@ -62,7 +62,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findPropertiesUsingNotMach() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"property.key\" : {\"$nmatch\" : \"a\"}})." +
-                        "include(\"property.key\",\"property.value\",\"id\")");
+                        "include(\"property.key\",\"property.value\",\"node\")");
         assertSize(queryResult, 31);
     }
 
@@ -266,14 +266,14 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void findArtifactsUsingArchives() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\": {\"$match\" : \"a*\"}})");
+                "items.find({\"archive.entry_name\": {\"$match\" : \"a*\"}})");
         assertSize(queryResult, 0);
     }
 
     @Test
     public void findArtifactsUsingArchivesAndMatches() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\": {\"$match\" : \"t*\"}})");
+                "items.find({\"archive.entry_name\": {\"$match\" : \"t*\"}})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "org/yossis/tools", "file2.bin", file);
     }
@@ -373,7 +373,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactsWithCanonicalAndOperatorsAndArtifactsFieldsAndPropertyKeyMatchingAndNorEqual() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"$or\" : [{\"$and\" : [{\"repo\" : \"repo1\"},{\"$and\" : [{\"@build.name\" : {\"$ne\" : \"an\"}},{\"@jungle\": {\"$ne\" : \"*\"}}]}]},{\"path\" : {\"$match\" : \"x*\"}}]})");
-        assertSize(queryResult, 13);
+        assertSize(queryResult, 2);
         assertItem(queryResult, "repo1", ".", ".", folder);
         assertItem(queryResult, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
     }
@@ -382,7 +382,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactsWithCanonicalAndOrOperatorsAndArtifactsFieldsUsingNotEquals() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"type\" : \"any\",\"$or\" : [{\"$and\" : [{\"repo\" : \"repo1\"},{\"$or\" : [{\"@yossis\" : {\"$ne\" : \"ant\"}},{\"@jungle\": {\"$eq\" : \"*\"}}]}]},{\"path\" : {\"$match\" : \"x*\"}}]})");
-        assertSize(queryResult, 14);
+        assertSize(queryResult, 2);
         assertItem(queryResult, "repo1", "org", "yossis", folder);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
     }
@@ -390,7 +390,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void findArtifactsWithCanonicalAndOrOperatorsAndArtifactsFieldsAndArchiveFields() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"repo\" : \"repo1\", \"$and\" : [{\"@yossis\" : {\"$ne\" : \"an\"}},{\"archive.entry.name\": {\"$match\" : \"file*\"}}]})");
+                "items.find({\"repo\" : \"repo1\", \"$and\" : [{\"@yossis\" : {\"$ne\" : \"an\"}},{\"archive.entry_name\": {\"$match\" : \"file*\"}}]})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
     }
@@ -398,7 +398,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void findArtifactsWithCanonicalAndOrOperatorsAndArtifactsFieldsAndArchiveFieldsUsingNotEquals() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"repo\" : \"repo1\", \"$and\" : [{\"@build.name\" : {\"$ne\" : \"ant\"}},{\"archive.entry.name\": {\"$match\" : \"file*\"}},{\"archive.entry.name\": \"lll\"}]})");
+                "items.find({\"repo\" : \"repo1\", \"$and\" : [{\"@build.name\" : {\"$ne\" : \"ant\"}},{\"archive.entry_name\": {\"$match\" : \"file*\"}},{\"archive.entry_name\": \"lll\"}]})");
         assertSize(queryResult, 0);
     }
 
@@ -464,7 +464,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void findArtifactWithPropertyNotMatches() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"@build.name\"  : {\"$nmatch\" : \"*GPL\"}})");
-        assertSize(queryResult, 11);
+        assertSize(queryResult, 1);
     }
 
     @Test(enabled = false)
@@ -492,20 +492,6 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     public void artifactWithLimit() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
                 "items.find({\"@build.name\"  : {\"$nmatch\" : \"*\"}}).limit(2)");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void artifactWithNotMatch() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"@build.name\"  : {\"$nmatch\" : \"antd\"},\"type\":\"any\"}).limit(2)");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void artifactWithNotMatch1() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"@build.name\"  : {\"$nmatch\" : \"*\"},\"type\":\"any\"}).limit(2)");
         assertSize(queryResult, 2);
     }
 
@@ -636,7 +622,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void findArchives() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "archive.entries.find({\"archive.item.repo\" :\"repo1\"})");
+                "archives.find({\"item.repo\" :\"repo1\"})");
         assertSize(queryResult, 8);
         assertArchive(queryResult, "META-INF", "LICENSE.txt");
         assertArchive(queryResult, "META-INF", "MANIFEST.MF");
@@ -645,7 +631,7 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void findArchivesFilterByArchiveEntryPath() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "archive.entries.find({\"archive.item.repo\" :\"repo1\",\"archive.entry.path\" :\"META\"})");
+                "archives.find({\"item.repo\" :\"repo1\",\"entry_path\" :\"META\"})");
         assertSize(queryResult, 0);
     }
 
@@ -663,192 +649,6 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
                 "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$match\":\"*\"}})");
         assertSize(queryResult, 3);
         assertBuild(queryResult, "bb", "1");
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties1() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$nmatch\":\"*\"}})");
-        assertSize(queryResult, 0);
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties2() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@build.number\" :{\"$nmatch\":\"*\"}})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties3() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@*\" :{\"$nmatch\":\"67\"}})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildPropertiesByBuildPropertiesUsingAt() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@status\" :\"good\",\"@start\" :\"4\"})");
-        assertSize(queryResult, 1);
-    }
-
-    @Test
-    public void findBuildPropertiesByBuildProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "build.properties.find({\"status\" :\"good\",\"start\" :\"4\"})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findBuildModulePropertiesByModuleProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "module.properties.find({\"status\" :\"good\",\"start\" :\"4\"})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findBuildModulePropertiesByBuildName() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "module.properties.find({\"module.build.name\" :\"ba\",\"start\" :\"4\"})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findItemsFilteringByBuildProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"artifact.module.build.@start\" :\"1\"})");
-        assertSize(queryResult, 1);
-    }
-
-    @Test
-    public void findModulesFilteringByBuildProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"build.@start\" :\"1\"})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findModulesFilteringByItemProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"artifact.item.@yossis\" :\"pdf\"})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findModulesFilteringByModulePropertiesWithStarOnValue() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"@start\" :\"*\"})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findModulesFilteringByModulePropertiesWithStarOnKey() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"@*\" :\"1\"})");
-        assertSize(queryResult, 1);
-    }
-
-    @Test
-    public void findModulesFilteringByModulePropertiesWithStarOnKeyAndValue() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"@*\" :{\"$match\":\"*\"}})");
-        assertSize(queryResult, 2);
-    }
-
-    @Test
-    public void findBuildsFilteringByBuildProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"build.@start\" :\"1\"})");
-        assertSize(queryResult, 2);
-        assertModule(queryResult,"bb:modb1");
-        assertModule(queryResult,"bb:modb2");
-    }
-
-    @Test
-    public void findModulesBuildsPropertiesNotMatch() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"build.@start\" :{\"$nmatch\":\"1\"}})");
-        assertSize(queryResult, 1);
-        assertModule(queryResult, "ba:moda1");
-        assertModule(queryResult,"ba:moda1");
-    }
-
-    @Test
-    public void findBuildsWithPropertiesNotMatch() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@start\" :{\"$nmatch\":\"1\"}})");
-        assertSize(queryResult, 4);
-    }
-
-    @Test
-    public void findModulesWithPropertiesNotMatch() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"@start\" :{\"$nmatch\":\"1\"}})");
-        assertSize(queryResult, 2);
-        assertModule(queryResult,  "ba:moda1");
-        assertModule(queryResult,"ba:moda1");
-    }
-
-    @Test
-    public void buildPropertiesWithInclude() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"@start\" :{\"$nmatch\":\"1\"}}).include(\"@start\")");
-        assertSize(queryResult, 2);
-        assertModule(queryResult,  "ba:moda1");
-        assertModule(queryResult,"ba:moda1");
-    }
-
-    @Test
-    public void spm() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"$msp\":[{\"@start\" :{\"$nmatch\":\"1\"}},{\"build.@*\" :{\"$match\":\"*\"}}]})");
-        assertSize(queryResult, 2);
-        assertModule(queryResult, "ba:moda1");
-        assertModule(queryResult,"ba:moda1");
-    }
-
-
-    @Test
-    public void findBuildsFilteringByItemProperties() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "modules.find({\"artifact.item.@yossis\" :\"pdf\"})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildsFilteringByModulePropertiesWithStarOnValue() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@start\" :\"*\"})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildsFilteringByModulePropertiesWithStarOnKey() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@*\" :\"1\"})");
-        assertSize(queryResult, 1);
-    }
-
-    @Test
-    public void findBuildsFilteringByModulePropertiesWithStarOnKeyAndValue() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@*\" :{\"$match\":\"*\"}})");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildsFilteringByModulePropertiesAndIncludeUsage() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"@*\" :{\"$match\":\"*\"}}).include(\"@start\")");
-        assertSize(queryResult, 3);
-    }
-
-    @Test
-    public void findBuildWithNotMatchItemProperties5() {
-        AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "builds.find({\"module.artifact.item.repo\" :\"repo1\", \"module.artifact.item.@build.number\" :{\"$nmatch\":\"67\"}})");
-        assertSize(queryResult, 3);
     }
 
     /*build artifacts*/
@@ -884,17 +684,17 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void checkOrBehaviour() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\" : {\"$match\": \"*txt\"}}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"archive.entry_name\" : {\"$match\": \"*txt\"}}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
 
         queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\" : {\"$match\": \"*file\"}}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"archive.entry_name\" : {\"$match\": \"*file\"}}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
 
         queryResult = aqlService.executeQueryEager(
-                "items.find({\"$or\":[{\"archive.entry.name\" : {\"$match\": \"*txt\"}},{\"archive.entry.name\" : {\"$match\": \"*file\"}}]}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"$or\":[{\"archive.entry_name\" : {\"$match\": \"*txt\"}},{\"archive.entry_name\" : {\"$match\": \"*file\"}}]}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 2);
         assertItem(queryResult, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
@@ -903,17 +703,17 @@ public class AqlServiceTest extends AqlAbstractServiceTest {
     @Test
     public void checkAndBehaviour() {
         AqlEagerResult queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\" : {\"$match\": \"*txt\"}}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"archive.entry_name\" : {\"$match\": \"*txt\"}}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
 
         queryResult = aqlService.executeQueryEager(
-                "items.find({\"archive.entry.name\" : {\"$match\": \"*file\"}}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"archive.entry_name\" : {\"$match\": \"*file\"}}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 1);
         assertItem(queryResult, "repo1", "org/yossis/tools", "test.bin", file);
 
         queryResult = aqlService.executeQueryEager(
-                "items.find({\"$and\":[{\"archive.entry.name\" : {\"$match\": \"*txt\"}},{\"archive.entry.name\" : {\"$match\": \"*file\"}}]}).sort({\"$desc\" : [\"name\"]})");
+                "items.find({\"$and\":[{\"archive.entry_name\" : {\"$match\": \"*txt\"}},{\"archive.entry_name\" : {\"$match\": \"*file\"}}]}).sort({\"$desc\" : [\"name\"]})");
         assertSize(queryResult, 0);
     }
 

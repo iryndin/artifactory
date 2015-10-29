@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * @author Chen Keinan
  */
-@Component("artifactoryUiApiResponse")
+@Component("artifactoryUiResponse")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ArtifactoryRestApiResponse implements IResponse {
     private Collection iModelList;

@@ -101,8 +101,7 @@ to your /etc/security/limits.conf file."
         fi
         findShutdownPort
         nbSeconds=1
-        START_TMO=${START_TMO:-60}
-        while [ $SHUTDOWN_PORT -eq 0 ] && [ $nbSeconds -lt $START_TMO ]; do
+        while [ $SHUTDOWN_PORT -eq 0 ] && [ $nbSeconds -lt 60 ]; do
             sleep 1
             let "nbSeconds = $nbSeconds + 1"
             findShutdownPort
@@ -232,38 +231,12 @@ check() {
     echo "JAVA_OPTIONS         =  $JAVA_OPTIONS"
     echo
 
-    checkJavaVersion
-
     exit 1
-}
-
-checkJavaVersion(){
-    if type -p java; then
-        _java=java
-    elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
-        echo found java executable in JAVA_HOME
-        _java="$JAVA_HOME/bin/java"
-    else
-        echo "no java"
-    fi
-
-    if [[ "$_java" ]]; then
-        $_java -version 2>&1| \
-        awk -F\" '/version/{\
-            if ($2 < 1.8) {\
-                printf "%s is too old must be at least java 1.8\n", $2;\
-                exit 0;\
-            } else exit 1}' && exit 99
-    fi
 }
 
 #
 ARTIFACTORY_PID=""
 artDefaultFile="/etc/opt/jfrog/artifactory/default"
-
-if [ ! -e $artDefaultFile ]; then
-    sed '/ARTIFACTORY/s/^#//;/ARTIFACTORY_PID/s-$ARTIFACTORY_HOME-/var/opt/jfrog-' </opt/jfrog/artifactory/bin/artifactory.default >$artDefaultFile
-fi
 
 . $artDefaultFile || errorArtHome "ERROR: $artDefaultFile does not exist or not executable"
 
@@ -283,11 +256,9 @@ checkArtUser
 
 case "$1" in
   start)
-        checkJavaVersion
         start
         ;;
   wait)
-        checkJavaVersion
 	    start_and_wait
 	    ;;
   stop)

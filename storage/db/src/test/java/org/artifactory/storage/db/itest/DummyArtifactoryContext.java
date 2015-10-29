@@ -1,7 +1,6 @@
 package org.artifactory.storage.db.itest;
 
 import com.google.common.collect.Maps;
-import org.artifactory.addon.AddonType;
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.ArtifactoryRunningMode;
 import org.artifactory.addon.OssAddonsManager;
@@ -10,7 +9,6 @@ import org.artifactory.addon.ha.message.HaMessage;
 import org.artifactory.addon.ha.message.HaMessageTopic;
 import org.artifactory.addon.ha.semaphore.JVMSemaphoreWrapper;
 import org.artifactory.addon.ha.semaphore.SemaphoreWrapper;
-import org.artifactory.addon.smartrepo.SmartRepoAddon;
 import org.artifactory.api.config.CentralConfigService;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
@@ -19,17 +17,12 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.converters.ConverterManager;
 import org.artifactory.converters.VersionProvider;
-import org.artifactory.fs.StatsInfo;
-import org.artifactory.repo.RepoPath;
 import org.artifactory.sapi.common.ExportSettings;
 import org.artifactory.sapi.common.ImportSettings;
 import org.artifactory.spring.SpringConfigPaths;
-import org.artifactory.storage.db.servers.model.ArtifactoryServer;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
@@ -65,25 +58,6 @@ public class DummyArtifactoryContext implements ArtifactoryContext {
         }
         if (type.equals(RepositoryService.class)) {
             return (T) Mockito.mock(RepositoryService.class);
-        }
-        if (type.equals(SmartRepoAddon.class)) {
-            return (T) new SmartRepoAddon(){
-
-                @Override
-                public boolean isDefault() {
-                    return false;
-                }
-
-                @Override
-                public boolean supportRemoteStats() {
-                    return true;
-                }
-
-                @Override
-                public void fileDownloadedRemotely(StatsInfo statsInfo, String origin, RepoPath repoPath) {
-
-                }
-            };
         }
         if (beans.containsKey(type)) {
             return (T) beans.get(type);
@@ -209,26 +183,6 @@ public class DummyArtifactoryContext implements ArtifactoryContext {
         }
 
         @Override
-        public List<ArtifactoryServer> getAllArtifactoryServers() {
-            return new ArrayList<>();
-        }
-
-        @Override
-        public boolean deleteArtifactoryServer(String id) {
-            return false;
-        }
-
-        @Override
-        public boolean artifactoryServerHasHeartbeat(ArtifactoryServer artifactoryServer) {
-            return false;
-        }
-
-        @Override
-        public String getCurrentMemberServerId() {
-            return null;
-        }
-
-        @Override
         public boolean isDefault() {
             return false;
         }
@@ -238,16 +192,6 @@ public class DummyArtifactoryContext implements ArtifactoryContext {
 
         private DummyOssAddonsManager() {
             context = ContextHelper.get();
-        }
-
-        @Override
-        public boolean isAddonSupported(AddonType addonType) {
-            return false;
-        }
-
-        @Override
-        public boolean isProLicensed(String licenseKeyHash) {
-            return false;
         }
 
         @Override

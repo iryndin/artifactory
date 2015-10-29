@@ -27,7 +27,6 @@ import org.artifactory.mime.version.converter.v3.NuPkgMimeTypeConverter;
 import org.artifactory.mime.version.converter.v4.GemMimeTypeConverter;
 import org.artifactory.mime.version.converter.v5.JsonMimeTypeConverter;
 import org.artifactory.mime.version.converter.v6.DebianMimeTypeConverter;
-import org.artifactory.mime.version.converter.v7.ArchiveMimeTypeConverter;
 import org.artifactory.version.ArtifactoryVersion;
 import org.artifactory.version.SubConfigElementVersion;
 import org.artifactory.version.VersionComparator;
@@ -49,8 +48,7 @@ public enum MimeTypesVersion implements SubConfigElementVersion {
     v4(ArtifactoryVersion.v251, ArtifactoryVersion.v302, new GemMimeTypeConverter()),
     v5(ArtifactoryVersion.v303, ArtifactoryVersion.v3111, new JsonMimeTypeConverter()),
     v6(ArtifactoryVersion.v320, ArtifactoryVersion.v322, new DebianMimeTypeConverter()),
-    v7(ArtifactoryVersion.v330, ArtifactoryVersion.v402, new ArchiveMimeTypeConverter()),
-    v8(ArtifactoryVersion.v410, ArtifactoryVersion.getCurrent());
+    v7(ArtifactoryVersion.v330, ArtifactoryVersion.getCurrent());
 
     private final XmlConverter[] converters;
 
@@ -103,33 +101,12 @@ public enum MimeTypesVersion implements SubConfigElementVersion {
         }
 
         int versionStartIndex = versionIdx + VERSION_ATT.length();
-        int versionEndIndex = getVersionEndIndex(mimeTypesXmlAsString, versionStartIndex);
-        int version = Integer.parseInt(mimeTypesXmlAsString.substring(versionStartIndex, versionEndIndex));
+        //TODO: [by YS] this relies on single digit version number which will work up until version 9. Should instead parse the string until next quote
+        int version = Integer.parseInt(mimeTypesXmlAsString.substring(versionStartIndex, versionStartIndex + 1));
         if (MimeTypesVersion.values().length < version) {
             throw new IllegalArgumentException("Version " + version + " no found.");
         }
         return MimeTypesVersion.values()[version - 1];
-    }
-
-    /**
-     * Having version start index, locates version end index
-     * in mimeTypesXmlAsString
-     *
-     * @param mimeTypesXmlAsString
-     * @param pointer version start index
-     *
-     * @return version end index
-     *
-     * @throws IllegalArgumentException if pointer reaches size of mimeTypesXmlAsString
-     *                                  without finding version closing '>' character
-     */
-    private static int getVersionEndIndex(String mimeTypesXmlAsString, int pointer) {
-        while(mimeTypesXmlAsString.charAt(pointer) != '>') {
-            pointer++;
-            if (pointer >= mimeTypesXmlAsString.length())
-                throw new IllegalArgumentException("MimeTypes version in malformed");
-        }
-        return --pointer;
     }
 
     public static MimeTypesVersion getCurrent() {

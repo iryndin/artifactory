@@ -32,19 +32,13 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.blackduck.BlackDuckAddon;
+import org.artifactory.addon.BlackDuckAddon;
 import org.artifactory.addon.license.LicensesAddon;
 import org.artifactory.addon.plugin.PluginsAddon;
 import org.artifactory.addon.plugin.build.AfterBuildSaveAction;
 import org.artifactory.addon.plugin.build.BeforeBuildSaveAction;
-import org.artifactory.api.build.BuildProps;
 import org.artifactory.api.build.BuildRunComparators;
-import org.artifactory.api.build.GeneralBuild;
 import org.artifactory.api.build.ImportableExportableBuild;
-import org.artifactory.api.build.ModuleArtifact;
-import org.artifactory.api.build.ModuleDependency;
-import org.artifactory.api.build.PublishedModule;
-import org.artifactory.api.build.diff.BuildParams;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepositoryService;
@@ -56,6 +50,7 @@ import org.artifactory.aql.api.domain.sensitive.AqlApiBuild;
 import org.artifactory.aql.api.domain.sensitive.AqlApiItem;
 import org.artifactory.aql.api.internal.AqlBase;
 import org.artifactory.aql.model.AqlComparatorEnum;
+import org.artifactory.aql.model.AqlFieldEnum;
 import org.artifactory.aql.result.AqlEagerResult;
 import org.artifactory.aql.result.rows.AqlBaseFullRowImpl;
 import org.artifactory.aql.util.AqlUtils;
@@ -95,7 +90,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -481,7 +475,7 @@ public class BuildServiceImpl implements InternalBuildService {
             }
         });
         results.add(new ArtifactoryBuildArtifact(idMatch, (FileInfo) AqlConverts.toFileInfo.apply(result)));
-        log.debug("Matched artifact {} to path {}", idMatch.getName(), AqlUtils.fromAql(result));
+        log.debug("Matched artifact {} to path {}", idMatch.getName(), AqlUtils.repoPathFromAql(result));
         artifacts.remove(idMatch);
     }
 
@@ -490,7 +484,7 @@ public class BuildServiceImpl implements InternalBuildService {
         Iterator<Artifact> artifactsIter = artifacts.iterator();
         Artifact matchedArtifact = artifactsIter.next();
         results.add(new ArtifactoryBuildArtifact(matchedArtifact, (FileInfo) AqlConverts.toFileInfo.apply(result)));
-        log.debug("Matched artifact {} to path {}", matchedArtifact.getName(), AqlUtils.fromAql(result));
+        log.debug("Matched artifact {} to path {}", matchedArtifact.getName(), AqlUtils.repoPathFromAql(result));
         //Remove artifact from list to ensure that we match everything
         artifactsIter.remove();
     }
@@ -531,7 +525,7 @@ public class BuildServiceImpl implements InternalBuildService {
                 AqlApiBuild.module().artifact().item().name()
                 //Ordering by the last updated field, in case of duplicates with the same checksum
                 //Since this is match any checksum mode
-        ).addSortElement(AqlApiBuild.module().artifact().item().updated()).desc();
+        ).sortBy(AqlFieldEnum.itemUpdated).desc();
 
 
         AqlEagerResult<AqlBaseFullRowImpl> aqlResult = aqlService.executeQueryEager(nonStrictQuery);
@@ -540,13 +534,18 @@ public class BuildServiceImpl implements InternalBuildService {
     }
 
     @Override
-    public Map<Dependency, FileInfo> getBuildDependenciesFileInfos(Build build) {
+    public Map<Dependency, FileInfo> getBuildDependenciesFileInfos(Build build, String sourceRepo) {
         AqlBase.AndClause<AqlApiBuild> and = AqlApiBuild.and(
                 AqlApiBuild.name().equal(build.getName()),
                 AqlApiBuild.number().equal(build.getNumber())
         );
         log.debug("Executing dependencies search for build {}:{}", build.getName(), build.getNumber());
-
+        if (StringUtils.isNotBlank(sourceRepo)) {
+            log.debug("Search limited to repo: {}", sourceRepo);
+            and.append(
+                    AqlApiBuild.module().dependecy().item().repo().equal(sourceRepo)
+            );
+        }
         AqlBase buildDependenciesQuery = AqlApiBuild.create().filter(and);
         buildDependenciesQuery.include(
                 AqlApiBuild.module().dependecy().name(),
@@ -563,7 +562,7 @@ public class BuildServiceImpl implements InternalBuildService {
                 AqlApiBuild.module().dependecy().item().name(),
                 AqlApiBuild.module().dependecy().item().size()
                 //Ordering by the last updated field, in case of duplicates with the same checksum.
-        ).addSortElement(AqlApiBuild.module().dependecy().item().updated()).asc();
+        ).sortBy(AqlFieldEnum.itemUpdated).asc();
 
         AqlEagerResult<AqlBaseFullRowImpl> results = aqlService.executeQueryEager(buildDependenciesQuery);
         log.debug("Search returned {} dependencies", results.getSize());
@@ -926,44 +925,6 @@ public class BuildServiceImpl implements InternalBuildService {
         buildStoreService.addPromotionStatus(build, promotion, authorizationService.currentUsername());
     }
 
-    @Nullable
-    @Override
-    public List<PublishedModule> getPublishedModules(String buildName, String date, String orderBy, String direction, String offset, String limit) {
-        return buildStoreService.getPublishedModules(buildName, date, orderBy, direction, offset, limit);
-    }
-
-    @Nullable
-    @Override
-    public List<ModuleArtifact> getModuleArtifact(String buildName, String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        return buildStoreService.getModuleArtifact(buildName, buildNumber, moduleId, date, orderBy, direction, offset,
-                limit);
-    }
-
-    @Nullable
-    @Override
-    public List<ModuleDependency> getModuleDependency(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        return buildStoreService.getModuleDependency(buildNumber, moduleId, date, orderBy, direction, offset, limit);
-    }
-
-
-    @Nullable
-    @Override
-    public int getModuleArtifactCount(String buildNumber, String moduleId,String date) {
-        return buildStoreService.getModuleArtifactCount(buildNumber, moduleId, date);
-    }
-
-    @Nullable
-    @Override
-    public int getModuleDependencyCount(String buildNumber, String moduleId, String date) {
-        return buildStoreService.getModuleDependenciesCount(buildNumber, moduleId, date);
-    }
-
-
-    @Override
-    public int  getPublishedModulesCounts(String buildName, String date) {
-        return buildStoreService.getPublishedModulesCounts(buildName, date);
-    }
-
     private void exportBuild(ExportSettings settings, BuildRun buildRun,
             long exportedBuildCount, File buildsFolder) throws Exception {
         MutableStatusHolder multiStatusHolder = settings.getStatusHolder();
@@ -1028,76 +989,5 @@ public class BuildServiceImpl implements InternalBuildService {
             virtualKeys.add(virtualDescriptor.getKey());
         }
         return virtualKeys;
-    }
-
-    @Override
-    public void deleteAllBuilds(String buildName) {
-        if (authorizationService.isAdmin()) {
-            buildStoreService.deleteAllBuilds(buildName);
-        }
-    }
-
-    @Override
-    public List<ModuleArtifact> getModuleArtifactsForDiffWithPaging(BuildParams buildParams, String offset, String limit) {
-        return buildStoreService.getModuleArtifactsForDiffWithPaging(buildParams, offset, limit);
-    }
-
-    @Override
-    public int getModuleArtifactsForDiffCount(BuildParams buildParams, String offset, String limit) {
-        return buildStoreService.getModuleArtifactsForDiffCount(buildParams, offset, limit);
-    }
-
-    @Override
-    public List<ModuleDependency> getModuleDependencyForDiffWithPaging(BuildParams buildParams, String offset, String limit) {
-        return buildStoreService.getModuleDependencyForDiffWithPaging(buildParams, offset, limit);
-    }
-
-    @Override
-    public int getModuleDependencyForDiffCount(BuildParams buildParams, String offset, String limit) {
-        return buildStoreService.getModuleDependencyForDiffCount(buildParams, offset, limit);
-    }
-
-    @Override
-    public List<GeneralBuild> getPrevBuildsList(String buildName, String buildDate) {
-        return buildStoreService.getPrevBuildsList(buildName, buildDate);
-    }
-
-    @Override
-    public List<BuildProps> getBuildProps(BuildParams buildParams, String offset, String limit) {
-        return buildStoreService.getBuildProps(buildParams, offset, limit);
-    }
-
-    @Override
-    public int getPropsDiffCount(BuildParams buildParams) {
-        return buildStoreService.getPropsDiffCount(buildParams);
-    }
-
-    @Override
-    public List<BuildProps> getBuildPropsData(BuildParams buildParams, String offset, String limit, String orderBy) {
-        return buildStoreService.getBuildPropsData(buildParams, offset, limit, orderBy);
-    }
-
-    @Override
-    public long getBuildPropsCounts(BuildParams buildParams) {
-        return buildStoreService.getBuildPropsCounts(buildParams);
-    }
-
-    @Override
-    public Map<String, ModuleArtifact> getAllModuleArtifacts(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        return null;
-    }
-
-    @Override
-    public Set<BuildRun> getLatestBuildsPaging(String offset, String orderBy, String direction, String limit) {
-        BuildStoreService buildStoreService = ContextHelper.get().beanForType(BuildStoreService.class);
-        return buildStoreService.getLatestBuildsPaging(offset, orderBy, direction, limit);
-    }
-
-    @Override
-    public List<GeneralBuild> getBuildForNamePaging(String buildName, String orderBy, String direction, String offset,
-            String limit) throws
-            SQLException {
-        BuildStoreService buildStoreService = ContextHelper.get().beanForType(BuildStoreService.class);
-        return buildStoreService.getBuildForNamePaging(buildName, orderBy, direction, offset, limit);
     }
 }

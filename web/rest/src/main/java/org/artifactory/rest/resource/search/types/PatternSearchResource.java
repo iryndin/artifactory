@@ -18,16 +18,6 @@
 
 package org.artifactory.rest.resource.search.types;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.artifactory.addon.rest.AuthorizationRestException;
@@ -43,9 +33,19 @@ import org.artifactory.repo.Repo;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.exception.RestException;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Exposes the pattern searcher to REST via the REST addon

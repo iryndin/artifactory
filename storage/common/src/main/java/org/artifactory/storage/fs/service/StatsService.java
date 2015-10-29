@@ -43,22 +43,8 @@ public interface StatsService {
      * @param repoPath       The file repo path to set/update stats
      * @param downloadedBy   User who downloaded the file
      * @param downloadedTime Time the file was downloaded
-     * @param fromAnotherArtifactory specifying whether request comes fromAnotherArtifactory
      */
-    void fileDownloaded(RepoPath repoPath, String downloadedBy, long downloadedTime, boolean fromAnotherArtifactory);
-
-    /**
-     * Update the download (performed at remote artifactory instance) stats and increment the count by one.
-     * The storage update is not immediate.
-     *
-     * @param origin           The remote host the download was triggered by
-     * @param path             The round trip of download request
-     * @param repoPath         The file repo path to set/update stats
-     * @param downloadedBy     User who downloaded the file
-     * @param downloadedTime   Time the file was downloaded
-     * @param count            Amount of performed downloads
-     */
-    void fileDownloadedRemotely(String origin, String path, RepoPath repoPath, String downloadedBy, long downloadedTime, long count);
+    void fileDownloaded(RepoPath repoPath, String downloadedBy, long downloadedTime);
 
     /**
      * Sets the stats details on the given node. Existing statistics on this node are overridden.

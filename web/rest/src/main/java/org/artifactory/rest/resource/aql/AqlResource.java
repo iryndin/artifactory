@@ -7,9 +7,12 @@ import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.aql.AqlException;
 import org.artifactory.aql.AqlService;
-import org.artifactory.aql.result.AqlJsonStreamer;
+import org.artifactory.aql.model.AqlDomainEnum;
+import org.artifactory.aql.model.DomainSensitiveField;
+import org.artifactory.aql.result.AqlJsonResult;
 import org.artifactory.aql.result.AqlLazyResult;
 import org.artifactory.aql.result.AqlRestResult;
+import org.artifactory.aql.result.AqlStreamResultImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLDecoder;
 
 /**
  * @author Gidi Shabat
@@ -59,20 +66,24 @@ public class AqlResource {
             log.error("Couldn't find the query neither in the request URL and the attached file");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        // Execute the query
+        // Try to execute the query
         try {
+
             final AqlRestResult restResult = executeAqlQuery(query);
             // After success query execution prepare the result in stream.
-            StreamingOutput stream = os -> {
-                byte[] array = restResult.read();
-                try {
-                    while (array != null) {
-                        os.write(array);
-                        array = restResult.read();
+            StreamingOutput stream = new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    byte[] array = restResult.read();
+                    try {
+                        while (array != null) {
+                            os.write(array);
+                            array = restResult.read();
+                        }
+                        os.flush();
+                    } finally {
+                        IOUtils.closeQuietly(restResult);
                     }
-                    os.flush();
-                } finally {
-                    IOUtils.closeQuietly(restResult);
                 }
             };
             return Response.ok(stream).build();
@@ -94,7 +105,11 @@ public class AqlResource {
     private AqlRestResult executeAqlQuery(String query) {
         AqlLazyResult result = aqlService.executeQueryLazy(query);
         final AqlRestResult restResult;
-        restResult = new AqlJsonStreamer(result);
+        if (isContainsProperties(result)) {
+            restResult = new AqlJsonResult(result);
+        } else {
+            restResult = new AqlStreamResultImpl(result);
+        }
         return restResult;
     }
 
@@ -104,10 +119,24 @@ public class AqlResource {
             if (StringUtils.isBlank(query)) {
                 // Try to find query in the attached params ()
                 query = ((String[]) request.getParameterMap().get("query"))[0];
+                if (query != null) {
+                    query = URLDecoder.decode(query, "UTF-8");
+                }
             }
             return query;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private boolean isContainsProperties(AqlLazyResult result) {
+        for (DomainSensitiveField field : result.getFields()) {
+            AqlDomainEnum fieldDomain = field.getSubDomains().get(field.getSubDomains().size() - 1);
+            AqlDomainEnum mainDomain = field.getSubDomains().get(0);
+            if (fieldDomain != mainDomain && fieldDomain == AqlDomainEnum.properties) {
+                return true;
+            }
+        }
+        return false;
     }
 }

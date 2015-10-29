@@ -22,7 +22,6 @@ import org.artifactory.descriptor.property.Property;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.fs.RepoResource;
 import org.artifactory.md.Properties;
-import org.artifactory.repo.Repo;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.request.InternalRequestContext;
 
@@ -70,22 +69,8 @@ public interface PropertiesAddon extends Addon {
     void addProperty(RepoPath repoPath, PropertySet propertySet, Property property, String... values);
 
     /**
-     * set properties
-     * @param repoPath - node repo path
-     * @param properties - node properties
-     */
-    void setProperties(RepoPath repoPath, Properties properties);
-
-    /**
      * Assemble a custom maven-metadata.xml according to the metadata definitions and matrix params in conjunction with
      * the existing properties already on the node.
      */
     RepoResource assembleDynamicMetadata(InternalRequestContext context, RepoPath metadataRepoPath);
-
-    /**
-     * update remote properties
-     *
-     * @param repo - repo descriptor interface
-     */
-    void updateRemoteProperties(Repo repo, RepoPath repoPath);
 }

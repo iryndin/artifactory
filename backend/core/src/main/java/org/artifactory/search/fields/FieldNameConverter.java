@@ -34,8 +34,6 @@ public abstract class FieldNameConverter {
                 return VfsDateFieldName.CREATED;
             case LAST_DOWNLOADED:
                 return VfsDateFieldName.LAST_DOWNLOADED;
-            case LAST_REMOTE_DOWNLOADED:
-                return VfsDateFieldName.LAST_REMOTE_DOWNLOADED;
             case LAST_MODIFIED:
                 return VfsDateFieldName.LAST_MODIFIED;
         }

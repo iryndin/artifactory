@@ -28,7 +28,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -69,9 +73,8 @@ public class MoveResource {
             // Flag to indicate whether path translation across different layouts should be suppressed. default false
             @QueryParam(ArtifactRestConstants.PARAM_SUPPRESS_LAYOUTS) int suppressLayouts,
             //Flag to indicate whether the operation should fail upon encountering an error. default false
-            @QueryParam(ArtifactRestConstants.PARAM_FAIL_FAST) int failFast,
-            @QueryParam(ArtifactRestConstants.PARAM_ATOMIC) String atomic) throws Exception {
+            @QueryParam(ArtifactRestConstants.PARAM_FAIL_FAST) int failFast) throws Exception {
         AddonsManager addonsManager = ContextHelper.get().beanForType(AddonsManager.class);
-        return addonsManager.addonByType(RestAddon.class).move(path, target, dryRun, suppressLayouts, failFast, atomic);
+        return addonsManager.addonByType(RestAddon.class).move(path, target, dryRun, suppressLayouts, failFast);
     }
 }

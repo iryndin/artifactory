@@ -21,7 +21,7 @@ package org.artifactory.storage.binstore.service.providers;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.storage.StorageUnit;
 import org.artifactory.storage.StorageException;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.FileBinaryProvider;
 import org.artifactory.util.Files;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public abstract class FileBinaryProviderBase extends FileBinaryProviderReadOnlyB
     }
 
     protected boolean deleteNoChain(String sha1) {
-        if (getBinaryStoreServices().isActivelyUsed(sha1)) {
+        if (getBinaryStore().isActivelyUsed(sha1)) {
             log.info("File {} is read. Deletion is skipped", sha1);
             return false;
         }
@@ -127,7 +127,7 @@ public abstract class FileBinaryProviderBase extends FileBinaryProviderReadOnlyB
 
     protected abstract void pruneFiles(BasicStatusHolder statusHolder, MovedCounter movedCounter, File first);
 
-    public static class MovedCounter {
+    static class MovedCounter {
         long foldersRemoved = 0;
         long filesMoved = 0;
         long totalSize = 0;

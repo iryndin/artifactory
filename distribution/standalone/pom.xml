@@ -17,17 +17,18 @@
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
   --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jfrog-artifactory-oss</artifactId>
+    <artifactId>artifactory-standalone</artifactId>
     <packaging>jar</packaging>
-    <name>Artifactory OSS Standalone</name>
+    <name>Artifactory Standalone</name>
 
     <parent>
-        <groupId>org.artifactory.oss</groupId>
         <artifactId>artifactory-distribution-parent</artifactId>
-        <version>4.2.0</version>
+        <groupId>org.artifactory</groupId>
+        <version>3.9.5</version>
     </parent>
 
     <build>
+        <finalName>artifactory</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -79,7 +80,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -145,6 +146,7 @@
                             <descriptors>
                                 <descriptor>src/assemble/assembly.xml</descriptor>
                             </descriptors>
+                            <finalName>artifactory-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                         <executions>

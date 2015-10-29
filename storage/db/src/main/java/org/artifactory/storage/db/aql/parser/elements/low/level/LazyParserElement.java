@@ -4,8 +4,6 @@ import org.artifactory.storage.db.aql.parser.AqlParserContext;
 import org.artifactory.storage.db.aql.parser.ParserElementResultContainer;
 import org.artifactory.storage.db.aql.parser.elements.ParserElement;
 
-import java.util.List;
-
 /**
  * @author Gidi Shabat
  */
@@ -43,9 +41,5 @@ public abstract class LazyParserElement implements ParserElement {
 
     public ParserElement forward(ParserElement... elements) {
         return new ForwardElement(elements);
-    }
-
-    public List<String> next() {
-        return element.next();
     }
 }

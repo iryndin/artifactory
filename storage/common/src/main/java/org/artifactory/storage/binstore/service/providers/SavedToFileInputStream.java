@@ -18,7 +18,6 @@
 
 package org.artifactory.storage.binstore.service.providers;
 
-import org.artifactory.storage.binstore.service.SkippableInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import java.io.InputStream;
  *
  * @author freds
  */
-public abstract class SavedToFileInputStream extends FilterInputStream implements SkippableInputStream {
+public abstract class SavedToFileInputStream extends FilterInputStream {
     private static final Logger log = LoggerFactory.getLogger(SavedToFileInputStream.class);
 
     final File tempFile;
@@ -95,11 +94,6 @@ public abstract class SavedToFileInputStream extends FilterInputStream implement
     public long skip(long n) throws IOException {
         somethingWrong = new IOException("Someone called skipped " + n);
         return super.skip(n);
-    }
-
-    @Override
-    public boolean isSkippable(){
-        return false;
     }
 
     @Override

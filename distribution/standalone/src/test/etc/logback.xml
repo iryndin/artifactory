@@ -129,11 +129,20 @@
         <level value="debug"/>
         <appender-ref ref="REQUEST"/>
     </logger>
+    <logger name="org.apache.wicket.markup.resolver.BorderBodyResolver">
+        <level value="error"/>
+    </logger>
+    <logger name="org.apache.wicket.markup.repeater.AbstractRepeater">
+        <level value="error"/>
+    </logger>
     <logger name="org.apache.http.impl.client">
         <level value="info"/>
     </logger>
     <logger name="org.apache.http.wire">
         <level value="info"/>
+    </logger>
+    <logger name="org.apache.wicket">
+        <level value="warn"/>
     </logger>
     <logger name="com.sun.jersey">
         <level value="warn"/>

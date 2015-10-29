@@ -38,7 +38,6 @@ public class MoverConfigBuilder implements Builder<MoverConfig> {
     private boolean suppressLayouts = false;
     private boolean failFast = false;
     private boolean unixStyleBehavior = true;
-    private boolean atomic = false;
 
     public MoverConfigBuilder(RepoPath fromRepoPath, RepoPath targetLocalRepoPath) {
         this.fromRepoPath = fromRepoPath;
@@ -53,17 +52,6 @@ public class MoverConfigBuilder implements Builder<MoverConfig> {
      */
     public MoverConfigBuilder copy(boolean copy) {
         this.copy = copy;
-        return this;
-    }
-
-    /**
-     * Indicate if a copy is being performed
-     *
-     * @param atomic True if performing a copy, false if not
-     * @return MoverConfigBuilder
-     */
-    public MoverConfigBuilder atomic(boolean atomic) {
-        this.atomic = atomic;
         return this;
     }
 
@@ -151,6 +139,6 @@ public class MoverConfigBuilder implements Builder<MoverConfig> {
     @Override
     public MoverConfig build() {
         return new MoverConfig(fromRepoPath, targetLocalRepoPath, copy, dryRun,executeMavenMetadataCalculation,
-                pruneEmptyFolders, properties, suppressLayouts, failFast, unixStyleBehavior, atomic);
+                pruneEmptyFolders, properties, suppressLayouts, failFast, unixStyleBehavior);
     }
 }

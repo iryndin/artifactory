@@ -24,7 +24,7 @@
     <parent>
         <artifactId>artifactory-base-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>4.2.0</version>
+        <version>3.9.5</version>
     </parent>
 
     <dependencies>
@@ -60,8 +60,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
+            <groupId>net.java.dev.stax-utils</groupId>
+            <artifactId>stax-utils</artifactId>
         </dependency>
 
         <dependency>

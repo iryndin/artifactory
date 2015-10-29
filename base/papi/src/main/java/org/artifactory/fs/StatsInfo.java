@@ -30,13 +30,8 @@ public interface StatsInfo extends Info {
     String ROOT = "artifactory.stats";
 
     long getDownloadCount();
+
     long getLastDownloaded();
+
     String getLastDownloadedBy();
-
-    long getRemoteDownloadCount();
-    long getRemoteLastDownloaded();
-    String getRemoteLastDownloadedBy();
-
-    String getPath();
-    String getOrigin();
 }

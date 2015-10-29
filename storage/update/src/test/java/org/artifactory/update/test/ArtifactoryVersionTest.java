@@ -31,7 +31,7 @@ import java.util.Properties;
 import static org.testng.Assert.assertEquals;
 
 /**
- * @author freds
+ * User: freds Date: May 30, 2008 Time: 10:22:23 AM
  */
 public class ArtifactoryVersionTest {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryVersionTest.class);
@@ -62,7 +62,7 @@ public class ArtifactoryVersionTest {
                 assertEquals(artifactoryRevision, version.getRevision(),
                         "Error in revision value for " + version);
             } else {
-                log.debug("Version " + version + " does not have a backup test folder in " +
+                log.warn("Version " + version + " does not have a backup test folder in " +
                         backupVersionFolder);
             }
         }

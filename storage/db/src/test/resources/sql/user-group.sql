@@ -20,9 +20,3 @@ INSERT INTO users_groups VALUES
 (15,2,NULL),
 (15,15,NULL);
 
-INSERT INTO user_props VALUES
-(1,'test.null',NULL),
-(1,'test.dup','A'),
-(2,'test.dup','B'),
-(15,'test.login','http://git/login'),
-(15,'test.logout','http://git/logout');

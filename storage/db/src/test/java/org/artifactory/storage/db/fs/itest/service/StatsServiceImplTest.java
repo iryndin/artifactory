@@ -52,14 +52,9 @@ public class StatsServiceImplTest extends DbBaseTest {
     public void getStatsFileWithStats() {
         StatsInfo stats = statsService.getStats(new RepoPathImpl("repo1", "ant/ant/1.5/ant-1.5.jar"));
         assertNotNull(stats);
-
         assertEquals(stats.getDownloadCount(), 2);
         assertEquals(stats.getLastDownloaded(), 1340283207850L);
         assertEquals(stats.getLastDownloadedBy(), "ariels");
-
-        assertEquals(stats.getRemoteDownloadCount(), 3);
-        assertEquals(stats.getRemoteLastDownloaded(), 1340283207853L);
-        assertEquals(stats.getRemoteLastDownloadedBy(), "michaelp");
     }
 
     public void getStatsFileWithNoStats() {
@@ -95,7 +90,7 @@ public class StatsServiceImplTest extends DbBaseTest {
     public void fileDownloadedOnFileWithNoStats() {
         RepoPathImpl filePath = new RepoPathImpl("repo2", "org/jfrog/test/test.jar");
         long lastDownloaded = System.currentTimeMillis();
-        statsService.fileDownloaded(filePath, "talias", lastDownloaded, false);
+        statsService.fileDownloaded(filePath, "talias", lastDownloaded);
 
         StatsInfo stats = statsService.getStats(filePath);
         assertNotNull(stats);
@@ -108,7 +103,7 @@ public class StatsServiceImplTest extends DbBaseTest {
     public void fileDownloadedOnFileWithStats() {
         RepoPathImpl filePath = new RepoPathImpl("repo2", "org/jfrog/test/test.jar");
         long lastDownloaded = System.currentTimeMillis() + 2000;
-        statsService.fileDownloaded(filePath, "ariels", lastDownloaded, false);
+        statsService.fileDownloaded(filePath, "ariels", lastDownloaded);
 
         StatsInfo stats = statsService.getStats(filePath);
         assertNotNull(stats);
@@ -117,26 +112,9 @@ public class StatsServiceImplTest extends DbBaseTest {
         assertEquals(stats.getLastDownloadedBy(), "ariels");
     }
 
-    @Test
-    public void fileDownloadedRemotelyOnFileWithStats() {
-        RepoPathImpl repoPath = new RepoPathImpl("repo1", "ant/ant/1.5/ant-1.5.jar");
-        long lastDownloaded = System.currentTimeMillis() + 2000;
-        String origin="myhost.com";
-        String path="myhost-a.com->myhost-b.com->myhost-c.com";
-
-        statsService.fileDownloadedRemotely(origin, path, repoPath, "remoteUser", lastDownloaded, 7);
-
-        StatsInfo stats = statsService.getStats(new RepoPathImpl("repo1", "ant/ant/1.5/ant-1.5.jar"));
-
-        assertNotNull(stats);
-        assertEquals(stats.getRemoteDownloadCount(), 10);
-        assertEquals(stats.getRemoteLastDownloaded(), lastDownloaded);
-        assertEquals(stats.getRemoteLastDownloadedBy(), "remoteUser");
-    }
-
     public void fileDownloadedOnNonExistingItem() {
         RepoPathImpl filePath = new RepoPathImpl("repo2", "no/such/item.jhk");
-        statsService.fileDownloaded(filePath, "ariels", System.currentTimeMillis(), false);
+        statsService.fileDownloaded(filePath, "ariels", System.currentTimeMillis());
 
         // file downloaded events are not checked against the database and the getStats will return the cached result
         StatsInfo stats = statsService.getStats(filePath);

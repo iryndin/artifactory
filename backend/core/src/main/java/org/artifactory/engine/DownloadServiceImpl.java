@@ -64,7 +64,6 @@ import org.artifactory.resource.ChecksumResource;
 import org.artifactory.resource.ResourceStreamHandle;
 import org.artifactory.resource.UnfoundRepoResource;
 import org.artifactory.resource.UnfoundRepoResourceReason;
-import org.artifactory.service.SmartRepoService;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.Reloadable;
 import org.artifactory.storage.StorageException;
@@ -115,9 +114,6 @@ public class DownloadServiceImpl implements InternalDownloadService {
 
     @Autowired
     private AddonsManager addonsManager;
-
-    @Autowired
-    SmartRepoService smartRepoService;
 
     private RequestResponseHelper requestResponseHelper;
 
@@ -209,9 +205,6 @@ public class DownloadServiceImpl implements InternalDownloadService {
                 resource = repository.getInfo(requestContext);
             }
 
-            if (!request.isHeadOnly()) {
-                smartRepoService.onFileDownload(resource);
-            }
             respond(requestContext, response, resource);
 
         } catch (IOException e) {

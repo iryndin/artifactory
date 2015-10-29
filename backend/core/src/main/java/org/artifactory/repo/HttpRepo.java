@@ -93,6 +93,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -166,7 +167,6 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
     @Override
     public void init() {
         super.init();
-        // TODO: This flag should be in the remote repo descriptor
         handleGzipResponse = ConstantValues.httpAcceptEncodingGzip.getBoolean();
         if (!isOffline()) {
             this.client = createHttpClient();
@@ -633,21 +633,19 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
     }
 
     protected CloseableHttpClient createHttpClient() {
-        String password = CryptoHelper.decryptIfNeeded(getPassword());
         return new HttpClientConfigurator()
                 .hostFromUrl(getUrl())
                 .defaultMaxConnectionsPerHost(50)
                 .maxTotalConnections(50)
                 .connectionTimeout(getSocketTimeoutMillis())
                 .soTimeout(getSocketTimeoutMillis())
-                .handleGzipResponse(handleGzipResponse)
                 .staleCheckingEnabled(true)
                 .retry(1, false)
                 .localAddress(getLocalAddress())
                 .proxy(getProxy())
-                .authentication(getUsername(), password, isAllowAnyHostAuth())
+                .authentication(getUsername(), CryptoHelper.decryptIfNeeded(getPassword()), isAllowAnyHostAuth())
                 .enableCookieManagement(isEnableCookieManagement())
-                .enableTokenAuthentication(isEnableTokenAuthentication(), getUsername(), password)
+                .enableTokenAuthentication(isEnableTokenAuthentication())
                 .getClient();
     }
 
@@ -666,7 +664,7 @@ public class HttpRepo extends RemoteRepoBase<HttpRepoDescriptor> {
      * @param extraHeaders Extra headers to add to the remote server request
      */
     @SuppressWarnings({"deprecation"})
-    private void addDefaultHeadersAndQueryParams(HttpRequestBase method, Map<String, String> extraHeaders) {
+    private void addDefaultHeadersAndQueryParams(HttpRequestBase method,Map<String, String> extraHeaders) {
         //Explicitly force keep alive
         method.setHeader(HttpHeaders.CONNECTION, "Keep-Alive");
 

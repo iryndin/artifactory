@@ -18,8 +18,6 @@
 
 package org.artifactory.api.security;
 
-import org.artifactory.common.Info;
-import org.artifactory.md.Properties;
 import org.artifactory.sapi.common.Lock;
 import org.artifactory.security.GroupInfo;
 import org.artifactory.security.MutableGroupInfo;
@@ -28,7 +26,6 @@ import org.artifactory.security.UserInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -101,19 +98,10 @@ public interface UserGroupService {
     boolean createGroup(MutableGroupInfo groupInfo);
 
     /**
-     * remove users group before update and add users group after update
-     *
-     * @param groupInfo    - update group
-     * @param usersInGroup - users after group update
-     */
-    @Lock
-    void updateGroupUsers(MutableGroupInfo groupInfo, List<String> usersInGroup);
-
-    /**
      * Adds a list of users to a group.
      *
      * @param groupName The group's unique name.
-     * @param usernames The list of users names.
+     * @param usernames The list of usernames.
      */
     @Lock
     void addUsersToGroup(String groupName, List<String> usernames);
@@ -159,15 +147,4 @@ public interface UserGroupService {
     GroupInfo findGroup(String groupName);
 
     String createEncryptedPasswordIfNeeded(UserInfo user, String password);
-
-    Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction);
-
-    long getAllUsersGroupsCount(boolean includeAdmins);
-
-    Properties findPropertiesForUser(String username);
-
-    void deleteProperty(String userName, String propertyKey);
-
-    void deletePropertyFromAllUsers(String propertyKey);
 }

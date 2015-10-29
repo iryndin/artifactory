@@ -78,10 +78,6 @@ public abstract class XmlUtils {
         sb.setFeature("http://xml.org/sax/features/validation", false);
         sb.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         sb.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        // JNLP needs DOCTYPE
-        //sb.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        sb.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        sb.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         return sb;
     }
 }

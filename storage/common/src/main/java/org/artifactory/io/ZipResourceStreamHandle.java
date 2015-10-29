@@ -18,8 +18,6 @@
 
 package org.artifactory.io;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.fs.RepoResource;
 import org.artifactory.fs.ZipEntryRepoResource;
@@ -29,8 +27,11 @@ import org.artifactory.util.ZipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * This stream handle encapsulates a stream of zip file and returns the input stream of a one resource inside the zip.
@@ -42,7 +43,7 @@ public class ZipResourceStreamHandle implements ResourceStreamHandle {
 
     private final ZipEntryRepoResource zipResource;
     private final InputStream stream;
-    private final ArchiveInputStream[] zipStreams;
+    private final ZipInputStream[] zipStreams;
 
     public ZipResourceStreamHandle(RepoResource zipResource, InputStream stream) throws IOException {
         if (!(zipResource instanceof ZipEntryRepoResource)) {
@@ -52,17 +53,16 @@ public class ZipResourceStreamHandle implements ResourceStreamHandle {
         this.zipResource = (ZipEntryRepoResource) zipResource;
         this.stream = stream;
         String[] zipEntryNames = PathUtils.splitZipResourcePathIfExist(this.zipResource.getEntryPath(), true);
-        String name = zipResource.getInfo().getName();
-        zipStreams = ZipUtils.getArchiveInputStreamArray(name, zipEntryNames.length);
+        zipStreams = new ZipInputStream[zipEntryNames.length];
         try {
             for (int i = 0; i < zipEntryNames.length; i++) {
                 String zipEntryName = zipEntryNames[i];
                 if (i == 0) {
-                    zipStreams[i] = ZipUtils.returnArchiveInputStream(stream, name);
+                    zipStreams[i] = new ZipInputStream(new BufferedInputStream(stream));
                 } else {
-                    zipStreams[i] = ZipUtils.returnArchiveInputStream(zipStreams[i - 1], name);
+                    zipStreams[i] = new ZipInputStream(zipStreams[i - 1]);
                 }
-                ArchiveEntry zipEntry = ZipUtils.locateArchiveEntry(zipStreams[i], zipEntryName);
+                ZipEntry zipEntry = ZipUtils.locateEntry(zipStreams[i], zipEntryName);
                 if (zipEntry == null) {
                     throw new IOException(String.format("Zip resource '%s' not found in '%s'",
                             zipEntryName, zipResource.getRepoPath()));
@@ -91,7 +91,7 @@ public class ZipResourceStreamHandle implements ResourceStreamHandle {
 
     @Override
     public void close() {
-        for (ArchiveInputStream zipStream : zipStreams) {
+        for (ZipInputStream zipStream : zipStreams) {
             IOUtils.closeQuietly(zipStream);
         }
         IOUtils.closeQuietly(stream);   // in case the zip stream creation failed

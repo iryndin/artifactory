@@ -144,6 +144,9 @@
     <logger name="org.springframework">
         <level value="warn"/>
     </logger>
+    <logger name="org.apache.wicket">
+        <level value="error"/>
+    </logger>
     <logger name="org.apache.cxf">
         <level value="error"/>
     </logger>

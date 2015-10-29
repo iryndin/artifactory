@@ -31,12 +31,4 @@ public interface MutableStatsInfo extends StatsInfo {
     void setLastDownloaded(long lastDownloaded);
 
     void setLastDownloadedBy(String lastDownloadedBy);
-
-    void setRemoteDownloadCount(long remoteDownloadCount);
-
-    void setRemoteLastDownloaded(long remoteLastDownloaded);
-
-    void setRemoteLastDownloadedBy(String remoteLastDownloadedBy);
-
-    void setOrigin(String origin);
 }

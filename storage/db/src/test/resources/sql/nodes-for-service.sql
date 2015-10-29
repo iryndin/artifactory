@@ -50,9 +50,6 @@ INSERT INTO watches VALUES
 INSERT INTO stats VALUES
 (5, 2, 1340283207850, 'ariels');
 
-INSERT INTO stats_remote VALUES
-(5, 'myhost.com', 3, 1340283207853, 'michaelp', 'no-path');
-
 INSERT INTO indexed_archives VALUES
 ('dcab88fc2a043c2479a6de676a2f8179e9ea2167', 6001),
 ('cccc88fc2a043c2479a6de676a2f8179e9eacccc', 6002);

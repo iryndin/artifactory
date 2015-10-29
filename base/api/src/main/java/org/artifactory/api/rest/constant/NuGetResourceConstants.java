@@ -5,6 +5,7 @@ package org.artifactory.api.rest.constant;
  */
 public interface NuGetResourceConstants {
     String PATH_ROOT = "nuget";
+    String FILENAME = "filename";
+    String PATH = "path";
     String REPO_KEY = "repoKey";
-    String FILE_NAME = "filename";
 }

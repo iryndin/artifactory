@@ -17,9 +17,6 @@ public class DynamicDomain extends DomainSensitiveParserElement {
             case archives: {
                 return AqlParser.archiveDomains;
             }
-            case entries: {
-                return AqlParser.entriesDomains;
-            }
             case properties: {
                 return AqlParser.propertiesDomains;
             }
@@ -37,9 +34,6 @@ public class DynamicDomain extends DomainSensitiveParserElement {
             }
             case modules: {
                 return AqlParser.buildModuleDomains;
-            }
-            case moduleProperties: {
-                return AqlParser.buildModulePropertiesDomains;
             }
             case buildProperties: {
                 return AqlParser.buildPropertiesDomains;

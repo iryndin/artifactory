@@ -18,8 +18,10 @@
 
 package org.artifactory.webapp;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.ThreadContext;
 import org.artifactory.api.web.WebappService;
-import org.artifactory.util.HttpUtils;
+import org.artifactory.webapp.wicket.application.ArtifactoryApplication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,20 +31,17 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WebappServiceImpl implements WebappService {
-
-    public static final String PATH_ID_PARAM = "pathId";
-    private static final String WEBAPP_URL_BROWSE_REPO = "/browserepo.html";
-
     @Override
-    public String createLinkToBrowsableArtifact(String artifactoryUrl, String repoPathId, String linkLabel) {
-        String encodedPathId = HttpUtils.encodeQuery(repoPathId);
-        String url = new StringBuilder().append(artifactoryUrl).append(HttpUtils.WEBAPP_URL_PATH_PREFIX)
-                .append(WEBAPP_URL_BROWSE_REPO).append("?").append(PATH_ID_PARAM).append("=").append(encodedPathId)
-                .toString();
-
-        StringBuilder builder = new StringBuilder();
-        builder.append("<a href=").append(url).append(" target=\"blank\"").append(">")
-                .append(linkLabel).append("</a>");
-        return builder.toString();
+    public void rebuildSiteMap() {
+        // get the first application key (in aol it will not work!)
+        ArtifactoryApplication app = (ArtifactoryApplication) Application.get(
+                Application.getApplicationKeys().iterator().next());
+        // we must attach the application to the current thread in order to perform wicket operation
+        ThreadContext.setApplication(app);
+        try {
+            app.rebuildSiteMap();
+        } finally {
+            ThreadContext.detach();
+        }
     }
 }

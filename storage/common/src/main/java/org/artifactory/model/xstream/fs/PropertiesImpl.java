@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -91,13 +89,6 @@ public class PropertiesImpl implements Properties {
     @Override
     public boolean putAll(@Nonnull String key, Iterable<? extends String> values) {
         return props.putAll(key, values);
-    }
-
-    @Override
-    public boolean putAll(@Nullable String key, String[] values) {
-        Set<String> valuesSet = new HashSet<String>();
-        Collections.addAll(valuesSet, values);
-        return props.putAll(key, valuesSet);
     }
 
     @Override

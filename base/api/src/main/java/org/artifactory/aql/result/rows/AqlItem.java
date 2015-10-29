@@ -11,7 +11,7 @@ import static org.artifactory.aql.model.AqlFieldEnum.*;
 /**
  * @author Gidi Shabat
  */
-@QueryTypes(value = items, fields = {itemId, itemType, itemRepo, itemPath, itemName,
+@QueryTypes(value = items, fields = {itemNodeId, itemType, itemRepo, itemPath, itemName,
         itemDepth, itemCreated, itemCreatedBy, itemModified, itemModifiedBy, itemUpdated,
         itemSize, itemActualSha1, itemOriginalSha1, itemActualMd5, itemOriginalMd5})
 public interface AqlItem extends AqlRowResult {

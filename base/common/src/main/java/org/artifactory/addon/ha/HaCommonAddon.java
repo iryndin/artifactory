@@ -4,9 +4,6 @@ import org.artifactory.addon.Addon;
 import org.artifactory.addon.ha.message.HaMessage;
 import org.artifactory.addon.ha.message.HaMessageTopic;
 import org.artifactory.addon.ha.semaphore.SemaphoreWrapper;
-import org.artifactory.storage.db.servers.model.ArtifactoryServer;
-
-import java.util.List;
 
 /**
  * @author mamo, gidi, fred
@@ -24,7 +21,6 @@ public interface HaCommonAddon extends Addon {
     String ARTIFACTORY_PRO = "Artifactory";
 
     String STATS_SEMAPHORE_NAME = "flushStatsSemaphore";
-    String STATS_REMOTE_SEMAPHORE_NAME = "flushRemoteStatsSemaphore";
     String INDEXING_SEMAPHORE_NAME = "indexingSemaphore";
     String INDEX_MARKED_ARCHIVES_SEMAPHORE_NAME = "indexMarkedArchivesSemaphore";
     int DEFAULT_SEMAPHORE_PERMITS = 1;
@@ -60,14 +56,4 @@ public interface HaCommonAddon extends Addon {
     SemaphoreWrapper getSemaphore(String semaphoreName);
 
     void shutdown();
-
-    List<ArtifactoryServer> getAllArtifactoryServers();
-
-    boolean deleteArtifactoryServer(String id);
-
-    boolean artifactoryServerHasHeartbeat(ArtifactoryServer artifactoryServer);
-
-    String getCurrentMemberServerId();
-
-
 }

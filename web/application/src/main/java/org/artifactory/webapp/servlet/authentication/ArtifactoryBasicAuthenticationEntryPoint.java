@@ -18,11 +18,8 @@
 
 package org.artifactory.webapp.servlet.authentication;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHeaders;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.util.HttpUtils;
-import org.artifactory.util.UiRequestUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -31,9 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 /**
  * Intercept spring security exceptions and transforms the response into a JSON object.
@@ -66,11 +60,11 @@ public class ArtifactoryBasicAuthenticationEntryPoint extends BasicAuthenticatio
      */
     private void sendErrorResponseToClient(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException {
-        if (isIvyRequest(request,authException) || isAlreadyAuthedNuGetRequest(request, authException)){
-            sendErrorResponse(request, response, authException, SC_FORBIDDEN);
+        if (isIvyRequest(request,authException)){
+            sendErrorResponse(response, authException,HttpServletResponse.SC_FORBIDDEN);
         }
         else {
-            sendErrorResponse(request, response, authException, SC_UNAUTHORIZED);
+            sendErrorResponse(response, authException,HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
@@ -81,13 +75,10 @@ public class ArtifactoryBasicAuthenticationEntryPoint extends BasicAuthenticatio
      * @param responseStatusCode - http response status code
      * @throws IOException
      */
-    private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException, int responseStatusCode)
+    private void sendErrorResponse(HttpServletResponse response, AuthenticationException authException,int responseStatusCode)
             throws IOException {
-        if (!UiRequestUtils.isUiRestRequest(request)) {
-            response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"");
-        }
-        HttpUtils.sendErrorResponse(response, responseStatusCode, authException.getMessage());
+        response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"");
+        HttpUtils.sendErrorResponse(response,responseStatusCode, authException.getMessage());
     }
 
     @Override
@@ -103,17 +94,6 @@ public class ArtifactoryBasicAuthenticationEntryPoint extends BasicAuthenticatio
     private boolean isIvyRequest(HttpServletRequest request,AuthenticationException authException){
         return ConstantValues.httpForceForbiddenResponse.getBoolean() && authException instanceof BadCredentialsException &&
                 request.getHeader("User-Agent").toLowerCase().indexOf("Ivy".toLowerCase()) != -1;
-    }
-
-    /**
-     * Return 403 to nuget client if bad credentials error, if not the client keeps asking for credentials
-     * indefinitely on 401 responses.
-     */
-    private boolean isAlreadyAuthedNuGetRequest(HttpServletRequest request, AuthenticationException authException) {
-        return authException instanceof BadCredentialsException
-                && request.getHeader(HttpHeaders.USER_AGENT).toLowerCase().contains("nuget")
-                && (StringUtils.isNotBlank(request.getHeader(HttpHeaders.AUTHORIZATION))
-                    || StringUtils.isNotBlank(request.getHeader("X-NuGet-ApiKey")));
     }
 
 

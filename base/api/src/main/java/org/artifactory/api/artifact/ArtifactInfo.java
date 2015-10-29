@@ -19,18 +19,15 @@
 package org.artifactory.api.artifact;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonTypeName;
 
 /**
  * Generic Artifact Info
  *
  * @author Tomer Cohen
  */
-@JsonTypeName("base")
 public class ArtifactInfo implements UnitInfo {
-    private String artifactType = "base";
 
-    private String path;
+    private final String path;
 
     /**
      * Artifact info constructor, which takes a path.
@@ -40,10 +37,6 @@ public class ArtifactInfo implements UnitInfo {
     public ArtifactInfo(String path) {
         this.path = path;
     }
-
-    ArtifactInfo() {
-    }
-
 
     /**
      * {@inheritDoc}
@@ -63,17 +56,5 @@ public class ArtifactInfo implements UnitInfo {
     @Override
     public boolean isValid() {
         return StringUtils.isNotBlank(path) && !NA.equals(path);
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getArtifactType() {
-        return artifactType;
-    }
-
-    public void setArtifactType(String artifactType) {
-        this.artifactType = artifactType;
     }
 }

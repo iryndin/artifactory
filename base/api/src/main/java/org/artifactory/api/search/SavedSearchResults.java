@@ -66,10 +66,6 @@ public class SavedSearchResults implements Serializable {
         results.retainAll(toIntersect.results); // Sets.retainAll <==> intersection
     }
 
-    public void discardFromResult(SavedSearchResults toDiscardFromResult) {
-        results.removeAll(toDiscardFromResult.results);
-    }
-
     public ImmutableList<FileInfo> getResults() {
         ImmutableList.Builder<FileInfo> builder = ImmutableList.builder();
         for (RepoAgnosticFileInfo result : results) {

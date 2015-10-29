@@ -18,8 +18,6 @@
 
 package org.artifactory.api.rest.search.result;
 
-import org.artifactory.api.config.VersionInfo;
-
 import java.util.List;
 
 /**
@@ -48,29 +46,4 @@ public class VersionRestResult {
 
     }
 
-    /**
-     * Converts {@link VersionRestResult} to {@link VersionInfo}
-     *
-     * @return {@link VersionInfo}
-     */
-    public VersionInfo toVersionInfo() {
-        return new VersionInfo(version, revision);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("version: ");
-        sb.append(version);
-        sb.append(" | ");
-        sb.append("revision: ");
-        sb.append(revision);
-        sb.append(" | ");
-        sb.append("addons: ");
-        sb.append(addons);
-        sb.append(" | ");
-        sb.append("license: ");
-        sb.append(license);
-        return sb.toString();
-    }
 }

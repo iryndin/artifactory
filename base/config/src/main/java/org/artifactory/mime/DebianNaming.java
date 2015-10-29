@@ -23,55 +23,105 @@ package org.artifactory.mime;
  */
 public class DebianNaming {
 
-    public final static String RELEASE = "Release";
-    public final static String INRELEASE = "InRelease";
-    public final static String RELEASE_GPG = "Release.gpg";
-    public final static String PACKAGES = "Packages";
-    public final static String PACKAGES_GZ = "Packages.gz";
-    public final static String PACKAGES_BZ2 = "Packages.bz2";
-    public final static String CONTENTS_PREFIX = "Contents";
-    public final static String DISTS_PATH = "dists";
-
     public final static String distribution = "deb.distribution";
     public final static String component = "deb.component";
     public final static String architecture = "deb.architecture";
     public final static String packageType = "deb.type";
+    public final static String packagesDistribution = "deb.packages.distribution";
+    public final static String packagesComponent = "deb.packages.component";
+    public final static String packagesArchitecture = "deb.packages.architecture";
 
     public static boolean isIndexFile(String fileName) {
-        return isPackagesIndex(fileName) || isReleaseIndex(fileName) || isContentIndex(fileName);
+        return isPackageIndex(fileName) || isReleaseIndex(fileName) || isContentIndex(fileName);
     }
 
     public static boolean isSupportedIndex(String fileName) {
-        return isReleaseIndex(fileName) || isPackagesIndex(fileName);
+        fileName = fileName.toLowerCase();
+        switch (fileName) {
+            case "release":
+            case "packages.gz":
+            case "packages.bz2":
+            case "packages":
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean isExpirable(String fileName) {
-        return isReleaseIndex(fileName) || isSigningFile(fileName) || isPackagesIndex(fileName);
+        fileName = fileName.toLowerCase();
+        switch (fileName) {
+            case "release.gpg":
+            case "inrelease":
+            case "release":
+            case "packages.gz":
+            case "packages.bz2":
+            case "packages":
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean isReleaseIndex(String fileName) {
-        return fileName.equalsIgnoreCase(RELEASE) || fileName.equalsIgnoreCase(INRELEASE);
+        fileName = fileName.toLowerCase();
+        switch (fileName) {
+            case "release":
+                return true;
+            case "inrelease":
+                return true;
+            default:
+                return false;
+        }
     }
 
-    public static boolean isPackagesIndex(String fileName) {
-        return fileName.equalsIgnoreCase(PACKAGES)
-                || fileName.equalsIgnoreCase(PACKAGES_GZ)
-                || fileName.equalsIgnoreCase(PACKAGES_BZ2);
+    public static boolean isPackageIndex(String fileName) {
+        fileName = fileName.toLowerCase();
+        switch (fileName) {
+            case "packages":
+                return true;
+            case "packages.gz":
+                return true;
+            case "packages.bz":
+                return true;
+            case "packages.bz2":
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean isSigningFile(String fileName) {
-        return fileName.equalsIgnoreCase(RELEASE_GPG);
+        fileName = fileName.toLowerCase();
+        if ("release.gpg".equals(fileName)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static boolean isInRelease(String fileName) {
-        return fileName.equalsIgnoreCase(INRELEASE);
+        fileName = fileName.toLowerCase();
+        if ("inrelease".equals(fileName)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    //Contents or Contents-<arch>.<gz\bz\bz2>
     public static boolean isContentIndex(String fileName) {
-        fileName = fileName.toLowerCase();
-        return fileName.equalsIgnoreCase(CONTENTS_PREFIX) ||
-                (fileName.startsWith(CONTENTS_PREFIX.toLowerCase() + "-")
-                    && (fileName.endsWith(".gz") || fileName.endsWith(".bz") || fileName.endsWith(".bz2")));
+        switch (fileName) {
+            case "contents":
+                return true;
+            case "contents.gz":
+                return true;
+            case "contents.bz":
+                return true;
+            case "contents.bz2":
+                return true;
+            default:
+                return false;
+        }
     }
+
 }

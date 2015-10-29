@@ -20,7 +20,6 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
 
     protected SortApiElement sortApiElement = new SortApiElement();
     protected LimitApiElement limit = new LimitApiElement();
-    protected OffsetApiElement offset = new OffsetApiElement();
     protected FilterApiElement filter = new FilterApiElement();
     protected DomainApiElement domain = new DomainApiElement();
 
@@ -35,6 +34,46 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
         for (AqlFieldEnum field : resultField) {
             this.domain.getFields().add(new DomainSensitiveField(field, Lists.newArrayList(domain)));
         }
+    }
+
+    public T filter(AqlApiElement<T> filter) {
+        this.filter.setFilter(filter);
+        return (T) this;
+    }
+
+    @Override
+    public List<AqlApiElement> get() {
+        ArrayList<AqlApiElement> elements = Lists.newArrayList();
+        elements.add(domain);
+        elements.add(sortApiElement);
+        elements.add(filter);
+        elements.add(limit);
+        return elements;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public T asc() {
+        this.sortApiElement.setSortType(AqlSortTypeEnum.asc);
+        return (T) this;
+    }
+
+    public T desc() {
+        this.sortApiElement.setSortType(AqlSortTypeEnum.desc);
+        return (T) this;
+    }
+
+    public T sortBy(AqlFieldEnum... fields) {
+        this.sortApiElement.setFields(fields);
+        return (T) this;
+    }
+
+    public T limit(int limit) {
+        this.limit.setLimit(limit);
+        return (T) this;
     }
 
     @SafeVarargs
@@ -55,52 +94,6 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
     @SafeVarargs
     public static <T extends AqlBase> FreezeJoin<T> freezeJoin(AqlApiElement<T>... elements) {
         return new FreezeJoin(elements);
-    }
-
-    public T filter(AqlApiElement<T> filter) {
-        this.filter.setFilter(filter);
-        return (T) this;
-    }
-
-    @Override
-    public List<AqlApiElement> get() {
-        ArrayList<AqlApiElement> elements = Lists.newArrayList();
-        elements.add(domain);
-        elements.add(sortApiElement);
-        elements.add(filter);
-        elements.add(limit);
-        elements.add(offset);
-        return elements;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    public T asc() {
-        this.sortApiElement.setSortType(AqlSortTypeEnum.asc);
-        return (T) this;
-    }
-
-    public T desc() {
-        this.sortApiElement.setSortType(AqlSortTypeEnum.desc);
-        return (T) this;
-    }
-
-    public T addSortElement(AqlApiDynamicFieldsDomains.AqlApiComparator<T> fields) {
-        this.sortApiElement.addSortElement(fields);
-        return (T) this;
-    }
-
-    public T limit(int limit) {
-        this.limit.setLimit(limit);
-        return (T) this;
-    }
-
-    public T offset(int offset) {
-        this.offset.setOffset(offset);
-        return (T) this;
     }
 
     public T include(AqlApiDynamicFieldsDomains.AqlApiComparator... comparator) {
@@ -127,12 +120,12 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
             return filter != null;
         }
 
-        public AqlApiElement getFilter() {
-            return filter;
-        }
-
         public void setFilter(AqlApiElement filter) {
             this.filter = filter;
+        }
+
+        public AqlApiElement getFilter() {
+            return filter;
         }
 
     }
@@ -166,9 +159,9 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
     }
 
     public static class LimitApiElement implements AqlApiElement {
-        private long limit = Long.MAX_VALUE;
+        private int limit = Integer.MAX_VALUE;
 
-        public long getLimit() {
+        public int getLimit() {
             return limit;
         }
 
@@ -187,15 +180,16 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
         }
     }
 
-    public static class OffsetApiElement implements AqlApiElement {
-        private long offset = 0;
+    public static class SortApiElement implements AqlApiElement {
+        private AqlSortTypeEnum sortType = AqlSortTypeEnum.desc;
+        private AqlFieldEnum[] fields;
 
-        public long getOffset() {
-            return offset;
+        public AqlSortTypeEnum getSortType() {
+            return sortType;
         }
 
-        public void setOffset(int offset) {
-            this.offset = offset;
+        public AqlFieldEnum[] getFields() {
+            return fields;
         }
 
         @Override
@@ -205,38 +199,15 @@ public class AqlBase<T extends AqlBase, Y extends AqlRowResult> implements AqlAp
 
         @Override
         public boolean isEmpty() {
-            return offset <= 0 && offset < Integer.MAX_VALUE;
-        }
-    }
-
-    public static class SortApiElement implements AqlApiElement {
-        private AqlSortTypeEnum sortType = AqlSortTypeEnum.desc;
-        private List<DomainSensitiveField> fields=new ArrayList<>();
-
-        public AqlSortTypeEnum getSortType() {
-            return sortType;
+            return sortType == null || fields == null || fields.length == 0;
         }
 
         public void setSortType(AqlSortTypeEnum sortType) {
             this.sortType = sortType;
         }
 
-        public List<DomainSensitiveField> getFields() {
-            return fields;
-        }
-
-        public void addSortElement(AqlApiDynamicFieldsDomains.AqlApiComparator field) {
-            this.fields.add(new DomainSensitiveField(field.fieldEnum,field.domains));
-        }
-
-        @Override
-        public List<AqlApiElement> get() {
-            return Lists.newArrayList();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return sortType == null || fields == null || fields.size() == 0;
+        public void setFields(AqlFieldEnum[] fields) {
+            this.fields = fields;
         }
     }
 

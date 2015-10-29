@@ -26,13 +26,8 @@ package org.artifactory.api.web;
 public interface WebappService {
 
     /**
-     * Creates an HTML link to the given repo path ID in the tree browser
-     *
-     * @param artifactoryUrl URL to Artifactory (excluding context)
-     * @param repoPathId     Repo path ID to link to
-     * @param linkLabel      Link label
-     * @return HTML link
+     * Rebuilds the Artifactory site map UI.
      */
-    String createLinkToBrowsableArtifact(String artifactoryUrl, String repoPathId, String linkLabel);
+    void rebuildSiteMap();
 
 }

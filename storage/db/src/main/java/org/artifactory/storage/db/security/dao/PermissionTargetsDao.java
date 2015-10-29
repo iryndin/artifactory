@@ -18,7 +18,6 @@
 
 package org.artifactory.storage.db.security.dao;
 
-import com.google.common.collect.Sets;
 import org.artifactory.storage.db.security.entity.PermissionTarget;
 import org.artifactory.storage.db.util.BaseDao;
 import org.artifactory.storage.db.util.DbUtils;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -130,7 +128,8 @@ public class PermissionTargetsDao extends BaseDao {
                 PermissionTarget pt = resultSetToPermissionTarget(resultSet);
                 Set<String> keys = repoKeys.get(pt.getPermTargetId());
                 if (keys == null) {
-                    pt.setRepoKeys(Collections.emptySet());
+                    Set<String> set = Collections.emptySet();
+                    pt.setRepoKeys(set);
                 } else {
                     pt.setRepoKeys(keys);
                 }
@@ -160,7 +159,6 @@ public class PermissionTargetsDao extends BaseDao {
         }
         return repoKeys;
     }
-
     private HashSet<String> findRepoKeysForTarget(long permTargetId) throws SQLException {
         HashSet<String> repoKeys;
         ResultSet resultSet = null;

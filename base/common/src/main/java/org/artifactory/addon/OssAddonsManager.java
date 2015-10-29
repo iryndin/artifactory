@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -107,11 +106,6 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     }
 
     @Override
-    public boolean isAddonSupported(AddonType addonType) {
-        return false;
-    }
-
-    @Override
     public boolean isHaLicensed() {
         return false;
     }
@@ -137,18 +131,8 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     }
 
     @Override
-    public Date getLicenseValidUntil() {
-        return null;
-    }
-
-    @Override
     public String getLicenseKeyHash() {
         return OSS_LICENSE_KEY_HASH;
-    }
-
-    @Override
-    public boolean isProLicensed(String licenseKeyHash) {
-        return false;
     }
 
     @Override
@@ -172,8 +156,13 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     }
 
     @Override
-    public FooterMessage getLicenseFooterMessage() {
+    public String getLicenseFooterMessage() {
         return null;
+    }
+
+    @Override
+    public boolean isInstantiationAuthorized(Class componentClass) {
+        return true;
     }
 
     @Override
@@ -196,6 +185,7 @@ public class OssAddonsManager implements AddonsManager, AddonsWebManager {
     public boolean isPartnerLicense() {
         return false;
     }
+
 
     @Override
     public void interceptResponse(ArtifactoryResponse response) {

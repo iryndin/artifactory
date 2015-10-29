@@ -26,7 +26,6 @@ import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.descriptor.repo.LocalRepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.md.Properties;
 import org.artifactory.model.xstream.fs.PropertiesImpl;
@@ -180,9 +179,7 @@ public class NuGetCalculationInterceptorTest {
     private RepositoryService createAndSetMockRepo(boolean nuGetSupported, String repoKey) {
         RepositoryService repoServiceMock = createMock(RepositoryService.class);
         LocalRepoDescriptor localRepoDescriptor = new LocalRepoDescriptor();
-        if(nuGetSupported) {
-            localRepoDescriptor.setType(RepoType.NuGet);
-        }
+        localRepoDescriptor.setEnableNuGetSupport(nuGetSupported);
         expect(repoServiceMock.repoDescriptorByKey(repoKey)).andReturn(localRepoDescriptor).anyTimes();
         nuGetCalculationInterceptor.repositoryService = repoServiceMock;
         return repoServiceMock;

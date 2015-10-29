@@ -35,8 +35,6 @@ public enum AqlTableFieldsEnum {
     dependency_type,
     sha1,
     md5,
-    artifact_id,
-    dependency_id,
     module_name_id,
     ci_url,
     build_name,
@@ -49,5 +47,5 @@ public enum AqlTableFieldsEnum {
     entry_path_id,
     build_id,
     module_id,
-    unknown,
+    unknown
 }

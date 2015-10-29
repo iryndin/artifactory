@@ -23,12 +23,10 @@ import org.artifactory.descriptor.addon.AddonSettings;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.bintray.BintrayConfigDescriptor;
 import org.artifactory.descriptor.cleanup.CleanupConfigDescriptor;
-import org.artifactory.descriptor.download.FolderDownloadConfigDescriptor;
 import org.artifactory.descriptor.external.ExternalProvidersDescriptor;
 import org.artifactory.descriptor.gc.GcConfigDescriptor;
 import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.mail.MailServerDescriptor;
-import org.artifactory.descriptor.message.SystemMessageDescriptor;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.quota.QuotaConfigDescriptor;
 import org.artifactory.descriptor.replication.LocalReplicationDescriptor;
@@ -61,8 +59,6 @@ public interface CentralConfigDescriptor extends Descriptor {
 
     List<ProxyDescriptor> getProxies();
 
-    ProxyDescriptor getProxy(String proxyKey);
-
     String getDateFormat();
 
     int getFileUploadMaxSizeMb();
@@ -81,8 +77,6 @@ public interface CentralConfigDescriptor extends Descriptor {
      */
     boolean isOfflineMode();
 
-    boolean isHelpLinksEnabled();
-
     ProxyDescriptor getDefaultProxy();
 
     MailServerDescriptor getMailServer();
@@ -94,10 +88,6 @@ public interface CentralConfigDescriptor extends Descriptor {
     AddonSettings getAddons();
 
     String getLogo();
-
-    SystemMessageDescriptor getSystemMessageConfig();
-
-    FolderDownloadConfigDescriptor getFolderDownloadConfig();
 
     String getFooter();
 

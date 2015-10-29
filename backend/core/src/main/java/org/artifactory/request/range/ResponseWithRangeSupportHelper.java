@@ -2,8 +2,6 @@ package org.artifactory.request.range;
 
 import org.artifactory.request.range.stream.MultiRangeInputStream;
 import org.artifactory.request.range.stream.SingleRangeInputStream;
-import org.artifactory.request.range.stream.SingleRangeSkipInputStream;
-import org.artifactory.storage.binstore.service.SkippableInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,19 +70,8 @@ public class ResponseWithRangeSupportHelper {
         context.setContentType(mimeType);
         context.setContentRange(contentRange);
         context.setContentLength((range.getEnd() - range.getStart()) + 1L);
-        if(isSkippable(in)){
-            context.setInputStream(new SingleRangeSkipInputStream(range, in));
-        }else {
-            context.setInputStream(new SingleRangeInputStream(range, in));
-        }
+        context.setInputStream(new SingleRangeInputStream(range, in));
         context.setEtagExtension("-" + range.getStart() + "-" + range.getEnd());
-    }
-
-    private static boolean isSkippable(InputStream inputStream) {
-        if(inputStream instanceof SkippableInputStream){
-            return ((SkippableInputStream)inputStream).isSkippable();
-        }
-        return true;
     }
 
     private static void handleMultiRangeResponse(InputStream in, List<Range> ranges, RangeAwareContext context)

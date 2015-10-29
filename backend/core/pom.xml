@@ -24,7 +24,7 @@
     <parent>
         <artifactId>artifactory-backend-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>4.2.0</version>
+        <version>3.9.5</version>
     </parent>
 
     <dependencies>
@@ -70,18 +70,13 @@
         <dependency>
             <groupId>org.artifactory</groupId>
             <artifactId>artifactory-storage-db</artifactId>
-            <scope>compile</scope>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.artifactory</groupId>
             <artifactId>artifactory-config</artifactId>
             <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
         <dependency>
@@ -223,7 +218,7 @@
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <artifactId>groovy</artifactId>
             <scope>test</scope>
         </dependency>
 

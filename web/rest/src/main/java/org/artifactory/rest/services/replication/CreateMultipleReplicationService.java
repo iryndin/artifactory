@@ -1,21 +1,21 @@
 package org.artifactory.rest.services.replication;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
 import org.artifactory.api.rest.replication.MultipleReplicationConfigRequest;
 import org.artifactory.api.rest.replication.ReplicationConfigRequest;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.replication.LocalReplicationDescriptor;
 import org.artifactory.descriptor.replication.ReplicationBaseDescriptor;
 import org.artifactory.rest.common.exception.BadRequestException;
-import org.artifactory.rest.common.util.RestUtils;
 import org.artifactory.rest.http.request.ArtifactoryRestRequest;
 import org.artifactory.rest.http.response.IResponse;
 import org.artifactory.rest.resource.replication.ReplicationConfigRequestHelper;
+import org.artifactory.rest.util.RestUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author Chen Keinan

@@ -68,12 +68,10 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.security.UserGroupService;
 import org.artifactory.aql.AqlService;
 import org.artifactory.aql.api.domain.sensitive.AqlApiItem;
-import org.artifactory.aql.api.internal.AqlBase;
 import org.artifactory.aql.model.AqlComparatorEnum;
 import org.artifactory.aql.result.AqlEagerResult;
 import org.artifactory.aql.result.rows.AqlItem;
 import org.artifactory.aql.util.AqlSearchablePath;
-import org.artifactory.aql.util.AqlUtils;
 import org.artifactory.build.ArtifactoryBuildArtifact;
 import org.artifactory.build.BuildServiceUtils;
 import org.artifactory.build.InternalBuildService;
@@ -88,6 +86,7 @@ import org.artifactory.fs.FileInfo;
 import org.artifactory.fs.ItemInfo;
 import org.artifactory.md.Properties;
 import org.artifactory.md.PropertiesFactory;
+import org.artifactory.mime.MavenNaming;
 import org.artifactory.repo.InternalRepoPathFactory;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.repo.service.InternalRepositoryService;
@@ -95,6 +94,7 @@ import org.artifactory.resource.ResourceStreamHandle;
 import org.artifactory.sapi.search.VfsQueryResult;
 import org.artifactory.sapi.search.VfsQueryRow;
 import org.artifactory.sapi.search.VfsQueryService;
+import org.artifactory.schedule.CachedThreadPoolTaskExecutor;
 import org.artifactory.security.UserInfo;
 import org.artifactory.storage.binstore.service.BinaryStore;
 import org.artifactory.util.CollectionUtils;
@@ -133,7 +133,6 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
@@ -164,6 +163,8 @@ public class BintrayServiceImpl implements BintrayService {
     private MailService mailService;
     @Autowired
     private AddonsManager addonsManager;
+    @Autowired
+    private CachedThreadPoolTaskExecutor executor;
     @Autowired
     private VfsQueryService vfsQueryService;
     @Autowired
@@ -610,6 +611,11 @@ public class BintrayServiceImpl implements BintrayService {
     private void validatePushRequestParams(String subject, List<FileInfo> artifactsToPush, BasicStatusHolder status)
             throws BintrayCallException {
 
+        if (snapshotArtifactsExistInArtifactsToPush(artifactsToPush)) {
+            status.error("Snapshot artifacts were detected in the build artifacts, Bintray does not accept snapshots" +
+                    " - aborting", SC_BAD_REQUEST, log);
+            throw new BintrayCallException(SC_BAD_REQUEST, status.getLastError().getMessage(), "");
+        }
         int fileUploadLimit = getFileUploadLimit();
         if (fileUploadLimit != 0 && artifactsToPush.size() > fileUploadLimit) { //0 is unlimited
             status.error(String.format("The amount of artifacts that are about to be pushed(%s) exceeds the maximum" +
@@ -826,11 +832,10 @@ public class BintrayServiceImpl implements BintrayService {
                             responseStream, new TypeReference<List<BintrayItemInfo>>() {
                             }
                     );
-                    List<BintrayItemInfo> distinctResults = listResult.stream().distinct().collect(Collectors.toList());
-                    BintrayItemSearchResults<BintrayItemInfo> results = new BintrayItemSearchResults<>(distinctResults,
+                    BintrayItemSearchResults<BintrayItemInfo> results = new BintrayItemSearchResults<>(listResult,
                             rangeLimitTotal);
-                    fillLocalRepoPaths(distinctResults);
-                    fixDateFormat(distinctResults);
+                    fillLocalRepoPaths(listResult);
+                    fixDateFormat(listResult);
                     return results;
                 } finally {
                     IOUtils.closeQuietly(response);
@@ -899,24 +904,10 @@ public class BintrayServiceImpl implements BintrayService {
         return null;
     }
 
-    @Override
-    public BintrayPackageInfo getBintrayPackageInfo(String sha1, @Nullable Map<String, String> headersMap) {
-        return getPackageInfoFromCache(sha1, headersMap);
-    }
-
-    private BintrayPackageInfo getPackageInfoFromCache(String sha1, @Nullable Map<String, String> headersMap) {
-        BintrayPackageInfo bintrayPackageInfo = bintrayPackageCache.get(sha1);
-        // Try to get info from bintray if cache is empty
-        if (bintrayPackageInfo == null) {
-            populatePackageCacheFromBintray(sha1, headersMap);
-        }
-        return bintrayPackageCache.get(sha1);
-    }
-
     private BintrayItemInfo getBintrayItemInfoByChecksum(final String sha1, @Nullable Map<String, String> headersMap) {
         String itemInfoRequest = String.format("%ssearch/file/?sha1=%s&subject=bintray&repo=jcenter",
                 getBaseBintrayApiUrl(), sha1);
-        BintrayItemInfo result = null;
+        BintrayItemInfo result = ITEM_RETRIEVAL_ERROR;
         CloseableHttpClient client = getUserOrSystemApiKeyHttpClient();
         CloseableHttpResponse response = null;
         try {
@@ -928,8 +919,10 @@ public class BintrayServiceImpl implements BintrayService {
                 if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                     String userName = getCurrentUser().getUsername();
                     log.info("Bintray authentication failure: item {}, user {}", sha1, userName);
+                    result = ITEM_RETRIEVAL_ERROR;
                 } else {
                     log.info("Bintray request info failure for item {}", sha1);
+                    result = ITEM_NOT_FOUND;
                 }
             } else {
                 int rangeLimitTotal = Integer.parseInt(response.getFirstHeader(RANGE_LIMIT_TOTAL).getValue());
@@ -945,12 +938,14 @@ public class BintrayServiceImpl implements BintrayService {
                     result = results.getResults().get(0);
                 } else {
                     log.debug("No item found for request: {}", itemInfoRequest);
+                    result = ITEM_NOT_FOUND;
                 }
             }
 
         } catch (Exception e) {
             log.warn("Failure during Bintray fetching package {}: {}", sha1, e.getMessage());
             log.debug("Failure during Bintray fetching package {}: {}", sha1, e);
+            result = ITEM_RETRIEVAL_ERROR;
         } finally {
             IOUtils.closeQuietly(response);
             IOUtils.closeQuietly(client);
@@ -958,53 +953,82 @@ public class BintrayServiceImpl implements BintrayService {
         return result;
     }
 
-    private void populatePackageCacheFromBintray(final String sha1, final @Nullable Map<String, String> headersMap) {
-        CloseableHttpClient client = null;
-        CloseableHttpResponse response = null;
-        try {
-            BintrayPackageInfo result = null;
-            // Try to get Bintray info for item by sha1
-            BintrayItemInfo bintrayItemInfo = getBintrayItemInfoByChecksum(sha1, headersMap);
-            // If item found update cache
-            if (bintrayItemInfo == null) {
-                return;
-            }
+    @Override
+    public BintrayPackageInfo getBintrayPackageInfo(String sha1, @Nullable Map<String, String> headersMap) {
+        return getPackageInfoFromCache(sha1, headersMap);
+    }
 
-            // Item exists in Bintray therefore try to get package info from Bintray
-            StringBuilder urlBuilder = new StringBuilder(getBaseBintrayApiUrl()).
-                    append("packages").append("/").
-                    append(bintrayItemInfo.getOwner()).append("/").
-                    append(bintrayItemInfo.getRepo()).append("/").
-                    append(bintrayItemInfo.getPackage());
-            final String url = urlBuilder.toString();
-            log.debug("Bintray package request:{}", url);
-            HttpGet getMethod = createGetMethod(url, headersMap);
-            client = getUserOrSystemApiKeyHttpClient();
-            response = client.execute(getMethod);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != HttpStatus.SC_OK) {
-                if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                    String userName = getCurrentUser().getUsername();
-                    log.info("Bintray authentication failure: user {}", userName);
-                }
-            } else {
-                InputStream responseStream = response.getEntity().getContent();
-                result = JacksonReader.streamAsValueTypeReference(
-                        responseStream, new TypeReference<BintrayPackageInfo>() {
+    private void getPackageInfoOnBackground(final String sha1, final @Nullable Map<String, String> headersMap) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                CloseableHttpClient client = null;
+                CloseableHttpResponse response = null;
+                try {
+                    BintrayPackageInfo result;
+                    // Try to get Bintray info for item by sha1
+                    BintrayItemInfo bintrayItemInfo = getBintrayItemInfoByChecksum(sha1, headersMap);
+                    // If item found update cache
+                    if (bintrayItemInfo == ITEM_NOT_FOUND) {
+                        bintrayPackageCache.put(sha1, PACKAGE_NOT_FOUND);
+                        return;
+                    }
+                    // If error occurred during item info request update cache
+                    if (bintrayItemInfo == ITEM_RETRIEVAL_ERROR) {
+                        bintrayPackageCache.put(sha1, PACKAGE_RETRIEVAL_ERROR);
+                        return;
+                    }
+
+                    // Item exists in Bintray therefore try to get package info from Bintray
+                    StringBuilder urlBuilder = new StringBuilder(getBaseBintrayApiUrl()).
+                            append("packages").append("/").
+                            append(bintrayItemInfo.getOwner()).append("/").
+                            append(bintrayItemInfo.getRepo()).append("/").
+                            append(bintrayItemInfo.getPackage());
+                    final String url = urlBuilder.toString();
+                    log.debug("Bintray package request:{}", url);
+                    HttpGet getMethod = createGetMethod(url, headersMap);
+                    client = getUserOrSystemApiKeyHttpClient();
+                    response = client.execute(getMethod);
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode != HttpStatus.SC_OK) {
+                        if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                            String userName = getCurrentUser().getUsername();
+                            log.info("Bintray authentication failure: user {}", userName);
+                            result = PACKAGE_RETRIEVAL_ERROR;
+                        } else {
+                            result = PACKAGE_NOT_FOUND;
                         }
-                );
-            }
+                    } else {
+                        InputStream responseStream = response.getEntity().getContent();
+                        result = JacksonReader.streamAsValueTypeReference(
+                                responseStream, new TypeReference<BintrayPackageInfo>() {
+                                }
+                        );
+                    }
 
-            if (result != null) {
-                bintrayPackageCache.put(sha1, result);
+                    bintrayPackageCache.put(sha1, result);
+                } catch (Exception e) {
+                    log.warn("Failure during Bintray fetching package {}: {}", sha1, e.getMessage());
+                    log.debug("Failure during Bintray fetching package {}: {}", sha1, e);
+                    bintrayPackageCache.put(sha1, PACKAGE_RETRIEVAL_ERROR);
+                } finally {
+                    IOUtils.closeQuietly(response);
+                    IOUtils.closeQuietly(client);
+                }
             }
-        } catch (Exception e) {
-            log.warn("Failure during Bintray fetching package {}: {}", sha1, e.getMessage());
-            log.debug("Failure during Bintray fetching package {}: {}", sha1, e);
-        } finally {
-            IOUtils.closeQuietly(response);
-            IOUtils.closeQuietly(client);
+        };
+        executor.execute(runnable);
+    }
+
+    private BintrayPackageInfo getPackageInfoFromCache(String sha1, @Nullable Map<String, String> headersMap) {
+        BintrayPackageInfo bintrayPackageInfo = bintrayPackageCache.get(sha1);
+        // Try to get info from bintray if cache is empty or cache contain PACKAGE_RETRIEVAL_ERROR
+        if (bintrayPackageInfo == null || bintrayPackageInfo == PACKAGE_RETRIEVAL_ERROR) {
+            bintrayPackageCache.put(sha1, PACKAGE_IN_PROCESS);
+            getPackageInfoOnBackground(sha1, headersMap);
         }
+        return bintrayPackageCache.get(sha1);
     }
 
     private InputStream executeGet(String requestUrl, UsernamePasswordCredentials creds,
@@ -1404,7 +1428,7 @@ public class BintrayServiceImpl implements BintrayService {
                 status.status("The descriptor doesn't contain file paths, pushing everything under "
                         + jsonFile.getRepoPath().getParent() + " , filtered by the properties specified.", log);
             }
-            artifactPaths = AqlUtils.getSearchablePathForCurrentFolderAndSubfolders(jsonFile.getRepoPath().getParent());
+            artifactPaths = searchablePathsFromDescriptorLocaltion(jsonFile.getRepoPath());
         } else {
             try {
                 if (descriptorHasPaths) {
@@ -1431,6 +1455,32 @@ public class BintrayServiceImpl implements BintrayService {
     }
 
     /**
+     * Returns a list of {@link org.artifactory.aql.util.AqlSearchablePath} pointing to all files contained in the
+     * parent folder of the descriptor as wll as all file under all subdirectories of that folder
+     *
+     * @param descriptorPath RepoPath of the descriptor file to construct the paths from
+     */
+    List<AqlSearchablePath> searchablePathsFromDescriptorLocaltion(RepoPath descriptorPath) {
+        List<AqlSearchablePath> artifactPaths = Lists.newArrayList();
+        //All files in the folder containing the json file
+        AqlSearchablePath jsonRoot = new AqlSearchablePath(descriptorPath);
+        jsonRoot.setFileName("*.*");
+        artifactPaths.add(jsonRoot);
+
+        //All files in all subfolders of folder containing json file
+        AqlSearchablePath jsonRootSubfolders = new AqlSearchablePath(descriptorPath);
+        jsonRootSubfolders.setFileName("*.*");
+        if (".".equals(jsonRootSubfolders.getPath())) {  //Special case for root folder
+            jsonRootSubfolders.setPath("**");
+        } else {
+            jsonRootSubfolders.setPath(jsonRootSubfolders.getPath() + "/**");
+        }
+        artifactPaths.add(jsonRoot);
+        artifactPaths.add(jsonRootSubfolders);
+        return artifactPaths;
+    }
+
+    /**
      * Searches for all Files defined in the supplied params.
      * The relation between each path is OR, and between each parameter is AND
      * The relation between parameters and paths is AND
@@ -1445,10 +1495,21 @@ public class BintrayServiceImpl implements BintrayService {
         if (CollectionUtils.isNullOrEmpty(aqlSearchablePaths)) {
             return null;
         }
-        AqlApiItem.AndClause rootFilterClause = AqlApiItem.and();
-        AqlApiItem.AndClause propertiesAndClause = AqlApiItem.and();
+        AqlApiItem.AndClause<AqlApiItem> rootFilterClause = AqlApiItem.and();
+        AqlApiItem.OrClause<AqlApiItem> artifactsPathOrClause = AqlApiItem.or();
+        AqlApiItem.AndClause<AqlApiItem> propertiesAndClause = AqlApiItem.and();
+
         //Resolve patterned path or patterned file names, as well as direct paths
-        AqlBase.OrClause artifactsPathOrClause = AqlUtils.getSearchClauseForPaths(aqlSearchablePaths);
+        for (AqlSearchablePath path : aqlSearchablePaths) {
+            log.debug("Adding path '{}' to artifact search", path.toRepoPath().toString());
+            artifactsPathOrClause.append(
+                    and(
+                            AqlApiItem.repo().matches(path.getRepo()),
+                            AqlApiItem.path().matches(path.getPath()),
+                            AqlApiItem.name().matches(path.getFileName())
+                    )
+            );
+        }
 
         //Filter results by property key and value
         for (String key : propertiesFilterList.keySet()) {
@@ -1488,6 +1549,16 @@ public class BintrayServiceImpl implements BintrayService {
     //0 is unlimited
     private int getFileUploadLimit() {
         return getBintrayGlobalConfig().getFileUploadLimit();
+    }
+
+    private boolean snapshotArtifactsExistInArtifactsToPush(List<FileInfo> artifactsToPush) {
+        for (FileInfo info : artifactsToPush) {
+            if (MavenNaming.isSnapshot(info.getRepoPath().getPath())) {
+                log.debug("Found snapshot artifact: " + info.getRepoPath());
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

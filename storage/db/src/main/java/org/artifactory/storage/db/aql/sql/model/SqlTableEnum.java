@@ -14,7 +14,6 @@ public enum SqlTableEnum {
     indexed_archives("ia"),
     indexed_archives_entries("iae"),
     build_modules("bm"),
-    module_props("bmp"),
     build_dependencies("bd"),
     build_artifacts("ba"),
     build_props("bp"),

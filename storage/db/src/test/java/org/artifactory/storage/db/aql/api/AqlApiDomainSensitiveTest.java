@@ -5,15 +5,15 @@ import org.artifactory.aql.api.domain.sensitive.AqlApiArtifact;
 import org.artifactory.aql.api.domain.sensitive.AqlApiBuild;
 import org.artifactory.aql.api.domain.sensitive.AqlApiBuildProperty;
 import org.artifactory.aql.api.domain.sensitive.AqlApiDependency;
-import org.artifactory.aql.api.domain.sensitive.AqlApiEntry;
 import org.artifactory.aql.api.domain.sensitive.AqlApiItem;
 import org.artifactory.aql.api.domain.sensitive.AqlApiProperty;
 import org.artifactory.aql.api.domain.sensitive.AqlApiStatistic;
+import org.artifactory.aql.model.AqlFieldEnum;
 import org.artifactory.aql.model.AqlItemTypeEnum;
 import org.artifactory.aql.result.AqlEagerResult;
-import org.artifactory.aql.result.AqlJsonStreamer;
+import org.artifactory.aql.result.AqlJsonResult;
 import org.artifactory.aql.result.AqlLazyResult;
-import org.artifactory.aql.result.rows.AqlArchiveEntryItem;
+import org.artifactory.aql.result.AqlStreamResultImpl;
 import org.artifactory.aql.result.rows.AqlBaseItem;
 import org.artifactory.aql.result.rows.AqlBuild;
 import org.artifactory.aql.result.rows.AqlBuildArtifact;
@@ -36,6 +36,7 @@ import java.io.IOException;
 
 import static org.artifactory.aql.api.internal.AqlBase.*;
 import static org.artifactory.aql.model.AqlComparatorEnum.matches;
+import static org.artifactory.aql.model.AqlFieldEnum.*;
 import static org.artifactory.aql.model.AqlItemTypeEnum.file;
 import static org.artifactory.aql.model.AqlItemTypeEnum.folder;
 import static org.fest.assertions.Assertions.assertThat;
@@ -64,7 +65,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
 
     @Test
     public void findAllSortedItemsTest() throws AqlException {
-        AqlApiItem aql = AqlApiItem.create().addSortElement(AqlApiItem.repo());
+        AqlApiItem aql = AqlApiItem.create().sortBy(AqlFieldEnum.itemRepo);
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 11);
     }
@@ -75,8 +76,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 filter(
                         AqlApiItem.path().matches("org*")
                 ).
-                addSortElement(AqlApiItem.name()).
-                addSortElement(AqlApiItem.repo()).
+                sortBy(itemName, itemRepo).
                 asc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 6);
@@ -94,8 +94,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 AqlApiItem.md5Orginal().matches("*")
                         )
                 ).
-                addSortElement(AqlApiItem.name()).
-                addSortElement(AqlApiItem.repo()).
+                sortBy(itemName, itemRepo).
                 asc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 11);
@@ -113,9 +112,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 ),
                                 AqlApiItem.property().value().matches("ant")
                         )
-                ).
-                addSortElement(AqlApiItem.name()).
-                desc();
+                ).sortBy(itemName).desc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 1);
         assertItemt(result, "repo1", "ant/ant/1.5", "ant-1.5.jar", file);
@@ -175,10 +172,8 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 AqlApiItem.property().key().matches("jun*"),
                                 AqlApiItem.property().key().matches("*gle")
                         )
-                ).
-                addSortElement(AqlApiItem.name()).
-                addSortElement(AqlApiItem.repo());
-                AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
+                ).sortBy(itemName, itemRepo);
+        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 1);
         assertItemt(result, "repo1", "org", "yossis", folder);
     }
@@ -202,7 +197,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 )
                         )
                 ).
-                addSortElement(AqlApiProperty.key());
+                sortBy(propertyKey);
         AqlEagerResult<AqlProperty> result = aqlService.executeQueryEager(aql);
         assertSize(result, 2);
         assertProperty(result, "yossis", "pdf");
@@ -221,44 +216,11 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 )
                         )
                 ).
-                addSortElement(AqlApiProperty.key());
+                sortBy(propertyKey);
         AqlEagerResult<AqlProperty> result = aqlService.executeQueryEager(aql);
         assertSize(result, 2);
         assertProperty(result, "yossis", "pdf");
         assertProperty(result, "yossis", "value1");
-    }
-
-    @Test
-    public void archiveEntry() throws AqlException {
-        // return only the properties with the key 'yossis' from repository 'repo1'
-        AqlApiEntry aql = AqlApiEntry.create().
-                filter(
-                        and(
-                                AqlApiEntry.archive().item().repo().matches("rep?1"),
-                                AqlApiEntry.name().matches("*")
-                        )
-                ).
-                addSortElement(AqlApiEntry.archive().item().property().key());
-        AqlEagerResult<AqlArchiveEntryItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 18);
-        assertArchive(result, "test.me", "another");
-        assertArchive(result, "Test", ".");
-    }
-
-    @Test
-    public void itemWithArchive() throws AqlException {
-        // return only the properties with the key 'yossis' from repository 'repo1'
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        and(
-                                AqlApiItem.archive().entry().name().matches("*")
-                        )
-                ).
-                addSortElement(AqlApiItem.archive().entry().path()).
-                addSortElement(AqlApiItem.archive().entry().name());
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 8);
-        assertItemt(result, "repo1", "org/yossis/tools","test.bin",AqlItemTypeEnum.file);
     }
 
     @Test(enabled = false)
@@ -273,7 +235,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 )
                         )
                 ).
-                addSortElement(AqlApiProperty.key());
+                sortBy(propertyKey);
         AqlEagerResult<AqlProperty> result = aqlService.executeQueryEager(aql);
         assertSize(result, 0);
     }
@@ -289,7 +251,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                         )
                 ).
                 include(AqlApiItem.property().key(), AqlApiItem.property().value()).
-                addSortElement(AqlApiItem.property().key()).asc();
+                sortBy(propertyKey).asc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
         assertSize(result, 21);
     }
@@ -305,25 +267,9 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                         )
                 ).
                 include(AqlApiItem.property().key(), AqlApiItem.property().value()).
-                addSortElement(AqlApiItem.property().key()).asc();
+                sortBy(propertyKey).asc();
         AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 31);
-    }
-
-    @Test(enabled = true)
-    public void doNotHaveProperty() throws AqlException {
-        // return only the properties with the key 'yossis' from repository 'repo1'
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        and(
-                                AqlApiItem.type().equal("any"),
-                                AqlApiItem.property().key().notMatches("*")
-                        )
-                ).
-                include(AqlApiItem.property().key(), AqlApiItem.property().value()).
-                addSortElement(AqlApiItem.property().key()).asc();
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 21);
+        assertSize(result, 10);
     }
 
 
@@ -339,7 +285,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                                 )
                         )
                 ).
-                addSortElement(AqlApiProperty.key());
+                sortBy(propertyKey);
         AqlEagerResult<AqlProperty> result = aqlService.executeQueryEager(aql);
         assertSize(result, 0);
     }
@@ -351,7 +297,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 filter(
                         AqlApiProperty.item().created().greater(new DateTime(0))
                 ).
-                addSortElement(AqlApiProperty.key());
+                sortBy(propertyKey);
         AqlEagerResult<AqlProperty> result = aqlService.executeQueryEager(aql);
         assertSize(result, 9);
     }
@@ -367,15 +313,9 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 //)
         );
         AqlLazyResult aqlLazyResult = aqlService.executeQueryLazy(item);
-        AqlJsonStreamer aqlJsonStreamer = new AqlJsonStreamer(aqlLazyResult);
+        AqlJsonResult aqlJsonResult = new AqlJsonResult(aqlLazyResult);
 
-        byte[] read;
-        StringBuilder builder=new StringBuilder();
-        while((read= aqlJsonStreamer.read())!=null){
-            builder.append(new String(read));
-        }
-        aqlJsonStreamer.close();
-        String string = builder.toString();
+        String string = new String(aqlJsonResult.read());
         Assert.assertTrue(string.contains("\"size\" : 43434"));
         Assert.assertTrue(string.contains("\"repo\" : \"repo1\""));
         Assert.assertTrue(string.contains("\"actual_md5\" : \"302a360ecad98a34b59863c1e65bcf71\""));
@@ -394,9 +334,9 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 //or(
                 AqlApiItem.artifact().module().build().name().matches("ba")
                 //)
-        ).limit(2000);
+        );
         AqlLazyResult aqlLazyResult = aqlService.executeQueryLazy(item);
-        AqlJsonStreamer streamResult = new AqlJsonStreamer(aqlLazyResult);
+        AqlStreamResultImpl streamResult = new AqlStreamResultImpl(aqlLazyResult);
 
         byte[] read = streamResult.read();
         StringBuilder builder = new StringBuilder();
@@ -415,7 +355,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
         Assert.assertTrue(string.contains("\"actual_sha1\" : \"acab88fc2a043c2479a6de676a2f8179e9ea2167\""));
         Assert.assertTrue(string.contains("\"path\" : \"org/yossis/tools\""));
         Assert.assertTrue(string.contains("\"total\" : 1"));
-        Assert.assertTrue(!string.contains("\"limit\" : 20000"));
+        Assert.assertTrue(!string.contains("\"limit\" :"));
     }
 
     @Test(enabled = true)
@@ -428,7 +368,7 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
                 //)
         ).limit(2);
         AqlLazyResult aqlLazyResult = aqlService.executeQueryLazy(item);
-        AqlJsonStreamer streamResult = new AqlJsonStreamer(aqlLazyResult);
+        AqlStreamResultImpl streamResult = new AqlStreamResultImpl(aqlLazyResult);
 
         byte[] read = streamResult.read();
         StringBuilder builder = new StringBuilder();
@@ -476,36 +416,6 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
             assertThat(artifact.getSize()).isGreaterThan(43434);
         }
     }
-
-    @Test
-    public void findArtifactsBiggerThanWithOffset() throws AqlException {
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        AqlApiItem.size().greater(43434)
-                )
-                .offset(4);
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 1);
-        for (AqlItem artifact : result.getResults()) {
-            assertThat(artifact.getSize()).isGreaterThan(43434);
-        }
-    }
-
-    @Test
-    public void findArtifactsBiggerThanWithOffsetAndLimit() throws AqlException {
-        AqlApiItem aql = AqlApiItem.create().
-                filter(
-                        AqlApiItem.size().greater(43434)
-                )
-                .limit(1)
-                .offset(1);
-        AqlEagerResult<AqlItem> result = aqlService.executeQueryEager(aql);
-        assertSize(result, 1);
-        for (AqlItem artifact : result.getResults()) {
-            assertThat(artifact.getSize()).isGreaterThan(43434);
-        }
-    }
-
 
     @Test
     public void findArtifactsUsinfInclude() throws AqlException {
@@ -666,18 +576,6 @@ public class AqlApiDomainSensitiveTest extends DbBaseTest {
             AqlBuildArtifact row = (AqlBuildArtifact) queryResult.getResult(j);
             if (row.getBuildArtifactName().equals(name) &&
                     row.getBuildArtifactType().equals(type)) {
-                found = true;
-            }
-        }
-        assertTrue(found);
-    }
-
-    private void assertArchive(AqlEagerResult queryResult, String name, String path) {
-        boolean found = false;
-        for (int j = 0; j < queryResult.getSize(); j++) {
-            AqlArchiveEntryItem row = (AqlArchiveEntryItem) queryResult.getResult(j);
-            if (row.getEntryName().equals(name) &&
-                    row.getEntryPath().equals(path)) {
                 found = true;
             }
         }

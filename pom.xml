@@ -20,7 +20,7 @@
     <groupId>org.artifactory</groupId>
     <artifactId>artifactory-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.2.0</version>
+    <version>3.9.5</version>
     <name>Artifactory Parent</name>
     <url>http://artifactory.jfrog.org/</url>
 
@@ -49,15 +49,16 @@
         <sourceforgeName>artifactory</sourceforgeName>
         <spring.version>4.1.5.RELEASE</spring.version>
         <spring.security.version>3.2.0.RELEASE</spring.security.version>
-        <build.info.version>2.5.3</build.info.version>
+        <build.info.version>2.3.4</build.info.version>
+        <wicket.version>1.5.5</wicket.version>
         <jetty.version>7.0.2.v20100331</jetty.version>
-        <tomcat.version>8.0.22</tomcat.version>
+        <tomcat.version>7.0.56</tomcat.version>
         <maven.version>3.0.4</maven.version>
-        <jersey.version>1.19</jersey.version>
+        <jersey.version>1.12</jersey.version>
         <slf4j.version>1.7.5</slf4j.version>
         <jackson.version>1.9.5</jackson.version>
-        <sonar.java.source>1.8</sonar.java.source>
-        <sonar.java.target>1.8</sonar.java.target>
+        <sonar.java.source>1.7</sonar.java.source>
+        <sonar.java.target>1.7</sonar.java.target>
         <javaHomeClasses>${java.home}/lib</javaHomeClasses>
         <javaRtJar>${java.home}/lib/rt.jar</javaRtJar>
     </properties>
@@ -132,100 +133,90 @@
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-config</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-config</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-common</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-capi</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-papi</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-api</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-storage-common</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-storage-config</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-traffic</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-log</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-core</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-update</artifactId>
-                <version>4.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.artifactory</groupId>
-                <artifactId>artifactory-rest-common</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-rest</artifactId>
-                <version>4.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.artifactory</groupId>
-                <artifactId>artifactory-rest-ui</artifactId>
-                <version>4.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.artifactory</groupId>
-                <artifactId>artifactory-angular-web</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-web-application</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-web-common</artifactId>
-                <version>${project.version}</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-web-war</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.artifactory</groupId>
+                <artifactId>artifactory-web-green-skin</artifactId>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
@@ -246,18 +237,10 @@
                 </exclusions>
             </dependency>
 
-            <!-- force provided scope (for transitive dependencies) -->
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.5</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -303,14 +286,15 @@
 
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>1.8.8</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
-                <version>2.4.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>1.8.8</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -361,6 +345,62 @@
                 <artifactId>jetty-ajp</artifactId>
                 <version>${jetty.version}</version>
                 <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-core</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-extensions</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-auth-roles</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-spring</artifactId>
+                <version>${wicket.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-ioc</artifactId>
+                <version>${wicket.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>cglib</groupId>
+                        <artifactId>cglib</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>3.2</version>
+            </dependency>
+
+            <!-- Required by wicket spring proxying -->
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib-nodep</artifactId>
+                <version>2.1_3</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -617,7 +657,7 @@
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
-                <version>10.11.1.1</version>
+                <version>10.9.1.0</version>
                 <scope>runtime</scope>
             </dependency>
 
@@ -844,14 +884,8 @@
             <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-core</artifactId>
-                <version>0.7-groovy-2.0</version>
+                <version>0.7-groovy-1.8</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -995,73 +1029,67 @@
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>repomd</artifactId>
-                <version>4.1.1</version>
+                <version>3.2.23</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>rpm-indexer</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.18</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>rpm-extractor</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.18</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>rpm-writer</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.18</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>gems-extractor</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.8</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>npm</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.14</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>bower</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.14</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>deb</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.14</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>docker</artifactId>
-                <version>4.1.1</version>
+                <version>3.2.23</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>pypi</artifactId>
-                <version>4.1.0</version>
+                <version>3.2.16</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jfrog.metadata</groupId>
                 <artifactId>vagrant</artifactId>
-                <version>4.1.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jfrog.metadata</groupId>
-                <artifactId>nuget</artifactId>
-                <version>4.1.1</version>
+                <version>3.2.16</version>
             </dependency>
 
             <dependency>
@@ -1079,7 +1107,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.10</version>
+                <version>1.9</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.tukaani</groupId>
@@ -1141,19 +1169,19 @@
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-storage-db</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.artifactory</groupId>
                 <artifactId>artifactory-storage-db</artifactId>
-                <version>4.2.0</version>
+                <version>3.9.5</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>8.0.22</version>
+                <version>7.0.47</version>
             </dependency>
 
             <dependency>
@@ -1216,10 +1244,6 @@
                     <exclusion>
                         <groupId>com.sun.xml.bind</groupId>
                         <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1374,163 +1398,123 @@
                 <groupId>com.jfrog.bintray.client</groupId>
                 <artifactId>bintray-client-java-service</artifactId>
                 <version>0.8.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.jclouds</groupId>
                 <artifactId>jclouds-allblobstore</artifactId>
-                <version>1.9.1</version>
+                <version>1.9.0</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.yaml</groupId>
-                        <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.testng</groupId>
-                        <artifactId>junit</artifactId>
+                    <groupId>org.testng</groupId>
+                    <artifactId>junit</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.jamesmurty.utils</groupId>
-                        <artifactId>java-xmlbuilder</artifactId>
+                    <groupId>com.jamesmurty.utils</groupId>
+                    <artifactId>java-xmlbuilder</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>atmos</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>atmos</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>azureblob</artifactId>
+                    <groupId>org.apache.jclouds.provider</groupId>
+                    <artifactId>azureblob</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>atmos</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>atmos</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>javax.inject</groupId>
-                        <artifactId>javax.inject</artifactId>
+                    <groupId>javax.inject</groupId>
+                    <artifactId>javax.inject</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>jsr250-api</artifactId>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>jsr250-api</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>hpcloud-objectstorage</artifactId>
+                    <groupId>org.apache.jclouds.provider</groupId>
+                    <artifactId>hpcloud-objectstorage</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>filesystem</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>filesystem</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>cloudfiles-us</artifactId>
+                    <groupId>org.apache.jclouds.provider</groupId>
+                    <artifactId>cloudfiles-us</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>cloudfiles-uk</artifactId>
+                    <groupId>org.apache.jclouds.provider</groupId>
+                    <artifactId>cloudfiles-uk</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>openstack</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>openstack</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>cloudfiles</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>cloudfiles</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>openstack-keystone</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>openstack-keystone</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.common</groupId>
-                        <artifactId>openstack-common</artifactId>
+                    <groupId>org.apache.jclouds.common</groupId>
+                    <artifactId>openstack-common</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>swift</artifactId>
+                    <groupId>org.apache.jclouds.api</groupId>
+                    <artifactId>swift</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.jclouds.api</groupId>
                         <artifactId>openstack-swift</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>rackspace-cloudfiles-us</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>rackspace-cloudfiles-uk</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>javax.ws.rs</groupId>
                         <artifactId>jsr311-api</artifactId>
                     </exclusion>
 
 
-                    <!-- All what's needed for S3 stays
-                    <exclusion>
-                        <groupId>com.google.inject</groupId>
-                        <artifactId>guice</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jclouds.api</groupId>
-                        <artifactId>sts</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jclouds</groupId>
-                        <artifactId>jclouds-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.inject.extensions</groupId>
-                        <artifactId>guice-assistedinject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.code.gson</groupId>
-                        <artifactId>gson</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.99soft.guice</groupId>
-                        <artifactId>rocoto</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jclouds.provider</groupId>
-                        <artifactId>aws-s3</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.jclouds</groupId>
-                        <artifactId>jclouds-blobstore</artifactId>
-                    </exclusion>
-                    -->
+                    <!--<exclusion>-->
+                    <!--<groupId>com.google.inject</groupId>-->
+                    <!--<artifactId>guice</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                    <!--<groupId>org.apache.jclouds.api</groupId>-->
+                    <!--<artifactId>sts</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                    <!--<groupId>org.apache.jclouds</groupId>-->
+                    <!--<artifactId>jclouds-core</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.google.inject.extensions</groupId>-->
+                        <!--<artifactId>guice-assistedinject</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.google.code.gson</groupId>-->
+                        <!--<artifactId>gson</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                    <!--<groupId>org.99soft.guice</groupId>-->
+                    <!--<artifactId>rocoto</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                    <!--<groupId>org.apache.jclouds.provider</groupId>-->
+                    <!--<artifactId>aws-s3</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                    <!--<groupId>org.apache.jclouds</groupId>-->
+                    <!--<artifactId>jclouds-blobstore</artifactId>-->
+                    <!--</exclusion>-->
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jclouds</groupId>
-                <artifactId>jclouds-core</artifactId>
-                <version>1.9.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.ws.rs</groupId>
-                        <artifactId>jsr311-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.inject</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>jsr250-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jclouds.labs</groupId>
-                <artifactId>google-cloud-storage-jfrog</artifactId>
-                <version>1.9.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -1597,6 +1581,7 @@
                                         <!-- included in java 6 -->
                                         <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <exclude>com.sun.xml.bind:jaxb-impl</exclude>
+
                                         <!-- google-collections cannot co-exist with guava -->
                                         <exclude>com.google.collections:google-collections</exclude>
                                         <!--we use log4j over slf4j -->
@@ -1613,19 +1598,13 @@
                                         <exclude>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</exclude>
                                         <!-- package changed to com.google.code.findbugs -->
                                         <exclude>net.sourceforge.findbugs:jsr305</exclude>
-                                        <!-- compatibility with Java 8 (version < 5) -->
-                                        <exclude>asm:asm</exclude>
-                                        <!-- we use groovy-all -->
-                                        <exclude>org.codehaus.groovy:groovy</exclude>
-                                        <!-- Artifact id changed to javax-servlet-api in servlet api v3-->
-                                        <exclude>javax.servlet:servlet-api:*:*:compile:*</exclude>
                                     </excludes>
                                 </bannedDependencies>
                                 <requireJavaVersion>
-                                    <version>[1.8.0-1,)</version>
+                                    <version>[1.7.0-1,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
-                                    <version>3.2.0</version>
+                                    <version>3.0.4</version>
                                 </requireMavenVersion>
                             </rules>
                             <fail>true</fail>
@@ -1654,22 +1633,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>2.4</version>
                     <configuration>
                         <compilerId>groovy-eclipse-compiler</compilerId>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
                             <artifactId>groovy-eclipse-compiler</artifactId>
-                            <version>2.9.1-01</version>
+                            <version>2.7.0-01</version>
                         </dependency>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
                             <artifactId>groovy-eclipse-batch</artifactId>
-                            <version>2.3.7-01</version>
+                            <version>1.8.6-01</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1732,9 +1711,43 @@
                     <version>1.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>1.3</version>
+                    <configuration>
+                        <providerSelection>1.7</providerSelection>
+                        <source />
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.gmaven.runtime</groupId>
+                            <artifactId>gmaven-runtime-1.7</artifactId>
+                            <version>1.3</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.codehaus.groovy</groupId>
+                                    <artifactId>groovy-all</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>1.8.8</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                     <groupId>org.spockframework</groupId>
                     <artifactId>spock-maven</artifactId>
-                    <version>0.7-groovy-2.0</version>
+                    <version>0.7-groovy-1.8</version>
                     <executions>
                         <execution>
                             <goals>
@@ -1767,7 +1780,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
+                    <version>2.10</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1789,7 +1802,7 @@
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>3.0.1</version>
                     <configuration>
-                        <targetJdk>1.8</targetJdk>
+                        <targetJdk>1.7</targetJdk>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1809,7 +1822,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>1.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -1817,9 +1830,9 @@
                     <version>1.2.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.github.wvengen</groupId>
+                    <groupId>com.pyx4me</groupId>
                     <artifactId>proguard-maven-plugin</artifactId>
-                    <version>2.0.8</version>
+                    <version>2.0.4</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1840,7 +1853,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>2.10</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1908,7 +1921,6 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
-                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                         <executions>
                             <execution>

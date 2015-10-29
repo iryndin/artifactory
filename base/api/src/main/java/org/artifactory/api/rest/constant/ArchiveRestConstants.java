@@ -26,8 +26,4 @@ public interface ArchiveRestConstants {
 
     //Query path
     String PATH_BUILD_ARTIFACTS = "buildArtifacts";
-
-    String PATH_DOWNLOAD_REPO_PATH = "download/{repoKey}/{path: .+}";
-
-    String PATH_DOWNLOAD_REPO_ROOT = "download/{repoKey}";
 }

@@ -9,10 +9,8 @@ import org.artifactory.storage.db.aql.parser.elements.low.level.LazyParserElemen
 import java.util.List;
 
 import static org.artifactory.aql.model.AqlDomainEnum.archives;
-import static org.artifactory.aql.model.AqlDomainEnum.entries;
 import static org.artifactory.aql.model.AqlDomainEnum.items;
 import static org.artifactory.storage.db.aql.parser.AqlParser.dot;
-import static org.artifactory.storage.db.aql.parser.AqlParser.entriesDomains;
 import static org.artifactory.storage.db.aql.parser.AqlParser.itemDomains;
 
 /**
@@ -35,8 +33,6 @@ public class ArchiveDomainsElement extends LazyParserElement implements DomainPr
     private void fillWithSubDomains(List<ParserElement> list) {
         list.add(forward(new InternalNameElement(items.signatue),
                 fork(new EmptyIncludeDomainElement(items), forward(dot, itemDomains))));
-        list.add(forward(new InternalNameElement(entries.signatue),
-                fork(new EmptyIncludeDomainElement(entries), forward(dot, entriesDomains))));
     }
 
     @Override

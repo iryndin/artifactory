@@ -48,6 +48,4 @@ public interface WebstartAddon extends Addon {
      * Export key store as part of the full system export.
      */
     void exportKeyStore(ExportSettings exportSettings);
-
-
 }

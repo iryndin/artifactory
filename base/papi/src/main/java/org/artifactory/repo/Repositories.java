@@ -203,17 +203,6 @@ public interface Repositories {
     StatusHolder move(RepoPath source, RepoPath target);
 
     /**
-     * Moves the source repoPath to the targetRepoPath , Directories are moved recursively in a single transaction, which might be
-     * resource intensive when moving very large directories.
-     *
-     * @param source - A source repository path
-     * @param target - A target repository path
-     * @return The result status for the move operation
-     */
-    StatusHolder moveAtomic(RepoPath source, RepoPath target);
-
-
-    /**
      * Copies the source repoPath to the targetRepoPath
      *
      * @param source - A source repository path
@@ -221,16 +210,6 @@ public interface Repositories {
      * @return The result status for the copy operation
      */
     StatusHolder copy(RepoPath source, RepoPath target);
-
-    /**
-     * Copies the source repoPath to the targetRepoPath , Directories are copied recursively in a single transaction, which might be
-     * resource intensive when copying very large directories.
-     *
-     * @param source - A source repository path
-     * @param target - A target repository path
-     * @return The result status for the copy operation
-     */
-    StatusHolder copyAtomic(RepoPath source, RepoPath target);
 
     /**
      * Returns module related information (group, artifact, version, etc.) for given file, as it was extracted according

@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 /**
  * Default implementation of virtual resolver filter which never filters any virtual.
+ * <p><b>NOTE!</b> Do not remove the serializable interface since this class is being used inside a wicket page.
  *
  * @author Shay Yaakov
  */

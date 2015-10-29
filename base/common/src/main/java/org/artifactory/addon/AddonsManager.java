@@ -23,7 +23,6 @@ import org.artifactory.api.request.ArtifactoryResponse;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -41,13 +40,6 @@ public interface AddonsManager {
     List<String> getEnabledAddonNames();
 
     boolean isLicenseInstalled();
-
-    /**
-     * check if addon is supported
-     * @param addonType - add on type to check
-     * @return if true - addon is supported
-     */
-    boolean isAddonSupported(AddonType addonType);
 
     /**
      * Indicates whether there's a valid HA or Trial license installed.
@@ -80,8 +72,6 @@ public interface AddonsManager {
      */
     String getLicenseKey();
 
-    Date getLicenseValidUntil();
-
     /**
      * Returns the hash of the license key (if installed) with an added char for indication of type
      * (<b>t</b>rial \ <b>c</b>ommercial).<br/>
@@ -91,8 +81,6 @@ public interface AddonsManager {
      */
     String getLicenseKeyHash();
 
-    boolean isProLicensed(String licenseKeyHash);
-
     /**
      * check if license key hash is HA based on last Digit
      * @param licenseKeyHash - license key hash
@@ -101,6 +89,8 @@ public interface AddonsManager {
     boolean isLicenseKeyHashHAType(String licenseKeyHash);
 
     boolean lockdown();
+
+    boolean isInstantiationAuthorized(Class componentClass);
 
     /**
      * Sends a "forbidden" response to the request if no valid license is installed
@@ -129,6 +119,4 @@ public interface AddonsManager {
     ArtifactoryRunningMode getArtifactoryRunningMode();
 
     boolean isPartnerLicense();
-
-    FooterMessage getLicenseFooterMessage();
 }

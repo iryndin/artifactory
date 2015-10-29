@@ -12,15 +12,63 @@ import java.util.List;
  * @author Gidi Shabat
  */
 public class SqlQuery {
-    private String query = "";
+    private static final String FIELDS = "<FIELDS>".intern();
+    private static final String TABLES = "<TABLES>";
+    private static final String FILTERS = "<FILTERS>";
+    private static final String WHERE = "<WHERE>";
+    private static final String SORT = "<SORT>";
+    private static final String SELECT_DISTINCT = "select distinct";
+    private static final String QUERY_TEMPLATE = SELECT_DISTINCT + FIELDS + "from" + TABLES + WHERE + FILTERS + SORT;
+    private String query = QUERY_TEMPLATE;
     private List<Object> params = Lists.newArrayList();
     private List<DomainSensitiveField> resultFields;
-    private long limit;
-    private long offset;
+    private int limit;
     private AqlDomainEnum domain;
 
     public SqlQuery(AqlDomainEnum domain) {
         this.domain = domain;
+    }
+
+    public void updateResultFields(String results) {
+        query = query.replace(FIELDS, results);
+    }
+
+    public void updateFilter(String filters, List<Object> params) {
+        query = query.replace(FILTERS, filters);
+        this.params = params;
+    }
+
+    public void updateSort(String sort) {
+        query = query.replace(SORT, sort);
+    }
+
+    public void updateTables(String tables) {
+        query = query.replace(TABLES, tables);
+    }
+
+    public void updateWhereClause(boolean whereClauseExist) {
+        query = query.replace(WHERE, whereClauseExist ? " where" : "");
+    }
+
+    public void updateOracleLimit(int limit) {
+        // unsupported, Using the limit in the UI;
+    }
+
+    public void updateMySqlLimit(int limit) {
+        query = query + " limit " + limit;
+    }
+
+    public void updateDerbyLimit(int limit) {
+        query = query + " FETCH FIRST " + limit + " ROWS ONLY";
+
+    }
+
+    public void updatePostgreSqlLimit(int limit) {
+        query = query + " limit " + limit;
+    }
+
+    public void updateMsSqlLimit(int limit) {
+        query = query.replaceFirst(SELECT_DISTINCT, "select distinct top " + limit);
     }
 
     public Object[] getQueryParams() {
@@ -48,31 +96,15 @@ public class SqlQuery {
         this.resultFields = resultFields;
     }
 
-    public long getLimit() {
+    public int getLimit() {
         return limit;
     }
 
-    public void setLimit(long limit) {
+    public void setLimit(int limit) {
         this.limit = limit;
-    }
-
-    public long getOffset() {
-        return offset;
-    }
-
-    public void setOffset(long offset) {
-        this.offset = offset;
     }
 
     public AqlDomainEnum getDomain() {
         return domain;
-    }
-
-    public void setParams(List<Object> params) {
-        this.params = params;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
     }
 }

@@ -19,7 +19,6 @@
 package org.artifactory.factory.xstream;
 
 import com.thoughtworks.xstream.XStream;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.artifactory.checksum.ChecksumsInfo;
 import org.artifactory.factory.common.AbstractInfoFactory;
 import org.artifactory.fs.*;
@@ -54,10 +53,6 @@ import java.util.zip.ZipEntry;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class XStreamInfoFactory extends AbstractInfoFactory {
-
-    private XStream securityXStream;
-    private XStream fileSystemXStream;
-
     @Override
     public RepoPath createRepoPathFromId(String repoPathId) {
         return InternalRepoPathFactory.createRepoPath(repoPathId);
@@ -215,32 +210,26 @@ public class XStreamInfoFactory extends AbstractInfoFactory {
 
     @Override
     public XStream getSecurityXStream() {
-        if (securityXStream == null) {
-            securityXStream = XStreamFactory.create(SecurityDataImpl.class,
-                    PermissionTargetImpl.class,
-                    AclImpl.class,
-                    AceImpl.class,
-                    UserImpl.class,
-                    UserGroupImpl.class,
-                    GroupImpl.class
-            );
-        }
-        return securityXStream;
+        return XStreamFactory.create(SecurityDataImpl.class,
+                PermissionTargetImpl.class,
+                AclImpl.class,
+                AceImpl.class,
+                UserImpl.class,
+                UserGroupImpl.class,
+                GroupImpl.class
+        );
     }
 
     @Override
     public XStream getFileSystemXStream() {
-        if (fileSystemXStream == null) {
-            fileSystemXStream = XStreamFactory.create(FileInfoImpl.class,
-                    FileAdditionalInfo.class,
-                    FolderInfoImpl.class,
-                    FolderAdditionalInfo.class,
-                    StatsImpl.class,
-                    PropertiesImpl.class,
-                    WatchersImpl.class,
-                    WatcherImpl.class);
-        }
-        return fileSystemXStream;
+        return XStreamFactory.create(FileInfoImpl.class,
+                FileAdditionalInfo.class,
+                FolderInfoImpl.class,
+                FolderAdditionalInfo.class,
+                StatsImpl.class,
+                PropertiesImpl.class,
+                WatchersImpl.class,
+                WatcherImpl.class);
     }
 
     @Override
@@ -281,11 +270,6 @@ public class XStreamInfoFactory extends AbstractInfoFactory {
     @Override
     public ZipEntryInfo createZipEntry(ZipEntry... zipEntries) {
         return new ZipEntryImpl(zipEntries);
-    }
-
-    @Override
-    public ZipEntryInfo createArchiveEntry(ArchiveEntry... archiveEntries) {
-        return new ArchiveEntryImpl(archiveEntries);
     }
 
     @Override

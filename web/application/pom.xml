@@ -24,7 +24,7 @@
     <parent>
         <artifactId>artifactory-web-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>4.2.0</version>
+        <version>3.9.5</version>
     </parent>
 
     <build>
@@ -71,12 +71,6 @@
 
         <dependency>
             <groupId>org.artifactory</groupId>
-            <artifactId>artifactory-rest-ui</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.artifactory</groupId>
             <artifactId>artifactory-core</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -88,8 +82,20 @@
         </dependency>
 
         <dependency>
+            <groupId>org.artifactory</groupId>
+            <artifactId>artifactory-web-green-skin</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
+        </dependency>
+
+        <!-- Required by spring proxying -->
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
         </dependency>
 
         <dependency>
@@ -105,7 +111,7 @@
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
 
         <dependency>

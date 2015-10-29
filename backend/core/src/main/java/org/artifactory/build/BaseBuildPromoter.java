@@ -109,7 +109,8 @@ public class BaseBuildPromoter {
 
         //Build dependencies should be collected
         if (promotion.isDependencies()) {
-            Map<Dependency, FileInfo> buildDependenciesInfo = buildService.getBuildDependenciesFileInfos(build);
+            Map<Dependency, FileInfo> buildDependenciesInfo = buildService.getBuildDependenciesFileInfos(build,
+                    promotion.getSourceRepo());
             verifyAllDependencyInfosExistInMap(build, true, multiStatusHolder, buildDependenciesInfo,
                     VerifierLogLevel.err);
             for (Map.Entry<Dependency, FileInfo> entry : buildDependenciesInfo.entrySet()) {

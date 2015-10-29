@@ -22,7 +22,6 @@ import com.sun.istack.internal.NotNull;
 import org.artifactory.addon.Addon;
 import org.artifactory.addon.license.LicenseStatus;
 import org.artifactory.addon.plugin.ResponseCtx;
-import org.artifactory.api.archive.ArchiveType;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.repo.Async;
 import org.artifactory.api.repo.exception.BlackedOutException;
@@ -74,11 +73,10 @@ public interface RestAddon extends Addon {
      *                        action.
      * @param suppressLayouts Indicates whether path translation across different layouts should be suppressed.
      * @param failFast        Indicates whether the operation should fail upon encountering an error.
-     * @param atomic          Indicates whether copy should run in one single tx
      * @return A JSON object of all the messages and errors that occurred during the action.
      * @throws Exception If an error occurred during the dry run or the actual action an exception is thrown.
      */
-    Response copy(String path, String target, int dryRun, int suppressLayouts, int failFast, String atomic) throws Exception;
+    Response copy(String path, String target, int dryRun, int suppressLayouts, int failFast) throws Exception;
 
     /**
      * Move an artifact from one path to another.
@@ -92,7 +90,7 @@ public interface RestAddon extends Addon {
      * @return A JSON object of all the messages and errors that occurred during the action.
      * @throws Exception If an error occurred during the dry run or the actual action an exception is thrown.
      */
-    Response move(String path, String target, int dryRun, int suppressLayouts, int failFast, String atomic) throws Exception;
+    Response move(String path, String target, int dryRun, int suppressLayouts, int failFast) throws Exception;
 
     /**
      * @deprecated use {@link RestAddon#replicate(org.artifactory.repo.RepoPath, org.artifactory.api.rest.replication.ReplicationRequest)} instead
@@ -336,18 +334,6 @@ public interface RestAddon extends Addon {
      * @see BuildArtifactsRequest
      */
     File getBuildArtifactsArchive(BuildArtifactsRequest buildArtifactsRequest) throws IOException;
-
-    /**
-     * Sends back an {@link InputStream} that streams the entire content of the folder or repo, archived according to
-     * {@param archiveType} and filtered by the user's authentication.
-     *
-     * @param pathToDownload - path to download (folder or repo)
-     * @param archiveType - how to archive the path
-     * @return an {@link InputStream} that serves the archived path
-     * @throws IOException
-     */
-    InputStream downloadFolderOrRepo(RepoPath pathToDownload, ArchiveType archiveType, BasicStatusHolder status)
-            throws IOException;
 
     /**
      * Invokes a user plugin based build promotion action

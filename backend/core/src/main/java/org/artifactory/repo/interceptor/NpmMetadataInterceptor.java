@@ -19,11 +19,10 @@
 package org.artifactory.repo.interceptor;
 
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.npm.NpmAddon;
+import org.artifactory.addon.NpmAddon;
 import org.artifactory.api.repo.RepositoryService;
 import org.artifactory.common.MutableStatusHolder;
 import org.artifactory.descriptor.repo.RepoDescriptor;
-import org.artifactory.descriptor.repo.RepoType;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.md.Properties;
 import org.artifactory.repo.RepoPath;
@@ -90,7 +89,7 @@ public class NpmMetadataInterceptor extends StorageInterceptorAdapter implements
             if (repoPath.getPath().endsWith(".tgz")) {
                 String repoKey = repoPath.getRepoKey();
                 RepoDescriptor repoDescriptor = repositoryService.localRepoDescriptorByKey(repoKey);
-                return ((repoDescriptor != null) && repoDescriptor.getType().equals(RepoType.Npm));
+                return ((repoDescriptor != null) && repoDescriptor.isEnableNpmSupport());
             }
         }
 

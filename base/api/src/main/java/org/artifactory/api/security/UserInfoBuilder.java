@@ -38,6 +38,7 @@ import java.util.Set;
 public class UserInfoBuilder implements Builder<MutableUserInfo> {
 
     private final String username;
+
     private SaltedPassword password = SaltedPassword.INVALID_PASSWORD;
     private String email = "";
     private boolean admin = false;

@@ -21,7 +21,7 @@ package org.artifactory.storage.db.binstore.dao;
 import com.google.common.collect.Lists;
 import org.artifactory.api.storage.BinariesInfo;
 import org.artifactory.checksum.ChecksumType;
-import org.artifactory.storage.binstore.service.BinaryData;
+import org.artifactory.storage.db.binstore.entity.BinaryData;
 import org.artifactory.storage.db.util.BaseDao;
 import org.artifactory.storage.db.util.DbUtils;
 import org.artifactory.storage.db.util.JdbcHelper;

@@ -24,7 +24,7 @@ import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.DockerAddon;
 import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.api.bintray.BintrayService;
-import org.artifactory.api.bintray.docker.BintrayDockerPushRequest;
+import org.artifactory.api.bintray.docker.BintrayPushRequest;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.repo.exception.ItemNotFoundRuntimeException;
 import org.artifactory.api.rest.constant.BintrayRestConstants;
@@ -34,8 +34,7 @@ import org.artifactory.repo.InternalRepoPathFactory;
 import org.artifactory.repo.service.InternalRepositoryService;
 import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.exception.NotFoundException;
-import org.artifactory.rest.common.util.BintrayRestHelper;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.artifactory.util.DoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -119,7 +118,7 @@ public class BintrayResource {
     @POST
     @Path("docker/push/{repoKey}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response pushDockerTag(@PathParam("repoKey") String repoKey, BintrayDockerPushRequest request) throws IOException {
+    public Response pushDockerTag(@PathParam("repoKey") String repoKey, BintrayPushRequest request) throws IOException {
         if (!BintrayRestHelper.isPushToBintrayAllowed()) {
             throw new AuthorizationRestException();
         }

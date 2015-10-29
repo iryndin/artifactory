@@ -25,7 +25,6 @@ import org.artifactory.factory.InfoFactoryHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -47,11 +46,20 @@ public class RealmAwareAuthenticationManager extends ProviderManager implements 
 
     private Map<String, RealmAwareAuthenticationProvider> realmAwareAuthenticationProviders = Maps.newHashMap();
 
-    public RealmAwareAuthenticationManager(List<AuthenticationProvider> providers) {
-        super(providers);
-        providers.stream()
-                .filter(provider -> provider instanceof RealmAwareAuthenticationProvider)
-                .forEach(provider -> addRealmAwareAuthenticationProvider((RealmAwareAuthenticationProvider) provider));
+    @Override
+    public void setProviders(List providers) {
+        super.setProviders(providers);
+        for (Object provider : providers) {
+            if (provider instanceof RealmAwareAuthenticationProvider) {
+                RealmAwareAuthenticationProvider realmAwareAuthenticationProvider =
+                        (RealmAwareAuthenticationProvider) provider;
+                setRealmAwareAuthenticationProvider(realmAwareAuthenticationProvider);
+            }
+        }
+    }
+
+    public void setRealmAwareAuthenticationProvider(RealmAwareAuthenticationProvider provider) {
+        realmAwareAuthenticationProviders.put(provider.getRealm(), provider);
     }
 
     /**
@@ -83,6 +91,10 @@ public class RealmAwareAuthenticationManager extends ProviderManager implements 
         return result;
     }
 
+    public RealmAwareAuthenticationProvider getAuthenticationProvider(String realm) {
+        return realmAwareAuthenticationProviders.get(realm);
+    }
+
     @Override
     public boolean userExists(String userName, String realm) {
         RealmAwareAuthenticationProvider provider = getAuthenticationProvider(realm);
@@ -96,13 +108,5 @@ public class RealmAwareAuthenticationManager extends ProviderManager implements 
             return;
         }
         provider.addExternalGroups(userName, groups);
-    }
-
-    public void addRealmAwareAuthenticationProvider(RealmAwareAuthenticationProvider provider) {
-        realmAwareAuthenticationProviders.put(provider.getRealm(), provider);
-    }
-
-    private RealmAwareAuthenticationProvider getAuthenticationProvider(String realm) {
-        return realmAwareAuthenticationProviders.get(realm);
     }
 }

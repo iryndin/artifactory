@@ -25,6 +25,8 @@ import org.artifactory.request.RequestWrapper;
 import org.artifactory.security.HttpAuthenticationDetails;
 import org.artifactory.traffic.RequestLogger;
 import org.artifactory.util.HttpUtils;
+import org.artifactory.webapp.wicket.page.browse.listing.ArtifactListPage;
+import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -83,6 +85,13 @@ public class RequestFilter extends DelayedFilterBase {
                 username = RequestUtils.extractUsernameFromRequest(request);
             }
             String remoteAddress = new HttpAuthenticationDetails(request).getRemoteAddress();
+            //check that path is not "dummy" path for simple or list browsing if is do not log event
+            if (StringUtils.endsWith(servletPath, SimpleRepoBrowserPage.PATH)) {
+                return;
+            }
+            if (StringUtils.endsWith(servletPath, ArtifactListPage.PATH)) {
+                return;
+            }
             RequestLogger.request(remoteAddress, username, method, servletPath, request.getProtocol(),
                     responseWrapper.getStatus(), contentLength, System.currentTimeMillis() - start);
         } finally {

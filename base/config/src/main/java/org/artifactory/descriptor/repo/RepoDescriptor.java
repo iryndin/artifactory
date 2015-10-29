@@ -26,8 +26,6 @@ import org.artifactory.descriptor.Descriptor;
 public interface RepoDescriptor extends Descriptor, Comparable {
     String getKey();
 
-    RepoType getType();
-
     String getDescription();
 
     String getNotes();
@@ -60,9 +58,23 @@ public interface RepoDescriptor extends Descriptor, Comparable {
 
     boolean isMavenRepoLayout();
 
+    boolean isEnableNuGetSupport();
+
+    boolean isEnableGemsSupport();
+
+    boolean isEnableNpmSupport();
+
+    boolean isEnableBowerSupport();
+
+    boolean isEnableDebianSupport();
+
+    boolean isEnablePypiSupport();
+    
+    boolean isEnableDockerSupport();
+
     DockerApiVersion getDockerApiVersion();
 
-    boolean isForceDockerAuthentication();
+    boolean isEnableVagrantSupport();
 
-    boolean isForceNugetAuthentication();
+    boolean isEnableGitLfsSupport();
 }

@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
 
 /**
@@ -106,23 +105,23 @@ public abstract class ArchiveUtils {
         log.debug("Completed archiving of '{}' into '{}'", sourcePath, archivePath);
     }
 
-    public static ArchiveOutputStream createArchiveOutputStream(OutputStream outputStream, ArchiveType archiveType)
-            throws IOException {
+    private static ArchiveOutputStream createArchiveOutputStream(BufferedOutputStream bufferedOutputStream,
+            ArchiveType archiveType) throws IOException {
         ArchiveOutputStream result = null;
         switch (archiveType) {
             case ZIP:
-                result = new ZipArchiveOutputStream(outputStream);
+                result = new ZipArchiveOutputStream(bufferedOutputStream);
                 break;
             case TAR:
-                result = new TarArchiveOutputStream(outputStream);
+                result = new TarArchiveOutputStream(bufferedOutputStream);
                 ((TarArchiveOutputStream) result).setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
                 break;
             case TARGZ:
-                result = new TarArchiveOutputStream(new GzipCompressorOutputStream(outputStream));
+                result = new TarArchiveOutputStream(new GzipCompressorOutputStream(bufferedOutputStream));
                 ((TarArchiveOutputStream) result).setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
                 break;
             case TGZ:
-                result = new TarArchiveOutputStream(new GzipCompressorOutputStream(outputStream));
+                result = new TarArchiveOutputStream(new GzipCompressorOutputStream(bufferedOutputStream));
                 ((TarArchiveOutputStream) result).setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
                 break;
         }
@@ -132,25 +131,6 @@ public abstract class ArchiveUtils {
         }
 
         return result;
-    }
-
-    /**
-     * Use for writing streams - must specify file size in advance as well
-     */
-    public static ArchiveEntry createArchiveEntry(String relativePath, ArchiveType archiveType, long size) {
-        switch (archiveType) {
-            case ZIP:
-                ZipArchiveEntry zipEntry = new ZipArchiveEntry(relativePath);
-                zipEntry.setSize(size);
-                return zipEntry;
-            case TAR:
-            case TARGZ:
-            case TGZ:
-                TarArchiveEntry tarEntry = new TarArchiveEntry(relativePath);
-                tarEntry.setSize(size);
-                return tarEntry;
-        }
-        throw new IllegalArgumentException("Unsupported archive type: '" + archiveType + "'");
     }
 
     private static ArchiveEntry createArchiveEntry(File file, String relativePath, ArchiveType archiveType) {

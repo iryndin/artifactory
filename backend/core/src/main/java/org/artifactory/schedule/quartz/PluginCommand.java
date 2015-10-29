@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 @JobCommand(schedulerUser = TaskUser.SYSTEM, manualUser = TaskUser.SYSTEM,
         commandsToStop = {@StopCommand(command = ImportJob.class, strategy = StopStrategy.IMPOSSIBLE)}
 )
-public class
-        PluginCommand extends QuartzCommand {
+public class PluginCommand extends QuartzCommand {
 
     private static final Logger log = LoggerFactory.getLogger(PluginCommand.class);
 

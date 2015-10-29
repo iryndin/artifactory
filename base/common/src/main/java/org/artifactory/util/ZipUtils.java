@@ -31,7 +31,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.api.archive.ArchiveType;
 import org.artifactory.common.ConstantValues;
-import org.artifactory.sapi.fs.VfsFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,21 +101,9 @@ public abstract class ZipUtils {
      * @throws IOException On failure to read the stream
      * @see ZipUtils#locateEntry(java.util.zip.ZipInputStream, java.lang.String, java.util.List<java.lang.String>)
      */
-    public static ArchiveEntry locateArchiveEntry(ArchiveInputStream zis, String entryPath) throws IOException {
-        return locateArchiveEntry(zis, entryPath, null);
-    }
-
-    /**
-     * @param zis       The zip input stream
-     * @param entryPath The entry path to search for
-     * @return The entry if found, null otherwise
-     * @throws IOException On failure to read the stream
-     * @see ZipUtils#locateEntry(java.util.zip.ZipInputStream, java.lang.String, java.util.List<java.lang.String>)
-     */
     public static ZipEntry locateEntry(ZipInputStream zis, String entryPath) throws IOException {
         return locateEntry(zis, entryPath, null);
     }
-
 
     /**
      * Searches for an entry inside the zip stream by entry path. If there are alternative extensions, will also look
@@ -144,41 +131,6 @@ public abstract class ZipUtils {
                     String alternativeSourcePath = basePath + "." + alternativeExtension;
                     if (zipEntryName.equals(alternativeSourcePath)) {
                         return zipEntry;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-
-    /**
-     * Searches for an entry inside the zip stream by entry path. If there are alternative extensions, will also look
-     * for entry with alternative extension. The search stops reading the stream when the entry is found, so calling
-     * read on the stream will read the returned entry. <p/>
-     * The zip input stream doesn't support mark/reset so once this method is used you cannot go back - either the
-     * stream was fully read (when entry is not found) or the stream was read until the current entry.
-     *
-     * @param zis                   The ar input stream
-     * @param entryPath             The entry path to search for
-     * @param alternativeExtensions List of alternative file extensions to try if the main entry path is not found.
-     * @return The entry if found, null otherwise
-     * @throws IOException On failure to read the stream
-     */
-    public static ArchiveEntry locateArchiveEntry(ArchiveInputStream zis, String entryPath,
-            List<String> alternativeExtensions)
-            throws IOException {
-        ArchiveEntry archiveEntry;
-        while ((archiveEntry = zis.getNextEntry()) != null) {
-            String zipEntryName = archiveEntry.getName();
-            if (zipEntryName.equals(entryPath)) {
-                return archiveEntry;
-            } else if (alternativeExtensions != null) {
-                String basePath = PathUtils.stripExtension(entryPath);
-                for (String alternativeExtension : alternativeExtensions) {
-                    String alternativeSourcePath = basePath + "." + alternativeExtension;
-                    if (zipEntryName.equals(alternativeSourcePath)) {
-                        return archiveEntry;
                     }
                 }
             }
@@ -214,109 +166,28 @@ public abstract class ZipUtils {
         }
     }
 
-    /**
-     * get archive input stream from File Object
-     *
-     * @param sourceArchive - archive File
-     * @return archive input stream
-     * @throws IOException
-     */
     private static ArchiveInputStream createArchiveInputStream(File sourceArchive) throws IOException {
         String fileName = sourceArchive.getName();
         String extension = PathUtils.getExtension(fileName);
         verifySupportedExtension(extension);
         FileInputStream fis = new FileInputStream(sourceArchive);
-        ArchiveInputStream archiveInputStream = returnArchiveInputStream(fis, extension);
-        if (archiveInputStream != null) {
-            return archiveInputStream;
+        if ("zip".equalsIgnoreCase(extension)) {
+            return new ZipArchiveInputStream(fis);
         }
+
+        if ("tar".equalsIgnoreCase(extension)) {
+            return new TarArchiveInputStream(fis);
+        }
+
+        if ("gz".equalsIgnoreCase(extension) && fileName.endsWith("tar.gz")) {
+            return new TarArchiveInputStream(new GzipCompressorInputStream(fis));
+        }
+
+        if ("tgz".equalsIgnoreCase(extension)) {
+            return new TarArchiveInputStream(new GzipCompressorInputStream(fis));
+        }
+
         throw new IllegalArgumentException("Unsupported archive extension: '" + extension + "'");
-    }
-
-    /**
-     *  get archive input stream from VfsFile Object
-     * @param file - archive vfs file
-     * @return archive input stream
-     * @throws IOException
-     */
-    public static ArchiveInputStream getArchiveInputStream(VfsFile file) throws IOException {
-        String archiveSuffix = file.getPath().toLowerCase();
-        ArchiveInputStream archiveInputStream = returnArchiveInputStream(file.getStream(), archiveSuffix);
-        if (archiveInputStream != null) {
-            return archiveInputStream;
-        }
-        return new TarArchiveInputStream(file.getStream());
-    }
-
-    /**
-     * return archive input stream
-     *
-     * @param inputStream - file  input Stream
-     * @param archiveSuffix   - archive suffix
-     * @return archive input stream
-     * @throws IOException
-     */
-    public static ArchiveInputStream returnArchiveInputStream(InputStream inputStream, String archiveSuffix)
-            throws IOException {
-        if (isZipFamilyArchive(archiveSuffix)) {
-            return new ZipArchiveInputStream(inputStream);
-        }
-
-        if (isTarArchive(archiveSuffix)) {
-            return new TarArchiveInputStream(inputStream);
-        }
-
-        if (isTgzFamilyArchive(archiveSuffix) || isGzCompress(archiveSuffix)) {
-            return new TarArchiveInputStream(new GzipCompressorInputStream(inputStream));
-        }
-        return new ZipArchiveInputStream(inputStream);
-    }
-
-    /**
-     * get archive input stream array
-     * @param file - file archive
-     * @param length - length of array
-     * @return  -array of archive input stream
-     * @throws IOException
-     */
-    public static ArchiveInputStream[] getArchiveInputStreamArray(String file, int length) throws IOException {
-        String archiveSuffix = file.toLowerCase();
-        if (isZipFamilyArchive(archiveSuffix)) {
-            return new ZipArchiveInputStream[length];
-        }
-        if (isTarArchive(archiveSuffix) || isTgzFamilyArchive(archiveSuffix)) {
-            return new TarArchiveInputStream[length];
-        }
-        return new ZipArchiveInputStream[length];
-    }
-
-    /**
-     * is file suffix related to gz compress
-     *
-     * @param archiveSuffix - archive file suffix
-     * @return
-     */
-    private static boolean isGzCompress(String archiveSuffix) {
-        return archiveSuffix.equals("gz");
-    }
-
-    /**
-     * is file suffix related to tar archive
-     *
-     * @param archiveSuffix - archive suffix
-     * @return
-     */
-    private static boolean isTarArchive(String archiveSuffix) {
-        return archiveSuffix.endsWith("tar");
-    }
-
-    private static boolean isTgzFamilyArchive(String archiveSuffix) {
-        return archiveSuffix.endsWith("tar.gz") || archiveSuffix.endsWith("tgz");
-    }
-
-    private static boolean isZipFamilyArchive(String archiveSuffix) {
-        return archiveSuffix.endsWith("zip") || archiveSuffix.endsWith("jar") || archiveSuffix.toLowerCase().endsWith(
-                "nupkg") || archiveSuffix.endsWith("war");
     }
 
     private static void verifySupportedExtension(String extension) {

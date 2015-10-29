@@ -18,9 +18,10 @@
 
 package org.artifactory.search;
 
+import org.artifactory.api.search.ItemSearchResults;
 import org.artifactory.api.search.SearchService;
-import org.artifactory.api.search.VersionSearchResults;
 import org.artifactory.api.search.deployable.VersionUnitSearchControls;
+import org.artifactory.api.search.deployable.VersionUnitSearchResult;
 import org.artifactory.spring.ReloadableBean;
 
 /**
@@ -34,5 +35,6 @@ public interface InternalSearchService extends SearchService, ReloadableBean {
      * @param controls Search controls
      * @return Search results
      */
-    VersionSearchResults searchVersionUnits(VersionUnitSearchControls controls);
+    ItemSearchResults<VersionUnitSearchResult> searchVersionUnits(VersionUnitSearchControls controls);
+
 }

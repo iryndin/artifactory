@@ -28,13 +28,13 @@ import org.artifactory.api.repo.VirtualRepoItem;
 import org.artifactory.api.rest.search.common.RestDateFieldName;
 import org.artifactory.api.search.ItemSearchResults;
 import org.artifactory.api.search.SearchControls;
-import org.artifactory.api.search.VersionSearchResults;
 import org.artifactory.api.search.archive.ArchiveSearchControls;
 import org.artifactory.api.search.archive.ArchiveSearchResult;
 import org.artifactory.api.search.artifact.ArtifactSearchControls;
 import org.artifactory.api.search.artifact.ArtifactSearchResult;
 import org.artifactory.api.search.artifact.ChecksumSearchControls;
 import org.artifactory.api.search.deployable.VersionUnitSearchControls;
+import org.artifactory.api.search.deployable.VersionUnitSearchResult;
 import org.artifactory.api.search.gavc.GavcSearchControls;
 import org.artifactory.api.search.gavc.GavcSearchResult;
 import org.artifactory.api.search.property.PropertySearchControls;
@@ -42,7 +42,6 @@ import org.artifactory.api.search.property.PropertySearchResult;
 import org.artifactory.api.search.stats.StatsSearchControls;
 import org.artifactory.api.search.stats.StatsSearchResult;
 import org.artifactory.api.security.AuthorizationService;
-import org.artifactory.aql.AqlService;
 import org.artifactory.build.BuildRun;
 import org.artifactory.common.ConstantValues;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
@@ -120,9 +119,6 @@ public class SearchServiceImpl implements InternalSearchService {
 
     @Autowired
     private CachedThreadPoolTaskExecutor executor;
-
-    @Autowired
-    AqlService aqlService;
 
     @Override
     public ItemSearchResults<ArtifactSearchResult> searchArtifacts(ArtifactSearchControls controls) {
@@ -259,7 +255,7 @@ public class SearchServiceImpl implements InternalSearchService {
                     query.endGroup(null);
                 }
             }
-            query.endGroup();
+            query.endGroup(null);
         }
         VfsQueryResult queryResult = query.execute(Integer.MAX_VALUE);
         // There are no limit here the the getCount is really the total amount
@@ -275,16 +271,16 @@ public class SearchServiceImpl implements InternalSearchService {
 
     private void addDateRangeFilter(VfsQuery query, Calendar from, Calendar to, RestDateFieldName dateField) {
         if (from != null) {
-            query.prop(FieldNameConverter.fromRest(dateField).getPropName()).comp(GREATER_THAN).val(from);
+            query.prop(FieldNameConverter.fromRest(dateField).propName).comp(GREATER_THAN).val(from);
         }
         if (to != null) {
-            query.prop(FieldNameConverter.fromRest(dateField).getPropName()).comp(LOWER_THAN_EQUAL).val(to);
+            query.prop(FieldNameConverter.fromRest(dateField).propName).comp(LOWER_THAN_EQUAL).val(to);
         }
     }
 
     @Override
-    public VersionSearchResults searchVersionUnits(VersionUnitSearchControls controls) {
-        VersionUnitSearcher searcher = new VersionUnitSearcher(aqlService, authService);
+    public ItemSearchResults<VersionUnitSearchResult> searchVersionUnits(VersionUnitSearchControls controls) {
+        VersionUnitSearcher searcher = new VersionUnitSearcher();
         return searcher.doSearch(controls);
     }
 

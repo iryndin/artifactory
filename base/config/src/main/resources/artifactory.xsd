@@ -18,8 +18,8 @@
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
-           targetNamespace="http://artifactory.jfrog.org/xsd/1.6.3"
-           xmlns="http://artifactory.jfrog.org/xsd/1.6.3"
+           targetNamespace="http://artifactory.jfrog.org/xsd/1.5.13"
+           xmlns="http://artifactory.jfrog.org/xsd/1.5.13"
            elementFormDefault="qualified">
 
     <xs:element name="config" type="CentralConfigType"/>
@@ -40,13 +40,6 @@
                     <xs:documentation source="description">
                         If marked, Artifactory never tries to fetch artifacts remotely.
                         Only cached and local artifacts are served.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="helpLinksEnabled" type="xs:boolean" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether help links are shown in the UI.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -221,8 +214,6 @@
             <xs:element name="virtualCacheCleanupConfig" type="CleanupConfigType" minOccurs="1"/>
             <xs:element name="quotaConfig" type="QuotaConfigType" minOccurs="0"/>
             <xs:element name="externalProviders" type="ExternalProvidersType" minOccurs="0"/>
-            <xs:element name="systemMessageConfig" type="SystemMessageType" minOccurs="0"/>
-            <xs:element name="folderDownloadConfig" type="FolderDownloadConfigType" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -355,7 +346,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="suppressPomConsistencyChecks" type="xs:boolean" default="true" minOccurs="0">
+                    <xs:element name="suppressPomConsistencyChecks" type="xs:boolean" default="false" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
                                 Whether the repository should suppress POM consistency checks.
@@ -410,7 +401,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="type" type="xs:string" minOccurs="1"/>
             <xs:element name="description" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -452,6 +442,55 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="enableNuGetSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Handle NuGet requests for hosted NuGet libraries.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableGemsSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable RubyGems support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableNpmSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable NodeJs NPM support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableBowerSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Bower support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableDebianSupport" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable support for Debian packages in this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enablePypiSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Python Package Index (PyPI) support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enableDockerSupport" type="xs:boolean" default="false" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable Docker support for this repository.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="dockerApiVersion" default="V1" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -465,17 +504,17 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="forceDockerAuthentication" type="xs:boolean" default="false" minOccurs="0">
+            <xs:element name="enableVagrantSupport" type="xs:boolean" default="false" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        Force basic authentication credentials in order to use this repository.
+                        Enable Vagrant boxes support for this repository.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="forceNugetAuthentication" type="xs:boolean" default="false" minOccurs="0">
+            <xs:element name="enableGitLfsSupport" type="xs:boolean" default="false" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        Force basic authentication credentials in order to use this repository.
+                        Enable Git LFS support for this repository.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -625,7 +664,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="retrievalCachePeriodSecs" type="xs:long" default="600" minOccurs="0">
+                    <xs:element name="retrievalCachePeriodSecs" type="xs:long" default="43200" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
                                 The number of seconds to cache artifact look-up results.
@@ -643,7 +682,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="missedRetrievalCachePeriodSecs" type="xs:long" default="1800" minOccurs="0">
+                    <xs:element name="missedRetrievalCachePeriodSecs" type="xs:long" default="7200" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
                                 The number of seconds to cache artifact retrieval misses (artifact not found).
@@ -770,47 +809,17 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="vcs" type="VcsType" minOccurs="0"/>
-                    <xs:element name="contentSynchronisation" type="ContentSynchronisation" minOccurs="0" maxOccurs="1">
+                    <xs:element name="enableVcsSupport" type="xs:boolean" default="false" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation source="description">
-                                Content synchronisation to another artifactory repository
+                                Proxy and cache tarballs from a VCS endpoint.
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
+                    <xs:element name="vcs" type="VcsType" minOccurs="0"/>
             </xs:sequence>
             </xs:extension>
         </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="ContentSynchronisation">
-        <xs:sequence>
-            <xs:element name="enabled" type="xs:boolean" form="qualified" default="false"  minOccurs="1" maxOccurs="1"/>
-            <xs:element name="statistics" type="StatisticsContent" form="qualified"  minOccurs="1" maxOccurs="1"/>
-            <xs:element name="properties" type="PropertiesContent" form="qualified"  minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="StatisticsContent">
-        <xs:complexContent>
-            <xs:extension base="AbstractRemoteRepoDelegate">
-                <xs:sequence/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="PropertiesContent">
-        <xs:complexContent>
-            <xs:extension base="AbstractRemoteRepoDelegate">
-                <xs:sequence/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="AbstractRemoteRepoDelegate" abstract="true">
-        <xs:sequence>
-            <xs:element name="enabled" type="xs:boolean" form="qualified" default="false"  minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="VirtualRepositoriesType">
@@ -874,13 +883,6 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="defaultDeploymentRepo" type="xs:IDREF" minOccurs="0">
-                        <xs:annotation>
-                            <xs:documentation source="description">
-                                Local repository reference (key).
-                            </xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -888,6 +890,13 @@
 
     <xs:complexType name="P2ConfigurationType">
         <xs:sequence>
+            <xs:element name="enabled" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Enable P2 repository aggregation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="urls" type="P2UrlsType" maxOccurs="1" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
@@ -1190,10 +1199,10 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="includedRepositories" minOccurs="0">
+            <xs:element name="excludedRepositories" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation source="description">
-                        A set of repository references to index.
+                        A set of repository references to exclude from indexing.
                     </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
@@ -1422,15 +1431,6 @@
                         ]]>
                     </xs:documentation>
                 </xs:annotation>
-            </xs:element>
-            <xs:element name="oauthSettings" type="oauthSettingsType" minOccurs="0" maxOccurs="1">
-                    <xs:annotation>
-                        <xs:documentation source="description">
-                            <![CDATA[
-                        Security settings specific to OAuth.
-                        ]]>
-                        </xs:documentation>
-                    </xs:annotation>
             </xs:element>
             <xs:element name="debianSettings" type="DebianSettingsType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
@@ -1671,145 +1671,7 @@ If using mod_jk, ensure to use the "JkEnvVar REMOTE_USER" directive in Apache's 
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="oauthSettingsType">
-        <xs:sequence>
-            <xs:element name="enableIntegration" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Enable security integration with OAuth.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="persistUsers" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Persist new users.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="defaultNpm" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Default NPM provider.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="oauthProvidersSettings" type="oauthProvidersSettingsType" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                        Security settings specific to LDAP Groups.
-                        ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="oauthProvidersSettingsType">
-        <xs:sequence>
-            <xs:element name="oauthProvidersSettings" type="oauthProviderSettingsType" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="oauthProviderSettingsType">
-        <xs:sequence>
-            <xs:element name="name" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider unique name.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="enabled" type="xs:boolean" minOccurs="0" default="false">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider type.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="providerType" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider type.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="id" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider id.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="secret" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider secret.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="apiUrl" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider url.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="authUrl" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider authenticationUrl.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="tokenUrl" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider token URL.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="basicUrl" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider basic URL.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="domain" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        <![CDATA[
-                                Provider domain.
-                                ]]>
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
+
     <xs:complexType name="DebianSettingsType">
         <xs:sequence>
             <xs:element name="passphrase" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -2672,89 +2534,6 @@ If using mod_jk, ensure to use the "JkEnvVar REMOTE_USER" directive in Apache's 
                     </xs:annotation>
                 </xs:element>
             </xs:sequence>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="SystemMessageType">
-        <xs:annotation>
-            <xs:documentation source="description">
-                Configuration for the system message that can be displayed in the Artifactory UI.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="enabled" type="xs:boolean" default="false" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether the system message is displayed.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="title" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Title for the system message.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="titleColor" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Color for the system message's title, in rgb format (i.e. #00ec00)
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="message" type="xs:string" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        The message that will be displayed
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="showOnAllPages" type="xs:boolean" default="false" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether the system message is displayed in all pages or just the home page.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="FolderDownloadConfigType">
-        <xs:annotation>
-            <xs:documentation source="description">
-                Configuration for the ability to download folders from the UI.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="enabled" type="xs:boolean" default="false" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Determines whether downloading folders is allowed.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="maxDownloadSizeMb" type="xs:int" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Max allowed size of all uncompressed files under a tree to download in a single request, in MB.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="maxFiles" type="xs:long" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Max allowed number of files to download in a single request.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="maxConcurrentRequests" type="xs:int" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation source="description">
-                        Maximum number of folder download requests that will be treated concurrently before being queued.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
         </xs:sequence>
     </xs:complexType>
 

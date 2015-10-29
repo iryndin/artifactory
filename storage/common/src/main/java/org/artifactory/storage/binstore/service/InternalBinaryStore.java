@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author freds
  */
-public interface InternalBinaryStore extends BinaryStore,BinaryStoreServices {
+public interface InternalBinaryStore extends BinaryStore {
 
     /**
      * Add the binary data line to this data store based on all params after verification
@@ -168,6 +168,4 @@ public interface InternalBinaryStore extends BinaryStore,BinaryStoreServices {
      * returns Binary providers classes by native (type).
      */
     public Map<String, Class> getBinaryProvidersMap();
-
-    void addGCListener(GarbageCollectorListener binaryProviderBase);
 }

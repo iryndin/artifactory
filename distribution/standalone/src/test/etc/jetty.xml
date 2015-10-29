@@ -75,7 +75,6 @@
     <!-- Configure a Context                                     -->
     <!-- ======================================================= -->
     <New class="org.eclipse.jetty.webapp.WebAppContext" id="artifactory">
-        <Set name="defaultsDescriptor">../open/distribution/standalone/src/test/etc/webdefault.xml</Set>
         <Call name="setContextPath">
             <Arg>/artifactory</Arg>
         </Call>

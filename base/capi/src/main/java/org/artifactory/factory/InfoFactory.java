@@ -19,7 +19,6 @@
 package org.artifactory.factory;
 
 import com.thoughtworks.xstream.XStream;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.artifactory.checksum.ChecksumsInfo;
 import org.artifactory.fs.*;
 import org.artifactory.md.MutableMetadataInfo;
@@ -104,20 +103,11 @@ public interface InfoFactory {
 
     MutableAclInfo createAcl(PermissionTargetInfo permissionTarget);
 
-    /**
-     * Return an immutable ACL
-     * @param permissionTarget
-     * @param aces
-     * @param updatedBy
-     * @return
-     */
-    AclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy);
+    MutableAclInfo createAcl(PermissionTargetInfo permissionTarget, Set<AceInfo> aces, String updatedBy);
 
     Tree<ZipEntryInfo> createZipEntriesTree();
 
     ZipEntryInfo createZipEntry(ZipEntry... zipEntry);
-
-    ZipEntryInfo createArchiveEntry(ArchiveEntry... archiveEntries);
 
     ZipEntryResourceInfo createZipEntryResource(FileInfo info, ZipEntryInfo zipEntryInfo, Long first,
             ChecksumsInfo checksumsInfo);
@@ -140,5 +130,5 @@ public interface InfoFactory {
 
     MutableMetadataInfo createMetadata(RepoPath repoPath, String metadataName);
 
-    RepoPath createRepoPath(String repoKey, String path, boolean folder);
+    RepoPath createRepoPath(String repoKey, String path, boolean file);
 }

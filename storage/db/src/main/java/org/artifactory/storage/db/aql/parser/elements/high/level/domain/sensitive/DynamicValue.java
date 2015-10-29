@@ -17,9 +17,6 @@ public class DynamicValue extends DomainSensitiveParserElement {
             case archives: {
                 return AqlParser.archiveValues;
             }
-            case entries: {
-                return AqlParser.entriesValues;
-            }
             case properties: {
                 return AqlParser.propertiesValues;
             }
@@ -37,9 +34,6 @@ public class DynamicValue extends DomainSensitiveParserElement {
             }
             case modules: {
                 return AqlParser.buildModuleValues;
-            }
-            case moduleProperties: {
-                return AqlParser.buildModulePropertiesValues;
             }
             case buildProperties: {
                 return AqlParser.buildPropertiesValues;

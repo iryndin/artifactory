@@ -1,6 +1,5 @@
 package org.artifactory.util.bearer;
 
-import org.apache.http.auth.Credentials;
 import org.artifactory.spring.ReloadableBean;
 
 import java.util.Map;
@@ -12,5 +11,5 @@ import java.util.Map;
  */
 public interface TokenProvider extends ReloadableBean {
 
-    String getToken(Map<String, String> challengeParams, String method, String uri, Credentials credentials);
+    String getToken(Map<String, String> challengeParams);
 }

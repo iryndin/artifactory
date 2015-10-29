@@ -18,10 +18,6 @@
 
 package org.artifactory.api.artifact;
 
-import org.artifactory.api.maven.MavenArtifactInfo;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
@@ -29,11 +25,6 @@ import java.io.Serializable;
  *
  * @author Tomer Cohen
  */
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "artifactType")
-@JsonSubTypes({@JsonSubTypes.Type(value = MavenArtifactInfo.class, name = "maven"),
-        @JsonSubTypes.Type(value = DebianArtifactInfo.class, name = "debian"),
-        @JsonSubTypes.Type(value = ArtifactInfo.class, name = "base")})
 public interface UnitInfo extends Serializable {
     /**
      * Represents a value that is not set or not available (for some implementers it indicates an invalid state)
@@ -62,6 +53,4 @@ public interface UnitInfo extends Serializable {
      * @return True if the artifact is valid, false otherwise.
      */
     boolean isValid();
-
-    void setPath(String path);
 }

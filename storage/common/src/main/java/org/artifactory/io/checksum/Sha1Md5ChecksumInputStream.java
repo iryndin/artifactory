@@ -19,7 +19,6 @@
 package org.artifactory.io.checksum;
 
 import org.artifactory.checksum.ChecksumType;
-import org.artifactory.storage.binstore.service.SkippableInputStream;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
@@ -29,13 +28,10 @@ import java.io.InputStream;
  *
  * @author Yossi Shaul
  */
-public class Sha1Md5ChecksumInputStream extends ChecksumInputStream implements SkippableInputStream {
-    private final InputStream inputStream;
-
+public class Sha1Md5ChecksumInputStream extends ChecksumInputStream {
     public Sha1Md5ChecksumInputStream(InputStream is) {
         // the order of the checksums does matter
         super(is, new Checksum(ChecksumType.sha1), new Checksum(ChecksumType.md5));
-        inputStream=is;
     }
 
     @Nonnull
@@ -46,13 +42,5 @@ public class Sha1Md5ChecksumInputStream extends ChecksumInputStream implements S
     @Nonnull
     public String getMd5() {
         return getChecksums()[1].getChecksum();
-    }
-
-    @Override
-    public boolean isSkippable() {
-        if(inputStream instanceof SkippableInputStream){
-            return ((SkippableInputStream)inputStream).isSkippable();
-        }
-        return true;
     }
 }

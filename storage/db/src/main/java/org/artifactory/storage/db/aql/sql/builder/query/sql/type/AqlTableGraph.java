@@ -27,12 +27,11 @@ public class AqlTableGraph {
         TableLink archivePaths = new TableLink(SqlTableEnum.archive_paths);
         TableLink indexedArchives = new TableLink(SqlTableEnum.indexed_archives);
         TableLink indexedArchiveEntries = new TableLink(SqlTableEnum.indexed_archives_entries);
-        TableLink builds = new TableLink(SqlTableEnum.builds);
+        TableLink buildsTable = new TableLink(SqlTableEnum.builds);
         TableLink buildsProps = new TableLink(SqlTableEnum.build_props);
         TableLink buildsModules = new TableLink(SqlTableEnum.build_modules);
         TableLink buildsArtifacts = new TableLink(SqlTableEnum.build_artifacts);
         TableLink buildsDependencies = new TableLink(SqlTableEnum.build_dependencies);
-        TableLink buildModuleProperties = new TableLink(SqlTableEnum.module_props);
         nodesTable.addLink(node_id, nodesProps, node_id);
         nodesTable.addLink(sha1_actual, buildsArtifacts, sha1);
         nodesTable.addLink(sha1_actual, buildsDependencies, sha1);
@@ -43,12 +42,10 @@ public class AqlTableGraph {
         indexedArchiveEntries.addLink(entry_path_id, archivePaths, path_id);
         buildsModules.addLink(module_id, buildsArtifacts, module_id);
         buildsModules.addLink(module_id, buildsDependencies, module_id);
-        buildsModules.addLink(module_id, buildModuleProperties, module_id);
-        buildsModules.addLink(build_id, builds, build_id);
-        builds.addLink(build_id, buildsProps, build_id);
+        buildsModules.addLink(build_id, buildsTable, build_id);
+        buildsTable.addLink(build_id, buildsProps, build_id);
         nodesProps.addLink(node_id, nodesProps, node_id);
         buildsProps.addLink(build_id, buildsProps, build_id);
-        buildModuleProperties.addLink(module_id, buildModuleProperties, module_id);
         //Fill the tables map
         Map<SqlTableEnum, TableLink> map = Maps.newHashMap();
         map.put(indexed_archives, indexedArchives);
@@ -61,8 +58,7 @@ public class AqlTableGraph {
         map.put(build_dependencies, buildsDependencies);
         map.put(build_artifacts, buildsArtifacts);
         map.put(build_modules, buildsModules);
-        map.put(module_props, buildModuleProperties);
-        map.put(SqlTableEnum.builds, builds);
+        map.put(builds, buildsTable);
         map.put(build_props, buildsProps);
         tablesLinksMap = map;
     }

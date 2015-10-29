@@ -24,7 +24,7 @@
     <parent>
         <artifactId>artifactory-backend-parent</artifactId>
         <groupId>org.artifactory</groupId>
-        <version>4.2.0</version>
+        <version>3.9.5</version>
     </parent>
 
     <dependencies>

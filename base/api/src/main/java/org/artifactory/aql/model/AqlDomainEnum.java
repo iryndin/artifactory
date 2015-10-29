@@ -16,18 +16,15 @@ public enum AqlDomainEnum {
     properties("property", new String[]{"properties"}, propertyKey, propertyValue),
     statistics("stat", new String[]{"stats"}, statDownloads, statDownloaded,
             statDownloadedBy),
-    archives("archive", new String[]{"archives"}),
-    entries("entry", new String[]{"archive","entries"}, archiveEntryPath, archiveEntryName),
+    archives("archive", new String[]{"archives"}, archiveEntryPath, archiveEntryName),
     builds("build", new String[]{"builds"}, buildNumber, buildName, buildUrl, buildCreated, buildCreatedBy,
             buildModified, buildModifiedBy),
     artifacts("artifact", new String[]{"artifacts"}, buildArtifactName, buildArtifactType),
     dependencies("dependency", new String[]{"dependencies"}, buildDependencyName,
             buildDependencyType,
             buildDependencyScope),
-    modules("module", new String[]{"modules"}, moduleName),
-    buildProperties("property", new String[]{"build", "properties"}, buildPropertyKey, buildPropertyValue),
-    moduleProperties("property", new String[]{ "module","properties"}, modulePropertyKey,
-            modulePropertyValue);
+    modules("module", new String[]{"modules"}, buildModuleName),
+    buildProperties("property", new String[]{"build", "properties"}, buildPropertyKey, buildPropertyValue);
 
     public String signatue;
     public String[] subDomains;

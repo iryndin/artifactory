@@ -18,10 +18,13 @@
 
 package org.artifactory.storage.db.build.service;
 
-import com.google.common.collect.*;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
-import org.artifactory.api.build.*;
-import org.artifactory.api.build.diff.BuildParams;
+import org.artifactory.api.build.ImportableExportableBuild;
 import org.artifactory.api.jackson.JacksonReader;
 import org.artifactory.binstore.BinaryInfo;
 import org.artifactory.build.BuildInfoUtils;
@@ -36,9 +39,19 @@ import org.artifactory.storage.db.build.dao.BuildArtifactsDao;
 import org.artifactory.storage.db.build.dao.BuildDependenciesDao;
 import org.artifactory.storage.db.build.dao.BuildModulesDao;
 import org.artifactory.storage.db.build.dao.BuildsDao;
-import org.artifactory.storage.db.build.entity.*;
+import org.artifactory.storage.db.build.entity.BuildArtifact;
+import org.artifactory.storage.db.build.entity.BuildDependency;
+import org.artifactory.storage.db.build.entity.BuildEntity;
+import org.artifactory.storage.db.build.entity.BuildModule;
+import org.artifactory.storage.db.build.entity.BuildPromotionStatus;
+import org.artifactory.storage.db.build.entity.BuildProperty;
+import org.artifactory.storage.db.build.entity.ModuleProperty;
 import org.artifactory.storage.db.util.blob.BlobWrapperFactory;
-import org.jfrog.build.api.*;
+import org.jfrog.build.api.Artifact;
+import org.jfrog.build.api.Build;
+import org.jfrog.build.api.BuildFileBean;
+import org.jfrog.build.api.Dependency;
+import org.jfrog.build.api.Module;
 import org.jfrog.build.api.release.PromotionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +61,15 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Date: 11/14/12
@@ -82,14 +103,6 @@ public class BuildStoreServiceImpl implements BuildStoreService {
 
     @Autowired
     private BlobWrapperFactory blobsFactory;
-
-    public static Date parseStringToDate(String dateString) {
-        return new Date(BuildInfoUtils.parseBuildTime(dateString));
-    }
-
-    public static String formatDateToString(long buildStarted) {
-        return BuildInfoUtils.formatBuildTime(buildStarted);
-    }
 
     @Override
     public void addBuild(String buildJson) {
@@ -219,6 +232,14 @@ public class BuildStoreServiceImpl implements BuildStoreService {
             }
             buildDependenciesDao.createBuildDependencies(dbDependencies);
         }
+    }
+
+    public static Date parseStringToDate(String dateString) {
+        return new Date(BuildInfoUtils.parseBuildTime(dateString));
+    }
+
+    public static String formatDateToString(long buildStarted) {
+        return BuildInfoUtils.formatBuildTime(buildStarted);
     }
 
     @Override
@@ -435,142 +456,12 @@ public class BuildStoreServiceImpl implements BuildStoreService {
     }
 
     @Override
-    public List<PublishedModule> getPublishedModules(String buildName, String date, String orderBy, String direction, String offset, String limit) {
-        List<PublishedModule> buildModule = null;
-        try {
-             buildModule = buildsDao.getBuildModule(buildName, date, orderBy, direction, offset, limit);
-        }catch (Exception e){
-            log.error(e.toString());
-        }
-        return buildModule;
-    }
-
-    @Override
-    public  List<ModuleArtifact> getModuleArtifact(String buildName,String buildNumber, String moduleId,String date, String orderBy, String direction, String offset, String limit) {
-        List<ModuleArtifact> moduleArtifactList = null;
-        try {
-            moduleArtifactList = buildsDao.getModuleArtifact(buildName, buildNumber, date, moduleId, orderBy, direction, offset, limit);
-        }catch (Exception e){
-            log.error(e.toString());
-        }
-        return moduleArtifactList;
-    }
-
-    @Override
-    public List<ModuleDependency> getModuleDependency(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit) {
-        List<ModuleDependency> moduleArtifactList = null;
-        try {
-            moduleArtifactList = buildsDao.getModuleDependency(buildNumber, date, moduleId, orderBy, direction, offset, limit);
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return moduleArtifactList;
-    }
-
-    @Override
-    public int getModuleDependenciesCount(String buildNumber, String moduleId, String date) {
-        int totalArtifactCount = 0;
-        try {
-            totalArtifactCount = buildsDao.getModuleDependenciesCount(buildNumber, date, moduleId);
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return totalArtifactCount;
-    }
-
-    @Override
-    public List<ModuleArtifact> getModuleArtifactsForDiffWithPaging(BuildParams buildParams, String offset, String limit) {
-        return buildsDao.getModuleArtifactsForDiffWithPaging(buildParams, offset, limit);
-    }
-
-    public List<GeneralBuild> getPrevBuildsList(String buildName, String buildDate) {
-        return buildsDao.getPrevBuildsList(buildName, buildDate);
-    }
-
-    @Override
-    public int getModuleArtifactsForDiffCount(BuildParams buildParams, String offset, String limit) {
-        return buildsDao.getModuleArtifactsForDiffCount(buildParams, offset, limit);
-    }
-
-    @Override
-    public List<BuildProps> getBuildPropsData(BuildParams buildParams, String offset, String limit, String orderBy) {
-        return buildsDao.getBuildProps(buildParams, offset, limit, orderBy);
-    }
-
-    @Override
-    public long getBuildPropsCounts(BuildParams buildParams) {
-        return buildsDao.getBuildPropsCounts(buildParams);
-    }
-
-    @Override
-    public int getPropsDiffCount(BuildParams buildParams) {
-        return buildsDao.getPropsDiffCount(buildParams);
-    }
-
-    @Override
-    public List<BuildProps> getBuildProps(BuildParams buildParams, String offset, String limit) {
-        return buildsDao.diffBuildProps(buildParams, offset, limit);
-    }
-
-
-    @Override
-    public List<ModuleDependency> getModuleDependencyForDiffWithPaging(BuildParams buildParams, String offset, String limit) {
-        return buildsDao.getModuleDependencyForDiffWithPaging(buildParams, offset, limit);
-    }
-
-    @Override
-    public int getModuleDependencyForDiffCount(BuildParams buildParams, String offset, String limit) {
-        return buildsDao.getModuleDependencyForDiffCount(buildParams, offset, limit);
-    }
-
-
-    @Override
-    public  int getModuleArtifactCount(String buildNumber, String moduleId,String date) {
-        int totalArtifactCount=0;
-        try {
-            totalArtifactCount =  buildsDao.getModuleArtifactCount(buildNumber, date, moduleId);
-        }catch (Exception e){
-            log.error(e.toString());
-        }
-        return totalArtifactCount;
-    }
-
-
-    @Override
-    public int  getPublishedModulesCounts(String buildName, String date) {
-
-        int  buildModuleCount = 0;
-        try {
-            buildModuleCount = buildsDao.getPublishedModulesCounts(buildName, date);
-        }catch (Exception e){
-            log.error(e.toString());
-        }
-        return buildModuleCount;
-    }
-
-    @Override
     public Set<BuildRun> getLatestBuildsByName() {
         try {
             List<String> allBuildNames = buildsDao.getAllBuildNames();
             LinkedHashSet<BuildRun> results = new LinkedHashSet<>(allBuildNames.size());
             for (String buildName : allBuildNames) {
                 BuildEntity buildEntity = buildsDao.getLatestBuild(buildName);
-                if (buildEntity != null) {
-                    results.add(getBuildRun(buildEntity));
-                }
-            }
-            return results;
-        } catch (SQLException e) {
-            throw new StorageException("Could not list all builds by name and latest build date", e);
-        }
-    }
-
-    @Override
-    public Set<BuildRun> getLatestBuildsPaging(String offset, String orderBy, String direction, String limit) {
-        try {
-            List<BuildEntity> allBuildNames = buildsDao.getAllBuildNamePaging(offset, orderBy, direction, limit);
-            LinkedHashSet<BuildRun> results = new LinkedHashSet<>(allBuildNames.size());
-            for (BuildEntity buildEntity : allBuildNames) {
                 if (buildEntity != null) {
                     results.add(getBuildRun(buildEntity));
                 }
@@ -634,16 +525,6 @@ public class BuildStoreServiceImpl implements BuildStoreService {
     private BuildRun getBuildRun(Long buildId) throws SQLException {
         BuildEntity buildEntity = buildsDao.getBuild(buildId);
         return getBuildRun(buildEntity);
-    }
-
-    @Override
-    public List<GeneralBuild> getBuildForNamePaging(String buildName, String orderBy, String direction, String offset, String limit) throws SQLException {
-        return  buildsDao.getBuildForName(buildName, orderBy, direction, offset, limit);
-    }
-
-    @Override
-    public int getBuildForNameTotalCount(String buildName) throws SQLException {
-        return buildsDao.getBuildForNameTotalCount(buildName);
     }
 
     private BuildRun getBuildRun(BuildEntity buildEntity) {

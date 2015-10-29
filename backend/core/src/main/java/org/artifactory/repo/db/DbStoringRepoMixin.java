@@ -26,10 +26,10 @@ import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.SnapshotVersion;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.FilteredResourcesAddon;
 import org.artifactory.addon.HaAddon;
 import org.artifactory.addon.PropertiesAddon;
 import org.artifactory.addon.RestCoreAddon;
-import org.artifactory.addon.filteredresources.FilteredResourcesAddon;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.context.ArtifactoryContext;
 import org.artifactory.api.context.ContextHelper;
@@ -38,7 +38,6 @@ import org.artifactory.api.properties.PropertiesService;
 import org.artifactory.api.repo.exception.FileExpectedException;
 import org.artifactory.api.repo.exception.ItemNotFoundRuntimeException;
 import org.artifactory.api.repo.exception.RepoRejectException;
-import org.artifactory.api.request.InternalArtifactoryRequest;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.binstore.BinaryInfo;
 import org.artifactory.checksum.ChecksumInfo;
@@ -75,7 +74,6 @@ import org.artifactory.repo.interceptor.StorageInterceptors;
 import org.artifactory.repo.local.LocalNonCacheOverridables;
 import org.artifactory.repo.local.PathDeletionContext;
 import org.artifactory.repo.service.InternalRepositoryService;
-import org.artifactory.request.ArtifactoryRequest;
 import org.artifactory.request.InternalRequestContext;
 import org.artifactory.request.RepoRequests;
 import org.artifactory.request.Request;
@@ -106,7 +104,6 @@ import org.artifactory.storage.fs.service.FileService;
 import org.artifactory.storage.fs.service.StatsService;
 import org.artifactory.storage.fs.session.StorageSession;
 import org.artifactory.storage.fs.session.StorageSessionHolder;
-import org.artifactory.storage.service.StatsServiceImpl;
 import org.artifactory.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +113,6 @@ import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -155,7 +151,7 @@ public class DbStoringRepoMixin<T extends RepoBaseDescriptor> /*implements Stori
         interceptors = context.beanForType(StorageInterceptors.class);
         addonsManager = context.beanForType(AddonsManager.class);
         fileService = context.beanForType(FileService.class);
-        statsService = context.beanForType(StatsServiceImpl.class);
+        statsService = context.beanForType(StatsService.class);
         repositoryService = context.beanForType(InternalRepositoryService.class);
         vfsItemProviderFactory = context.beanForType(VfsItemProviderFactory.class);
         mavenMetadataService = context.beanForType(MavenMetadataService.class);
@@ -739,35 +735,15 @@ public class DbStoringRepoMixin<T extends RepoBaseDescriptor> /*implements Stori
             handle = new SimpleResourceStreamHandle(file.getStream(), file.length());
         }
 
-        if(!request.isHeadOnly())
-            updateDownloadStats(file, isFromAnotherArtifactory(request));
+        updateDownloadStats(file);
 
         return handle;
     }
 
-    /**
-     * Checks if original request came from another origin
-     *
-     * @param request
-     *
-     * @return boolean
-     */
-    private final boolean isFromAnotherArtifactory(Request request) {
-        if(request.isFromAnotherArtifactory()) return true;
-        if(request instanceof InternalArtifactoryRequest) {
-            Enumeration origins = request.getHeaders(ArtifactoryRequest.ARTIFACTORY_ORIGINATED);
-            if (origins == null) {
-                 origins = request.getHeaders(ArtifactoryRequest.ORIGIN_ARTIFACTORY);
-            }
-            return origins != null && origins.hasMoreElements();
-        }
-        return false;
-    }
-
-    private void updateDownloadStats(VfsFile file, boolean fromAnotherArtifactory) {
+    private void updateDownloadStats(VfsFile file) {
         if (descriptor.isReal() && ConstantValues.downloadStatsEnabled.getBoolean()) {  // stats only for real repos, if enabled
             statsService.fileDownloaded(file.getRepoPath(), authorizationService.currentUsername(),
-                    System.currentTimeMillis(), fromAnotherArtifactory);
+                    System.currentTimeMillis());
         }
     }
 

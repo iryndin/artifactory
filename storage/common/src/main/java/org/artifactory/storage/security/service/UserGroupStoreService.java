@@ -18,8 +18,6 @@
 
 package org.artifactory.storage.security.service;
 
-import org.artifactory.common.Info;
-import org.artifactory.md.Properties;
 import org.artifactory.sapi.common.Lock;
 import org.artifactory.security.GroupInfo;
 import org.artifactory.security.MutableGroupInfo;
@@ -27,7 +25,6 @@ import org.artifactory.security.MutableUserInfo;
 import org.artifactory.security.UserInfo;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -140,65 +137,4 @@ public interface UserGroupStoreService {
     boolean adminUserExists();
 
     boolean userExists(String username);
-
-    /**
-     * get user groups paging
-     *
-     * @param includeAdmins include admin
-     * @return list
-     */
-    Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction);
-
-    /**
-     * get all users and groups count
-     *
-     * @param includeAdmins include admin
-     * @return num of records
-     */
-     long getAllUsersGroupsCount(boolean includeAdmins);
-
-    /**
-     * Find the user associated with the given external user datum
-     *
-     * @param realm The authentication realm to consider
-     * @param key The key associated with this datum
-     * @param val The value to search for
-     * @return The user, or null if no user was found
-     */
-    @Nullable
-    UserInfo findUserByProperty(String key, String val);
-
-    /**
-     * Find the datum associated with the given user
-     *
-     * @param username The user holding this datum
-     * @param key The key associated with this datum
-     * @return The datum, or null if no datum was found
-     */
-    @Nullable
-    String findUserProperty(String username, String key);
-
-    /**
-     * Add or alter an external user datum
-     *
-     * @param username The name of the user to alter
-     * @param key The key associated with this datum
-     * @param val The value to write
-     * @return True if the write succeeded, false otherwise
-     */
-    boolean addUserProperty(String username, String key, String val);
-
-    /**
-     * Delete an external user datum
-     *
-     * @param username The name of the user to alter
-     * @param key The key associated with this datum
-     * @return True if the delete succeeded, false otherwise
-     */
-    boolean deleteUserProperty(String username, String key);
-
-    Properties findPropertiesForUser(String username);
-
-    void deletePropertyFromAllUsers(String propertyKey);
 }

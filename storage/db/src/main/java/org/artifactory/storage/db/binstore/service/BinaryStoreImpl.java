@@ -35,22 +35,21 @@ import org.artifactory.storage.StorageException;
 import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.binstore.BinaryStoreInputStream;
 import org.artifactory.storage.binstore.GarbageCollectorInfo;
-import org.artifactory.storage.binstore.service.BinaryData;
 import org.artifactory.storage.binstore.service.BinaryInfoImpl;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.BinaryProviderFactory;
 import org.artifactory.storage.binstore.service.FileBinaryProvider;
-import org.artifactory.storage.binstore.service.GarbageCollectorListener;
 import org.artifactory.storage.binstore.service.InternalBinaryStore;
-import org.artifactory.storage.binstore.service.MutableBinaryProvider;
 import org.artifactory.storage.binstore.service.ProviderConnectMode;
 import org.artifactory.storage.binstore.service.annotation.BinaryProviderClassInfo;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.providers.DoubleFileBinaryProviderImpl;
 import org.artifactory.storage.binstore.service.providers.ExternalWrapperBinaryProviderImpl;
 import org.artifactory.storage.config.model.ChainMetaData;
 import org.artifactory.storage.config.model.Param;
 import org.artifactory.storage.config.model.ProviderMetaData;
 import org.artifactory.storage.db.DbService;
 import org.artifactory.storage.db.binstore.dao.BinariesDao;
+import org.artifactory.storage.db.binstore.entity.BinaryData;
 import org.artifactory.storage.fs.service.ArchiveEntriesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +73,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static org.artifactory.storage.binstore.service.BinaryProviderFactory.*;
-import static org.artifactory.storage.binstore.service.base.MutableBinaryProviderInjector.getMutableBinaryProvider;
 import static org.artifactory.storage.db.binstore.service.ConfigurableBinaryProviderManager.buildByConfig;
 import static org.artifactory.storage.db.binstore.service.ConfigurableBinaryProviderManager.buildByStorageProperties;
 
@@ -114,12 +110,10 @@ public class BinaryStoreImpl implements InternalBinaryStore {
      */
     private ConcurrentMap<String, AtomicInteger> deleteProtectedBinaries;
     private Map<String, Class> binaryProvidersMap;
-    private List<GarbageCollectorListener> garbageCollectorListeners;
 
     @PostConstruct
     public void initialize() {
         try {
-            garbageCollectorListeners=new CopyOnWriteArrayList<>();
             binaryProvidersMap = loadProvidersMap();
             log.debug("Initializing the ConfigurableBinaryProviderManager");
             deleteProtectedBinaries = new MapMaker().makeMap();
@@ -153,12 +147,7 @@ public class BinaryStoreImpl implements InternalBinaryStore {
         return binaryProvidersMap;
     }
 
-    @Override
-    public void addGCListener(GarbageCollectorListener garbageCollectorListener) {
-        garbageCollectorListeners.add(garbageCollectorListener);
-    }
-
-    public static Map<String, Class> loadProvidersMap() {
+    private Map<String, Class> loadProvidersMap() {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(BinaryProviderClassInfo.class));
         Map<String, Class> providersMap = Maps.newHashMap();
@@ -176,7 +165,7 @@ public class BinaryStoreImpl implements InternalBinaryStore {
         return providersMap;
     }
 
-    private static void updateMap(Map<String, Class> providersMap, BeanDefinition bd) {
+    private void updateMap(Map<String, Class> providersMap, BeanDefinition bd) {
         try {
             String beanClassName = bd.getBeanClassName();
             Class<?> beanClass = Class.forName(beanClassName);
@@ -195,8 +184,7 @@ public class BinaryStoreImpl implements InternalBinaryStore {
                 binaryProvider = binaryProvider.getBinaryProvider();
             }
             for (BinaryProviderBase toAdd : binaryProvidersToAdd) {
-                MutableBinaryProvider mutableBinaryProvider = getMutableBinaryProvider(binaryProvider);
-                mutableBinaryProvider.setBinaryProvider(toAdd);
+                binaryProvider.setBinaryProvider(toAdd);
                 binaryProvider = toAdd;
             }
         }
@@ -257,9 +245,8 @@ public class BinaryStoreImpl implements InternalBinaryStore {
             ProviderMetaData providerMetaData = new ProviderMetaData("external-wrapper", "external-wrapper");
             providerMetaData.addParam(new Param("dir", getBinariesDir().getAbsolutePath()));
             providerMetaData.addParam(new Param("connectMode", disconnectMode.propName));
-            wrapper = BinaryProviderFactory.createBinaryProvider(providerMetaData, storageProperties, this);
-            MutableBinaryProvider mutableBinaryProvider = getMutableBinaryProvider(wrapper);
-            mutableBinaryProvider.setBinaryProvider(externalFilestore);
+            wrapper = BinaryProviderFactory.create(providerMetaData, storageProperties, this);
+            wrapper.setBinaryProvider(externalFilestore);
         }
 
         // Now run fetch all on wrapper
@@ -425,7 +412,9 @@ public class BinaryStoreImpl implements InternalBinaryStore {
                 Collection<String> validChecksums = extractValid(checksumType, checksums);
                 if (!validChecksums.isEmpty()) {
                     Collection<BinaryData> found = binariesDao.search(checksumType, validChecksums);
-                    results.addAll(found.stream().map(this::convertToBinaryInfo).collect(Collectors.toList()));
+                    for (BinaryData data : found) {
+                        results.add(convertToBinaryInfo(data));
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -436,13 +425,16 @@ public class BinaryStoreImpl implements InternalBinaryStore {
 
     private Collection<String> extractValid(ChecksumType checksumType, Collection<String> checksums) {
         Collection<String> results = Sets.newHashSet();
-        results.addAll(checksums.stream().filter(checksumType::isValid).collect(Collectors.toList()));
+        for (String checksum : checksums) {
+            if (checksumType.isValid(checksum)) {
+                results.add(checksum);
+            }
+        }
         return results;
     }
 
     @Override
     public GarbageCollectorInfo garbageCollect() {
-        notifyGCListenersOnStart();
         final GarbageCollectorInfo result = new GarbageCollectorInfo();
         Collection<BinaryData> binsToDelete;
         try {
@@ -455,7 +447,6 @@ public class BinaryStoreImpl implements InternalBinaryStore {
         }
         result.stopScanTimestamp = System.currentTimeMillis();
         result.candidatesForDeletion = binsToDelete.size();
-        notifyGCListenersOnDelete(binsToDelete);
         if (result.candidatesForDeletion > 0) {
             log.info("Found {} candidates for deletion", result.candidatesForDeletion);
         }
@@ -477,24 +468,15 @@ public class BinaryStoreImpl implements InternalBinaryStore {
         } catch (SQLException e) {
             log.error("Could not list files due to " + e.getMessage());
         }
-        notifyGCListenersOnFinished(result);
+
+        if (fileBinaryProvider != null && fileBinaryProvider instanceof DoubleFileBinaryProviderImpl) {
+            long start = System.currentTimeMillis();
+            log.info("Double filestore found. Activating Checksum synchronization.");
+            ((DoubleFileBinaryProviderImpl) fileBinaryProvider).syncFilestores();
+            log.info("Checksum synchronization took " + (System.currentTimeMillis() - start) + "ms");
+        }
+
         return result;
-    }
-
-    private void notifyGCListenersOnStart() {
-        garbageCollectorListeners.forEach(org.artifactory.storage.binstore.service.GarbageCollectorListener::start);
-    }
-
-    private void notifyGCListenersOnDelete(Collection<BinaryData> binsToDelete) {
-        for (GarbageCollectorListener garbageCollectorListener : garbageCollectorListeners) {
-            garbageCollectorListener.toDelete(binsToDelete);
-        }
-    }
-
-    private void notifyGCListenersOnFinished(GarbageCollectorInfo result) {
-        for (GarbageCollectorListener garbageCollectorListener : garbageCollectorListeners) {
-            garbageCollectorListener.finished(result);
-        }
     }
 
     @Override
@@ -590,7 +572,9 @@ public class BinaryStoreImpl implements InternalBinaryStore {
         try {
             Collection<BinaryData> allBinaries = binariesDao.findAll();
             List<BinaryInfo> result = new ArrayList<>(allBinaries.size());
-            result.addAll(allBinaries.stream().map(this::convertToBinaryInfo).collect(Collectors.toList()));
+            for (BinaryData bd : allBinaries) {
+                result.add(convertToBinaryInfo(bd));
+            }
             return result;
         } catch (SQLException e) {
             throw new StorageException("Could not retrieve all binary entries", e);

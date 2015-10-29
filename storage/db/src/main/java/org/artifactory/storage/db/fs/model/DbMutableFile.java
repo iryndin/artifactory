@@ -233,7 +233,7 @@ public class DbMutableFile extends DbMutableItem<MutableFileInfo> implements Mut
     }
 
     protected StatsService getStatsService() {
-        return ContextHelper.get().beanForType("statsServiceImpl", StatsService.class);
+        return ContextHelper.get().beanForType(StatsService.class);
     }
 
 }

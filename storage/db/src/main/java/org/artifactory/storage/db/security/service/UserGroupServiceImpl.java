@@ -20,10 +20,7 @@ package org.artifactory.storage.db.security.service;
 
 import org.artifactory.api.security.GroupNotFoundException;
 import org.artifactory.api.security.UserInfoBuilder;
-import org.artifactory.common.Info;
 import org.artifactory.factory.InfoFactoryHolder;
-import org.artifactory.md.Properties;
-import org.artifactory.model.xstream.fs.PropertiesImpl;
 import org.artifactory.security.GroupInfo;
 import org.artifactory.security.MutableGroupInfo;
 import org.artifactory.security.MutableUserInfo;
@@ -32,9 +29,7 @@ import org.artifactory.security.UserGroupInfo;
 import org.artifactory.security.UserInfo;
 import org.artifactory.storage.StorageException;
 import org.artifactory.storage.db.DbService;
-import org.artifactory.storage.db.fs.entity.UserProperty;
 import org.artifactory.storage.db.security.dao.UserGroupsDao;
-import org.artifactory.storage.db.security.dao.UserPropertiesDao;
 import org.artifactory.storage.db.security.entity.Group;
 import org.artifactory.storage.db.security.entity.User;
 import org.artifactory.storage.db.security.entity.UserGroup;
@@ -69,9 +64,6 @@ public class UserGroupServiceImpl implements UserGroupStoreService {
 
     @Autowired
     private UserGroupsDao userGroupsDao;
-
-    @Autowired
-    private UserPropertiesDao userPropertiesDao;
 
     @Override
     public void deleteAllGroupsAndUsers() {
@@ -162,23 +154,6 @@ public class UserGroupServiceImpl implements UserGroupStoreService {
         } catch (SQLException e) {
             throw new StorageException("Could not execute get all users query", e);
         }
-    }
-
-    @Override
-    public Collection<Info> getUsersGroupsPaging(boolean includeAdmins, String orderBy,
-            String startOffset, String limit, String direction) {
-        Collection<Info> infoCollection;
-        try {
-            infoCollection = userGroupsDao.getUsersGroupsPaging(includeAdmins, orderBy,
-                    startOffset, limit, direction);
-        } catch (SQLException e) {
-            throw new StorageException("Failed to get users  group ");
-        }
-        return infoCollection;
-    }
-
-    public long getAllUsersGroupsCount(boolean includeAdmins) {
-        return userGroupsDao.getAllUsersGroupsCount(includeAdmins);
     }
 
     @Override
@@ -324,73 +299,6 @@ public class UserGroupServiceImpl implements UserGroupStoreService {
         } catch (SQLException e) {
             throw new StorageException("Could not search for group with name='" + groupName + "'", e);
         }
-    }
-
-    @Override
-    @Nullable
-    public UserInfo findUserByProperty(String key, String val) {
-        try {
-            long userId = userPropertiesDao.getUserIdByProperty(key, val);
-            if (userId == 0L) {
-                return null;
-            } else {
-                return userToUserInfo(userGroupsDao.findUserById(userId));
-            }
-        } catch (SQLException e) {
-            throw new StorageException("Could not search for user with property " + key + ":" + val, e);
-        }
-    }
-
-    @Override
-    @Nullable
-    public String findUserProperty(String username, String key) {
-        try {
-            return userPropertiesDao.getUserProperty(username, key);
-        } catch (SQLException e) {
-            throw new StorageException("Could not search for datum " + key + " of user " + username, e);
-        }
-    }
-
-    @Override
-    public boolean addUserProperty(String username, String key, String val) {
-        try {
-            return userPropertiesDao.addUserProperty(userGroupsDao.findUserIdByUsername(username), key, val);
-        } catch (SQLException e) {
-            throw new StorageException("Could not add external data " + key + ":" + val + " to user " + username, e);
-        }
-    }
-
-    @Override
-    public boolean deleteUserProperty(String username, String key) {
-        try {
-            return userPropertiesDao.deleteProperty(userGroupsDao.findUserIdByUsername(username), key);
-        } catch (SQLException e) {
-            throw new StorageException("Could not delete external data " + key + " from user " + username, e);
-        }
-    }
-
-    @Override
-    public Properties findPropertiesForUser(String username) {
-        try {
-            List<UserProperty> userProperties = userPropertiesDao.getPropertiesForUser(username);
-            PropertiesImpl properties = new PropertiesImpl();
-            for (UserProperty userProperty : userProperties) {
-                properties.put(userProperty.getPropKey(), userProperty.getPropValue());
-            }
-            return properties;
-        } catch (SQLException e) {
-            throw new StorageException("Failed to load user properties for " + username, e);
-        }
-    }
-
-    @Override
-    public void deletePropertyFromAllUsers(String propertyKey) {
-        try {
-            userPropertiesDao.deletePropertyFromAllUsers(propertyKey);
-        } catch (SQLException e) {
-            throw new StorageException("Could not delete property by key" + propertyKey+" from all users");
-        }
-
     }
 
     private GroupInfo groupToGroupInfo(Group group) {

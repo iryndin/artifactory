@@ -21,13 +21,10 @@ package org.artifactory.storage.db.itest.spring;
 import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.db.DbType;
 import org.artifactory.storage.db.spring.ArtifactoryTomcatDataSource;
-import org.artifactory.storage.db.util.JdbcHelper;
-import org.artifactory.storage.db.util.querybuilder.*;
 import org.artifactory.util.ResourceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,8 +32,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A Spring {@link org.springframework.context.annotation.Configuration} to initialized database beans.
@@ -129,43 +124,6 @@ public class DbTestConfigFactory implements BeanFactoryAware {
         // reset the value to make sure it's not propagated to other tests
         System.clearProperty("artifactory.db.generated.config");
         return generatedConfig;
-    }
-
-
-    /**
-     * create  a query builder instance per db type
-     *
-     * @return query builder instance
-     */
-    @Bean(name = "queryBuilder", autowire = Autowire.BY_TYPE)
-    public IQueryBuilder createSqlBuilder() throws SQLException {
-        JdbcHelper jdbcHelper = beanFactory.getBean(JdbcHelper.class);
-        StorageProperties storageProperties = beanFactory.getBean(StorageProperties.class);
-        String productName = storageProperties.getDbType().toString();
-        Connection connection = jdbcHelper.getDataSource().getConnection();
-        connection.close();
-        IQueryBuilder queryBuilder;
-        switch (productName) {
-            case "oracle":
-                queryBuilder = new OracleQueryBuilder();
-                break;
-            case "mssql":
-                queryBuilder = new SqlServerQueryBuilder();
-                break;
-            case "derby":
-                queryBuilder = new DerbyQueryBuilder();
-                break;
-            case "postgresql":
-                queryBuilder = new PostgresqlQueryBuilder();
-                break;
-            case "mysql":
-                queryBuilder = new MysqlQueryBuilder();
-                break;
-            default:
-                queryBuilder = new DerbyQueryBuilder();
-                break;
-        }
-        return queryBuilder;
     }
 
 }

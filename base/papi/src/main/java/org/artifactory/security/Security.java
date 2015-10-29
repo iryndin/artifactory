@@ -19,9 +19,6 @@
 package org.artifactory.security;
 
 import org.artifactory.repo.RepoPath;
-import org.artifactory.security.groups.CrowdGroupsSettings;
-import org.artifactory.security.groups.LdapGroupsSettings;
-import org.artifactory.security.groups.RealmAwareGroupsSettings;
 
 /**
  * These are the usage of security data and logged in user methods.
@@ -93,16 +90,6 @@ public interface Security {
      * @since 2.3.3
      */
     String[] getCurrentUserGroupNames();
-
-    /**
-     * Retrieves the groups of the current user according to the given realm settings
-     * Available realms are {@link LdapGroupsSettings} and {@link CrowdGroupsSettings}
-     *
-     * @param settings Realm specific settings
-     * @return A list of group names associated with the current user with the relevant realm.
-     * @since 4.1.0
-     */
-    String[] getCurrentUserGroupNames(RealmAwareGroupsSettings settings);
 
     /**
      * @return True if the current is a system administrator.

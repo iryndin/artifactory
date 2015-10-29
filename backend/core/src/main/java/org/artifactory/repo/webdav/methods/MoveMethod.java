@@ -80,31 +80,13 @@ public class MoveMethod implements WebdavMethod {
             response.sendError(HttpStatus.SC_FORBIDDEN, "Insufficient permissions.", log);
             return;
         }
-        MoveMultiStatusHolder status;
-        status = getMoveMultiStatusHolder(repoPath, targetPath, request);
+
+        MoveMultiStatusHolder status = repoService.move(repoPath, targetPath, false, true, true);
         if (!status.hasWarnings() && !status.hasErrors()) {
             response.sendSuccess();
         } else {
             response.sendError(status);
         }
-    }
-
-    /**
-     * move artifact with multiple tx and return status holder
-     *
-     * @param repoPath   - repo path
-     * @param targetPath - target repo path
-     * @return status holder
-     */
-    private MoveMultiStatusHolder getMoveMultiStatusHolder(RepoPath repoPath, RepoPath targetPath, ArtifactoryRequest request) {
-        MoveMultiStatusHolder status;
-        Boolean atomic = Boolean.valueOf(request.getParameter("atomic"));
-        if (atomic) {
-            status = repoService.move(repoPath, targetPath, false, true, true);
-        } else {
-            status = repoService.moveMultiTx(repoPath, targetPath, false, true, true);
-        }
-        return status;
     }
 
     @Override

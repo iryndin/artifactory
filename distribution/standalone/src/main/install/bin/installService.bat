@@ -29,7 +29,7 @@ set PR_DISPLAYNAME=Artifactory
 set PR_DESCRIPTION=Artifactory Binary Repository
 set STARTUP_TYPE=auto
 
-set "JOPTS=-Xms512m;-Xmx2g;-Xss256k;-XX:+UseG1GC"
+set "JOPTS=-Xms512m;-Xmx2g;-Xss256k;-XX:PermSize=128m;-XX:MaxPermSize=256m;-XX:+UseG1GC"
 set "PR_LOGPATH=%ARTIFACTORY_HOME%\logs"
 set "PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_HOME%\bin\tomcat-juli.jar"
 set PR_STDOUTPUT=auto
@@ -86,7 +86,6 @@ goto end
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties"
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djruby.compile.invokedynamic=false"
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Dfile.encoding=UTF8"
-"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Dartdist=zip"
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Dartifactory.home=%ARTIFACTORY_HOME%" --Startup %STARTUP_TYPE% --LogPrefix artifactory-service
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions %JOPTS%
 rem --JvmMs 128 --JvmMx 256

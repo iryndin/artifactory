@@ -18,7 +18,6 @@
 
 package org.artifactory.api.build;
 
-import org.artifactory.api.build.diff.BuildParams;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.config.ImportableExportable;
 import org.artifactory.api.rest.artifact.PromotionResult;
@@ -31,9 +30,7 @@ import org.jfrog.build.api.release.Promotion;
 import org.jfrog.build.api.release.PromotionStatus;
 
 import javax.annotation.Nullable;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -180,46 +177,4 @@ public interface BuildService extends ImportableExportable {
 
     @Lock
     void addPromotionStatus(Build build, PromotionStatus promotion);
-
-    @Nullable
-    List<PublishedModule> getPublishedModules(String buildName, String date, String orderBy, String direction, String offset, String limit);
-
-   int  getPublishedModulesCounts(String buildName, String date);
-
-    List<ModuleArtifact> getModuleArtifact(String buildName,String buildNumber, String moduleId,String date, String orderBy, String direction, String offset, String limit);
-
-     int getModuleArtifactCount(String buildNumber, String moduleId,String date);
-
-    List<ModuleDependency> getModuleDependency(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit);
-
-    int getModuleDependencyCount(String buildNumber, String moduleId, String date);
-
-    void deleteAllBuilds(String buildName);
-
-    List<ModuleArtifact> getModuleArtifactsForDiffWithPaging(BuildParams buildParams, String offset, String limit);
-
-    Map<String, ModuleArtifact> getAllModuleArtifacts(String buildNumber, String moduleId, String date, String orderBy, String direction, String offset, String limit);
-
-    int getModuleArtifactsForDiffCount(BuildParams buildParams, String offset, String limit);
-
-    List<ModuleDependency> getModuleDependencyForDiffWithPaging(BuildParams buildParams, String offset, String limit);
-
-    int getModuleDependencyForDiffCount(BuildParams buildParams, String offset, String limit);
-
-    List<GeneralBuild> getPrevBuildsList(String buildName, String buildDate);
-
-    List<BuildProps> getBuildProps(BuildParams buildParams, String offset, String limit);
-
-    int getPropsDiffCount(BuildParams buildParams);
-
-    List<BuildProps> getBuildPropsData(BuildParams buildParams, String offset, String limit, String orderBy);
-
-    long getBuildPropsCounts(BuildParams buildParams);
-
-    Set<BuildRun> getLatestBuildsPaging(String offset, String orderBy, String direction, String limit);
-
-    List<GeneralBuild> getBuildForNamePaging(String buildName, String orderBy, String direction, String offset,
-            String limit) throws
-            SQLException;
-
 }

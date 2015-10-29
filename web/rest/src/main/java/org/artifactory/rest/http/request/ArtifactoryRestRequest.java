@@ -2,7 +2,6 @@ package org.artifactory.rest.http.request;
 
 
 import org.artifactory.api.rest.restmodel.IModel;
-import org.artifactory.util.UiRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,7 +29,7 @@ public class ArtifactoryRestRequest {
         this.httpHeaders = requestBuilder.httpHeaders;
         this.imodel = requestBuilder.imodel;
         this.models = requestBuilder.imodels;
-        this.uiRestCall = UiRequestUtils.isUiRestRequest(servletRequest);
+        this.uiRestCall = uriInfo.getBaseUri().getPath().equals("/artifactory/ui/");
     }
 
     /**

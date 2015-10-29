@@ -51,7 +51,8 @@ public abstract class PathMatcher {
             @Nullable Collection<String> excludes, boolean useStartMatch) {
         if (CollectionUtils.notNullOrEmpty(excludes)) {
             for (String exclude : excludes) {
-                if (antPathMatcher.match(exclude, path)) {
+                boolean match = antPathMatcher.match(exclude, path);
+                if (match) {
                     log.debug("excludes pattern ({}) rejected path '{}'.", exclude, path);
                     return false;
                 }
@@ -60,7 +61,11 @@ public abstract class PathMatcher {
 
         if (CollectionUtils.notNullOrEmpty(includes)) {
             for (String include : includes) {
-                if (includeMatch(path, useStartMatch, include)) {
+                if (useStartMatch && antPathMatcher.matchStart(include, path)) {
+                    return true;
+                }
+                boolean match = antPathMatcher.match(include, path);
+                if (match) {
                     return true;
                 }
             }
@@ -70,10 +75,5 @@ public abstract class PathMatcher {
         return false;
     }
 
-    private static boolean includeMatch(String path, boolean useStartMatch, String include) {
-        return "**/*".equals(include)
-                || "**".equals(include)
-                || (useStartMatch && antPathMatcher.matchStart(include, path))
-                || antPathMatcher.match(include, path);
-    }
+
 }

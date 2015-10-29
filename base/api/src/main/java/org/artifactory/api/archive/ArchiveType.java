@@ -42,7 +42,6 @@ public enum ArchiveType {
                 return c;
             }
         }
-        throw new IllegalArgumentException("Archive type parameter must be one of: 'zip','tar','tar.gz','tgz'. You " +
-                "sent: " + v);
+        throw new IllegalArgumentException(v);
     }
 }

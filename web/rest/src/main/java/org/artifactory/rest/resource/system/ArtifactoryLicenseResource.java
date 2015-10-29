@@ -23,6 +23,7 @@ import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.CoreAddons;
 import org.artifactory.addon.license.LicenseInstaller;
 import org.artifactory.api.context.ContextHelper;
+import org.artifactory.api.web.WebappService;
 import org.artifactory.state.ArtifactoryServerState;
 import org.artifactory.state.model.ArtifactoryStateManager;
 import org.slf4j.Logger;
@@ -44,11 +45,13 @@ public class ArtifactoryLicenseResource {
     private static final Logger log = LoggerFactory.getLogger(ArtifactoryLicenseResource.class);
 
     private final ArtifactoryStateManager stateManager;
+    private final WebappService webService;
     private AddonsManager addonsManager;
 
     public ArtifactoryLicenseResource() {
         stateManager = ContextHelper.get().beanForType(ArtifactoryStateManager.class);
         addonsManager = ContextHelper.get().beanForType(AddonsManager.class);
+        webService = ContextHelper.get().beanForType(WebappService.class);
     }
 
     private class ResponseMessage {
@@ -94,6 +97,7 @@ public class ArtifactoryLicenseResource {
             @Override
             public void handleSuccess() {
                 log.info(LicenseInstaller.SUCCESSFULLY_INSTALL);
+                webService.rebuildSiteMap();
                 boolean success = stateManager.forceState(ArtifactoryServerState.RUNNING);
                 if (success) {
                     responseBuilder.entity(

@@ -18,15 +18,6 @@
 
 package org.artifactory.rest.resource.search.types;
 
-import java.io.IOException;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.addon.rest.RestAddon;
 import org.artifactory.api.rest.build.artifacts.BuildArtifactsRequest;
@@ -36,8 +27,17 @@ import org.artifactory.api.rest.search.result.DownloadRestSearchResult;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.fs.FileInfo;
 import org.artifactory.rest.common.exception.NotFoundException;
-import org.artifactory.rest.common.util.RestUtils;
 import org.artifactory.rest.resource.ci.BuildResource;
+import org.artifactory.rest.util.RestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 

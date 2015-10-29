@@ -47,8 +47,8 @@ public abstract class RealRepoDescriptor extends RepoBaseDescriptor {
     @XmlElement(defaultValue = "0", required = false)
     private int maxUniqueSnapshots;
 
-    @XmlElement(defaultValue = "true", required = false)
-    private boolean suppressPomConsistencyChecks = true;
+    @XmlElement(defaultValue = "false", required = false)
+    private boolean suppressPomConsistencyChecks = false;
 
     @XmlElement(defaultValue = "false", required = false)
     private boolean archiveBrowsingEnabled;

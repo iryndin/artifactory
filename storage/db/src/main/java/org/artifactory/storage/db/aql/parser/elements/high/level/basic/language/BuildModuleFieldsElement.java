@@ -36,7 +36,6 @@ public class BuildModuleFieldsElement extends LazyParserElement implements Domai
         list.add(forward(new InternalNameElement(builds.signatue), dot, buildFields));
         list.add(forward(new InternalNameElement(artifacts.signatue), dot, buildArtifactFields));
         list.add(forward(new InternalNameElement(dependencies.signatue), dot, buildDependenciesFields));
-        list.add(forward(new InternalNameElement(moduleProperties.signatue), dot, buildModulePropertiesFields));
     }
 
     @Override

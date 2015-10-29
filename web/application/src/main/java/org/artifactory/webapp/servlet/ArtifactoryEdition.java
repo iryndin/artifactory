@@ -35,7 +35,7 @@ public enum ArtifactoryEdition {
      * @return The running Artifactory edition
      */
     public static ArtifactoryEdition detect(ArtifactoryHome artifactoryHome) {
-        if (classExists("org.artifactory.addon.aol.webapp.AolCoreAddons")) {
+        if (classExists("org.artifactory.addon.aol.webapp.AolWicketAddons")) {
             return aol;
         }
         if (artifactoryHome.isHaConfigured() && classExists("org.artifactory.addon.ha.HaAddonImpl")) {

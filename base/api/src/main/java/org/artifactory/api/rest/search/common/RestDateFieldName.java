@@ -24,11 +24,7 @@ package org.artifactory.api.rest.search.common;
  * @author freds
  */
 public enum  RestDateFieldName {
-    LAST_MODIFIED("lastModified"),
-    CREATED("created"),
-    LAST_DOWNLOADED("lastDownloaded"),
-    LAST_REMOTE_DOWNLOADED("remote_last_downloaded");
-
+    LAST_MODIFIED("lastModified"), CREATED("created"), LAST_DOWNLOADED("lastDownloaded");
 
     public String fieldName;
 

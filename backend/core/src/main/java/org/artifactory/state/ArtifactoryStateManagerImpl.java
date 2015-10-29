@@ -6,7 +6,6 @@ import org.artifactory.addon.ArtifactoryRunningMode;
 import org.artifactory.addon.HaAddon;
 import org.artifactory.addon.license.VerificationResult;
 import org.artifactory.api.context.ContextHelper;
-import org.artifactory.api.version.VersionInfoService;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.common.ha.HaNodeProperties;
 import org.artifactory.config.InternalCentralConfigService;
@@ -37,9 +36,6 @@ public class ArtifactoryStateManagerImpl implements ArtifactoryStateManager, Rel
 
     @Autowired
     private ArtifactoryServersCommonService serversService;
-
-    @Autowired
-    private VersionInfoService versionInfoService;
 
     @Autowired
     private AddonsManager addonsManager;
@@ -95,7 +91,6 @@ public class ArtifactoryStateManagerImpl implements ArtifactoryStateManager, Rel
             log.debug("Changing from {} to {} is allowed only if the previous step was {}",
                     artifactoryServer.getServerState(), RUNNING.getPrettyName(), STARTING.getPrettyName());
         }
-        versionInfoService.callHome();
     }
 
     @Override

@@ -22,12 +22,10 @@ import org.artifactory.descriptor.addon.AddonSettings;
 import org.artifactory.descriptor.backup.BackupDescriptor;
 import org.artifactory.descriptor.bintray.BintrayConfigDescriptor;
 import org.artifactory.descriptor.cleanup.CleanupConfigDescriptor;
-import org.artifactory.descriptor.download.FolderDownloadConfigDescriptor;
 import org.artifactory.descriptor.external.ExternalProvidersDescriptor;
 import org.artifactory.descriptor.gc.GcConfigDescriptor;
 import org.artifactory.descriptor.index.IndexerDescriptor;
 import org.artifactory.descriptor.mail.MailServerDescriptor;
-import org.artifactory.descriptor.message.SystemMessageDescriptor;
 import org.artifactory.descriptor.property.PropertySet;
 import org.artifactory.descriptor.quota.QuotaConfigDescriptor;
 import org.artifactory.descriptor.replication.LocalReplicationDescriptor;
@@ -70,8 +68,6 @@ public interface MutableCentralConfigDescriptor extends CentralConfigDescriptor 
     void setSecurity(SecurityDescriptor security);
 
     void setOfflineMode(boolean offlineMode);
-
-    void setHelpLinksEnabled(boolean helpLinksEnabled);
 
     /**
      * Removes the repository with the specified key from the repositories list. Will also remove any references to this
@@ -217,10 +213,6 @@ public interface MutableCentralConfigDescriptor extends CentralConfigDescriptor 
 
     void setLogo(String logo);
 
-    void setSystemMessageConfig(SystemMessageDescriptor systemMessage);
-
-    void setFolderDownloadConfig(FolderDownloadConfigDescriptor folderDownloadConfig);
-
     boolean isRepoLayoutExists(String repoLayoutName);
 
     void addRepoLayout(RepoLayout repoLayout);
@@ -256,6 +248,4 @@ public interface MutableCentralConfigDescriptor extends CentralConfigDescriptor 
     void setExternalProvidersDescriptor(ExternalProvidersDescriptor externalProvidersDescriptor);
 
     void setBintrayConfig(BintrayConfigDescriptor bintrayConfigDescriptor);
-
-    BackupDescriptor getBackup(String backupKey);
 }

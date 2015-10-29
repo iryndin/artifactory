@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.storage.StorageException;
 import org.artifactory.storage.binstore.service.BinaryNotFoundException;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.BinaryProviderHelper;
 import org.artifactory.storage.binstore.service.FileBinaryProvider;
 import org.artifactory.storage.binstore.service.FileProviderStrategy;
@@ -55,19 +55,15 @@ public abstract class FileBinaryProviderReadOnlyBase extends BinaryProviderBase
     @Override
     public void initialize() {
         // Main filestore directory
+        File haAwareDataDir = ArtifactoryHome.get().getHaAwareDataDir();
         String binaryProviderDir = getStorageProperties().getBinaryProviderDir();
         if (StringUtils.isBlank(binaryProviderDir)) {
             binaryProviderDir = "filestore";
         }
-        binariesDir = getDataFolder(getBaseDataDir(), getParam("dir", binaryProviderDir));
+        binariesDir = getDataFolder(haAwareDataDir, getParam("dir", binaryProviderDir));
         this.tempBinariesDir = getNewTempBinariesFile(binariesDir);
         verifyState(binariesDir);
     }
-
-    protected File getBaseDataDir() {
-        return ArtifactoryHome.get().getHaAwareDataDir();
-    }
-
 
     protected File getNewTempBinariesFile(File binariesDir) {
         return new File(binariesDir, "_pre");

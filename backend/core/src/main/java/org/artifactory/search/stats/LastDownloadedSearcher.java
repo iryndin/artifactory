@@ -56,27 +56,11 @@ public class LastDownloadedSearcher extends SearcherBase<StatsSearchControls, St
 
         VfsQuery repoQuery = createQuery(controls)
                 .expectedResult(FILE)
-
-                .startGroup()
-                .prop("last_downloaded").comp(LOWER_THAN).val(since).nextBool(AND)
-                .prop("remote_last_downloaded").comp(LOWER_THAN).val(since)
-                .endGroup(OR)
-
-                .startGroup()
-                .prop("last_downloaded").comp(LOWER_THAN).val(since).nextBool(AND)
-                .prop("remote_last_downloaded").comp(NONE).nextBool(AND)
-                .endGroup(OR)
-
+                .prop("last_downloaded").comp(LOWER_THAN).val(since).nextBool(OR)
                 .startGroup()
                 .prop("last_downloaded").comp(NONE).nextBool(AND)
-                .prop("remote_last_downloaded").comp(LOWER_THAN).val(since).nextBool(OR)
-                .endGroup(OR)
-
-                .startGroup()
-                .prop("last_downloaded").comp(NONE).nextBool(AND)
-                .prop("remote_last_downloaded").comp(NONE).nextBool(AND)
                 .prop("created").comp(LOWER_THAN).val(createdBefore)
-                .endGroup();
+                .endGroup(null);
 
         VfsQueryResult queryResult = repoQuery.execute(getLimit(controls));
 

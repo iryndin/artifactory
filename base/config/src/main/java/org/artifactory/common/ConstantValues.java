@@ -37,7 +37,6 @@ public enum ConstantValues {
     supportUrlSessionTracking("servlet.supportUrlSessionTracking", FALSE),
     disabledAddons("addons.disabled", ""),
     addonsInfoUrl("addons.info.url", "http://service.jfrog.org/artifactory/addons/info/%s"),
-    addonsConfigureUrl("addons.info.url", "http://www.jfrog.com/confluence/display/RTF/%s"),
     springConfigDir("spring.configDir"),
     asyncCorePoolSize("async.corePoolSize", 4 * Runtime.getRuntime().availableProcessors()),
     asyncPoolTtlSecs("async.poolTtlSecs", 60),
@@ -78,7 +77,6 @@ public enum ConstantValues {
     securityUseBase64("security.useBase64", FALSE),
     securityMasterKeyLocation("security.master.key", "security/artifactory.key"),
     securityDisableRememberMe("security.disableRememberMe", FALSE),
-    ldapForceGroupMemberAttFullDN("security.ldap.forceGroupMemberAttFullDN", FALSE),
     enableAqlReadCommitted("enable.aql.read.committed", FALSE),
     mvnCentralHostPattern("mvn.central.hostPattern", ".maven.org"),
     mvnCentralIndexerMaxQueryIntervalSecs("mvn.central.indexerMaxQueryIntervalSecs", Seconds.DAY),
@@ -99,7 +97,6 @@ public enum ConstantValues {
     pluginScriptsRefreshIntervalSecs("plugin.scripts.refreshIntervalSecs", 0),
     aolPluginSupport("plugin.aol.support", FALSE),
     aolDedicatedServer("aol.dedicated.server", FALSE),
-    aolDisplayAccountManagementLink("aol.displayAccountManagementLink", TRUE),
     uiChroot("ui.chroot"),
     artifactoryLicenseDir("licenseDir"),
     fileRollerMaxFilesToRetain("file.roller.maxFileToRetain", 10),
@@ -140,13 +137,11 @@ public enum ConstantValues {
     bintraySystemUser("bintray.system.user"),
     bintraySystemUserApiKey("bintray.system.api.key"),
     bintrayClientThreadPoolSize("bintray.client.threadPool.size", 5),
-    enableUiPagesInIframe("enable.ui.pages.in.Iframe", false),
     bintrayClientRequestTimeout("bintray.client.requestTimeoutMS",150000),
     bintrayClientSignRequestTimeout("bintray.client.signRequestTimeoutMS",90000),
     useUserNameAutoCompleteOnLogin("useUserNameAutoCompleteOnLogin", "on"),
     uiHideEncryptedPassword("ui.hideEncryptedPassword", FALSE),
     statsFlushIntervalSecs("stats.flushIntervalSecs", 30),
-    statsRemoteFlushIntervalSecs("stats.remote.flushIntervalSecs", 35),
     statsFlushTimeoutSecs("stats.flushTimeoutSecs", 120),
     integrationCleanupIntervalSecs("integrationCleanup.intervalSecs", 300),
     integrationCleanupQuietPeriodSecs("integrationCleanup.quietPeriodSecs", 60),
@@ -167,7 +162,6 @@ public enum ConstantValues {
     archiveIndexerTaskIntervalSecs("archive.indexer.intervalSecs", 60),
     inMemoryNuGetRemoteCaches("nuget.inMemoryRemoteCaches", TRUE),
     nuGetRequireAuthentication("nuget.forceAuthentication", FALSE),
-    nuGetAllowRootGetWithAnon("nuget.allowRootGetWithAnon", FALSE),
     dockerForceAuthentication("docker.forceAuthentication", FALSE),
     haHeartbeatIntervalSecs("ha.heartbeat.intervalSecs", 5),
     haHeartbeatStaleIntervalSecs("ha.heartbeat.staleSecs", 30),
@@ -175,6 +169,7 @@ public enum ConstantValues {
     haMembersIntroductionStaleIntervalSecs("ha.membersIntroduction.staleSecs", 30),
     npmIndexQuietPeriodSecs("npm.index.quietPeriodSecs", 60),
     npmIndexCycleSecs("npm.index.cycleSecs", 60),
+    aclDirtyReadsTimeout("acl.dirty.read.timeout", 20000), // in milliseconds
     importMaxParallelRepos("import.max.parallelRepos", Runtime.getRuntime().availableProcessors() - 1),
     debianDistributionPath("debian.distribution.path", "dists"),
     debianIndexQuietPeriodSecs("debian.index.quietPeriodSecs", 60),
@@ -183,8 +178,7 @@ public enum ConstantValues {
     pypiIndexQuietPeriodSecs("pypi.index.quietPeriodSecs", 60),
     pypiIndexSleepSecs("pypi.index.sleepMilliSecs", 60),
     dockerCleanupMaxAgeMillis("docker.cleanup.maxAgeMillis", Seconds.DAY * 1000),
-    httpRangeSupport("http.range.support", true),
-    aclDirtyReadsTimeout("acl.dirty.read.timeout", 20000); // in milliseconds
+    httpRangeSupport("http.range.support", true);
     public static final String SYS_PROP_PREFIX = "artifactory.";
 
     private final String propertyName;
@@ -208,7 +202,7 @@ public enum ConstantValues {
     }
 
     public String getString() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(propertyName, defValue);
     }
 
     public int getInt() {
@@ -216,15 +210,15 @@ public enum ConstantValues {
     }
 
     public long getLong() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getLongProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getLongProperty(propertyName, defValue);
     }
 
     public boolean getBoolean() {
-        return ArtifactoryHome.get().getArtifactoryProperties().getBooleanProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getBooleanProperty(propertyName, defValue);
     }
 
     public boolean isSet() {
-        return ArtifactoryHome.get().getArtifactoryProperties().hasProperty(this);
+        return ArtifactoryHome.get().getArtifactoryProperties().getProperty(propertyName, null) != null;
     }
 
     private static class Seconds {

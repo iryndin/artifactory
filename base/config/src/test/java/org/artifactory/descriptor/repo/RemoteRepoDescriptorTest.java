@@ -39,8 +39,8 @@ public class RemoteRepoDescriptorTest {
         assertNull(remote.getRepoLayout());
         assertEquals(remote.getAssumedOfflinePeriodSecs(), 300);
         assertEquals(remote.getMaxUniqueSnapshots(), 0);
-        assertEquals(remote.getMissedRetrievalCachePeriodSecs(), 1800);
-        assertEquals(remote.getRetrievalCachePeriodSecs(), 600);
+        assertEquals(remote.getMissedRetrievalCachePeriodSecs(), 7200);
+        assertEquals(remote.getRetrievalCachePeriodSecs(), 43200);
         assertEquals(remote.getChecksumPolicyType(), ChecksumPolicyType.GEN_IF_ABSENT);
         assertNull(remote.getUrl());
         assertNull(remote.getRemoteRepoLayout());
@@ -52,12 +52,12 @@ public class RemoteRepoDescriptorTest {
         assertTrue(remote.isStoreArtifactsLocally());
         assertFalse(remote.isFetchJarsEagerly());
         assertFalse(remote.isFetchSourcesEagerly());
-        assertTrue(remote.isSuppressPomConsistencyChecks(),
+        assertFalse(remote.isSuppressPomConsistencyChecks(),
                 "Default should not supress pom consistency checks");
         assertEquals(remote.getUnusedArtifactsCleanupPeriodHours(), 0);
         assertFalse(remote.isShareConfiguration());
         assertNotNull(remote.getPropertySets(), "Property sets list should not be null");
         assertFalse(remote.isRejectInvalidJars());
-        assertNotEquals(remote.getType(), RepoType.NuGet, "NuGet should be off by default.");
+        assertFalse(remote.isEnableNuGetSupport(), "NuGet should be off by default.");
     }
 }

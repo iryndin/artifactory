@@ -18,6 +18,11 @@
 
 package org.artifactory.repo.service;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.*;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.io.FileUtils;
@@ -29,9 +34,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.artifactory.addon.AddonsManager;
+import org.artifactory.addon.GemsAddon;
 import org.artifactory.addon.NuGetAddon;
 import org.artifactory.addon.WebstartAddon;
-import org.artifactory.addon.gems.GemsAddon;
 import org.artifactory.addon.replication.ReplicationAddon;
 import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.api.common.MoveMultiStatusHolder;
@@ -54,9 +59,10 @@ import org.artifactory.api.repo.exception.RepoRejectException;
 import org.artifactory.api.request.UploadService;
 import org.artifactory.api.rest.constant.RepositoriesRestConstants;
 import org.artifactory.api.rest.constant.RestConstants;
+import org.artifactory.api.search.ItemSearchResults;
 import org.artifactory.api.search.SavedSearchResults;
-import org.artifactory.api.search.VersionSearchResults;
 import org.artifactory.api.search.deployable.VersionUnitSearchControls;
+import org.artifactory.api.search.deployable.VersionUnitSearchResult;
 import org.artifactory.api.security.AclService;
 import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.api.storage.StorageQuotaInfo;
@@ -88,7 +94,9 @@ import org.artifactory.repo.interceptor.StorageInterceptors;
 import org.artifactory.repo.local.PathDeletionContext;
 import org.artifactory.repo.local.ValidDeployPathContext;
 import org.artifactory.repo.mbean.ManagedRepository;
-import org.artifactory.repo.service.mover.*;
+import org.artifactory.repo.service.mover.MoverConfig;
+import org.artifactory.repo.service.mover.MoverConfigBuilder;
+import org.artifactory.repo.service.mover.RepoPathMover;
 import org.artifactory.repo.virtual.VirtualRepo;
 import org.artifactory.request.InternalArtifactoryResponse;
 import org.artifactory.request.InternalRequestContext;
@@ -115,14 +123,21 @@ import org.artifactory.storage.fs.service.FileService;
 import org.artifactory.storage.fs.service.ItemMetaInfo;
 import org.artifactory.storage.fs.service.NodeMetaInfoService;
 import org.artifactory.storage.fs.service.PropertiesService;
+import org.artifactory.storage.fs.service.StatsService;
+import org.artifactory.storage.fs.stats.StatsFlushJob;
+//import org.artifactory.storage.jobs.InternalStatsFlushJob;
 import org.artifactory.storage.fs.tree.ItemNode;
 import org.artifactory.storage.fs.tree.ItemTree;
 import org.artifactory.storage.fs.tree.TreeBrowsingCriteria;
 import org.artifactory.storage.fs.tree.TreeBrowsingCriteriaBuilder;
-import org.artifactory.storage.jobs.StatsDelegatingServiceFlushJob;
-import org.artifactory.storage.jobs.StatsPersistingServiceFlushJob;
-import org.artifactory.storage.service.StatsServiceImpl;
-import org.artifactory.util.*;
+//import org.artifactory.storage.jobs.RemoteStatsFlushJob;
+//import org.artifactory.storage.service.StatsServiceImpl;
+import org.artifactory.util.HttpClientConfigurator;
+import org.artifactory.util.HttpUtils;
+import org.artifactory.util.RepoLayoutUtils;
+import org.artifactory.util.RepoPathUtils;
+import org.artifactory.util.Tree;
+import org.artifactory.util.ZipUtils;
 import org.artifactory.version.CompoundVersionDetails;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -178,7 +193,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
     private StorageService storageService;
 
     @Autowired
-    private StatsServiceImpl statsService;
+    private StatsService statsService;
 
     @Autowired
     private FileService fileService;
@@ -219,18 +234,11 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
             log.warn("Failed dumping system info", e);
         }
 
-        // register internal statistics flushing job
-        TaskBase localStatsFlushTask = TaskUtils.createRepeatingTask(StatsPersistingServiceFlushJob.class,
+        // register statistics flushing job
+        TaskBase statsFlushTask = TaskUtils.createRepeatingTask(StatsFlushJob.class,
                 TimeUnit.SECONDS.toMillis(ConstantValues.statsFlushIntervalSecs.getLong()),
                 TimeUnit.SECONDS.toMillis(ConstantValues.statsFlushIntervalSecs.getLong()));
-
-        // register remote statistics flushing job
-        TaskBase remoteFlushTask = TaskUtils.createRepeatingTask(StatsDelegatingServiceFlushJob.class,
-                TimeUnit.SECONDS.toMillis(ConstantValues.statsRemoteFlushIntervalSecs.getLong()),
-                TimeUnit.SECONDS.toMillis(ConstantValues.statsRemoteFlushIntervalSecs.getLong()));
-
-        taskService.startTask(localStatsFlushTask, false);
-        taskService.startTask(remoteFlushTask, false);
+        taskService.startTask(statsFlushTask, false);
     }
 
     /**
@@ -275,13 +283,13 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         if (!gemsAddon.isDefault()) {
             for (LocalRepo localRepo : globalVirtualRepo.getLocalRepositories()) {
                 if (!localRepo.isBlackedOut()) {
-                    if (localRepo.getDescriptor().getType().equals(RepoType.Gems)) {
+                    if (localRepo.getDescriptor().isEnableGemsSupport()) {
                         gemsAddon.afterRepoInit(localRepo.getKey());
                     }
                 }
             }
             for (VirtualRepo virtualRepo : getVirtualRepositories()) {
-                if (virtualRepo.getDescriptor().getType().equals(RepoType.Gems)) {
+                if (virtualRepo.getDescriptor().isEnableGemsSupport()) {
                     gemsAddon.afterRepoInit(virtualRepo.getKey());
                 }
             }
@@ -292,7 +300,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         if (!nuGetAddon.isDefault()) {
             for (LocalRepo localRepo : globalVirtualRepo.getLocalRepositories()) {
                 if (!localRepo.isBlackedOut()) {
-                    if (localRepo.getDescriptor().getType().equals(RepoType.NuGet)) { //feature
+                    if (localRepo.getDescriptor().isEnableNuGetSupport()) { //feature
                         nuGetAddon.afterRepoInit(localRepo.getKey());
                     }
                 }
@@ -772,13 +780,6 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         return new ArchiveContentRetriever().getArchiveFileContent(repo, archivePath, sourceEntryPath);
     }
 
-    @Override
-    public ArchiveFileContent getGenericArchiveFileContent(RepoPath archivePath, String sourceEntryPath)
-            throws IOException {
-        LocalRepo repo = localOrCachedRepositoryByKey(archivePath.getRepoKey());
-        return new ArchiveContentRetriever().getGenericArchiveFileContent(repo, archivePath, sourceEntryPath);
-    }
-
     /**
      * Import all the repositories under the passed folder which matches local or cached repository declared in the
      * configuration. Having empty directory for each repository is allowed and not an error. Nothing will be imported
@@ -1075,7 +1076,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
     public MoveMultiStatusHolder move(RepoPath from, RepoPath to, boolean dryRun, boolean suppressLayouts,
             boolean failFast) {
         MoverConfigBuilder configBuilder = new MoverConfigBuilder(from, to).copy(false).dryRun(dryRun).
-                executeMavenMetadataCalculation(true).suppressLayouts(suppressLayouts).failFast(failFast).atomic(true);
+                executeMavenMetadataCalculation(true).suppressLayouts(suppressLayouts).failFast(failFast);
         return moveOrCopy(configBuilder.build());
     }
 
@@ -1087,35 +1088,17 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         log.debug("The following paths will be moved: {}", pathsToMoveIncludingParents);
         // start moving each path separately, marking each folder or file's parent folder for metadata recalculation
         MoveMultiStatusHolder status = new MoveMultiStatusHolder();
-        RepoPathMover mover = getMoveRepoPathService();
+        RepoPathMover mover = getRepoPathMover();
         for (RepoPath pathToMove : pathsToMoveIncludingParents) {
             RepoPath targetRepoPath = InternalRepoPathFactory.create(targetLocalRepoKey, pathToMove.getPath());
             log.debug("Moving path: {} to {}", pathToMove, targetRepoPath);
-            mover.executeOperation(status, new MoverConfigBuilder(pathToMove, targetRepoPath).copy(false).dryRun(dryRun)
+            mover.moveOrCopy(status, new MoverConfigBuilder(pathToMove, targetRepoPath).copy(false).dryRun(dryRun)
                     .executeMavenMetadataCalculation(false).pruneEmptyFolders(true).properties(properties)
-                    .unixStyleBehavior(false).failFast(failFast).atomic(true).build());
+                    .unixStyleBehavior(false).failFast(failFast).build());
         }
         mavenMetadataService.calculateMavenMetadataAsyncNonRecursive(status.getCandidatesForMavenMetadataCalculation());
         return status;
     }
-
-    @Override
-    public MoveMultiStatusHolder copyMultiTx(RepoPath fromRepoPath, RepoPath targetRepoPath,
-                                             boolean dryRun, boolean suppressLayouts, boolean failFast) {
-        MoverConfigBuilder configBuilder = new MoverConfigBuilder(fromRepoPath, targetRepoPath).copy(true).
-                dryRun(dryRun).executeMavenMetadataCalculation(true).suppressLayouts(suppressLayouts).
-                failFast(failFast);
-        return moveOrCopy(configBuilder.build());
-    }
-
-    @Override
-    public MoveMultiStatusHolder moveMultiTx(RepoPath from, RepoPath to, boolean dryRun, boolean suppressLayouts,
-                                             boolean failFast) {
-        MoverConfigBuilder configBuilder = new MoverConfigBuilder(from, to).copy(false).dryRun(dryRun).
-                executeMavenMetadataCalculation(true).suppressLayouts(suppressLayouts).failFast(failFast);
-        return moveOrCopy(configBuilder.build());
-    }
-
 
     @Override
     public MoveMultiStatusHolder copy(RepoPath fromRepoPath, RepoPath targetRepoPath, boolean dryRun,
@@ -1123,7 +1106,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         MoverConfigBuilder configBuilder = new MoverConfigBuilder(fromRepoPath, targetRepoPath).copy(true).
                 dryRun(dryRun).executeMavenMetadataCalculation(true).suppressLayouts(suppressLayouts).
                 failFast(failFast);
-        return moveOrCopy(configBuilder.atomic(true).build());
+        return moveOrCopy(configBuilder.build());
     }
 
     @Override
@@ -1134,13 +1117,13 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         log.debug("The following paths will be copied: {}", pathsToCopyIncludingParents);
         //Start copying each path separately, marking each folder or file's parent folder for metadata recalculation
         MoveMultiStatusHolder status = new MoveMultiStatusHolder();
-        RepoPathMover mover = getCopyRepoPathService();
+        RepoPathMover mover = getRepoPathMover();
         for (RepoPath pathToCopy : pathsToCopyIncludingParents) {
             RepoPath targetRepoPath = InternalRepoPathFactory.create(targetLocalRepoKey, pathToCopy.getPath());
             log.debug("Copying path: {} to {}", pathToCopy, targetRepoPath);
-            mover.executeOperation(status, new MoverConfigBuilder(pathToCopy, targetRepoPath).copy(true).dryRun(dryRun)
+            mover.moveOrCopy(status, new MoverConfigBuilder(pathToCopy, targetRepoPath).copy(true).dryRun(dryRun)
                     .executeMavenMetadataCalculation(false).pruneEmptyFolders(false).properties(properties)
-                    .unixStyleBehavior(false).failFast(failFast).atomic(true).build());
+                    .unixStyleBehavior(false).failFast(failFast).build());
         }
         mavenMetadataService.calculateMavenMetadataAsyncNonRecursive(status.getCandidatesForMavenMetadataCalculation());
 
@@ -1149,32 +1132,8 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
 
     private MoveMultiStatusHolder moveOrCopy(MoverConfig config) {
         MoveMultiStatusHolder status = new MoveMultiStatusHolder();
-        // copy or move service
-        if (config.isCopy()) {
-            getCopyRepoPathService().executeOperation(status, config);
-        } else {
-            getMoveRepoPathService().executeOperation(status, config);
-        }
+        getRepoPathMover().moveOrCopy(status, config);
         return status;
-    }
-
-
-    /**
-     * Returns an instance of the Repo Path Mover
-     *
-     * @return RepoPathMover
-     */
-    private RepoPathMover getMoveRepoPathService() {
-        return ContextHelper.get().beanForType(MoveRepoPathService.class);
-    }
-
-    /**
-     * Returns an instance of the Repo Path Mover
-     *
-     * @return RepoPathMover
-     */
-    private RepoPathMover getCopyRepoPathService() {
-        return ContextHelper.get().beanForType(CopyRepoPathService.class);
     }
 
     @Override
@@ -1280,6 +1239,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
      *
      * @param repoPath          - repo path
      * @param calcMavenMetadata - if true calculate meta data
+     * @param pruneEmptyFolders - if true delete empty folders
      * @return
      */
     private BasicStatusHolder undeploySingleItemTransactions(RepoPath repoPath, boolean calcMavenMetadata,BasicStatusHolder statusHolder) {
@@ -1314,6 +1274,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
      *
      * @param repoPath          - file ((leaf) repo path
      * @param calcMavenMetadata
+     * @param pruneEmptyFolders @return - update basic status holder
      */
     private BasicStatusHolder deleteSingleLeaf(RepoPath repoPath, boolean calcMavenMetadata,BasicStatusHolder statusHolder) {
         LockableUndeploy lockableUndeploy = InternalContextHelper.get().beanForType(LockableUndeploy.class);
@@ -1338,22 +1299,17 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
 
     @Override
     public StatusHolder undeployVersionUnits(Set<VersionUnit> versionUnits) {
-        BasicStatusHolder status = new BasicStatusHolder();
+        BasicStatusHolder multiStatusHolder = new BasicStatusHolder();
         InternalRepositoryService transactionalMe = getTransactionalMe();
 
         Set<RepoPath> pathsForMavenMetadataCalculation = Sets.newHashSet();
 
         for (VersionUnit versionUnit : versionUnits) {
             Set<RepoPath> repoPaths = versionUnit.getRepoPaths();
-            if (repoPaths.stream().filter(authService::canDelete).count() != repoPaths.size()) {
-                status.warn("User " + authService.currentUsername() + "doesn't have permission to delete one or more " +
-                        "the paths associated with module '" + versionUnit.getModuleInfo().getPrettyModuleId()
-                        + "', it will not be removed.", log);
-                continue;
-            }
             for (RepoPath repoPath : repoPaths) {
                 BasicStatusHolder holder = transactionalMe.undeploy(repoPath, false, true);
-                status.merge(holder);
+                multiStatusHolder.merge(holder);
+
                 if (NamingUtils.isPom(repoPath.getPath())) {
                     // We need to re-calculate the artifact id folder (which is the grandparent of the pom file)
                     RepoPath grandparentFolder = RepoPathUtils.getAncestor(repoPath, 2);
@@ -1363,11 +1319,15 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
                 }
             }
         }
-        // Check to make sure of existence, might have been removed through the iterations of the version units
-        pathsForMavenMetadataCalculation.stream()
-                .filter(this::exists)
-                .forEach(path -> mavenMetadataService.calculateMavenMetadataAsync(path, true));
-        return status;
+
+        for (RepoPath path : pathsForMavenMetadataCalculation) {
+            // Check to make sure of existence, might have been removed through the iterations of the version units
+            if (exists(path)) {
+                mavenMetadataService.calculateMavenMetadataAsync(path, true);
+            }
+        }
+
+        return multiStatusHolder;
     }
 
     @Override
@@ -1727,9 +1687,10 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
     }
 
     @Override
-    public VersionSearchResults getVersionUnitsUnder(RepoPath repoPath) {
+    public ItemSearchResults<VersionUnitSearchResult> getVersionUnitsUnder(RepoPath repoPath) {
         VersionUnitSearchControls controls = new VersionUnitSearchControls(repoPath);
-        return searchService.searchVersionUnits(controls);
+        ItemSearchResults<VersionUnitSearchResult> searchResults = searchService.searchVersionUnits(controls);
+        return searchResults;
     }
 
     @Override
@@ -1796,7 +1757,7 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
     @Override
     public boolean isRepoPathAccepted(RepoPath repoPath) {
         LocalRepo repo = getLocalOrCachedRepository(repoPath);
-        return repo == null || repo.accepts(repoPath);
+        return repo.accepts(repoPath);
     }
 
     @Override
@@ -1877,21 +1838,6 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
         } finally {
             IOUtils.closeQuietly(zin);
         }
-    }
-
-    @Override
-    public ZipInputStream zipInputStream(RepoPath zipPath) throws IOException {
-        LocalRepo localRepo = getLocalOrCachedRepository(zipPath);
-        VfsFile file = localRepo.getImmutableFile(zipPath);
-             return new ZipInputStream(file.getStream());
-    }
-
-    @Override
-    public ArchiveInputStream archiveInputStream(RepoPath zipPath) throws IOException {
-        LocalRepo localRepo = getLocalOrCachedRepository(zipPath);
-        VfsFile file = localRepo.getImmutableFile(zipPath);
-        String zipSuffix = zipPath.getPath().toLowerCase();
-        return ZipUtils.returnArchiveInputStream(file.getStream(), zipSuffix);
     }
 
     @Override
@@ -2094,6 +2040,15 @@ public class RepositoryServiceImpl implements InternalRepositoryService ,Lockabl
     @Override
     public boolean isRepoExistInCache(RepoPath repoPath) {
         return getLocalOrCachedRepository(repoPath) != null;
+    }
+
+    /**
+     * Returns an instance of the Repo Path Mover
+     *
+     * @return RepoPathMover
+     */
+    private RepoPathMover getRepoPathMover() {
+        return ContextHelper.get().beanForType(RepoPathMover.class);
     }
 
     /**

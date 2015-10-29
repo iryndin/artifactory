@@ -20,6 +20,7 @@ package org.artifactory.api.version;
 
 import org.artifactory.api.repo.Async;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -33,12 +34,12 @@ public interface VersionInfoService {
     /**
      * Indicates that the remote versioning service is unavailable It might be down, blocked or not connected yet
      */
-    String SERVICE_UNAVAILABLE = "NA";
+    static final String SERVICE_UNAVAILABLE = "NA";
 
     /**
      * Points to the wiki home page, in case the service is unavailable
      */
-    String WIKI_DEFAULT = "http://wiki.jfrog.org/confluence/display/RTF";
+    static final String WIKI_DEFAULT = "http://wiki.jfrog.org/confluence/display/RTF";
 
     /**
      * Get latest version information. If not yet retrieved from the remote server return SERVICE_UNAVAILABLE and
@@ -48,7 +49,17 @@ public interface VersionInfoService {
      * @param release    True to get the latest stable version, False to get the latest version of any kind @return
      *                   String Latest version number
      */
-    VersionHolder getLatestVersion(Map<String, String> headersMap, boolean release);
+    @Nonnull
+    public VersionHolder getLatestVersion(Map<String, String> headersMap, boolean release);
+
+    /**
+     * Get latest version number from the cache. If doesn't exist will return NA.
+     *
+     * @param release True to get the latest stable version, False to get the latest version of any kind
+     * @return String Latest version number
+     */
+    @Nonnull
+    public VersionHolder getLatestVersionFromCache(boolean release);
 
     /**
      * @param headersMap Client http header params
@@ -56,7 +67,4 @@ public interface VersionInfoService {
      */
     @Async
     Future<ArtifactoryVersioning> getRemoteVersioningAsync(Map<String, String> headersMap);
-
-    @Async
-    void callHome();
 }

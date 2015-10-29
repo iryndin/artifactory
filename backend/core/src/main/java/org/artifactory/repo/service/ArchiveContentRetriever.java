@@ -22,8 +22,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.api.context.ContextHelper;
@@ -99,84 +97,6 @@ public class ArchiveContentRetriever {
 
                         jis = new ZipInputStream(sourceFile.getStream());
                         ZipEntry zipEntry = ZipUtils.locateEntry(jis, sourceEntryPath, alternativeExtensions);
-                        if (zipEntry == null) {
-                            failureReason = "Source file not found.";
-                        } else {
-                            found = true;   // source entry was found in the jar
-                            int maxAllowedSize = 1024 * 1024;
-                            if (zipEntry.getSize() > maxAllowedSize) {
-                                failureReason = String.format(
-                                        "Source file is too big to render: file size: %s, max size: %s.",
-                                        zipEntry.getSize(), maxAllowedSize);
-
-                            } else {
-                                // read the current entry (the source entry path)
-                                content = IOUtils.toString(jis, "UTF-8");
-                                sourceEntryPath = zipEntry.getName();
-                                sourceJarPath = sourcesJarPath;
-                            }
-                        }
-                    }
-                }
-            }
-        } finally {
-            IOUtils.closeQuietly(jis);
-        }
-
-        if (content != null) {
-            return new ArchiveFileContent(content, InternalRepoPathFactory.create(repo.getKey(), sourceJarPath),
-                    sourceEntryPath);
-        } else {
-            return ArchiveFileContent.contentNotFound(failureReason);
-        }
-    }
-
-    public ArchiveFileContent getGenericArchiveFileContent(LocalRepo repo, RepoPath archivePath,
-            String archiveEntryPath)
-            throws IOException {
-        String content = null;
-        String sourceJarPath = null;
-        List<String> searchList = null;
-        String failureReason = null;
-        ArchiveInputStream jis = null;
-        String sourceEntryPath = null;
-        try {
-            if (archiveEntryPath.endsWith(".class")) {
-                sourceEntryPath = NamingUtils.javaSourceNameFromClassName(archiveEntryPath);
-                // locate the sources jar and find the source file in it
-                String sourceJarName = PathUtils.stripExtension(archivePath.getName()) + "-sources." +
-                        PathUtils.getExtension(archivePath.getName());
-                String sourcesJarPath = archivePath.getParent().getPath() + "/" + sourceJarName;
-                // search in the sources file first
-                searchList = Lists.newArrayList(sourcesJarPath, archivePath.getPath());
-            } else if (isTextFile(archiveEntryPath)) {
-                // read directly from this archive
-                searchList = Lists.newArrayList(archivePath.getPath());
-                sourceEntryPath = archiveEntryPath;
-            } else {
-                failureReason = "View source for " + archiveEntryPath + " is not supported";
-            }
-
-            if (searchList != null) {
-                boolean found = false;
-                for (int i = 0; i < searchList.size() && !found; i++) {
-                    String sourcesJarPath = searchList.get(i);
-                    log.debug("Looking for {} source in {}", sourceEntryPath, sourceJarPath);
-                    VfsFile sourceFile = repo.getImmutableFile(new RepoPathImpl(repo.getKey(), sourcesJarPath));
-                    if (sourceFile == null) {
-                        failureReason = "Source jar not found.";
-                    } else if (!ContextHelper.get().getAuthorizationService()
-                            .canRead(InternalRepoPathFactory.create(repo.getKey(), sourcesJarPath))) {
-                        failureReason = "No read permissions for the source jar.";
-                    } else {
-                        List<String> alternativeExtensions = null;
-                        if ("java".equalsIgnoreCase(PathUtils.getExtension(sourceEntryPath))) {
-                            alternativeExtensions = Lists.newArrayList("groovy", "fx");
-                        }
-
-                        jis = ZipUtils.getArchiveInputStream(sourceFile);
-                        ArchiveEntry zipEntry = ZipUtils.locateArchiveEntry(jis, sourceEntryPath,
-                                alternativeExtensions);
                         if (zipEntry == null) {
                             failureReason = "Source file not found.";
                         } else {

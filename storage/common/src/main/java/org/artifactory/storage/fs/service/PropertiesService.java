@@ -49,14 +49,5 @@ public interface PropertiesService {
      */
     void setProperties(long nodeId, Properties properties);
 
-    /**
-     * Sets the given properties on the node id. Existing properties are overridden. An empty object will cause a
-     * removal of all the properties on this node.
-     *
-     * @param repoPath RepoPath of the node
-     * @param properties The properties to set
-     */
-    void setProperties(RepoPath repoPath, Properties properties);
-
     int deleteProperties(long nodeId);
 }

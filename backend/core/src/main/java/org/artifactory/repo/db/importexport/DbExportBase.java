@@ -45,7 +45,6 @@ import org.artifactory.storage.fs.service.ItemMetaInfo;
 import org.artifactory.storage.fs.service.NodeMetaInfoService;
 import org.artifactory.storage.fs.service.PropertiesService;
 import org.artifactory.storage.fs.service.StatsService;
-import org.artifactory.storage.service.StatsServiceImpl;
 import org.artifactory.storage.spring.StorageContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -308,6 +307,6 @@ public abstract class DbExportBase extends DbRepoImportExportBase {
     }
 
     protected StatsService getStatsService() {
-        return StorageContextHelper.get().beanForType(StatsServiceImpl.class);
+        return StorageContextHelper.get().beanForType(StatsService.class);
     }
 }

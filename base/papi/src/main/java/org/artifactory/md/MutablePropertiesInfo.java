@@ -30,7 +30,6 @@ import java.util.Set;
  */
 public interface MutablePropertiesInfo extends PropertiesInfo {
     boolean putAll(@Nullable String key, Iterable<? extends String> values);
-    boolean putAll(@Nullable String key, String[] values);
 
     @Nullable
     Set<? extends String> replaceValues(@Nonnull String key, Iterable<? extends String> values);

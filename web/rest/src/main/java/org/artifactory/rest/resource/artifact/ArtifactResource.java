@@ -23,12 +23,10 @@ import com.sun.jersey.api.core.ExtendedUriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.PropertiesAddon;
 import org.artifactory.addon.rest.AuthorizationRestException;
 import org.artifactory.addon.rest.MissingRestAddonException;
 import org.artifactory.addon.rest.RestAddon;
 import org.artifactory.api.config.CentralConfigService;
-import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.repo.RepositoryBrowsingService;
 import org.artifactory.api.repo.VirtualRepoItem;
 import org.artifactory.api.repo.exception.BlackedOutException;
@@ -59,7 +57,7 @@ import org.artifactory.rest.common.exception.BadRequestException;
 import org.artifactory.rest.common.exception.NotFoundException;
 import org.artifactory.rest.common.list.KeyValueList;
 import org.artifactory.rest.common.list.StringList;
-import org.artifactory.rest.common.util.RestUtils;
+import org.artifactory.rest.util.RestUtils;
 import org.artifactory.util.DoesNotExistException;
 import org.artifactory.util.HttpUtils;
 import org.joda.time.format.DateTimeFormat;
@@ -89,10 +87,12 @@ import static org.artifactory.api.rest.constant.ArtifactRestConstants.*;
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Path(PATH_ROOT + "/{" + PATH_PARAM + ": .+}")
+@Path(PATH_ROOT + "/{" + ArtifactResource.PATH_PARAM + ": .+}")
 @RolesAllowed({AuthorizationService.ROLE_ADMIN, AuthorizationService.ROLE_USER})
 public class ArtifactResource {
     private static final Logger log = LoggerFactory.getLogger(ArtifactResource.class);
+
+    public static final String PATH_PARAM = "path";
 
     private static final String LIST_PARAM = "list";
     private static final String DEEP_PARAM = "deep";
@@ -130,8 +130,6 @@ public class ArtifactResource {
 
     @Autowired
     private CentralConfigService centralConfig;
-
-
 
     @PathParam(PATH_PARAM)
     String path;
@@ -350,7 +348,6 @@ public class ArtifactResource {
     }
 
     private Response getPropertiesResponse() throws IOException {
-
         ItemProperties itemProperties = new ItemProperties();
         Properties propertiesAnnotatingItem = resolveProperties();
         if (propertiesAnnotatingItem != null) {
@@ -397,9 +394,6 @@ public class ArtifactResource {
             return properties;
         }
         if (repo.isLocal() || repo.isCache()) {
-            if (repo.isCache()) {
-                updateProperties(repoPath, repo);
-            }
             properties = repositoryService.getProperties(repoPathFromRequestPath());
         } else {
             VirtualRepo virtualRepo = repositoryService.virtualRepositoryByKey(repoPath.getRepoKey());
@@ -416,18 +410,6 @@ public class ArtifactResource {
             }
         }
         return properties;
-    }
-
-    /**
-     * Updates remote properties if cache has expired
-     *
-     * @param repoPath
-     * @param repo
-     */
-    private void updateProperties(RepoPath repoPath, Repo repo) {
-        PropertiesAddon propertiesAddon = ContextHelper.get().beanForType(AddonsManager.class)
-                .addonByType(PropertiesAddon.class);
-        propertiesAddon.updateRemoteProperties(repo, repoPath);
     }
 
     private void fixPathIfNeeded() {

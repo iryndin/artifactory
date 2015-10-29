@@ -30,6 +30,7 @@ import java.util.List;
  * Resolved recursively the search order of the virtual repositories. The resolving is done according to the virtual
  * repository repositories list order. Local repositories are always placed first. If the virtual repo has cycles (one
  * or more virtual repos appear more than once) the resolver will skip the repeated virtual repo.
+ * <p><b>NOTE!</b> Do not remove the serializable interface since this class is being used inside a wicket page.
  *
  * @author Yossi Shaul
  */

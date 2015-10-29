@@ -109,6 +109,4 @@ public interface PropertiesService {
      */
     Map<RepoPath, Properties> getProperties(Set<RepoPath> repoPaths, String... mandatoryKeys);
 
-    @Lock
-    void setProperties(RepoPath repoPath,Properties newProperties);
 }

@@ -84,7 +84,7 @@ public class HttpClientConfiguratorTest extends ArtifactoryHomeBoundTest {
     }
 
     public void testTokenAuthentication() {
-        HttpClient client = new HttpClientConfigurator().host("bob").enableTokenAuthentication(true, null, null).getClient();
+        HttpClient client = new HttpClientConfigurator().host("bob").enableTokenAuthentication(true).getClient();
         Registry<AuthSchemeProvider> registry = getAuthSchemeRegistry(client);
         assertThat(registry.lookup("bearer")).isInstanceOf(BearerSchemeFactory.class);
         RequestConfig defaultConfig = getDefaultConfig(client);

@@ -32,8 +32,6 @@ import org.artifactory.security.UserInfo;
 import org.artifactory.util.HttpUtils;
 import org.artifactory.webapp.servlet.authentication.ArtifactoryAuthenticationFilter;
 import org.artifactory.webapp.servlet.authentication.ArtifactoryAuthenticationFilterChain;
-import org.artifactory.webapp.servlet.authentication.interceptor.anonymous.AnonymousAuthenticationInterceptor;
-import org.artifactory.webapp.servlet.authentication.interceptor.anonymous.AnonymousAuthenticationInterceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
@@ -66,7 +64,6 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
 
     private ArtifactoryContext context;
     private ArtifactoryAuthenticationFilter authFilter;
-    private AnonymousAuthenticationInterceptors authInterceptors;
 
     /**
      * holds cached Authentication instances for the non ui requests based on the Authorization header and client ip
@@ -79,14 +76,13 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
         ServletContext servletContext = filterConfig.getServletContext();
         this.context = RequestUtils.getArtifactoryContext(servletContext);
         ArtifactoryAuthenticationFilterChain filterChain = new ArtifactoryAuthenticationFilterChain();
+        filterChain.setServeAll(true);
         //Add all the authentication filters
         //TODO: [by yl] Support ordering...
         filterChain.addFilters(context.beansForType(ArtifactoryAuthenticationFilter.class).values());
         authFilter = filterChain;
         initCaches(filterConfig);
         authFilter.init(filterConfig);
-        authInterceptors = new AnonymousAuthenticationInterceptors();
-        authInterceptors.addInterceptors(context.beansForType(AnonymousAuthenticationInterceptor.class).values());
     }
 
     private void initCaches(FilterConfig filterConfig) {
@@ -94,9 +90,10 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
                 ((ArtifactoryHome) filterConfig.getServletContext().getAttribute(ArtifactoryHome.SERVLET_CTX_ATTR))
                         .getArtifactoryProperties();
         ConstantValues idleTimeSecsProp = ConstantValues.securityAuthenticationCacheIdleTimeSecs;
-        long cacheIdleSecs = properties.getLongProperty(idleTimeSecsProp);
+        long cacheIdleSecs = properties.getLongProperty(idleTimeSecsProp.getPropertyName(),
+                idleTimeSecsProp.getDefValue());
         ConstantValues initSizeProp = ConstantValues.securityAuthenticationCacheInitSize;
-        long initSize = properties.getLongProperty(initSizeProp);
+        long initSize = properties.getLongProperty(initSizeProp.getPropertyName(), initSizeProp.getDefValue());
         nonUiAuthCache = CacheBuilder.newBuilder().softValues()
                 .initialCapacity((int) initSize)
                 .expireAfterWrite(cacheIdleSecs, TimeUnit.SECONDS)
@@ -158,13 +155,11 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
     private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         final String servletPath = RequestUtils.getServletPathFromRequest(request);
-        // add no cache header to web app request
-        RequestUtils.addNoCacheToWebAppRequest(servletPath, response);
         String method = request.getMethod();
         if ((servletPath == null || "/".equals(servletPath) || servletPath.length() == 0) &&
                 "get".equalsIgnoreCase(method)) {
             //We were called with an empty path - redirect to the app main page
-            response.sendRedirect(HttpUtils.ANGULAR_WEBAPP + "/");
+            response.sendRedirect(HttpUtils.WEBAPP_URL_PATH_PREFIX);
             return;
         }
         //Reuse the authentication if it exists
@@ -175,7 +170,7 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
         if (reAuthRequired) {
             /**
              * A re-authentication is required but we might still have data that needs to be invalidated (like the
-             * web session)
+             * Wicket session)
              */
             Map<String, LogoutHandler> logoutHandlers = ContextHelper.get().beansForType(LogoutHandler.class);
             for (LogoutHandler logoutHandler : logoutHandlers.values()) {
@@ -194,16 +189,6 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
             log.debug("Using authentication {} from Http session.", authentication);
             useAuthentication(request, response, chain, authentication, securityContext);
         }
-    }
-
-    /**
-     * check if angular routing pattern match
-     * @param servletPath - servlet path
-     * @param method - method type
-     * @return if true match angular pattern
-     */
-    private boolean isAngularRoutingPatternMatch(String servletPath, String method) {
-        return servletPath.startsWith("/web/app/") && "get".equalsIgnoreCase(method);
     }
 
     private boolean reAuthenticationRequired(HttpServletRequest request, Authentication authentication) {
@@ -242,7 +227,7 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
             if (newAuthentication != null && newAuthentication.isAuthenticated()) {
                 // Add to user change cache the login state
                 addToUserChange(newAuthentication);
-                // Save authentication (if session exists)
+                // Save authentication like in Wicket Session (if session exists)
                 if (RequestUtils.setAuthentication(request, newAuthentication, false)) {
                     log.debug("Added authentication {} in Http session.", newAuthentication);
                 } else {
@@ -278,7 +263,7 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
     private void useAnonymousIfPossible(HttpServletRequest request, HttpServletResponse response,
             FilterChain chain, SecurityContext securityContext) throws IOException, ServletException {
         boolean anonAccessEnabled = context.getAuthorizationService().isAnonAccessEnabled();
-        if (anonAccessEnabled || authInterceptors.accept(request)) {
+        if (anonAccessEnabled) {
             log.debug("Using anonymous");
             Authentication authentication = getNonUiCachedAuthentication(request);
             if (authentication == null) {
@@ -307,7 +292,7 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
             if (authFilter.acceptEntry(request)) {
                 log.debug("Sending request requiring authentication");
                 authFilter.commence(request, response,
-                        new InsufficientAuthenticationException("Authentication is required"));
+                        new InsufficientAuthenticationException("Authentication is required."));
             } else {
                 log.debug("No filter or entry just chain");
                 chain.doFilter(request, response);
@@ -319,7 +304,6 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
         // return cached authentication only if this is a non ui request (this guards the case when user accessed
         // Artifactory both from external tool and from the ui)
         AuthCacheKey authCacheKey = new AuthCacheKey(authFilter.getCacheKey(request), request.getRemoteAddr());
-        log.debug("'{}' Cached key has been found for request: '{}' with method: '{}'",authFilter.getCacheKey(request),request.getRequestURI(),request.getMethod());
         return RequestUtils.isUiRequest(request) ? null : nonUiAuthCache.get(authCacheKey);
     }
 
@@ -428,4 +412,5 @@ public class AccessFilter extends DelayedFilterBase implements SecurityListener 
             authState.put(auth.hashCode(), 0);
         }
     }
+
 }

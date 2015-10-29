@@ -19,13 +19,11 @@
 package org.artifactory.mime;
 
 import com.google.common.collect.ImmutableSet;
-import com.sun.xml.internal.ws.api.streaming.XMLStreamWriterFactory;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.mime.version.MimeTypesVersion;
-import org.artifactory.util.PrettyStaxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +72,7 @@ public class MimeTypesReader {
             xmlContent = mimeTypesVersion.convert(xmlContent);
         }
 
-        XStream xStream = new XStream(new PrettyStaxDriver(null));
+        XStream xStream = new XStream();
         xStream.processAnnotations(new Class[]{MimeTypes.class, MimeType.class});
         xStream.registerLocalConverter(MimeType.class, "extensions", new StringToListAttributeConverter());
         MimeTypes mimeTypes = ((MimeTypes) xStream.fromXML(xmlContent));

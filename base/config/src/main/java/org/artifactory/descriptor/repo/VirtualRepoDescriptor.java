@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlType(name = "VirtualRepoType", propOrder = {"artifactoryRequestsCanRetrieveRemoteArtifacts", "repositories",
-        "keyPair", "pomRepositoryReferencesCleanupPolicy", "p2", "defaultDeploymentRepo"}, namespace = Descriptor.NS)
+        "keyPair", "pomRepositoryReferencesCleanupPolicy", "p2"}, namespace = Descriptor.NS)
 public class VirtualRepoDescriptor extends RepoBaseDescriptor {
 
     public static final String GLOBAL_VIRTUAL_REPO_KEY = "repo";
@@ -50,10 +50,6 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
 
     @XmlElement(required = false)
     private P2Configuration p2;
-
-    @XmlIDREF
-    @XmlElement(name = "defaultDeploymentRepo", type = LocalRepoDescriptor.class, required = false)
-    private LocalRepoDescriptor defaultDeploymentRepo;
 
     public List<RepoDescriptor> getRepositories() {
         return repositories;
@@ -101,20 +97,16 @@ public class VirtualRepoDescriptor extends RepoBaseDescriptor {
         this.pomRepositoryReferencesCleanupPolicy = pomRepositoryReferencesCleanupPolicy;
     }
 
+    public boolean isP2Support() {
+        return p2 != null && p2.isEnabled();
+    }
+
     public P2Configuration getP2() {
         return p2;
     }
 
     public void setP2(P2Configuration p2) {
         this.p2 = p2;
-    }
-
-    public LocalRepoDescriptor getDefaultDeploymentRepo() {
-        return defaultDeploymentRepo;
-    }
-
-    public void setDefaultDeploymentRepo(LocalRepoDescriptor defaultDeploymentRepo) {
-        this.defaultDeploymentRepo = defaultDeploymentRepo;
     }
 
     @Override

@@ -41,7 +41,8 @@ import org.artifactory.request.RepoRequests;
 import org.artifactory.security.HttpAuthenticationDetails;
 import org.artifactory.util.HttpUtils;
 import org.artifactory.util.PathUtils;
-import org.artifactory.util.UiRequestUtils;
+import org.artifactory.webapp.wicket.page.browse.listing.ArtifactListPage;
+import org.artifactory.webapp.wicket.page.browse.simplebrowser.SimpleRepoBrowserPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -73,12 +74,10 @@ public class RepoFilter extends DelayedFilterBase {
         String nonUiPathPrefixes = filterConfig.getInitParameter("nonUiPathPrefixes");
         String uiPathPrefixes = filterConfig.getInitParameter("UiPathPrefixes");
         List<String> nonUiPrefixes = PathUtils.delimitedListToStringList(nonUiPathPrefixes, ",");
-        UiRequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
         RequestUtils.setNonUiPathPrefixes(nonUiPrefixes);
         List<String> uiPrefixes = PathUtils.delimitedListToStringList(uiPathPrefixes, ",");
         uiPrefixes.add(HttpUtils.WEBAPP_URL_PATH_PREFIX);
         RequestUtils.setUiPathPrefixes(uiPrefixes);
-        UiRequestUtils.setUiPathPrefixes(uiPrefixes);
     }
 
     @Override
@@ -99,11 +98,6 @@ public class RepoFilter extends DelayedFilterBase {
             String servletPath) throws IOException, ServletException {
         if (log.isDebugEnabled()) {
             log.debug("Entering request {}.", requestDebugString(request));
-        }
-        if (request.getRequestURI().endsWith("treebrowser")){
-            ArtifactoryRequest artifactoryRequest = new HttpArtifactoryRequest(request);
-            request.setAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH, artifactoryRequest.getRepoPath());
-            request.setAttribute(ATTR_ARTIFACTORY_REQUEST_PROPERTIES, artifactoryRequest.getProperties());
         }
         boolean repoRequest = servletPath != null && RequestUtils.isRepoRequest(request, true);
         if (repoRequest && servletPath.startsWith("/" + ArtifactoryRequest.LIST_BROWSING_PATH)
@@ -146,7 +140,11 @@ public class RepoFilter extends DelayedFilterBase {
                     response.sendError(HttpStatus.SC_FORBIDDEN, msg);
                     return;
                 }
-                doRepoListing(request, response, servletPath, artifactoryRequest);
+                if (servletPath.startsWith("/" + ArtifactoryRequest.SIMPLE_BROWSING_PATH)) {
+                    doSimpleRepoBrowse(request, response, artifactoryRequest);
+                } else {
+                    doRepoListing(request, response, servletPath, artifactoryRequest);
+                }
                 return;
             }
 
@@ -286,6 +284,24 @@ public class RepoFilter extends DelayedFilterBase {
         }
     }
 
+    private void doSimpleRepoBrowse(HttpServletRequest request, HttpServletResponse response,
+            ArtifactoryRequest artifactoryRequest) throws ServletException, IOException {
+        log.debug("Forwarding internally to a directory browsing request.");
+        //Expose the artifactory repository path as a request attribute
+        final RepoPath repoPath = artifactoryRequest.getRepoPath();
+        request.setAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH, repoPath);
+        request.setAttribute(ATTR_ARTIFACTORY_REQUEST_PROPERTIES, artifactoryRequest.getProperties());
+
+        //Remove the forwarding URL (repo+path) as this is used by wicket to build
+        //a relative path, which does not make sense in this case
+        final boolean wicketRequest = RequestUtils.isWicketRequest(request);
+        HttpServletRequestWrapper requestWrapper = new InnerRequestWrapper(request, wicketRequest);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher(
+                "/" + HttpUtils.WEBAPP_URL_PATH_PREFIX + "/" + SimpleRepoBrowserPage.PATH);
+        dispatcher.forward(requestWrapper, response);
+    }
+
     private void doRepoListing(HttpServletRequest request, HttpServletResponse response, String servletPath,
             ArtifactoryRequest artifactoryRequest) throws ServletException, IOException {
         log.debug("Forwarding internally to an apache-style listing page.");
@@ -296,7 +312,8 @@ public class RepoFilter extends DelayedFilterBase {
         request.setAttribute(ATTR_ARTIFACTORY_REPOSITORY_PATH, artifactoryRequest.getRepoPath());
         request.setAttribute(ATTR_ARTIFACTORY_REQUEST_PROPERTIES, artifactoryRequest.getProperties());
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/ui/nativeBrowser");
+        RequestDispatcher dispatcher =
+                request.getRequestDispatcher("/" + HttpUtils.WEBAPP_URL_PATH_PREFIX + "/" + ArtifactListPage.PATH);
         dispatcher.forward(request, response);
     }
 
@@ -321,6 +338,44 @@ public class RepoFilter extends DelayedFilterBase {
         String str = request.getMethod() + " (" + new HttpAuthenticationDetails(request).getRemoteAddress() + ") " +
                 RequestUtils.getServletPathFromRequest(request) + (queryString != null ? queryString : "");
         return str;
+    }
+
+    private static class InnerRequestWrapper extends HttpServletRequestWrapper {
+        private final boolean wicketRequest;
+
+        public InnerRequestWrapper(HttpServletRequest request, boolean wicketRequest) {
+            super(request);
+            this.wicketRequest = wicketRequest;
+        }
+
+        @Override
+        public Object getAttribute(String name) {
+            if ("javax.servlet.forward.servlet_path".equals(name)) {
+                return null;
+            } else {
+                return super.getAttribute(name);
+            }
+        }
+
+        @Override
+        public String getContextPath() {
+            return super.getContextPath();
+        }
+
+        @Override
+        public String getServletPath() {
+            RepoPath removedRepoPath = (RepoPath) getAttribute(ATTR_ARTIFACTORY_REMOVED_REPOSITORY_PATH);
+            if (wicketRequest) {
+                //All wicket request that come after direct repository
+                //browsing need to have the repo+path stripped
+                return "/" + HttpUtils.WEBAPP_URL_PATH_PREFIX + "/";
+            } else if (removedRepoPath != null) {
+                //After login redirection
+                return "/" + removedRepoPath.getRepoKey() + "/" + removedRepoPath.getPath();
+            } else {
+                return super.getServletPath();
+            }
+        }
     }
 
     private boolean redirectLegacyMetadataRequest(HttpServletRequest request, HttpServletResponse response,

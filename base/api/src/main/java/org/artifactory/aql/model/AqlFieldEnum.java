@@ -20,7 +20,7 @@ public enum AqlFieldEnum {
     itemModifiedBy("modified_by", "items", string),
     itemType("type", "items", AqlVariableTypeEnum.itemType),
     itemDepth("depth", "items", integer),
-    itemId("id", "items", longInt),
+    itemNodeId("node", "items", longInt),
     itemOriginalMd5("original_md5", "items", string),
     itemActualMd5("actual_md5", "items", string),
     itemOriginalSha1("original_sha1", "items", string),
@@ -30,44 +30,32 @@ public enum AqlFieldEnum {
     statDownloaded("downloaded", "statistics", date),
     statDownloads("downloads", "statistics", integer),
     statDownloadedBy("downloaded_by", "statistics", string),
-    statId("id", "statistics", longInt),
     // properties
     propertyKey("key", "properties", string),
     propertyValue("value", "properties", string),
-    propertyId("id", "properties", longInt),
     // archive entries
-    archiveEntryName("name", "entries", string),
-    archiveEntryPath("path", "entries", string),
-    archiveEntryPathId("path_id", "entries", longInt),
-    archiveEntryNameId("name_id", "entries", longInt),
+    archiveEntryName("entry_name", "archives", string),
+    archiveEntryPath("entry_path", "archives", string),
     // builds
-    moduleName("name", "modules", string),
-    moduleId("id","modules",longInt),
+    buildModuleName("name", "modules", string),
     buildDependencyName("name", "dependencies", string),
     buildDependencyScope("scope", "dependencies", string),
     buildDependencyType("type", "dependencies", string),
     buildDependencySha1("sha1", "dependencies", string),
     buildDependencyMd5("md5", "dependencies", string),
-    buildDependencyId("id", "dependencies", longInt),
     buildArtifactName("name", "artifacts", string),
     buildArtifactType("type", "artifacts", string),
     buildArtifactSha1("sha1", "artifacts", string),
     buildArtifactMd5("md5", "artifacts", string),
-    buildArtifactId("id", "artifacts", longInt),
     buildPropertyKey("key", "buildProperties", string),
     buildPropertyValue("value", "buildProperties", string),
-    buildPropertyId("id", "buildProperties", longInt),
-    modulePropertyKey("key", "moduleProperties", string),
-    modulePropertyValue("value", "moduleProperties", string),
-    modulePropertyId("id", "moduleProperties", longInt),
     buildUrl("url", "builds", string),
     buildName("name", "builds", string),
     buildNumber("number", "builds", string),
     buildCreated("created", "builds", date),
     buildCreatedBy("created_by", "builds", string),
     buildModified("modified", "builds", date),
-    buildModifiedBy("modified_by", "builds", string),
-    buildId("id","builds",longInt);
+    buildModifiedBy("modified_by", "builds", string);
     public String signature;
     public String domainName;
     public AqlVariableTypeEnum type;
@@ -102,7 +90,7 @@ public enum AqlFieldEnum {
                         itemModifiedBy,
                         itemType,
                         itemDepth,
-                        itemId,
+                        itemNodeId,
                         itemOriginalMd5,
                         itemActualMd5,
                         itemOriginalSha1,
@@ -114,31 +102,23 @@ public enum AqlFieldEnum {
                         statDownloaded,
                         statDownloads,
                         statDownloadedBy,
-                        statId
                 };
             case properties:
                 return new AqlFieldEnum[]{
                         propertyKey,
-                        propertyValue,
-                        propertyId
+                        propertyValue
                 };
             case archives:
                 return new AqlFieldEnum[]{
-                };
-            case entries:
-                return new AqlFieldEnum[]{
                         archiveEntryName,
-                        archiveEntryNameId,
-                        archiveEntryPath,
-                        archiveEntryPathId
+                        archiveEntryPath
                 };
             case artifacts:
                 return new AqlFieldEnum[]{
                         buildArtifactName,
                         buildArtifactType,
                         buildArtifactSha1,
-                        buildArtifactMd5,
-                        buildArtifactId
+                        buildArtifactMd5
                 };
             case dependencies:
                 return new AqlFieldEnum[]{
@@ -146,25 +126,16 @@ public enum AqlFieldEnum {
                         buildDependencyScope,
                         buildDependencyType,
                         buildDependencySha1,
-                        buildDependencyMd5,
-                        buildDependencyId
+                        buildDependencyMd5
                 };
             case modules:
                 return new AqlFieldEnum[]{
-                        moduleName,
-                        moduleId
-                };
-            case moduleProperties:
-                return new AqlFieldEnum[]{
-                        modulePropertyKey,
-                        modulePropertyValue,
-                        modulePropertyId
+                        buildModuleName
                 };
             case buildProperties:
                 return new AqlFieldEnum[]{
                         buildPropertyKey,
-                        buildPropertyValue,
-                        buildPropertyId
+                        buildPropertyValue
                 };
             case builds:
                 return new AqlFieldEnum[]{
@@ -174,8 +145,7 @@ public enum AqlFieldEnum {
                         buildCreated,
                         buildCreatedBy,
                         buildModified,
-                        buildModifiedBy,
-                        buildId
+                        buildModifiedBy
                 };
         }
         throw new UnsupportedOperationException("Unsupported domain: " + domain);
@@ -189,10 +159,5 @@ public enum AqlFieldEnum {
             }
         }
         return null;
-    }
-
-    public boolean isId() {
-        return this==itemId || this==propertyId || this==statId || this==buildArtifactId || this==buildDependencyId ||
-                this==moduleId || this==modulePropertyId || this==buildId || this==buildPropertyId;
     }
 }

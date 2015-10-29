@@ -36,176 +36,10 @@ public abstract class AqlAdapter {
     public static final OperatorQueryElement or = new OperatorQueryElement(AqlOperatorEnum.or);
 
     /**
-     * Create Simple Property criteria: A property criteria is actually two criterias on the same property table
-     * Example "key" "$matches" "license*"
-     * The above criteria is being converted to the following SQL query
-     * node_props.key equals 'license' and node_props.value like 'GPL'
-     */
-    public static Criteria createSimplePropertyCriteria(List<AqlDomainEnum> subDomains, AqlFieldEnum aqlField,
-            String name2,
-            AqlComparatorEnum comparatorEnum, AdapterContext context) {
-        Pair<AqlVariable, AqlVariable> variables = new Pair<>(new AqlField(aqlField), new AqlValue(aqlField.type, name2));
-        Pair<SqlTable, SqlTable> tables = resolveTableForSimpleCriteria(variables, context);
-        return new SimplePropertyCriteria(subDomains, variables.getFirst(), tables.getFirst(), comparatorEnum.signature,
-                variables.getSecond(), tables.getSecond());
-    }
-
-    /**
-     * Create Property criteria: A property criteria is actually two criterias on the same property table
-     * Example "license" "$matches" "GPL"
-     * The above criteria is being converted to the following SQL query
-     * node_props.key equals 'license' and node_props.value like 'GPL'
-     */
-    public static Criteria createComplexPropertyCriteria(List<AqlDomainEnum> subDomains, String name1, String name2,
-            AqlComparatorEnum comparatorEnum,
-            AdapterContext tableReference) {
-        AqlVariable variable1 = AqlFieldResolver.resolve(name1, AqlVariableTypeEnum.string);
-        AqlVariable variable2 = AqlFieldResolver.resolve(name2, AqlVariableTypeEnum.string);
-        Pair<SqlTable, SqlTable> tables = resolveTableForPropertyCriteria(tableReference,subDomains);
-        return new ComplexPropertyCriteria(subDomains, variable1, tables.getFirst(),
-                comparatorEnum.signature, variable2, tables.getSecond());
-    }
-
-    /**
-     * Create Simple criteria: A simple criteria is actually single criteria constructed as following
-     * Field Comparator Value
-     * Example the "artifact_repo" "$matches" "libs-release-local"
-     * The above criteria is being converted to the following SQL query * node.repo like 'libs-release-local'
-     */
-    public static Criteria createSimpleCriteria(List<AqlDomainEnum> subDomains, AqlFieldEnum aqlField, String name2,
-            AqlComparatorEnum comparatorEnum, AdapterContext context) {
-        Pair<AqlVariable, AqlVariable> variables = new Pair<>(new AqlField(aqlField), new AqlValue(aqlField.type, name2));
-        Pair<SqlTable, SqlTable> tables = resolveTableForSimpleCriteria(variables, context);
-        return new SimpleCriteria(subDomains, variables.getFirst(), tables.getFirst(), comparatorEnum.signature,
-                variables.getSecond(), tables.getSecond());
-    }
-
-    /**
-     * Resolving tables is delicate issue.
-     * The tables are provided as follow:
-     * 1. If the table is not property table then use the default tables from the tablesLinksMap.
-     * 2. if the table is property table then by default generate new table with new alias id to each property table
-     * unless the criteria is inside freezeJoin function, and in such case use the table index provided in the
-     * join operator
-     */
-    public static Pair<SqlTable, SqlTable> resolveTableForSimpleCriteria(Pair<AqlVariable, AqlVariable> variables,
-            AdapterContext context) {
-        AqlField field = (AqlField) variables.getFirst();
-        AqlFieldExtensionEnum extension = AqlFieldExtensionEnum.getExtensionFor(field.getFieldEnum());
-        SqlTableEnum tableEnum = extension.table;
-        if (SqlTableEnum.node_props == tableEnum || SqlTableEnum.build_props == tableEnum ||
-                SqlTableEnum.module_props == tableEnum) {
-            ResultFilterAqlElement resultFieldAqlElement = (ResultFilterAqlElement) getResultFilterOperator(context);
-            if (resultFieldAqlElement != null) {
-                SqlTable table = tablesLinksMap.get(tableEnum).getTable();
-                return new Pair<>(table, table);
-            }
-            MspAqlElement propertyAqlElement = (MspAqlElement) getMspOperator(context);
-            if (propertyAqlElement == null) {
-                SqlTable table = new SqlTable(tableEnum, context.provideIndex());
-                return new Pair<>(table, table);
-            }
-            SqlTable table = new SqlTable(tableEnum, propertyAqlElement.getTableId());
-            return new Pair<>(table, table);
-        } else {
-            SqlTable table = tablesLinksMap.get(tableEnum).getTable();
-            return new Pair<>(table, table);
-        }
-    }
-
-    /**
-     * Resolving tables is delicate issue, in this case we now that the tables are properties therefore
-     * by default generate new table with new alias id to each property table unless the criteria is inside freezeJoin
-     * function, and in such case use the table index provided in the
-     * join operator
-     */
-    public static Pair<SqlTable, SqlTable> resolveTableForPropertyCriteria(AdapterContext context,List<AqlDomainEnum> subDomains) {
-        ResultFilterAqlElement resultFilterElement = (ResultFilterAqlElement) getResultFilterOperator(context);
-        if (resultFilterElement != null) {
-            AqlDomainEnum aqlDomainEnum = subDomains.get(subDomains.size() - 1);
-            AqlFieldExtensionEnum extension = AqlFieldExtensionEnum.getExtensionFor(aqlDomainEnum.fields[0]);
-            SqlTable table = tablesLinksMap.get(extension.table).getTable();
-            return new Pair<>(table, table);
-        }
-        MspAqlElement propertyAqlElement = (MspAqlElement) getMspOperator(context);
-        if (propertyAqlElement == null) {
-            AqlDomainEnum aqlDomainEnum = subDomains.get(subDomains.size() - 1);
-            AqlFieldExtensionEnum extension = AqlFieldExtensionEnum.getExtensionFor(aqlDomainEnum.fields[0]);
-            SqlTable table = new SqlTable(extension.table, context.provideIndex());
-            return new Pair<>(table, table);
-        }
-        AqlDomainEnum aqlDomainEnum = subDomains.get(subDomains.size() - 1);
-        AqlFieldExtensionEnum extension = AqlFieldExtensionEnum.getExtensionFor(aqlDomainEnum.fields[0]);
-        SqlTable table = new SqlTable(extension.table, propertyAqlElement.getTableId());
-        return new Pair<>(table, table);
-    }
-
-    /**
-     * Scans the context que for leading join operators
-     */
-    protected static AqlQueryElement getMspOperator(AdapterContext context) {
-        if (context.getFunctions().isEmpty()) {
-            return null;
-        }
-        AqlQueryElement peek = context.peek();
-        if (peek instanceof MspAqlElement) {
-            return peek;
-        }
-        AqlQueryElement temp = context.pop();
-        peek = getMspOperator(context);
-        context.push(temp);
-        return peek;
-    }
-
-    /**
-     * Scans the context que for leading join operators
-     */
-    protected static AqlQueryElement getResultFilterOperator(AdapterContext context) {
-        if (context.getFunctions().isEmpty()) {
-            return null;
-        }
-        AqlQueryElement peek = context.peek();
-        if (peek instanceof ResultFilterAqlElement) {
-            return peek;
-        }
-        AqlQueryElement temp = context.pop();
-        peek = getResultFilterOperator(context);
-        context.push(temp);
-        return peek;
-    }
-
-    /**
-     * Scans the context que for leading or/and operators
-     */
-    protected static AqlQueryElement getOperator(AdapterContext context) {
-        if (context.getFunctions().isEmpty()) {
-            return null;
-        }
-        AqlQueryElement peek = context.peek();
-        if (peek.isOperator()) {
-            return peek;
-        }
-        AqlQueryElement temp = context.pop();
-        peek = getOperator(context);
-        context.push(temp);
-        return peek;
-    }
-
-    /**
-     * Adds operator to the AqlQuery if needed
-     */
-    protected static void addOperatorToAqlQueryElements(AdapterContext context) {
-        List<AqlQueryElement> currentAqlQueryElments = context.getAqlQueryElements();
-        if (!currentAqlQueryElments.isEmpty() && (currentAqlQueryElments.get(
-                currentAqlQueryElments.size() - 1) instanceof Criteria ||
-                currentAqlQueryElments.get(currentAqlQueryElments.size() - 1) instanceof CloseParenthesisAqlElement)) {
-            context.addAqlQueryElements(getOperator(context));
-        }
-    }
-
-    /**
      * This is ugly hack that force AQL ITEMS queries to return (by default) on files by
      * Injecting extra  (type=file) filter to the query.
+     *
+     * @param context
      */
     protected void injectDefaultValues(AdapterContext context) {
         AqlQuery aqlQuery = context.getAqlQuery();
@@ -237,10 +71,187 @@ public abstract class AqlAdapter {
     }
 
     /**
+     * Create Property criteria: A property criteria is actually two criterias on the same property table
+     * Example "license" "$matches" "GPL"
+     * The above criteria is being converted to the following SQL query
+     * node_props.key equals 'license' and node_props.value like 'GPL'
+     *
+     * @param name1
+     * @param name2
+     * @param comparatorEnum
+     * @param tableReference
+     * @return
+     */
+    public static Criteria createPropertyCriteria(List<AqlDomainEnum> subDomains, String name1, String name2,
+            AqlComparatorEnum comparatorEnum,
+            AdapterContext tableReference) {
+        AqlVariable variable1 = AqlFieldResolver.resolve(name1, AqlVariableTypeEnum.string);
+        AqlVariable variable2 = AqlFieldResolver.resolve(name2, AqlVariableTypeEnum.string);
+        Pair<SqlTable, SqlTable> tables = resolveTableForPropertyCriteria(tableReference);
+        return new PropertyCriteria(subDomains, variable1, tables.getFirst(),
+                comparatorEnum.signature, variable2, tables.getSecond());
+    }
+
+    /**
+     * Create Simple criteria: A simple criteria is actually single criteria constructed as following
+     * Field Comparator Value
+     * Example the "artifact_repo" "$matches" "libs-release-local"
+     * The above criteria is being converted to the following SQL query * node.repo like 'libs-release-local'
+     *
+     * @param name2
+     * @param comparatorEnum
+     * @param context
+     * @return
+     */
+    public static Criteria createSimpleCriteria(List<AqlDomainEnum> subDomains, AqlFieldEnum aqlField, String name2,
+            AqlComparatorEnum comparatorEnum, AdapterContext context) {
+        Pair<AqlVariable, AqlVariable> variables = new Pair(new AqlField(aqlField), new AqlValue(aqlField.type, name2));
+        Pair<SqlTable, SqlTable> tables = resolveTableForSimpleCriteria(variables, context);
+        return new SimpleCriteria(subDomains, variables.getFirst(), tables.getFirst(), comparatorEnum.signature,
+                variables.getSecond(), tables.getSecond());
+    }
+
+    /**
+     * Resolving tables is delicate issue.
+     * The tables are provided as follow:
+     * 1. If the table is not property table then use the default tables from the tablesLinksMap.
+     * 2. if the table is property table then by default generate new table with new alias id to each property table
+     * unless the criteria is inside freezeJoin function, and in such case use the table index provided in the
+     * join operator
+     *
+     * @param variables
+     * @param context
+     * @return
+     */
+    public static Pair<SqlTable, SqlTable> resolveTableForSimpleCriteria(Pair<AqlVariable, AqlVariable> variables,
+            AdapterContext context) {
+        AqlField field = (AqlField) variables.getFirst();
+        AqlFieldExtensionEnum extension = AqlFieldExtensionEnum.getExtensionFor(field.getFieldEnum());
+        SqlTableEnum tableEnum = extension.table;
+        if (SqlTableEnum.node_props == tableEnum) {
+            ResultFilterAqlElement resultFieldAqlElement = (ResultFilterAqlElement) getResultFilterOperator(context);
+            if (resultFieldAqlElement != null) {
+                SqlTable table = tablesLinksMap.get(SqlTableEnum.node_props).getTable();
+                return new Pair<>(table, table);
+            }
+            MspAqlElement propertyAqlElement = (MspAqlElement) getMspOperator(context);
+            if (propertyAqlElement == null) {
+                SqlTable table = new SqlTable(SqlTableEnum.node_props, context.provideIndex());
+                return new Pair<>(table, table);
+            }
+            SqlTable table = new SqlTable(SqlTableEnum.node_props, propertyAqlElement.getTableId());
+            return new Pair<>(table, table);
+        } else {
+            return new Pair<>(tablesLinksMap.get(tableEnum).getTable(), null);
+        }
+    }
+
+    /**
+     * Resolving tables is delicate issue, in this case we now that the tables are properties therefore
+     * by default generate new table with new alias id to each property table unless the criteria is inside freezeJoin
+     * function, and in such case use the table index provided in the
+     * join operator
+     *
+     * @param context
+     * @return
+     */
+    public static Pair<SqlTable, SqlTable> resolveTableForPropertyCriteria(AdapterContext context) {
+        ResultFilterAqlElement resultFilterElement = (ResultFilterAqlElement) getResultFilterOperator(context);
+        if (resultFilterElement != null) {
+            SqlTable table = tablesLinksMap.get(SqlTableEnum.node_props).getTable();
+            return new Pair<>(table, table);
+        }
+        MspAqlElement propertyAqlElement = (MspAqlElement) getMspOperator(context);
+        if (propertyAqlElement == null) {
+            SqlTable table = new SqlTable(SqlTableEnum.node_props, context.provideIndex());
+            return new Pair<>(table, table);
+        }
+        SqlTable table = new SqlTable(SqlTableEnum.node_props, propertyAqlElement.getTableId());
+        return new Pair<>(table, table);
+    }
+
+    /**
      * Adds criteria to the AqlQuery and its leading operator if needed
+     *
+     * @param context
+     * @param criteria
      */
     protected void addCriteria(AdapterContext context, Criteria criteria) {
         addOperatorToAqlQueryElements(context);
         context.addAqlQueryElements(criteria);
+    }
+
+    /**
+     * Scans the context que for leading join operators
+     *
+     * @param context
+     * @return
+     */
+    protected static AqlQueryElement getMspOperator(AdapterContext context) {
+        if (context.getFunctions().isEmpty()) {
+            return null;
+        }
+        AqlQueryElement peek = context.peek();
+        if (peek instanceof MspAqlElement) {
+            return peek;
+        }
+        AqlQueryElement temp = context.pop();
+        peek = getMspOperator(context);
+        context.push(temp);
+        return peek;
+    }
+
+    /**
+     * Scans the context que for leading join operators
+     *
+     * @param context
+     * @return
+     */
+    protected static AqlQueryElement getResultFilterOperator(AdapterContext context) {
+        if (context.getFunctions().isEmpty()) {
+            return null;
+        }
+        AqlQueryElement peek = context.peek();
+        if (peek instanceof ResultFilterAqlElement) {
+            return peek;
+        }
+        AqlQueryElement temp = context.pop();
+        peek = getResultFilterOperator(context);
+        context.push(temp);
+        return peek;
+    }
+
+    /**
+     * Scans the context que for leading or/and operators
+     *
+     * @param context
+     * @return
+     */
+    protected static AqlQueryElement getOperator(AdapterContext context) {
+        if (context.getFunctions().isEmpty()) {
+            return null;
+        }
+        AqlQueryElement peek = context.peek();
+        if (peek.isOperator()) {
+            return peek;
+        }
+        AqlQueryElement temp = context.pop();
+        peek = getOperator(context);
+        context.push(temp);
+        return peek;
+    }
+
+    /**
+     * Adds operator to the AqlQuery if needed
+     *
+     * @param context
+     */
+    protected static void addOperatorToAqlQueryElements(AdapterContext context) {
+        List<AqlQueryElement> currentAqlQueryElments = context.getAqlQueryElements();
+        if (!currentAqlQueryElments.isEmpty() && (currentAqlQueryElments.get(
+                currentAqlQueryElments.size() - 1) instanceof Criteria ||
+                currentAqlQueryElments.get(currentAqlQueryElments.size() - 1) instanceof CloseParenthesisAqlElement)) {
+            context.addAqlQueryElements(getOperator(context));
+        }
     }
 }

@@ -40,7 +40,7 @@ import org.artifactory.schedule.TaskService;
 import org.artifactory.schedule.TaskUtils;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.spring.Reloadable;
-import org.artifactory.storage.service.StatsServiceImpl;
+import org.artifactory.storage.fs.service.StatsService;
 import org.artifactory.version.CompoundVersionDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,7 @@ public class ArtifactCleanupServiceImpl implements InternalArtifactCleanupServic
     private CentralConfigService centralConfigService;
 
     @Autowired
-    private StatsServiceImpl statsService;
+    private StatsService statsService;
 
     @Autowired
     private InternalRepositoryService repositoryService;

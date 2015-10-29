@@ -20,7 +20,6 @@ package org.artifactory.converters;
 
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.common.ArtifactoryHome;
-import org.artifactory.common.ConstantValues;
 import org.artifactory.storage.db.properties.model.DbProperties;
 import org.artifactory.storage.db.properties.service.ArtifactoryCommonDbPropertiesService;
 import org.artifactory.version.ArtifactoryVersion;
@@ -36,7 +35,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static java.lang.String.valueOf;
-import static org.artifactory.version.ArtifactoryVersion.*;
+import static org.artifactory.version.ArtifactoryVersion.v304;
+import static org.artifactory.version.ArtifactoryVersion.v310;
 
 /**
  * @author Gidi Shabat
@@ -105,21 +105,15 @@ public class VersionProviderImpl implements VersionProvider {
                 // If the db_properties table exists, but no version found the we can't conclude the original version
                 // in such case the vest choice is to assume that the home version is equals to the database version.
                 if (dbProperties == null) {
-                    if (ConstantValues.test.getBoolean()) {
-                        String version = v413.name();
-                        String revision = valueOf(v413.getRevision());
-                        originalDatabaseVersion = new CompoundVersionDetails(v413, version, revision, 1387059697274l);
-                    } else {
-                        //TODO [Gidi] this case should not happened check with Yossi
-                        // In this case it is ok to assume that the version is 3.1.0 since the DB_PROPERTIES table exists and above is
-                        // allowed only from version 3.0.0 and no conversion has been added between version 3.0.0 to 3.1.0
-                        // except the addition of DB_PROPERTIES and the ARTIFACTORY_SERVERS tables.
-                        String version = v310.name();
-                        String revision = valueOf(v310.getRevision());
-                        long timestampOfVersion311 = 1387059697274l;
-                        originalDatabaseVersion = new CompoundVersionDetails(v310, version, revision,
-                                timestampOfVersion311);
-                    }
+                    //TODO [Gidi] this case should not happened check with Yossi
+                    // In this case it is ok to assume that the version is 3.1.0 since the DB_PROPERTIES table exists and above is
+                    // allowed only from version 3.0.0 and no conversion has been added between version 3.0.0 to 3.1.0
+                    // except the addition of DB_PROPERTIES and the ARTIFACTORY_SERVERS tables.
+                    String version = v310.name();
+                    String revision = valueOf(v310.getRevision());
+                    long timestampOfVersion311 = 1387059697274l;
+                    originalDatabaseVersion = new CompoundVersionDetails(v310, version, revision,
+                            timestampOfVersion311);
                 } else {
                     originalDatabaseVersion = getDbCompoundVersionDetails(dbProperties);
                 }

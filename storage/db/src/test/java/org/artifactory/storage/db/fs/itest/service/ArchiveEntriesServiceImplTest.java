@@ -23,7 +23,7 @@ import org.artifactory.fs.ZipEntryInfo;
 import org.artifactory.model.xstream.fs.ZipEntryImpl;
 import org.artifactory.storage.db.DbService;
 import org.artifactory.storage.db.binstore.dao.BinariesDao;
-import org.artifactory.storage.binstore.service.BinaryData;
+import org.artifactory.storage.db.binstore.entity.BinaryData;
 import org.artifactory.storage.db.fs.dao.ArchiveEntriesDao;
 import org.artifactory.storage.db.itest.DbBaseTest;
 import org.artifactory.storage.db.util.JdbcHelper;

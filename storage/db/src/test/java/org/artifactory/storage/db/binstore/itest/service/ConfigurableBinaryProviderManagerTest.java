@@ -1,7 +1,7 @@
 package org.artifactory.storage.db.binstore.itest.service;
 
 import org.artifactory.storage.StorageProperties;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.EmptyBinaryProvider;
 import org.artifactory.storage.binstore.service.FileBinaryProvider;
 import org.artifactory.storage.binstore.service.providers.DoubleFileBinaryProviderImpl;

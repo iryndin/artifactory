@@ -20,7 +20,7 @@ public class AqlApiModule extends AqlBase<AqlApiArtifact, AqlBuildModule> {
 
     public static AqlApiDynamicFieldsDomains.AqlApiComparator<AqlApiModule> name() {
         ArrayList<AqlDomainEnum> subDomains = Lists.newArrayList(AqlDomainEnum.modules);
-        return new AqlApiDynamicFieldsDomains.AqlApiComparator(AqlFieldEnum.moduleName, subDomains);
+        return new AqlApiDynamicFieldsDomains.AqlApiComparator(AqlFieldEnum.buildModuleName, subDomains);
     }
 
     public static AqlApiDynamicFieldsDomains.AqlApiArtifactDynamicFieldsDomains<AqlApiModule> artifact() {

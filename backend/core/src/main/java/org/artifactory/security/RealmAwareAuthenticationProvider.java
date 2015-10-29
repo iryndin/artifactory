@@ -48,4 +48,10 @@ public interface RealmAwareAuthenticationProvider extends AuthenticationProvider
      * @return True if the user exists in the realm.
      */
     boolean userExists(String userName);
+
+    /**
+     *
+     * @return True if authenticated users should be auto-created in Artifactory
+     */
+    //boolean shouldAutoCreateUsers();
 }

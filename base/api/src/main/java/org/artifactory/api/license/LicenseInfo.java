@@ -30,7 +30,7 @@ public class LicenseInfo implements Serializable {
     public static final String UNKNOWN = "Unknown";
     public static final String ROOT = "license";
     private static final String NOT_SEARCHED = "Not Searched";
-    public static final LicenseInfo EMPTY_UNKNOWN_LICENSE = createUnknown("License Name Not Found", "");
+    public static final LicenseInfo EMPTY_UNKNOWN_LICENSE = createUnknown("", "");
     public static final LicenseInfo NOT_FOUND_LICENSE = createNotFound();
     //Signifies no attempt was made to search for this license so it doesn't get tagged as a conflict. INTERNAL USE ONLY
     public static final LicenseInfo NOT_SEARCHED_LICENSE = new LicenseInfo(NOT_SEARCHED, "", "");
@@ -46,13 +46,6 @@ public class LicenseInfo implements Serializable {
     private String regexp = "";
     private String comments = "";
     private boolean approved = false;
-    private boolean unknown;
-    private boolean validLicense;
-    private boolean found;
-    private boolean notFound;
-    private boolean notSearched;
-
-
 
     public LicenseInfo(String name, String longName, String url) {
         this.name = name;
@@ -148,7 +141,7 @@ public class LicenseInfo implements Serializable {
      * NOT_FOUND AND NOT_SEARCHED (so this is a found license that was extracted)
      */
     public boolean isFound() {
-        return !isNotFound() && !isNotSearched();
+        return !isNotFound() && !isNotSearhced();
     }
 
     /**
@@ -162,7 +155,7 @@ public class LicenseInfo implements Serializable {
         return name.equals(UNKNOWN);
     }
 
-    public boolean isNotSearched() {
+    public boolean isNotSearhced() {
         return name.equals(NOT_SEARCHED);
     }
 

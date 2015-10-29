@@ -120,19 +120,6 @@ INSERT INTO build_props VALUES
 (5, 5, 'start', '4'),
 (6, 5, 'status', 'good');
 
-INSERT INTO build_modules VALUES
-  (1, 1, 'ba:moda1'),
-  (2, 2, 'bb:modb1'),
-  (3, 2, 'bb:modb2'),
-  (4, 3, 'ba:moda1');
-
-INSERT INTO module_props VALUES
-(1, 1, 'start', '0'),
-(2, 1, 'status', 'bad'),
-(3, 2, 'start', '1'),
-(4, 2, 'status', 'not-too-bad'),
-(5, 4, 'start', '4'),
-(6, 4, 'status', 'good');
 -- Inserting date in oposite order to check re-ordering
 INSERT INTO build_promotions VALUES
 (3, 1350012000000, 'me', 'dead', NULL, 'bad stuff', NULL),
@@ -141,6 +128,12 @@ INSERT INTO build_promotions VALUES
 (4, 1350003000000, NULL, 'staging', NULL, NULL, NULL),
 (4, 1350023000000, 'tester', 'rollback', 'lost-local', 'Refused by QA', NULL),
 (4, 1350013000000, 'promoter', 'promoted', 'qa-local', 'sending to QA', 'me');
+
+INSERT INTO build_modules VALUES
+  (1, 1, 'ba:moda1'),
+  (2, 2, 'bb:modb1'),
+  (3, 2, 'bb:modb2'),
+  (4, 3, 'ba:moda1');
 
 INSERT INTO build_artifacts VALUES
 (2001, 1, 'ba1mod1-art1', 'dll', 'acab88fc2a043c2479a6de676a2f8179e9ea2167', 'a02a360ecad98a34b59863c1e65bcf71'),

@@ -19,8 +19,6 @@
 package org.artifactory.api.config;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -28,27 +26,16 @@ import java.io.Serializable;
  * User: freds Date: Aug 5, 2008 Time: 9:30:26 PM
  */
 @XStreamAlias("artifactoryVersion")
-public class VersionInfo implements Serializable, Comparable<VersionInfo> {
-
-    private static final String SNAPSHOT = "-SNAPSHOT";
-    private static final Logger log = LoggerFactory.getLogger(VersionInfo.class);
-
+public class VersionInfo implements Serializable {
     private String version;
     private String revision;
 
-    /**
-     * Serialization .ctr
-     */
     public VersionInfo() {
     }
 
     public VersionInfo(String version, String revision) {
         this.version = version;
         this.revision = revision;
-    }
-
-    public VersionInfo(String version) {
-        this.version = version;
     }
 
     public String getVersion() {
@@ -73,64 +60,5 @@ public class VersionInfo implements Serializable, Comparable<VersionInfo> {
                 "version='" + version + '\'' +
                 ", revision='" + revision + '\'' +
                 '}';
-    }
-
-    /**
-     * Performs version compare
-     *
-     * @param other {@link VersionInfo} to compare against this instance
-     *
-     * @exception  NumberFormatException if the {@code Version}
-     *             does not contain a parsable {@code int}.
-     *
-     * @return int (-1/0/1)
-     */
-    @Override
-    public int compareTo(VersionInfo other) {
-        if (other.getVersion().endsWith(SNAPSHOT)) {
-            log.debug("Found development {} version, assuming it grader than any other version ...", other);
-            return 1;
-        }
-
-        String[] arrLeft = other.getVersion().split("\\.");
-        String[] arrRight = this.getVersion().split("\\.");
-
-        // TODO: Should we support revision as well?
-
-        int i=0;
-        while(i<arrLeft.length || i<arrRight.length){
-            if(i<arrLeft.length && i<arrRight.length){
-                if(Integer.parseInt(arrLeft[i]) < Integer.parseInt(arrRight[i])){
-                    return -1;
-                }else if(Integer.parseInt(arrLeft[i]) > Integer.parseInt(arrRight[i])){
-                    return 1;
-                }
-            } else if(i<arrLeft.length){
-                if(Integer.parseInt(arrLeft[i]) != 0){
-                    return 1;
-                }
-            } else if(i<arrRight.length){
-                if(Integer.parseInt(arrRight[i]) != 0){
-                    return -1;
-                }
-            }
-
-            i++;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Defines equality of VersionInfo
-     */
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (!(other instanceof VersionInfo)) return false;
-
-        VersionInfo that = (VersionInfo)other;
-        return this.getVersion().equals(that.getVersion()) &&
-                this.getRevision().equals(that.getRevision());
     }
 }

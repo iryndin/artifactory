@@ -8,7 +8,7 @@ import static org.artifactory.aql.model.AqlFieldEnum.*;
 /**
  * @author Gidi Shabat
  */
-@QueryTypes(value = statistics, fields = {itemId, itemType, itemRepo, itemPath, itemName,
+@QueryTypes(value = statistics, fields = {itemNodeId, itemType, itemRepo, itemPath, itemName,
         itemDepth, itemCreated, itemCreatedBy, itemModified, itemModifiedBy, itemUpdated,
         itemSize, itemActualSha1, itemOriginalSha1, itemActualMd5, itemOriginalMd5})
 public interface AqlStatisticItem extends AqlItem {

@@ -82,41 +82,6 @@ public class BintrayItemInfo implements Serializable {
         this.created = created;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BintrayItemInfo)) {
-            return false;
-        }
-
-        BintrayItemInfo that = (BintrayItemInfo) o;
-
-        if (!name.equals(that.name)) {
-            return false;
-        }
-        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null) {
-            return false;
-        }
-        if (version != null ? !version.equals(that.version) : that.version != null) {
-            return false;
-        }
-        if (repo != null ? !repo.equals(that.repo) : that.repo != null) {
-            return false;
-        }
-
-        return !(path != null ? !path.equals(that.path) : that.path != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (repo != null ? repo.hashCode() : 0);
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        return result;
-    }
 }
+
+

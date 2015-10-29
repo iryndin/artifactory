@@ -25,14 +25,11 @@ import org.artifactory.api.common.BasicStatusHolder;
 import org.artifactory.binstore.BinaryInfo;
 import org.artifactory.io.checksum.Sha1Md5ChecksumInputStream;
 import org.artifactory.storage.StorageException;
-import org.artifactory.storage.binstore.GarbageCollectorInfo;
-import org.artifactory.storage.binstore.service.BinaryData;
 import org.artifactory.storage.binstore.service.BinaryInfoImpl;
 import org.artifactory.storage.binstore.service.BinaryNotFoundException;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
 import org.artifactory.storage.binstore.service.BinaryProviderHelper;
 import org.artifactory.storage.binstore.service.FileBinaryProvider;
-import org.artifactory.storage.binstore.service.GarbageCollectorListener;
 import org.artifactory.storage.binstore.service.annotation.BinaryProviderClassInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +46,6 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,13 +59,8 @@ import java.util.concurrent.TimeUnit;
  * @author Fred Simon
  */
 @BinaryProviderClassInfo(nativeName = "double")
-public class DoubleFileBinaryProviderImpl extends BinaryProviderBase implements FileBinaryProvider ,GarbageCollectorListener{
+public class DoubleFileBinaryProviderImpl extends BinaryProviderBase implements FileBinaryProvider {
     private static final Logger log = LoggerFactory.getLogger(DoubleFileBinaryProviderImpl.class);
-
-    @Override
-    public void initialize() {
-        getBinaryStoreServices().addGCListener(this);
-    }
 
     public void syncFilestores() {
         log.info("Synchronizing Binary Stores");
@@ -391,20 +382,6 @@ public class DoubleFileBinaryProviderImpl extends BinaryProviderBase implements 
         }
         //log.trace("Saved  temp file: {} {}", temp[0].getAbsolutePath(), temp[1].getAbsolutePath());
         return result;
-    }
-
-    @Override
-    public void start() {}
-
-    @Override
-    public void toDelete(Collection<BinaryData> binsToDelete) {}
-
-    @Override
-    public void finished(GarbageCollectorInfo result) {
-        long start = System.currentTimeMillis();
-        log.info("Double filestore found. Activating Checksum synchronization.");
-        syncFilestores();
-        log.info("Checksum synchronization took " + (System.currentTimeMillis() - start) + "ms");
     }
 
     interface Do {

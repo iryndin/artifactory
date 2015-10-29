@@ -21,7 +21,7 @@ package org.artifactory.repo;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.artifactory.addon.AddonsManager;
-import org.artifactory.addon.filteredresources.FilteredResourcesAddon ;
+import org.artifactory.addon.FilteredResourcesAddon;
 import org.artifactory.api.context.ContextHelper;
 import org.artifactory.api.module.ModuleInfo;
 import org.artifactory.api.module.ModuleInfoUtils;

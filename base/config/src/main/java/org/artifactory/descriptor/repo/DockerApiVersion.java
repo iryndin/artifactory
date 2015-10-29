@@ -26,16 +26,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
  */
 @XmlEnum(value = String.class)
 public enum DockerApiVersion {
-    @XmlEnumValue("V1")V1("V1"),
-    @XmlEnumValue("V2")V2("V2");
-
-    private final String val;
-
-    DockerApiVersion(String val) {
-        this.val = val;
-    }
-
-    public String toString() {
-        return val;
-    }
+    @XmlEnumValue("V1")V1,
+    @XmlEnumValue("V2")V2
 }

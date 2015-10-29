@@ -34,8 +34,6 @@ public class BuildModuleDomainsElement extends LazyParserElement implements Doma
                 fork(new EmptyIncludeDomainElement(artifacts), forward(dot, buildArtifactDomains))));
         list.add(forward(new InternalNameElement(dependencies.signatue),
                 fork(new EmptyIncludeDomainElement(dependencies), forward(dot, buildDependenciesDomains))));
-        list.add(forward(new InternalNameElement(moduleProperties.signatue),
-                fork(new EmptyIncludeDomainElement(moduleProperties), forward(dot, buildModulePropertiesDomains))));
     }
 
     @Override

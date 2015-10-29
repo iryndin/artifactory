@@ -18,14 +18,12 @@
 
 package org.artifactory.storage.build.service;
 
-import org.artifactory.api.build.*;
-import org.artifactory.api.build.diff.BuildParams;
+import org.artifactory.api.build.ImportableExportableBuild;
 import org.artifactory.build.BuildRun;
 import org.artifactory.checksum.ChecksumType;
 import org.jfrog.build.api.Build;
 import org.jfrog.build.api.release.PromotionStatus;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -65,17 +63,11 @@ public interface BuildStoreService {
 
     void deleteBuild(BuildRun buildRun);
 
-    Set<BuildRun> getLatestBuildsPaging(String offset ,String orderBy,String direction,String limit);
-
     void deleteBuild(String buildName, String buildNumber, String buildStarted);
 
     void deleteAllBuilds();
 
     Set<BuildRun> getLatestBuildsByName();
-
-    List<GeneralBuild> getBuildForNamePaging(String buildName, String orderBy, String direction, String offset, String limit) throws SQLException;
-
-    int getBuildForNameTotalCount(String buildName) throws SQLException;
 
     Build getBuildJson(BuildRun buildRun);
 
@@ -84,34 +76,4 @@ public interface BuildStoreService {
     void addPromotionStatus(Build build, PromotionStatus promotion, String currentUser);
 
     Set<BuildRun> findBuildsForChecksum(BuildSearchCriteria criteria, ChecksumType type, String checksum);
-
-    List<PublishedModule> getPublishedModules(String buildName, String date, String orderBy, String direction, String offset, String limit);
-
-    int  getPublishedModulesCounts(String buildName, String date);
-
-    List<ModuleArtifact> getModuleArtifact(String buildName,String buildNumber, String moduleId,String date, String orderBy, String direction, String offset, String limit);
-
-    int getModuleArtifactCount(String buildNumber, String moduleId,String date);
-
-    List<ModuleDependency> getModuleDependency(String buildNumber, String moduleId,String date, String orderBy, String direction, String offset, String limit);
-
-     int getModuleDependenciesCount(String buildNumber, String moduleId,String date);
-
-    List<ModuleArtifact> getModuleArtifactsForDiffWithPaging(BuildParams buildParams, String offset, String limit);
-
-    int getModuleArtifactsForDiffCount(BuildParams buildParams, String offset, String limit);
-
-    List<ModuleDependency> getModuleDependencyForDiffWithPaging(BuildParams buildParams, String offset, String limit);
-
-    int getModuleDependencyForDiffCount(BuildParams buildParams, String offset, String limit);
-
-    List<GeneralBuild> getPrevBuildsList(String buildName, String buildDate);
-
-    List<BuildProps> getBuildProps(BuildParams buildParams, String offset, String limit);
-
-    int getPropsDiffCount(BuildParams buildParams);
-
-    List<BuildProps> getBuildPropsData(BuildParams buildParams, String offset, String limit, String orderBy);
-
-    long getBuildPropsCounts(BuildParams buildParams);
-    }
+}

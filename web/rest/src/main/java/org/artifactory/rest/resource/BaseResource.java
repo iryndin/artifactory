@@ -30,7 +30,6 @@ public abstract class BaseResource {
     protected HttpServletResponse servletResponse;
     @Autowired
     protected ServiceExecutor serviceExecutor;
-
     protected IResponse artifactoryResponse;
 
     @Context
@@ -41,7 +40,7 @@ public abstract class BaseResource {
     HttpHeaders httpHeaders;
 
     @Autowired
-    @Qualifier("artifactoryUiApiResponse")
+    @Qualifier("artifactoryUiResponse")
     public void setArtifactoryResponse(IResponse artifactoryResponse) {
         this.artifactoryResponse = artifactoryResponse;
     }

@@ -110,11 +110,11 @@ public class DynamicFileBinaryProviderImpl extends FileBinaryProviderBase implem
         for (File file : files) {
             filesInFolder.add(file.getName());
         }
-        Set<String> existingSha1 = getBinaryStoreServices().isInStore(filesInFolder);
+        Set<String> existingSha1 = getBinaryStore().isInStore(filesInFolder);
         for (File file : files) {
             String sha1 = file.getName();
             if (!existingSha1.contains(sha1)) {
-                if (getBinaryStoreServices().isActivelyUsed(sha1)) {
+                if (getBinaryStore().isActivelyUsed(sha1)) {
                     statusHolder.status("Skipping deletion for in-use artifact record: " + sha1, log);
                 } else {
                     long size = file.length();

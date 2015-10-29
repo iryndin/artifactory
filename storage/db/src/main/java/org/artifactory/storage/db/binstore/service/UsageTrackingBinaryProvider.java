@@ -22,9 +22,8 @@ import org.artifactory.binstore.BinaryInfo;
 import org.artifactory.storage.binstore.BinaryStoreInputStream;
 import org.artifactory.storage.binstore.service.BinaryNotFoundException;
 import org.artifactory.storage.binstore.service.BinaryProvider;
-import org.artifactory.storage.binstore.service.SkippableInputStream;
-import org.artifactory.storage.binstore.service.base.BinaryProviderBase;
-import org.artifactory.storage.binstore.service.BinaryStoreServices;
+import org.artifactory.storage.binstore.service.BinaryProviderBase;
+import org.artifactory.storage.binstore.service.InternalBinaryStore;
 import org.artifactory.storage.binstore.service.annotation.BinaryProviderClassInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class UsageTrackingBinaryProvider extends BinaryProviderBase implements B
     @Nonnull
     @Override
     public InputStream getStream(String sha1) throws BinaryNotFoundException {
-        return new ReaderTrackingStream(next().getStream(sha1), sha1, getBinaryStoreServices());
+        return new ReaderTrackingStream(next().getStream(sha1), sha1, getBinaryStore());
     }
 
 
@@ -66,18 +65,16 @@ public class UsageTrackingBinaryProvider extends BinaryProviderBase implements B
         return next().delete(sha1);
     }
 
-    static class ReaderTrackingStream extends BufferedInputStream implements BinaryStoreInputStream ,SkippableInputStream{
+    static class ReaderTrackingStream extends BufferedInputStream implements BinaryStoreInputStream {
         private final String sha1;
-        private final InputStream inputStream;
-        private BinaryStoreServices binaryStoreServices;
+        private InternalBinaryStore binaryStore;
         private boolean closed = false;
 
-        public ReaderTrackingStream(InputStream is, String sha1, BinaryStoreServices binaryStoreServices) {
+        public ReaderTrackingStream(InputStream is, String sha1, InternalBinaryStore binaryStore) {
             super(is);
-            inputStream=is;
             this.sha1 = sha1;
-            this.binaryStoreServices = binaryStoreServices;
-            int newReadersCount = binaryStoreServices.incrementNoDeleteLock(sha1);
+            this.binaryStore = binaryStore;
+            int newReadersCount = binaryStore.incrementNoDeleteLock(sha1);
             if (newReadersCount < 0) {
                 try {
                     // File being deleted...
@@ -101,17 +98,9 @@ public class UsageTrackingBinaryProvider extends BinaryProviderBase implements B
             } finally {
                 if (!closed) {
                     closed = true;
-                    binaryStoreServices.decrementNoDeleteLock(sha1);
+                    binaryStore.decrementNoDeleteLock(sha1);
                 }
             }
-        }
-
-        @Override
-        public boolean isSkippable() {
-            if(inputStream instanceof SkippableInputStream){
-                return ((SkippableInputStream)inputStream).isSkippable();
-            }
-            return true;
         }
     }
 

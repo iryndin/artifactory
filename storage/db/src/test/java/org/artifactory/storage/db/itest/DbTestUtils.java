@@ -46,10 +46,10 @@ public class DbTestUtils {
      */
     public static String[] tables = new String[]{
             "db_properties", "artifactory_servers",
-            "stats_remote", "stats", "watches", "node_props", "node_meta_infos", "nodes",
+            "stats", "watches", "node_props", "node_meta_infos", "nodes",
             "indexed_archives_entries", "archive_names", "archive_paths", "indexed_archives",
             "binary_blobs", "binaries",
-            "aces", "acls", "users_groups", "groups", "user_props", "users",
+            "aces", "acls", "users_groups", "groups", "users",
             "permission_target_repos", "permission_targets",
             "configs", "tasks",
             "module_props", "build_props", "build_jsons", "build_promotions",

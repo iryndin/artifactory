@@ -20,7 +20,6 @@ package org.artifactory.search.archive;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.artifactory.addon.AddonsManager;
 import org.artifactory.addon.HaAddon;
 import org.artifactory.addon.ha.HaCommonAddon;
@@ -32,7 +31,7 @@ import org.artifactory.fs.ItemInfo;
 import org.artifactory.fs.ZipEntryInfo;
 import org.artifactory.mime.MimeType;
 import org.artifactory.mime.NamingUtils;
-import org.artifactory.model.xstream.fs.ArchiveEntryImpl;
+import org.artifactory.model.xstream.fs.ZipEntryImpl;
 import org.artifactory.repo.LocalRepo;
 import org.artifactory.repo.RepoPath;
 import org.artifactory.repo.RepoPathFactory;
@@ -50,7 +49,7 @@ import org.artifactory.schedule.TaskUtils;
 import org.artifactory.schedule.quartz.QuartzCommand;
 import org.artifactory.spring.InternalContextHelper;
 import org.artifactory.storage.db.DbService;
-import org.artifactory.storage.fs.VfsArchiveFile;
+import org.artifactory.storage.fs.VfsZipFile;
 import org.artifactory.storage.fs.service.ArchiveEntriesService;
 import org.artifactory.storage.fs.service.FileService;
 import org.artifactory.storage.fs.service.TasksService;
@@ -70,6 +69,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
 
 import static org.artifactory.schedule.StopStrategy.IMPOSSIBLE;
 
@@ -145,12 +145,12 @@ public class ArchiveIndexerImpl implements InternalArchiveIndexer {
 
             // start indexing ...
             log.info("Indexing archive: {}", vfsFile);
-            try (VfsArchiveFile archive = new VfsArchiveFile(vfsFile)) {
-                List<? extends ArchiveEntry> entries = archive.entries();
+            try (VfsZipFile jar = new VfsZipFile(vfsFile)) {
+                List<? extends ZipEntry> entries = jar.entries();
                 Set<ZipEntryInfo> zipEntryInfos = Sets.newHashSet();
-                for (ArchiveEntry zipEntry : entries) {
+                for (ZipEntry zipEntry : entries) {
                     if (!zipEntry.isDirectory()) {
-                        zipEntryInfos.add(new ArchiveEntryImpl(zipEntry));
+                        zipEntryInfos.add(new ZipEntryImpl(zipEntry));
                     }
                 }
 

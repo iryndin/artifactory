@@ -12,11 +12,12 @@ import java.util.Date;
  */
 public class IfRangeSelector {
 
-    private String ifRange;
+    private static String ifRange;
     private String actualSha1;
     private String headerEtag;
     private long actualLastModified;
     private long headerEtagLastModified;
+
 
     /**
      * this Constructor is being used in case that the If-Range header does not exist
@@ -28,7 +29,6 @@ public class IfRangeSelector {
      * this Constructor is being used in case that the If-Range header contains ETag
      */
     public IfRangeSelector(String headerEtag, String actualSha1) {
-        this.ifRange = headerEtag;
         this.headerEtag = headerEtag;
         this.actualSha1 = actualSha1;
     }
@@ -36,9 +36,9 @@ public class IfRangeSelector {
     /**
      * this Constructor is being used in case that the If-Range header contains modification date
      */
-    public IfRangeSelector(String ifRange, long headerEtagLastModified, long actualLastModified) {
-        this.ifRange = ifRange;
+    public IfRangeSelector(long headerEtagLastModified, long actualLastModified) {
         this.headerEtagLastModified = headerEtagLastModified;
+
         this.actualLastModified = actualLastModified;
     }
 
@@ -46,6 +46,7 @@ public class IfRangeSelector {
      * Creates  IfRangeHandler instance according to the If-Range header existence and value
      */
     public static IfRangeSelector constructIfRange(String ifRange, long lastModified, String sha1) {
+        IfRangeSelector.ifRange = ifRange;
         if (StringUtils.isBlank(ifRange)) {
             return new IfRangeSelector();
         }
@@ -53,7 +54,7 @@ public class IfRangeSelector {
         if (date == null) {
             return new IfRangeSelector(ifRange, sha1);
         } else {
-            return new IfRangeSelector(ifRange, date.getTime(), lastModified);
+            return new IfRangeSelector(date.getTime(), lastModified);
         }
     }
 

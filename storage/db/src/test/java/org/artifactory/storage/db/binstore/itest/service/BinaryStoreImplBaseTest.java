@@ -29,7 +29,7 @@ import org.artifactory.common.ArtifactoryHome;
 import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.binstore.GarbageCollectorInfo;
 import org.artifactory.storage.db.binstore.dao.BinariesDao;
-import org.artifactory.storage.binstore.service.BinaryData;
+import org.artifactory.storage.db.binstore.entity.BinaryData;
 import org.artifactory.storage.db.binstore.service.BinaryStoreImpl;
 import org.artifactory.storage.db.fs.dao.NodesDao;
 import org.artifactory.storage.db.fs.entity.Node;

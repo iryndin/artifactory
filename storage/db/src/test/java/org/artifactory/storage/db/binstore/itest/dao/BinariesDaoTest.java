@@ -27,7 +27,7 @@ import com.google.common.collect.Sets;
 import org.artifactory.api.storage.BinariesInfo;
 import org.artifactory.checksum.ChecksumType;
 import org.artifactory.storage.db.binstore.dao.BinariesDao;
-import org.artifactory.storage.binstore.service.BinaryData;
+import org.artifactory.storage.db.binstore.entity.BinaryData;
 import org.artifactory.storage.db.itest.DbBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.BeforeClass;

@@ -34,7 +34,6 @@ public class UserConfigurationImpl {
     private Set<String> groups;
     private String lastLoggedIn;
     private String realm;
-    private boolean offlineMode;
 
     public UserConfigurationImpl() {
     }
@@ -112,14 +111,6 @@ public class UserConfigurationImpl {
 
     public void setRealm(String realm) {
         this.realm = realm;
-    }
-
-    public boolean isOfflineMode() {
-        return offlineMode;
-    }
-
-    public void setOfflineMode(boolean offlineMode) {
-        this.offlineMode = offlineMode;
     }
 
     @Override

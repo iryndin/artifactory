@@ -60,7 +60,7 @@ public interface LdapGroupAddon extends Addon {
     void populateGroups(String userDn, MutableUserInfo userInfo);
 
     /**
-     * Get the enabled {@link LdapSetting} in the system, in the pro version of Artifactory this will return more
+     * Get the enabled {@link LdapSetting} in the system, in the powerpack version of Artifactory this will return more
      * than one enabled LDAP setting configuration.
      *
      * @return The enabled LDAP setting(s)

@@ -38,9 +38,7 @@ import org.artifactory.api.security.AuthorizationService;
 import org.artifactory.checksum.ChecksumInfo;
 import org.artifactory.checksum.ChecksumType;
 import org.artifactory.common.ConstantValues;
-import org.artifactory.descriptor.repo.LocalRepoDescriptor;
 import org.artifactory.descriptor.repo.SnapshotVersionBehavior;
-import org.artifactory.descriptor.repo.VirtualRepoDescriptor;
 import org.artifactory.factory.InfoFactoryHolder;
 import org.artifactory.fs.MutableFileInfo;
 import org.artifactory.fs.RepoResource;
@@ -173,14 +171,7 @@ public class UploadServiceImpl implements UploadService {
     }
 
     private LocalRepo getTargetRepository(ArtifactoryRequest request) {
-        String repoKey = request.getRepoKey();
-        VirtualRepoDescriptor virtualRepoDescriptor = repoService.virtualRepoDescriptorByKey(repoKey);
-        if (virtualRepoDescriptor == null) {
-            return repoService.localRepositoryByKey(repoKey);
-        }
-
-        LocalRepoDescriptor defaultDeploymentRepo = virtualRepoDescriptor.getDefaultDeploymentRepo();
-        return defaultDeploymentRepo != null ? repoService.localRepositoryByKey(defaultDeploymentRepo.getKey()) : null;
+        return repoService.localRepositoryByKey(request.getRepoKey());
     }
 
     private boolean isTargetRepositoryInvalid(LocalRepo targetRepository) {
@@ -197,8 +188,8 @@ public class UploadServiceImpl implements UploadService {
 
             response.setHeader("Allow", "GET");
             responseStatus = HttpStatus.SC_METHOD_NOT_ALLOWED;
-            responseMessage = "No local repository was configured as local deployment " +
-                    "repository for the (" + repoKey + ") virtual repository.";
+            responseMessage = "A virtual repository cannot be used for deployment (" + repoKey +
+                    "). Use a local repository as deployment target.";
         } else {
 
             responseStatus = SC_NOT_FOUND;
@@ -274,7 +265,7 @@ public class UploadServiceImpl implements UploadService {
         annotateWithRequestPropertiesIfPermitted(request, repoPath);
 
         sendSuccessfulResponse(request, response, repoPath, true);
-        log.info("Successfully created directory '{}'", request.getRepoPath());
+        log.info("Directory '{}' was created successfully.", request.getRepoPath());
     }
 
     private void annotateWithRequestPropertiesIfPermitted(ArtifactoryRequest request, RepoPath repoPath) {

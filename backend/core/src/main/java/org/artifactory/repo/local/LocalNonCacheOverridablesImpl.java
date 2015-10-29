@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Aggregates and polls all the overridable components when needing to determine
@@ -48,11 +47,14 @@ public class LocalNonCacheOverridablesImpl implements LocalNonCacheOverridables,
 
     @Override
     public void init() {
-        Collection<LocalNonCacheOverridable> allOverridableIncludingMe = context.beansForType(
-                LocalNonCacheOverridable.class).values();
+        Collection<LocalNonCacheOverridable> allOverridableIncludingMe =
+                context.beansForType(LocalNonCacheOverridable.class).values();
         Object thisAsBean = context.getBean(beanName);
-        overridable.addAll(allOverridableIncludingMe.stream().filter(
-                localNonCacheOverridable -> localNonCacheOverridable != thisAsBean).collect(Collectors.toList()));
+        for (LocalNonCacheOverridable t : allOverridableIncludingMe) {
+            if (t != thisAsBean) {
+                overridable.add(t);
+            }
+        }
         log.debug("Loaded overridable: {}", overridable);
     }
 

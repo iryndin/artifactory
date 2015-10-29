@@ -17,8 +17,8 @@
   ~ You should have received a copy of the GNU Lesser General Public License
   ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
@@ -28,12 +28,8 @@
     </bean>
 
     <!-- register artifactory authentication filters -->
-    <bean class="org.artifactory.webapp.servlet.authentication.MissionControlAuthenticationFilter"/>
     <bean class="org.artifactory.webapp.servlet.authentication.ArtifactoryBasicAuthenticationFilter"/>
     <bean class="org.artifactory.webapp.servlet.authentication.ArtifactoryRememberMeFilter"/>
-
-    <!-- register artifactory authentication interceptors -->
-    <bean class="org.artifactory.webapp.servlet.authentication.interceptor.anonymous.AnonymousLoginInterceptor"/>
 
     <!-- create the spring basic authentication filter (will be used as a delegate) -->
     <bean id="basicAuthenticationFilter"
@@ -50,7 +46,6 @@
     </bean>
 
     <!-- create authentication providers -->
-    <bean class="org.artifactory.security.mission.control.MissionControlAuthenticationProviderImpl"/>
     <bean id="ldapAuthenticationProvider" class="org.artifactory.security.ldap.ArtifactoryLdapAuthenticationProvider"/>
     <bean id="crowdAuthenticationProviderAdapter"
           class="org.artifactory.security.crowd.CrowdAuthenticationProviderAdapter"/>
@@ -63,14 +58,14 @@
     <!-- authentication providers order is important. keep internal provider after ldap and sso -->
     <bean id="authenticationManager" class="org.artifactory.security.RealmAwareAuthenticationManager">
         <property name="eraseCredentialsAfterAuthentication" value="false"/>
-        <constructor-arg>
+        <property name="providers">
             <list>
                 <ref bean="ldapAuthenticationProvider"/>
                 <ref bean="crowdAuthenticationProviderAdapter"/>
                 <ref bean="dbAuthenticationProvider"/>
                 <ref bean="rememberMeAuthenticationProvider"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="passwordEncoder"

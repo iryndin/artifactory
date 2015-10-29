@@ -38,7 +38,6 @@ import javax.annotation.Nonnull;
 public interface NuGetAddon extends Addon {
 
     String API_KEY_HEADER = "X-NuGet-ApiKey";
-    String NUGET_USER_AGENT = "nuget";
     String API_KEY_SEPARATOR = ":";
     String REPO_KEY_PARAM = "repoKey";
     String PATH_PARAM = "path";

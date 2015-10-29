@@ -19,6 +19,7 @@
 package org.artifactory.maven.index;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.lucene.store.FSDirectory;
@@ -67,7 +68,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @author Yoav Landman
@@ -89,16 +91,96 @@ public class MavenIndexerServiceImpl implements InternalMavenIndexerService {
 
     @Override
     public void init() {
-        new IndexerSchedulerHandler(getDescriptor(), null).reschedule();
+        new IndexerSchedulerHandler(getAndCheckDescriptor(), null).reschedule();
     }
 
     @Override
     public void reload(CentralConfigDescriptor oldDescriptor) {
-        new IndexerSchedulerHandler(getDescriptor(), oldDescriptor.getIndexer()).reschedule();
+        new IndexerSchedulerHandler(getAndCheckDescriptor(), oldDescriptor.getIndexer()).reschedule();
     }
 
-    private IndexerDescriptor getDescriptor() {
-        return centralConfig.getDescriptor().getIndexer();
+    private IndexerDescriptor getAndCheckDescriptor() {
+        IndexerDescriptor descriptor = centralConfig.getDescriptor().getIndexer();
+        if (descriptor != null) {
+            SortedSet<RepoBaseDescriptor> set = new TreeSet<>();
+            if (descriptor.getExcludedRepositories() == null) {
+                //Auto exclude all remote and virtual repos
+                set.addAll(repositoryService.getRemoteRepoDescriptors());
+                set.addAll(getAllVirtualReposExceptGlobal());
+            } else {
+                set.addAll(descriptor.getExcludedRepositories());
+                // Always remove globalVirtual one
+                VirtualRepoDescriptor dummyGlobal = new VirtualRepoDescriptor();
+                dummyGlobal.setKey(VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY);
+                set.remove(dummyGlobal);
+            }
+            descriptor.setExcludedRepositories(set);
+        }
+        return descriptor;
+    }
+
+    static class IndexerSchedulerHandler extends BaseTaskServiceDescriptorHandler<IndexerDescriptor> {
+        final List<IndexerDescriptor> oldDescriptorHolder = Lists.newArrayList();
+        final List<IndexerDescriptor> newDescriptorHolder = Lists.newArrayList();
+
+        IndexerSchedulerHandler(IndexerDescriptor newDesc, IndexerDescriptor oldDesc) {
+            if (newDesc != null) {
+                newDescriptorHolder.add(newDesc);
+            }
+            if (oldDesc != null) {
+                oldDescriptorHolder.add(oldDesc);
+            }
+        }
+
+        @Override
+        public String jobName() {
+            return "Indexer";
+        }
+
+        @Override
+        public List<IndexerDescriptor> getNewDescriptors() {
+            return newDescriptorHolder;
+        }
+
+        @Override
+        public List<IndexerDescriptor> getOldDescriptors() {
+            return oldDescriptorHolder;
+        }
+
+        @Override
+        public Predicate<Task> getAllPredicate() {
+            return new Predicate<Task>() {
+                @Override
+                public boolean apply(Task input) {
+                    return MavenIndexerJob.class.isAssignableFrom(input.getType());
+                }
+            };
+        }
+
+        @Override
+        public Predicate<Task> getPredicate(@Nonnull IndexerDescriptor descriptor) {
+            return getAllPredicate();
+        }
+
+        @Override
+        public void activate(@Nonnull IndexerDescriptor descriptor, boolean manual) {
+            String cronExp = descriptor.getCronExp();
+            if (descriptor.isEnabled() && cronExp != null) {
+                TaskBase task = TaskUtils.createCronTask(MavenIndexerJob.class, cronExp);
+                // Passing null for repo keys because they are taken from the indexer descriptor
+                MavenIndexerRunSettings settings = new MavenIndexerRunSettings(false, false, null);
+                task.addAttribute(MavenIndexerJob.SETTINGS, settings);
+                InternalContextHelper.get().getBean(TaskService.class).startTask(task, false, manual);
+                log.info("Indexer activated with cron expression '{}'.", cronExp);
+            } else {
+                log.debug("No indexer cron expression is configured. Indexer will be disabled.");
+            }
+        }
+
+        @Override
+        public IndexerDescriptor findOldFromNew(@Nonnull IndexerDescriptor newDescriptor) {
+            return oldDescriptorHolder.isEmpty() ? null : oldDescriptorHolder.get(0);
+        }
     }
 
     @Override
@@ -144,28 +226,23 @@ public class MavenIndexerServiceImpl implements InternalMavenIndexerService {
     @Override
     public void index(MavenIndexerRunSettings settings) {
         log.info("Starting Maven indexing");
-        IndexerDescriptor descriptor = getDescriptor();
+        IndexerDescriptor descriptor = getAndCheckDescriptor();
         if (!settings.isForceRemoteDownload() && !descriptor.isEnabled() && !settings.isManualRun()) {
             log.debug("Indexer is disabled - doing nothing.");
             return;
         }
 
-        Set<? extends RepoDescriptor> includedRepositories;
+        Set<? extends RepoDescriptor> excludedRepositories;
         List<String> repoKeys = settings.getRepoKeys();
         if ((repoKeys == null) || repoKeys.isEmpty()) {
-            includedRepositories = descriptor.getIncludedRepositories();
-            if (includedRepositories == null) {
-                // Nothing to index
-                log.info("Indexer activated but has no repository declared to index - doing nothing.");
-                return;
-            }
+            excludedRepositories = descriptor.getExcludedRepositories();
         } else {
-            // only calculate the requested repositories
-            includedRepositories = calcSpecificReposForIndexing(repoKeys);
+            // everything is excluded besides this one repo
+            excludedRepositories = calcSpecificRepoForIndexing(settings.getRepoKeys());
         }
 
         log.info("Starting non virtual repositories indexing...");
-        List<RealRepo> indexedRepos = getNonVirtualRepositoriesToIndex(includedRepositories);
+        List<RealRepo> indexedRepos = getNonVirtualRepositoriesToIndex(excludedRepositories);
         log.info("Non virtual repositories to index: {}", indexedRepos);
         //Do the indexing work
         for (RealRepo indexedRepo : indexedRepos) {
@@ -197,31 +274,55 @@ public class MavenIndexerServiceImpl implements InternalMavenIndexerService {
                 }
             }
         }
-        mergeVirtualRepoIndexes(includedRepositories, indexedRepos);
+        mergeVirtualRepoIndexes(excludedRepositories, indexedRepos);
         log.info("Finished Maven indexing...");
     }
 
-    private Set<? extends RepoDescriptor> calcSpecificReposForIndexing(List<String> repoKeys) {
-        Set<RepoBaseDescriptor> repos = Sets.newHashSet();
-        repos.addAll(repositoryService.getLocalRepoDescriptors());
-        repos.addAll(repositoryService.getRemoteRepoDescriptors());
-        repos.addAll(getAllVirtualReposExceptGlobal());
-        repos.removeIf(descriptor -> !repoKeys.contains(descriptor.getKey()));
-        return repos;
+    private Set<? extends RepoDescriptor> calcSpecificRepoForIndexing(@Nullable final List<String> repoKeys) {
+        Set<RepoBaseDescriptor> excludedRepos = Sets.newHashSet();
+        excludedRepos.addAll(repositoryService.getLocalRepoDescriptors());
+        excludedRepos.addAll(repositoryService.getRemoteRepoDescriptors());
+        excludedRepos.addAll(getAllVirtualReposExceptGlobal());
+        if ((repoKeys != null) && !repoKeys.isEmpty()) {
+            Iterables.removeIf(excludedRepos, new Predicate<RepoBaseDescriptor>() {
+                @Override
+                public boolean apply(@Nullable RepoBaseDescriptor repoBaseDescriptor) {
+                    if (repoBaseDescriptor == null) {
+                        return false;
+                    }
+                    return repoKeys.contains(repoBaseDescriptor.getKey());
+                }
+            });
+        }
+
+        return excludedRepos;
     }
 
     private List<RealRepo> getNonVirtualRepositoriesToIndex(
-            @Nullable Set<? extends RepoDescriptor> includedRepositories) {
-        List<RealRepo> indexedRepos = repositoryService.getLocalAndRemoteRepositories();
-        if (includedRepositories != null) {
-            indexedRepos.removeIf(realRepo -> !includedRepositories.contains(realRepo.getDescriptor()));
+            @Nullable Set<? extends RepoDescriptor> excludedRepositories) {
+        List<RealRepo> realRepositories = repositoryService.getLocalAndRemoteRepositories();
+        List<RealRepo> indexedRepos = new ArrayList<>();
+        //Skip excluded repositories and remote repositories that are currently offline
+        for (RealRepo repo : realRepositories) {
+            boolean excluded = false;
+            if (excludedRepositories != null) {
+                for (RepoDescriptor excludedRepo : excludedRepositories) {
+                    if (excludedRepo.getKey().equals(repo.getKey())) {
+                        excluded = true;
+                        break;
+                    }
+                }
+            }
+            if (!excluded) {
+                indexedRepos.add(repo);
+            }
         }
         return indexedRepos;
     }
 
-    public void mergeVirtualRepoIndexes(@Nonnull Set<? extends RepoDescriptor> includedRepositories,
+    public void mergeVirtualRepoIndexes(Set<? extends RepoDescriptor> excludedRepositories,
             List<RealRepo> indexedRepos) {
-        List<VirtualRepo> virtualRepos = getVirtualRepos(includedRepositories);
+        List<VirtualRepo> virtualRepos = filterExcludedVirtualRepos(excludedRepositories);
         log.info("Virtual repositories to index: {}", virtualRepos);
         //Keep a list of extracted index dirs for all the local repo indexes for merging
         Map<StoringRepo, FSDirectory> extractedLocalRepoIndexes = new HashMap<>();
@@ -295,25 +396,24 @@ public class MavenIndexerServiceImpl implements InternalMavenIndexerService {
     /**
      * Returns a filtered list of virtual repositories based on the excluded repository list
      *
-     * @param includedRepositories List of repositories to index
-     * @return List of virtual repositories to index
+     * @param excludedRepositories List of repositories excluded from the indexer
+     * @return List of virtual repositories which weren't excluded
      */
-    private List<VirtualRepo> getVirtualRepos(@Nonnull Set<? extends RepoDescriptor> includedRepositories) {
+    private List<VirtualRepo> filterExcludedVirtualRepos(Set<? extends RepoDescriptor> excludedRepositories) {
         List<VirtualRepo> virtualRepositories = repositoryService.getVirtualRepositories();
         List<VirtualRepo> virtualRepositoriesCopy = new ArrayList<>(virtualRepositories);
-        virtualRepositoriesCopy.removeIf(virtualRepo -> {
-            boolean isFilterGlobalRepo = VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY.equals(virtualRepo.getKey())
-                    && ConstantValues.disableGlobalRepoAccess.getBoolean();
-
-            boolean isIncluded = includedRepositories
-                    .stream()
-                    .map(RepoDescriptor::getKey)
-                    .collect(Collectors.toList())
-                    .contains(virtualRepo.getKey());
-
-            return isFilterGlobalRepo || !isIncluded;
-        });
-
+        for (RepoDescriptor excludedRepository : excludedRepositories) {
+            String excludedKey = excludedRepository.getKey();
+            for (VirtualRepo virtualRepository : virtualRepositories) {
+                if (excludedKey.equals(virtualRepository.getKey())) {
+                    virtualRepositoriesCopy.remove(virtualRepository);
+                } else if (VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY.equals(virtualRepository.getKey())
+                        && ConstantValues.disableGlobalRepoAccess.getBoolean()) {
+                    // remove global repo if it is disabled
+                    virtualRepositoriesCopy.remove(virtualRepository);
+                }
+            }
+        }
         return virtualRepositoriesCopy;
     }
 
@@ -329,69 +429,5 @@ public class MavenIndexerServiceImpl implements InternalMavenIndexerService {
         dummyGlobal.setKey(VirtualRepoDescriptor.GLOBAL_VIRTUAL_REPO_KEY);
         virtualRepositoriesCopy.remove(dummyGlobal);
         return virtualRepositoriesCopy;
-    }
-
-    static class IndexerSchedulerHandler extends BaseTaskServiceDescriptorHandler<IndexerDescriptor> {
-        final List<IndexerDescriptor> oldDescriptorHolder = Lists.newArrayList();
-        final List<IndexerDescriptor> newDescriptorHolder = Lists.newArrayList();
-
-        IndexerSchedulerHandler(IndexerDescriptor newDesc, IndexerDescriptor oldDesc) {
-            if (newDesc != null) {
-                newDescriptorHolder.add(newDesc);
-            }
-            if (oldDesc != null) {
-                oldDescriptorHolder.add(oldDesc);
-            }
-        }
-
-        @Override
-        public String jobName() {
-            return "Indexer";
-        }
-
-        @Override
-        public List<IndexerDescriptor> getNewDescriptors() {
-            return newDescriptorHolder;
-        }
-
-        @Override
-        public List<IndexerDescriptor> getOldDescriptors() {
-            return oldDescriptorHolder;
-        }
-
-        @Override
-        public Predicate<Task> getAllPredicate() {
-            return new Predicate<Task>() {
-                @Override
-                public boolean apply(Task input) {
-                    return MavenIndexerJob.class.isAssignableFrom(input.getType());
-                }
-            };
-        }
-
-        @Override
-        public Predicate<Task> getPredicate(@Nonnull IndexerDescriptor descriptor) {
-            return getAllPredicate();
-        }
-
-        @Override
-        public void activate(@Nonnull IndexerDescriptor descriptor, boolean manual) {
-            String cronExp = descriptor.getCronExp();
-            if (descriptor.isEnabled() && cronExp != null) {
-                TaskBase task = TaskUtils.createCronTask(MavenIndexerJob.class, cronExp);
-                // Passing null for repo keys because they are taken from the indexer descriptor
-                MavenIndexerRunSettings settings = new MavenIndexerRunSettings(false, false, null);
-                task.addAttribute(MavenIndexerJob.SETTINGS, settings);
-                InternalContextHelper.get().getBean(TaskService.class).startTask(task, false, manual);
-                log.info("Indexer activated with cron expression '{}'.", cronExp);
-            } else {
-                log.debug("No indexer cron expression is configured. Indexer will be disabled.");
-            }
-        }
-
-        @Override
-        public IndexerDescriptor findOldFromNew(@Nonnull IndexerDescriptor newDescriptor) {
-            return oldDescriptorHolder.isEmpty() ? null : oldDescriptorHolder.get(0);
-        }
     }
 }

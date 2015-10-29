@@ -19,13 +19,9 @@
 package org.artifactory.jaxb;
 
 import com.google.common.base.Charsets;
-import com.sun.xml.internal.bind.v2.runtime.IllegalAnnotationException;
-import com.sun.xml.internal.bind.v2.runtime.IllegalAnnotationsException;
 import org.apache.commons.io.IOUtils;
 import org.artifactory.descriptor.config.CentralConfigDescriptor;
 import org.artifactory.descriptor.config.CentralConfigDescriptorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -47,13 +43,12 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.List;
 
 /**
  * @author yoavl
  */
 public class JaxbHelper<T> {
-    private static final Logger log = LoggerFactory.getLogger(JaxbHelper.class);
+
     public static CentralConfigDescriptorImpl readConfig(String configXmlString) {
         URL schemaUrl = CentralConfigDescriptorImpl.class.getClassLoader().getResource("artifactory.xsd");
         if (schemaUrl == null) {
@@ -119,17 +114,6 @@ public class JaxbHelper<T> {
             }
             o = (T) unmarshaller.unmarshal(stream);
         } catch (Throwable t) {
-            // The following code resolves the errors from JAXB result.
-            // Just throwing new RuntimeException doesn't shows the root cause of the failure and it is almost impossible
-            // to conclude it without this log.
-            if(t instanceof IllegalAnnotationsException){
-                List<IllegalAnnotationException> errors = ((IllegalAnnotationsException) t).getErrors();
-                if(errors!=null){
-                    for (IllegalAnnotationException error : errors) {
-                        log.error("Failed to read object from stream, error:", error);
-                    }
-                }
-            }
             throw new RuntimeException("Failed to read object from stream.", t);
         } finally {
             IOUtils.closeQuietly(stream);

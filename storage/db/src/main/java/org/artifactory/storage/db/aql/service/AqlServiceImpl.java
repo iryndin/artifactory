@@ -6,7 +6,6 @@ import org.artifactory.aql.model.AqlPermissionProvider;
 import org.artifactory.aql.result.AqlEagerResult;
 import org.artifactory.aql.result.AqlLazyResult;
 import org.artifactory.aql.result.rows.AqlRowResult;
-import org.artifactory.storage.StorageProperties;
 import org.artifactory.storage.db.aql.dao.AqlDao;
 import org.artifactory.storage.db.aql.parser.AqlParser;
 import org.artifactory.storage.db.aql.parser.ParserElementResultContainer;
@@ -37,16 +36,13 @@ public class AqlServiceImpl implements AqlService {
 
     @Autowired
     private AqlDao aqlDao;
-    @Autowired
-    private StorageProperties storageProperties;
-
     private AqlParser parser;
     private ParserToAqlAdapter parserToAqlAdapter;
     private AqlApiToAqlAdapter aqlApiToAqlAdapter;
     private SqlQueryBuilder sqlQueryBuilder;
     private AqlQueryOptimizer optimizer;
     private AqlQueryValidator validator;
-    private AqlQueryDecorator decorator;
+    private AqlQueryRestrictor restrictor;
     private AqlPermissionProvider permissionProvider=new AqlPermissionProviderImpl();
 
     @PostConstruct
@@ -58,9 +54,9 @@ public class AqlServiceImpl implements AqlService {
         parserToAqlAdapter = new ParserToAqlAdapter();
         sqlQueryBuilder = new SqlQueryBuilder();
         aqlApiToAqlAdapter = new AqlApiToAqlAdapter();
-        optimizer = new AqlQueryOptimizer(storageProperties.getDbType());
+        optimizer = new AqlQueryOptimizer();
         validator = new AqlQueryValidator();
-        decorator = new AqlQueryDecorator();
+        restrictor = new AqlQueryRestrictor();
     }
 
     /**
@@ -110,9 +106,10 @@ public class AqlServiceImpl implements AqlService {
         AqlQuery aqlQuery = parserToAqlAdapter.toAqlModel(parserResult);
         optimizer.optimize(aqlQuery);
         validator.validate(aqlQuery,permissionProvider);
-        decorator.decorate(aqlQuery);
+        restrictor.restrict(aqlQuery, permissionProvider);
         log.trace("Successfully finished to convert the parser result into AqlApi query");
-        return getAqlQueryResult(aqlQuery);
+        AqlEagerResult aqlQueryResult = getAqlQueryResult(aqlQuery);
+        return aqlQueryResult;
     }
 
     /**
@@ -123,7 +120,7 @@ public class AqlServiceImpl implements AqlService {
         AqlQuery aqlQuery = parserToAqlAdapter.toAqlModel(parserResult);
         optimizer.optimize(aqlQuery);
         validator.validate(aqlQuery,permissionProvider);
-        decorator.decorate(aqlQuery);
+        restrictor.restrict(aqlQuery, permissionProvider);
         log.trace("Successfully finished to convert the parser result into AqlApi query");
         return getAqlQueryStreamResult(aqlQuery);
     }

@@ -65,8 +65,9 @@ public interface InternalBuildService extends ReloadableBean, BuildService {
      * Returns a map of build dependency and it's matching FileInfo
      *
      * @param build            The searched build (searching within it's dependencies)
+     * @param sourceRepository filtering by source repository key, not mandatory
      */
-    Map<Dependency, FileInfo> getBuildDependenciesFileInfos(Build build);
+    Map<Dependency, FileInfo> getBuildDependenciesFileInfos(Build build, @Nullable String sourceRepository);
 
     /**
      * Imports an exportable build info into the database. This is an internal method and should be used to import a
