@@ -1,0 +1,2 @@
+release date=09:20 08.07.2015,version=4.0,urgency=low,by=Jay Denebeim <jayd@jfrog.com>,distribution=deb
+ * initial packaging
