@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Artifactory is a binaries repository manager.
+  ~ Copyright (C) 2012 JFrog Ltd.
+  ~
+  ~ Artifactory is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Artifactory is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with Artifactory.  If not, see <http://www.gnu.org/licenses/>.
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.artifactory.oss.deb</groupId>
+    <artifactId>jfrog-artifactory-oss</artifactId>
+    <packaging>deb</packaging>
+    <name>Artifactory Oss deb</name>
+
+    <parent>
+        <groupId>org.artifactory.oss</groupId>
+        <artifactId>artifactory-distribution-parent</artifactId>
+        <version>4.2.1</version>
+    </parent>
+
+    <properties>
+        <artifactory>artifactory</artifactory>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <username>artifactory</username>
+        <group_name>artifactory</group_name>
+
+        <target_jfrog_home>/opt/jfrog</target_jfrog_home>
+        <target_artifactory_install>${target_jfrog_home}/${artifactory}</target_artifactory_install>
+        <target_jfrog_doc>${target_jfrog_home}/doc/${artifactory}-${project.version}</target_jfrog_doc>
+        <target_tomcat_home>${target_artifactory_install}/tomcat</target_tomcat_home>
+        <target_etc_dir>/etc</target_etc_dir>
+        <target_var_dir>/var${target_jfrog_home}</target_var_dir>
+        <target_artifactory_home>${target_var_dir}/${artifactory}</target_artifactory_home>
+
+    </properties>
+    <build>
+        <extensions>
+            <!-- Add support for the "deb" packaging -->
+            <extension>
+                <groupId>org.vafer</groupId>
+                <artifactId>jdeb</artifactId>
+                <version>1.4</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>deb</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>${zipFilename}</artifactId>
+                    <version>${project.version}</version>
+                    <type>zip</type>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.9</version>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.parent.groupId}</groupId>
+                                            <artifactId>${zipFilename}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>zip</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <file>
+                                ${project.build.directory}/${zipDirname}-${project.version}/bin/artifactory.default
+                            </file>
+                            <outputFile>
+                                ${project.build.directory}/${zipDirname}-${project.version}/${target_etc_dir}/default
+                            </outputFile>
+                            <regex>true</regex>
+                            <variableTokenValueMap>
+                                export TOMCAT_HOME\=.*=export TOMCAT_HOME\=${target_tomcat_home},
+                                [#]*export ARTIFACTORY_USER\=.*=export ARTIFACTORY_USER\=${username},
+                                export ARTIFACTORY_PID\=.*=export ARTIFACTORY_PID\=${target_var_dir}/run/artifactory.pid,
+                                [#]*export ARTIFACTORY_HOME\=.*=export ARTIFACTORY_HOME\=${target_artifactory_home},
+                                -Dartdist\=zip=-Dartdist\=deb
+                            </variableTokenValueMap>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>jdeb</artifactId>
+                        <groupId>org.vafer</groupId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                                <configuration>
+                                    <verbose>true</verbose>
+                                    <snapshotExpand>false</snapshotExpand>
+                                    <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
+                                    <snapshotEnv>USER</snapshotEnv>
+                                    <controlDir>${basedir}/src/deb/control</controlDir>
+                                    <dataSet>
+
+                                        <data>
+                                            <type>template</type>
+                                            <paths>
+                                                <path>/opt/jfrog</path>
+                                                <path>${target_var_dir}</path>
+                                                <path>/etc/opt/jfrog</path>
+                                                <path>${target_jfrog_doc}</path>
+                                            </paths>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>root</user>
+                                                <group>root</group>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <type>template</type>
+                                            <paths>
+                                                <path>${target_artifactory_install}</path>
+                                                <path>/etc${target_artifactory_install}</path>
+                                                <path>${target_var_dir}/run</path>
+                                                <path>${target_artifactory_home}</path>
+                                                <path>${target_artifactory_home}/logs/catalina</path>
+                                                <path>${target_tomcat_home}</path>
+                                            </paths>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <user>${username}</user>
+                                                <group>${group_name}</group>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <!--src>${project.build.directory}/${project.build.finalName}</src-->
+                                            <src>${project.build.directory}/${zipDirname}-${project.version}
+                                            </src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>${target_artifactory_install}</prefix>
+                                                <user>root</user>
+                                                <group>root</group>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                            <includes>**/bin/**</includes>
+                                            <excludes>
+                                                **/etc/**,*,**/*.bat,**/*.exe,tomcat,tomcat/temp,tomcat/webapps/**,tomcat/work
+                                            </excludes>
+                                        </data>
+                                        <data>
+                                            <!--src>${project.build.directory}/${project.build.finalName}</src-->
+                                            <src>${project.build.directory}/${zipDirname}-${project.version}
+                                            </src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>${target_artifactory_install}</prefix>
+                                                <user>root</user>
+                                                <group>root</group>
+                                            </mapper>
+                                            <excludes>
+                                                **/etc/**,*,**/*.bat,**/*.exe,**/bin/**,tomcat,tomcat/temp,tomcat/webapps/**,tomcat/work
+                                            </excludes>
+                                        </data>
+                                        <data>
+                                            <!--src>${project.build.directory}/${project.build.finalName}</src-->
+                                            <src>${project.build.directory}/${zipDirname}-${project.version}
+                                            </src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>${target_artifactory_install}</prefix>
+                                                <user>${username}</user>
+                                                <group>${group_name}</group>
+                                            </mapper>
+                                            <includes>tomcat/webapps/**</includes>
+                                        </data>
+                                        <data>
+                                            <!--src>${project.build.directory}/${project.build.finalName}</src-->
+                                            <src>
+                                                ${project.build.directory}/${zipDirname}-${project.version}/etc
+                                            </src>
+                                            <type>directory</type>
+                                            <conffile>true</conffile>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/etc${target_artifactory_install}</prefix>
+                                                <user>${username}</user>
+                                                <group>${group_name}</group>
+                                            </mapper>
+                                        </data>
+
+                                        <data>
+                                            <src>
+                                                ${project.build.directory}/${zipDirname}-${project.version}/misc/service/artifactory
+                                            </src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/etc/init.d/</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <src>
+                                                ${project.build.directory}/${zipDirname}-${project.version}/misc/service/setenv.sh
+                                            </src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>${target_tomcat_home}/bin</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <type>files</type>
+                                            <paths>
+                                                <path>${project.build.directory}/${zipDirname}-${project.version}/Third-Parties-Usage-About-Box.html</path>
+                                                <path>${project.build.directory}/${zipDirname}-${project.version}/COPYING</path>
+                                                <path>${project.build.directory}/${zipDirname}-${project.version}/COPYING.LESSER</path>
+                                                <path>${project.build.directory}/${zipDirname}-${project.version}/README.txt</path>
+                                            </paths>
+                                            <dst>${target_jfrog_doc}</dst>
+                                        </data>
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>${target_artifactory_home}/etc</linkName>
+                                            <linkTarget>/etc${target_artifactory_install}</linkTarget>
+                                        </data>
+
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>${target_artifactory_home}/misc</linkName>
+                                            <linkTarget>${target_artifactory_install}/misc</linkTarget>
+                                        </data>
+
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>${target_artifactory_home}/tomcat</linkName>
+                                            <linkTarget>${target_tomcat_home}</linkTarget>
+                                        </data>
+
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>${target_artifactory_home}/webapps</linkName>
+                                            <linkTarget>${target_artifactory_install}/webapps</linkTarget>
+                                        </data>
+
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkTarget>${target_artifactory_home}/logs/catalina</linkTarget>
+                                            <linkName>${target_tomcat_home}/logs</linkName>
+                                        </data>
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
