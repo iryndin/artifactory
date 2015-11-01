@@ -1,0 +1,20 @@
+<div class="builds-tab">
+    <jf-switch jf-switch-title="View:" ng-model="jfBuilds.mode" options="jfBuilds.viewBySwitch" controller="jfBuilds.switchControl"></jf-switch>
+
+    <div ng-switch="jfBuilds.mode">
+        <div ng-switch-when="ProducedBy">
+            <jf-grid grid-options="jfBuilds.producedByGridOptions"
+                     filter-field="name"
+                     filter-field2="number"
+                     filter-on-change="true">
+            </jf-grid>
+        </div>
+        <div ng-switch-when="UsedBy">
+            <jf-grid grid-options="jfBuilds.usedByGridOptions"
+                     filter-field="name"
+                     filter-field2="number"
+                     filter-on-change="true">
+            </jf-grid>
+        </div>
+    </div>
+</div>

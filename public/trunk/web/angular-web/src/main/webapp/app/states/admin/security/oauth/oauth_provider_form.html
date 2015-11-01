@@ -1,0 +1,162 @@
+<div class="content-layout-container"> <!-- classes: with-head-bar -->
+    <h1>{{ProviderForm.title}}</h1>
+
+    <div class="content-wrapper">
+        <form name="ProviderForm.providerForm" ng-submit="ProviderForm.save()">
+            <div class="card stretch card-pole-pad card-side-pad">
+                <div class="content-with-footer">
+                    <div class="oauth-provider-form">
+
+                        <jf-panel jf-panel-heading="Provider Settings">
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-checkbox text="Enabled">
+                                        <input type="checkbox"
+                                               id="enabled"
+                                               ng-model="ProviderForm.providerData.enabled">
+                                    </jf-checkbox>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label class="mandatory" for="providerName">Provider Name</label>
+                                        <input id="providerName"
+                                               ng-disabled="ProviderForm.mode !== 'create'"
+                                               type="text"
+                                               ng-model="ProviderForm.providerData.name"
+                                               name="providerName"
+                                               class="input-text"
+                                               required>
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-field>
+                                        <label class="mandatory">Provider Type</label>
+                                        <selectize config="ProviderForm.selectizeConfig"
+                                                   options="ProviderForm.selectizeOptions"
+                                                   ng-change="ProviderForm.onChangeProviderType()"
+                                                   ng-model="ProviderForm.providerData.providerType">
+                                        </selectize>
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="providerID" class="mandatory">Provider ID</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.id"></jf-help-tooltip>
+                                        <input id="providerID"
+                                               type="text"
+                                               ng-model="ProviderForm.providerData.id"
+                                               name="providerID"
+                                               required
+                                               class="input-text">
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="secret" class="mandatory">Secret</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.secret"></jf-help-tooltip>
+                                        <input id="secret"
+                                               type="password"
+                                               ng-model="ProviderForm.providerData.secret"
+                                               name="secret"
+                                               required
+                                               class="input-text">
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="ProviderForm.mandatoryFields[ProviderForm.providerData.providerType].domain !== undefined">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="domain" class="mandatory">Domain</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.domain"></jf-help-tooltip>
+                                        <input id="domain"
+                                               type="text"
+                                               ng-model="ProviderForm.providerData.domain"
+                                               name="domain"
+                                               required
+                                               class="input-text">
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="ProviderForm.mandatoryFields[ProviderForm.providerData.providerType].basicUrl !== undefined">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="basicUrl" class="mandatory">Basic URL</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.basicUrl"></jf-help-tooltip>
+                                        <input type="url"
+                                               class="input-text"
+                                               id="basicUrl"
+                                               name="basicUrl"
+                                               required
+                                               ng-model="ProviderForm.providerData.basicUrl"/>
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="ProviderForm.mandatoryFields[ProviderForm.providerData.providerType].authUrl !== undefined">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="authUrl" class="mandatory">Auth URL</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.authUrl"></jf-help-tooltip>
+                                        <input type="url"
+                                               class="input-text"
+                                               id="authUrl"
+                                               name="authUrl"
+                                               required
+                                               ng-model="ProviderForm.providerData.authUrl"/>
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="ProviderForm.mandatoryFields[ProviderForm.providerData.providerType].apiUrl !== undefined">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="apiUrl" class="mandatory">API URL</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.apiUrl"></jf-help-tooltip>
+                                        <input type="url"
+                                               class="input-text"
+                                               id="apiUrl"
+                                               name="apiUrl"
+                                               required
+                                               ng-model="ProviderForm.providerData.apiUrl"/>
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-if="ProviderForm.mandatoryFields[ProviderForm.providerData.providerType].tokenUrl !== undefined">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="tokenUrl" class="mandatory">Token URL</label>
+                                        <jf-help-tooltip html="ProviderForm.TOOLTIP.tokenUrl"></jf-help-tooltip>
+                                        <input type="url"
+                                               class="input-text"
+                                               id="tokenUrl"
+                                               name="tokenUrl"
+                                               required
+                                               ng-model="ProviderForm.providerData.tokenUrl"/>
+                                    </jf-field>
+                                </div>
+                            </div>
+
+                        </jf-panel>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-footer">
+                <div class="pull-right">
+                    <button class="btn btn-default" type="button"
+                            ng-click="ProviderForm.cancel()">Cancel</button>
+                    <button class="btn btn-primary" type="submit"
+                            ng-disabled="ProviderForm.isSaveDisabled()">Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
