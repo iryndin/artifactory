@@ -1,1 +1,0 @@
-username = "${artifactory_user}"${creds.line.break}password = "${artifactory_password}"${creds.line.break}
