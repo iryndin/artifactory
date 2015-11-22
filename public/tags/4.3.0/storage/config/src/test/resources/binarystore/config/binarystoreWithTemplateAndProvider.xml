@@ -1,0 +1,6 @@
+<config version="2">
+    <chain template="cache-fs"/>
+    <provider id="file-system" type="file-system">
+        <dir>test654</dir>
+    </provider>
+</config>
