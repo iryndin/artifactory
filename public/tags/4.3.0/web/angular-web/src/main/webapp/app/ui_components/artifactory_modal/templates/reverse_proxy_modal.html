@@ -1,0 +1,109 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="close" aria-label="Close" ng-click="$close()"><span
+            aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">Reverse Proxy Config Generator</h4>
+</div>
+<div class="modal-body">
+    <jf-panel jf-panel-heading="Artifactory Settings">
+        <div class="form-group">
+            <div class="form-group-cell">
+                <label for="repositoryKey" class="mandatory">Repository Key</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="repositoryKey"
+                       name="repositoryKey"
+                       required/>
+            </div>
+            <div class="form-group-cell">
+                <label for="artifactoryURL" class="mandatory">Artifactory URL</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="artifactoryURL"
+                       name="artifactoryURL"
+                       required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group-cell">
+                <label>Docker Version</label>
+                <ul class="radio-select-list">
+                    <li>
+                        <input type="radio" id="v1" value="V1"
+                               name="docker-version"/>
+                        <label for="v1" class="input-label-weight">V1</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="v2" value="V2"
+                               name="docker-version"/>
+                        <label for="v2" class="input-label-weight">V2</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </jf-panel>
+    <jf-panel jf-panel-heading="Proxy Settings">
+        <div class="form-group">
+            <div class="form-group-cell">
+                <label class="mandatory">Web Server Provider</label>
+                <ul class="radio-select-list">
+                    <li>
+                        <input type="radio" id="provider-nginx" value="nginx"
+                               name="provider"/>
+                        <label for="provider-nginx" class="input-label-weight">NGINX</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="provider-apache" value="apache"
+                               name="provider"/>
+                        <label for="provider-apache" class="input-label-weight">Apache</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group-cell">
+                <label for="serverName" class="mandatory">Server Name</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="serverName"
+                       name="serverName"
+                       required/>
+            </div>
+            <div class="form-group-cell">
+                <label for="certificatePath" class="mandatory">Certificate Path</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="certificatePath"
+                       name="certificatePath"
+                       required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group-cell">
+                <label for="serverPort" class="mandatory">Port</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="serverPort"
+                       name="serverPort"
+                       required/>
+            </div>
+            <div class="form-group-cell">
+                <label for="keyPath" class="mandatory">Key Path</label>
+                <jf-help-tooltip html=""></jf-help-tooltip>
+                <input type="text"
+                       class="input-text"
+                       id="keyPath"
+                       name="keyPath"
+                       required/>
+            </div>
+        </div>
+    </jf-panel>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="">Generate Configuration</button>
+</div>
