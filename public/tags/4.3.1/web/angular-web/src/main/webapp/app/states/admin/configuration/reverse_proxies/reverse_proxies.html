@@ -1,0 +1,19 @@
+<div class="content-layout-container">
+    <h1>Reverse Proxies Management</h1>
+
+    <div class="content-wrapper">
+        <div class="card stretch card-pole-pad card-side-pad">
+            <div class="pull-right admin-grid-buttons">
+                <a ui-sref="^.reverse_proxies.new">
+                    <i class="grid-button-icon icon icon-new"></i>New
+                </a>
+            </div>
+            <jf-grid grid-options="AdminConfigurationReverseProxies.gridOptions"
+                     filter-field="key"
+                     filter-on-change="true"
+                     object-name="reverse proxy/reverse proxies"
+                     auto-focus="true">
+            </jf-grid>
+        </div>
+    </div>
+</div>
