@@ -1,0 +1,8 @@
+<div ng-class="{'jf-spinner':jfSpinner.domain === 'body' || jfSpinner.domain === 'content', 'jf-spinner-local': jfSpinner.domain !== 'body' && jfSpinner.domain !== 'content'}" ng-if="jfSpinner.show">
+    <div class="spinner-msg" ng-if="jfSpinner.domain === 'body' || jfSpinner.domain === 'content'">
+        <div class="icon-hourglass"></div>
+    </div>
+    <div class="spinner-msg-local" ng-if="jfSpinner.domain !== 'body' && jfSpinner.domain !== 'content'">
+        <div class="icon-hourglass-local"></div>
+    </div>
+</div>
