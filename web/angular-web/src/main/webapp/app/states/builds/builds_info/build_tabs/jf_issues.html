@@ -1,0 +1,7 @@
+<jf-grid ng-if="!jfIssues.noData"
+         grid-options="jfIssues.gridOptions"
+         object-name="Issue"></jf-grid>
+
+<div class="alert alert-warning" ng-if="jfIssues.noData">
+    No issues were recorded during this build.
+</div>
