@@ -1,0 +1,184 @@
+<div class="content-layout-container">
+    <h1>Support Zone</h1>
+
+    <div class="content-wrapper">
+        <form>
+            <div class="card stretch card-pole-pad card-side-pad">
+                <div class="content-with-footer">
+                    <jf-panel jf-panel-heading="Information To Collect">
+                        <div class="alert alert-info">The support info bundle is not sent to JFrog support directly. Once you completed the download log in to JFrog <a href="https://support.jfrog.com/" target="_blank">Support Portal</a> and open a relevant ticket.</div>
+
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="System Info">
+                                    <input type="checkbox"
+                                           id="includeSystemInfo"
+                                           ng-model="SupportPage.setup.systemInfoConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Security Descriptor">
+                                    <input type="checkbox"
+                                           id="includeSecurityDesc"
+                                           ng-model="SupportPage.setup.securityInfoConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Config Descriptor">
+                                    <input type="checkbox"
+                                           id="includeConfigDesc"
+                                           ng-model="SupportPage.setup.configDescriptorConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Configuration Files">
+                                    <input type="checkbox"
+                                           id="includeConfigFiles"
+                                           ng-model="SupportPage.setup.configFilesConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Storage Summary">
+                                    <input type="checkbox"
+                                           id="includeStorageSummary"
+                                           ng-model="SupportPage.setup.storageSummaryConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Scrub Passwords and Private Information">
+                                    <input type="checkbox"
+                                           id="hideUserDetails"
+                                           ng-model="SupportPage.setup.hideUserDetails">
+                                </jf-checkbox>
+                                <jf-help-tooltip html="SupportPage.TOOLTIP.hideUserDetails"></jf-help-tooltip>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Thread Dump">
+                                    <input type="checkbox"
+                                           id="includeThreadDump"
+                                           ng-model="SupportPage.setup.threadDumpConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox-group">
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="count">Number of Thread Dumps</label>
+                                    <input type="number"
+                                           class="input-text"
+                                           required
+                                           id="count"
+                                           name="count"
+                                           ng-model="SupportPage.setup.threadDumpConfiguration.count"/>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="interval">Interval (Milliseconds)</label>
+                                    <input type="number"
+                                           class="input-text"
+                                           required
+                                           id="interval"
+                                           name="interval"
+                                           ng-model="SupportPage.setup.threadDumpConfiguration.interval"/>
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="System Logs">
+                                    <input type="checkbox"
+                                           id="includeLogs"
+                                           ng-model="SupportPage.setup.systemLogsConfiguration.enabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox-group">
+                            <div class="form-group-cell">
+                                <label class="label-wight">Date Span</label>
+                                <selectize config="SupportPage.timePeriodConfig"
+                                           options="SupportPage.timePeriodOptions"
+                                           ng-change="SupportPage.onChangeTimePeriod()"
+                                           ng-model="SupportPage.timePeriodSelection"
+                                           ng-disabled="!SupportPage.setup.systemLogsConfiguration.enabled">
+                                </selectize>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox-group"
+                             ng-show="SupportPage.timePeriodSelection != 1">
+                            <div class="form-group-cell form-calendar">
+                                <label for="from-date">Start Date</label>
+                                <div>
+                                    <input type="text"
+                                           class="input-text"
+                                           readonly
+                                           ng-disabled="!SupportPage.setup.systemLogsConfiguration.enabled || SupportPage.timePeriodSelection !== 'CUSTOM'"
+                                           ng-click="SupportPage.openDatePicker($event)"
+                                           id="from-date">
+                                    <i class="icon icon-docker-created"></i>
+                                </div>
+                            </div>
+                            <div class="form-group-cell form-calendar">
+                                <label for="to-date">End Date</label>
+                                <div>
+                                    <input type="text"
+                                           class="input-text"
+                                           readonly
+                                           ng-disabled="!SupportPage.setup.systemLogsConfiguration.enabled || SupportPage.timePeriodSelection !== 'CUSTOM'"
+                                           ng-click="SupportPage.openDatePicker($event)"
+                                           id="to-date">
+                                    <i class="icon icon-docker-created"
+                                       ng-click="SupportPage.openDatePicker($event)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </jf-panel>
+
+                    <jf-panel ng-if="SupportPage.oldBundles.length"
+                              jf-panel-heading="Previously Created Bundles">
+                        <div class="form-group">
+                            <div class="form-group-cell double">
+                                <div class="group-list-wrapper">
+                                    <ul class="group-list with-actions">
+                                        <li class="group-list-item"
+                                            ng-repeat="bundle in SupportPage.oldBundles">
+                                            {{bundle.date}} <span ng-if="$index === 0">(Latest)</span>
+                                            <div class="group-list-actions">
+                                                <a class="btn btn-action" ng-click="SupportPage.downloadOld(bundle.filename)" jf-tooltip="Download">
+                                                    <i class="icon-2x icon icon-download"></i>
+                                                </a>
+                                                <a class="btn btn-action" ng-click="SupportPage.deleteOld(bundle.filename)" jf-tooltip="Delete">
+                                                    <i class="icon-2x icon icon-clear"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </jf-panel>
+                </div>
+            </div>
+            <div class="content-footer">
+                <div class="pull-right">
+                    <button class="btn btn-primary"
+                            ng-disabled="!SupportPage.ready"
+                            ng-click="SupportPage.create()">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
