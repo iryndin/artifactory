@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<versionFeatures>
+    <features>
+        <feature>
+            <name>SYNC_PROPERTIES</name>
+            <availableFrom>
+                <version>4.1</version>
+            </availableFrom>
+        </feature>
+        <feature>
+            <name>LIST_CONTENT</name>
+            <availableFrom>
+                <version>4.1</version>
+            </availableFrom>
+        </feature>
+        <feature>
+            <name>SYNC_STATISTICS</name>
+            <availableFrom>
+                <version>4.2</version>
+            </availableFrom>
+        </feature>
+        <feature>
+            <name>DETECT_ORIGIN_ABSENCE</name>
+            <availableFrom>
+                <version>4.3.3</version>
+            </availableFrom>
+        </feature>
+    </features>
+</versionFeatures>
