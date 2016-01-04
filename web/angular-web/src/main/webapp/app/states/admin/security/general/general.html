@@ -1,0 +1,151 @@
+<div class="content-layout-container">
+    <h1>General Security Configuration</h1>
+
+    <div class="content-wrapper">
+        <div class="card stretch card-pole-pad card-side-pad">
+            <div class="content-with-footer">
+                <jf-panel jf-panel-heading="General Security Settings">
+                    <form class="form" name="AdminSecurityGeneral.genForm">
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Allow Anonymous Access">
+                                    <input id="inlineCheckbox1"
+                                           type="checkbox"
+                                           name="inlineCheckbox1"
+                                           ng-click="AdminSecurityGeneral.onClickAllowAnonymousAccess()"
+                                           ng-model="AdminSecurityGeneral.generalConfig.anonAccessEnabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Prevent Anonymous Access to Build Related Info">
+                                    <input id="inlineCheckbox2"
+                                           type="checkbox"
+                                           name="inlineCheckbox2"
+                                           ng-disabled="!AdminSecurityGeneral.generalConfig.anonAccessEnabled"
+                                           ng-model="AdminSecurityGeneral.generalConfig.anonAccessToBuildInfosDisabled">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Hide Existence of Unauthorized Resources">
+                                    <input type="checkbox"
+                                           id="inlineCheckbox3"
+                                           ng-model="AdminSecurityGeneral.generalConfig.hideUnauthorizedResources">
+                                </jf-checkbox>
+                                <jf-help-tooltip html="AdminSecurityGeneral.TOOLTIP.hideExistenceOfUnauthorizedResources"></jf-help-tooltip>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-field>
+                                    <label class="control-label">Password Encryption Policy</label>
+                                    <jf-help-tooltip html="AdminSecurityGeneral.TOOLTIP.passwordEncryptionPolicy"></jf-help-tooltip>
+                                    <jf-ui-select jf-select-model="AdminSecurityGeneral.generalConfig.passwordSettings.encryptionPolicy"
+                                                  jf-select-options="AdminSecurityGeneral.options">
+                                    </jf-ui-select>
+                                </jf-field>
+                            </div>
+                        </div>
+                    </form>
+                </jf-panel>
+                <jf-panel jf-panel-heading="User Lock">
+                    <form class="form">
+                    <div class="form-group">
+                        <div class="form-group-cell">
+                            <jf-checkbox text="Lock User After Exceeding Max Failed Login Attempts">
+                                <input type="checkbox"
+                                       id="lockUsers"
+                                       ng-model="AdminSecurityGeneral.generalConfig.userLockPolicy.enabled">
+                            </jf-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-group half-margin-bottom">
+                        <div class="form-group-cell">
+                            <jf-field validations="common">
+                                <label for="maxAttempts">Max Failed Login Attempts</label>
+                                <input type="number"
+                                       class="input-text"
+                                       required
+                                       min="1"
+                                       max="100"
+                                       ng-disabled="!AdminSecurityGeneral.generalConfig.userLockPolicy.enabled"
+                                       id="maxAttempts"
+                                       name="maxAttempts"
+                                       ng-model="AdminSecurityGeneral.generalConfig.userLockPolicy.loginAttempts"/>
+                            </jf-field>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group-cell">
+                            <div ng-disabled="!AdminSecurityGeneral.generalConfig.userLockPolicy.enabled"
+                                 ng-click="AdminSecurityGeneral.generalConfig.userLockPolicy.enabled && AdminSecurityGeneral.unlockAllUsers()"
+                                 class="text-button">
+                                <span class="icon icon-unlock"></span>Unlock All Users
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </jf-panel>
+                <jf-panel jf-panel-heading="API Keys Management">
+                    <form>
+                        <div class="form-group half-margin-bottom">
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label>Revoke User API Key</label>
+                                    <input type="text"
+                                           class="input-text"
+                                           id="username"
+                                           name="username"
+                                           placeholder="User Name"
+                                           ng-model="AdminSecurityGeneral.usernameToRevoke"/>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell form-button">
+                                <div ng-click="AdminSecurityGeneral.canRevokeUser() && AdminSecurityGeneral.revokeApiKey()" class="text-button warning-button"
+                                     ng-disabled="!AdminSecurityGeneral.canRevokeUser()">
+                                    <span class="icon icon-clear"></span>Revoke
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <div ng-click="AdminSecurityGeneral.revokeApiKeys()" class="text-button warning-button">
+                                    <span class="icon icon-clear"></span>Revoke API Keys For All Users
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </jf-panel>
+                <jf-panel jf-panel-heading="Passwords Encryption">
+                    <form class="form">
+                        <div class="alert alert-info">{{AdminSecurityGeneral.getEncryptionStatusText()}}</div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <button class="btn btn-secondary"
+                                        ng-click="AdminSecurityGeneral.toggleEncryption()">
+                                    {{ AdminSecurityGeneral.getEncryptionButtonText() }}
+                                </button>
+                                <jf-help-tooltip ng-if="AdminSecurityGeneral.getEncryptionButtonText() === 'Encrypt'"
+                                                 html="AdminSecurityGeneral.TOOLTIP.encrypt"></jf-help-tooltip>
+                                <jf-help-tooltip ng-if="AdminSecurityGeneral.getEncryptionButtonText() === 'Decrypt'"
+                                                 html="AdminSecurityGeneral.TOOLTIP.decrypt"></jf-help-tooltip>
+                            </div>
+                        </div>
+                    </form>
+                </jf-panel>
+            </div>
+        </div>
+
+        <div class="content-footer">
+            <div class="pull-right">
+                <button class="btn btn-default" type="button" ng-click="AdminSecurityGeneral.cancel()">Reset</button>
+                <button class="btn btn-primary"
+                        ng-click="AdminSecurityGeneral.save()"
+                        ng-disabled="!AdminSecurityGeneral.genForm.$valid">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

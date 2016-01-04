@@ -1,0 +1,10 @@
+Package: [[artifactId]]
+Version: [[version]]
+Section: misc
+Priority: low
+Architecture: all
+Description: [[description]]
+Maintainer: jayd@jfrog.com
+Depends: java8-runtime-headless, net-tools
+Provides: artifactory
+Conflicts: jfrog-artifactory-pro, jfrog-artifactory-vrcs
