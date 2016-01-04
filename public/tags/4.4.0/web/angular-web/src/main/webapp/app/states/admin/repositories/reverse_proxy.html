@@ -1,0 +1,37 @@
+<jf-panel jf-panel-heading="Reverse Proxy"
+          ng-if="RepositoryForm.repoInfo.isType('docker') && !RepositoryForm.features.isAol() && !RepositoryForm.features.isOss()">
+    <div class="alert alert-warning"
+         ng-if="!RepositoryForm.reverseProxyConfigured">
+        To use this feature first <a href ui-sref="admin.configuration.reverse_proxy">configure reverse proxy</a>.
+    </div>
+    <div class="form-group" ng-if="RepositoryForm.reverseProxyConfigured">
+        <div class="form-group-cell">
+            <label for="serverName">Registry Name</label>
+            <input type="text"
+                   class="input-text"
+                   id="serverName"
+                   ng-model="RepositoryForm.repoInfo.advanced.reverseProxy.serverName"
+                   disabled />
+        </div>
+        <div class="form-group-cell" ng-if="RepositoryForm.reverseProxyPortMode">
+            <jf-field validations="reverseProxy">
+                <label for="serverPort">Registry Port</label>
+                <jf-help-tooltip html="RepositoryForm.TOOLTIP.reverseProxy.registryPort"></jf-help-tooltip>
+                <input type="number"
+                       name="serverPort"
+                       min="1"
+                       max="65535"
+                       jf-validator-reverse-proxy-port="{{RepositoryForm.repoInfo.general.repoKey}}"
+                       placeholder="e.g. 6555"
+                       ng-model-options="{debounce: { 'default': 500 } }"
+                       class="input-text"
+                       id="serverPort"
+                       ng-model="RepositoryForm.repoInfo.advanced.reverseProxy.serverPort" />
+            </jf-field>
+        </div>
+    </div>
+    <div class="alert alert-info"
+         ng-if="RepositoryForm.reverseProxyConfigured">
+        To view / download the snippet, go to <a target="_blank" href ui-sref="admin.configuration.reverse_proxy">reverse proxy</a> page.
+    </div>
+</jf-panel>

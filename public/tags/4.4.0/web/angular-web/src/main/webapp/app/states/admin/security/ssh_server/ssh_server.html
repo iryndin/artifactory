@@ -1,0 +1,124 @@
+<div class="content-layout-container">
+    <h1>SSH Server Configuration</h1>
+
+    <div class="content-wrapper">
+        <form class="form" name="adminSshForm" novalidate>
+            <div class="card stretch card-pole-pad card-side-pad">
+                <div class="content-with-footer">
+                    <jf-panel jf-panel-heading="SSH Server Settings">
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Enable SSH Authentication">
+                                    <input type="checkbox"
+                                           id="enableSshServer"
+                                           ng-model="AdminSecuritySshServer.sshServer.enableSshServer">
+                                </jf-checkbox>
+                                <!--<jf-help-tooltip html="AdminSecuritySshServer.TOOLTIP.enableSshServer"></jf-help-tooltip>-->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-field validations="sshServer" autofocus="true">
+                                    <label class="mandatory" for="sshServerPort">Port</label>
+                                    <!--<jf-help-tooltip html="AdminSecuritySshServer.TOOLTIP.sshServerPort"></jf-help-tooltip>-->
+                                    <input name="sshServerPort"
+                                           id="sshServerPort"
+                                           type="number"
+                                           required
+                                           ng-disabled="!AdminSecuritySshServer.sshServer.enableSshServer"
+                                           ng-model="AdminSecuritySshServer.sshServer.sshServerPort"
+                                           class="input-text">
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell">
+                                <jf-field validations="sshServer">
+                                    <label for="customUrl" ng-class="{mandatory: AdminSecuritySshServer.sshServer.enableSshServer}">Custom URL Base</label>
+                                    <jf-help-tooltip html="AdminSecuritySshServer.TOOLTIP.customURLBase"></jf-help-tooltip>
+                                    <input type="url"
+                                           class="input-text"
+                                           name="customUrl"
+                                           id="customUrl"
+                                           ng-disabled="!AdminSecuritySshServer.sshServer.enableSshServer"
+                                           ng-required="AdminSecuritySshServer.sshServer.enableSshServer"
+                                           ng-model="AdminSecuritySshServer.sshServer.customUrlBase"/>
+                                </jf-field>
+                            </div>
+                        </div>
+                    </jf-panel>
+                    <jf-panel jf-panel-heading="Server Keys">
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <div class="available-key">
+                                    <span>Public key</span> : <span class="debian-value"
+                                                                    ng-if="!AdminSecuritySshServer.publicKeyInstalled">{{AdminSecuritySshServer.publicKeyValue}}</span>
+                                    <span class="key-installed"
+                                          ng-if="AdminSecuritySshServer.publicKeyInstalled">{{AdminSecuritySshServer.publicKeyValue}}&nbsp;
+                                        <a href="{{AdminSecuritySshServer.publicKeyLink}}"
+                                           class="default-link icon icon-download"
+                                           jf-tooltip="Download Key"
+                                           class="debian-value"></a>
+                                    </span>&nbsp;
+                                    <a href=""
+                                       ng-click="AdminSecuritySshServer.removeKey(true)"
+                                       class="default-link icon icon-clear"
+                                       ng-if="AdminSecuritySshServer.publicKeyInstalled">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-file-drop jf-file-uploader="AdminSecuritySshServer.uploaderPublicKey"></jf-file-drop>
+                            </div>
+                            <div class="form-group-cell">
+                                <button class="btn btn-primary upload-button"
+                                        ng-click="AdminSecuritySshServer.upload('public')"
+                                        ng-disabled="!AdminSecuritySshServer.canUploadSshKey('uploaderPublicKey')">
+                                    Upload
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <span>Private key :</span>&nbsp;
+                                <span class="debian-value"
+                                      ng-class="{'key-installed': AdminSecuritySshServer.privateKeyInstalled}">{{AdminSecuritySshServer.privateKeyValue}}</span>&nbsp;
+                                <a href=""
+                                   ng-click="AdminSecuritySshServer.removeKey(false)"
+                                   class="default-link icon icon-clear"
+                                   ng-if="AdminSecuritySshServer.privateKeyInstalled">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-file-drop jf-file-uploader="AdminSecuritySshServer.uploaderPrivateKey"></jf-file-drop>
+                            </div>
+                            <div class="form-group-cell">
+                                <button class="btn btn-primary upload-button"
+                                        ng-click="AdminSecuritySshServer.upload('private')"
+                                        ng-disabled="!AdminSecuritySshServer.canUploadSshKey('uploaderPrivateKey')">
+                                    Upload
+                                </button>
+                            </div>
+                        </div>
+                    </jf-panel>
+                </div>
+            </div>
+
+            <div class="content-footer">
+                <div class="pull-right">
+                    <button class="btn btn-default"
+                            type="button"
+                            ng-click="AdminSecuritySshServer.reset()">
+                        Reset
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            ng-click="AdminSecuritySshServer.save()"
+                            ng-disabled="!adminSshForm.$valid">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
