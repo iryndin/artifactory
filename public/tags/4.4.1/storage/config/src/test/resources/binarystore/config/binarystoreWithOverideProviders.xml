@@ -1,0 +1,6 @@
+<config version="2">
+    <chain template="full-db-direct"/>
+    <provider id="blob" type="blob">
+        <useless>true</useless>
+    </provider>
+</config>
