@@ -1,0 +1,306 @@
+<div class="content-layout-container">
+    <h1>{{ ReverseProxyForm.formTitle }}</h1>
+
+    <div class="content-wrapper">
+        <form novalidate name="ReverseProxyForm.reverseProxyEditForm" ng-submit="ReverseProxyForm.save()">
+            <div class="card stretch card-pole-pad card-side-pad">
+                <div class="content-with-footer">
+                    <jf-panel jf-panel-heading="Reverse Proxy Settings">
+                        <div class="form-group no-margin-bottom pull-left" ng-if="!ReverseProxyForm.canViewSnippet()">
+                            <div class="form-group-cell double">
+                                <div class="alert alert-warning">
+                                    Saving changes is required in order to view or download configuration snippet.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pull-right admin-grid-buttons">
+                            <a ng-disabled="!ReverseProxyForm.canViewSnippet()"
+                               ng-click="ReverseProxyForm.viewSnippet()"
+                               jf-tooltip="View Reverse Proxy Configuration Snippet">
+                                <i class="grid-button-icon icon icon-view"></i>View
+                            </a>
+                            <a ng-disabled="!ReverseProxyForm.canViewSnippet()"
+                               ng-click="ReverseProxyForm.downloadSnippet()"
+                               jf-tooltip="Download Reverse Proxy Configuration Snippet">
+                                <i class="grid-button-icon icon icon-download"></i>Download
+                            </a>
+                        </div>
+
+                        <div class="clearfix"
+                             ng-if="!ReverseProxyForm.canViewSnippet()"></div>
+
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-field>
+                                    <label class="mandatory">Web Server Type</label>
+                                    <ui-select ng-model="ReverseProxyForm.reverseProxy.webServerType">
+                                        <ui-select-match placeholder="Select Type...">
+                                            <i class="icon-reverse icon-reverse-{{$select.selected.text}}"></i>{{$select.selected.text}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="serverType in ReverseProxyForm.webServerTypeOptions | filter: $select.search track by $index">
+                                            <i ng-if="serverType.icon" class="icon-reverse icon-reverse-{{serverType.text}}"></i>
+                                            <span ng-bind-html="serverType.text | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="artifactoryServerName" class="mandatory">Artifactory Server Name</label>
+                                    <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.artifactoryServerName"></jf-help-tooltip>
+                                    <input type="text"
+                                           placeholder="Artifactory IP or hostname"
+                                           name="artifactoryServerName"
+                                           class="input-text"
+                                           id="artifactoryServerName"
+                                           required
+                                           ng-model="ReverseProxyForm.reverseProxy.artifactoryServerName"/>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="artifactoryPort" class="mandatory">Artifactory Port</label>
+                                    <input type="number"
+                                           name="artifactoryPort"
+                                           class="input-text"
+                                           id="artifactoryPort"
+                                           min="1"
+                                           max="65535"
+                                           required
+                                           ng-model="ReverseProxyForm.reverseProxy.artifactoryPort"/>
+                                </jf-field>
+                            </div>
+                        </div>
+
+                        <div class="form-group no-margin-bottom">
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="artifactoryAppContext">Artifactory Context Path</label>
+                                    <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.artifactoryAppContext"></jf-help-tooltip>
+                                    <input type="text"
+                                           name="artifactoryAppContext"
+                                           class="input-text"
+                                           id="artifactoryAppContext"
+                                           ng-model="ReverseProxyForm.reverseProxy.artifactoryAppContext"/>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell" ng-if="ReverseProxyForm.haConfigured">
+                                <jf-field validations="common" class="mandatory">
+                                    <label for="upStreamName">Upstream Name</label>
+                                    <input type="text"
+                                           name="upStreamName"
+                                           class="input-text"
+                                           id="upStreamName"
+                                           required
+                                           ng-model="ReverseProxyForm.reverseProxy.upStreamName"/>
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group margin-top-10">
+                            <div class="form-group-cell double">
+                                <div class="stripped alert alert-info">
+                                    Internal Artifactory URL:
+                                    <b>{{ReverseProxyForm.reverseProxy.artifactoryServerName || '&ltSERVER_NAME&gt'}}:{{ReverseProxyForm.reverseProxy.artifactoryPort || '&ltPORT&gt'}}/{{ReverseProxyForm.reverseProxy.artifactoryAppContext || ''}}</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="serverName" class="mandatory">Public Server Name</label>
+                                    <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.serverName"></jf-help-tooltip>
+                                    <input type="text"
+                                           name="serverName"
+                                           class="input-text"
+                                           id="serverName"
+                                           required
+                                           placeholder="e.g. myserver.org"
+                                           ng-change="ReverseProxyForm.onChangeServerName()"
+                                           ng-model="ReverseProxyForm.reverseProxy.serverName"/>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell">
+                                <jf-field validations="common">
+                                    <label for="publicAppContext">Public Context Path</label>
+                                    <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.publicAppContext"></jf-help-tooltip>
+                                    <input type="text"
+                                           name="publicAppContext"
+                                           class="input-text"
+                                           id="publicAppContext"
+                                           ng-model="ReverseProxyForm.reverseProxy.publicAppContext"/>
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Use HTTP">
+                                    <input type="checkbox"
+                                           ng-disabled="!ReverseProxyForm.reverseProxy.useHttps"
+                                           id="useHttp"
+                                           name="useHttp"
+                                           ng-model="ReverseProxyForm.reverseProxy.useHttp">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-cell" ng-if="ReverseProxyForm.reverseProxy.useHttp">
+                                <jf-field validations="common">
+                                    <label for="httpPort" class="mandatory">HTTP Port</label>
+                                    <input type="number"
+                                           class="input-text"
+                                           required
+                                           id="httpPort"
+                                           name="httpPort"
+                                           min="1"
+                                           max="65535"
+                                           ng-model="ReverseProxyForm.reverseProxy.httpPort">
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group form-checkbox" ng-class="{'no-margin-bottom' : !ReverseProxyForm.reverseProxy.useHttps}">
+                            <div class="form-group-cell">
+                                <jf-checkbox text="Use HTTPS">
+                                    <input type="checkbox"
+                                           ng-disabled="!ReverseProxyForm.reverseProxy.useHttp"
+                                           id="useHttps"
+                                           name="useHttps"
+                                           ng-model="ReverseProxyForm.reverseProxy.useHttps">
+                                </jf-checkbox>
+                            </div>
+                        </div>
+                        <div ng-if="ReverseProxyForm.reverseProxy.useHttps">
+                            <div class="form-group">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="sslPort" class="mandatory">HTTPS Port</label>
+                                        <input type="number"
+                                               class="input-text"
+                                               required
+                                               id="sslPort"
+                                               name="sslPort"
+                                               min="1"
+                                               max="65535"
+                                               ng-model="ReverseProxyForm.reverseProxy.httpsPort">
+                                    </jf-field>
+                                </div>
+                            </div>
+                            <div class="form-group no-margin-bottom">
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="sslKey" class="mandatory">SSL Key Path</label>
+                                        <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.sslKey"></jf-help-tooltip>
+                                        <input type="text"
+                                               placeholder="e.g. /etc/ssl/private/myserver.key"
+                                               name="sslKey"
+                                               class="input-text"
+                                               id="sslKey"
+                                               required
+                                               ng-model="ReverseProxyForm.reverseProxy.sslKey"/>
+                                    </jf-field>
+                                </div>
+                                <div class="form-group-cell">
+                                    <jf-field validations="common">
+                                        <label for="sslCertificate" class="mandatory">SSL Certificate Path</label>
+                                        <jf-help-tooltip html="ReverseProxyForm.TOOLTIP.sslCertificate"></jf-help-tooltip>
+                                        <input type="text"
+                                               placeholder="e.g. /etc/ssl/certs/myserver.crt"
+                                               name="sslCertificate"
+                                               class="input-text"
+                                               id="sslCertificate"
+                                               required
+                                               ng-model="ReverseProxyForm.reverseProxy.sslCertificate"/>
+                                    </jf-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group margin-top-10">
+                            <div class="form-group-cell double">
+                                <div class="stripped alert alert-info">
+                                    Users will have access to Artifactory at the following URL(s): <br ng-if="ReverseProxyForm.reverseProxy.useHttp && ReverseProxyForm.reverseProxy.useHttps" />
+                                    <span ng-if="!(ReverseProxyForm.reverseProxy.useHttp && ReverseProxyForm.reverseProxy.useHttps)">
+                                        <span ng-if="ReverseProxyForm.reverseProxy.useHttp"><b>http://{{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}:{{ReverseProxyForm.reverseProxy.httpPort || '&ltPORT&gt'}}/{{ReverseProxyForm.reverseProxy.publicAppContext || ''}}</b></span><br ng-if="ReverseProxyForm.reverseProxy.useHttp && ReverseProxyForm.reverseProxy.useHttps" />
+                                        <span ng-if="ReverseProxyForm.reverseProxy.useHttps"><b>https://{{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}:{{ReverseProxyForm.reverseProxy.httpsPort || '&ltPORT&gt'}}/{{ReverseProxyForm.reverseProxy.publicAppContext || ''}}</b></span>
+                                    </span>
+                                    <ul ng-if="ReverseProxyForm.reverseProxy.useHttp && ReverseProxyForm.reverseProxy.useHttps">
+                                        <li><b>http://{{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}:{{ReverseProxyForm.reverseProxy.httpPort || '&ltPORT&gt'}}/{{ReverseProxyForm.reverseProxy.publicAppContext || ''}}</b></li>
+                                        <li><b>https://{{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}:{{ReverseProxyForm.reverseProxy.httpsPort || '&ltPORT&gt'}}/{{ReverseProxyForm.reverseProxy.publicAppContext || ''}}</b></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </jf-panel>
+                    <jf-panel jf-panel-heading="Docker Reverse Proxy Settings">
+                        <div class="form-group" ng-if="!ReverseProxyForm.reverseProxy.useHttps">
+                            <div class="form-group-cell double">
+                                <div class="stripped alert alert-warning">
+                                    Not using HTTPS requires Docker clients to add an --insecure-registry flag to <b>DOCKER_OPTS</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group no-margin-bottom">
+                            <div class="form-group-cell">
+                                <jf-field>
+                                    <label>Reverse Proxy Method</label>
+                                    <selectize config='ReverseProxyForm.selectizeConfig'
+                                               options='ReverseProxyForm.dockerReverseProxyMethodSelectizeOptions'
+                                               ng-model='ReverseProxyForm.reverseProxy.dockerReverseProxyMethod'>
+                                    </selectize>
+                                </jf-field>
+                            </div>
+                            <div class="form-group-cell" ng-if="ReverseProxyForm.reverseProxy.dockerReverseProxyMethod === 'SUBDOMAIN'">
+                                <jf-field validations="common">
+                                    <label for="serverNameExpression">Server Name Expression</label>
+                                    <input type="text"
+                                           name="serverNameExpression"
+                                           class="input-text"
+                                           id="serverNameExpression"
+                                           disabled
+                                           ng-model="ReverseProxyForm.reverseProxy.serverNameExpression"/>
+                                </jf-field>
+                            </div>
+                        </div>
+                        <div class="form-group margin-top-10"
+                             ng-if="ReverseProxyForm.reverseProxy.dockerReverseProxyMethod !== 'NOVALUE'">
+                            <div class="form-group-cell double">
+                                <div class="stripped alert alert-info"
+                                     ng-if="ReverseProxyForm.reverseProxy.dockerReverseProxyMethod === 'PORTPERREPO'">
+                                    When using Port as the Reverse Proxy Method, each Docker repository should be bound to a specific port. You can configure the port binding for each Docker repository in the Advanced tab of the Docker repository configuration. Once you configure the ports you can view and download the snippet.<br>
+                                    Example of docker push or pull command:<br>
+                                    <b>docker pull / push {{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}:&lt;REPOSITORY_PORT&gt;/&lt;IMAGE&gt;:&lt;TAG&gt;</b>
+                                </div>
+                                <div class="stripped alert alert-info"
+                                     ng-if="ReverseProxyForm.reverseProxy.dockerReverseProxyMethod === 'SUBDOMAIN'">
+                                    When using Sub Domain method, each Docker repository key will be used as the sub domain. This option requires a wildcard certificate.<br>
+                                    Example of docker push or pull command:<br>
+                                    <b>docker pull / push &lt;REPOSITORY_KEY&gt;.{{ReverseProxyForm.reverseProxy.serverName || '&ltSERVER_NAME&gt'}}/&lt;IMAGE&gt;:&lt;TAG&gt;</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="ReverseProxyForm.reverseProxy.dockerReverseProxyMethod === 'NOVALUE'">
+                            <br><br><br><br><br>
+                        </div>
+                    </jf-panel>
+                </div>
+            </div>
+            <div class="content-footer">
+                <div class="pull-right">
+                    <button
+                            type="button"
+                            class="btn btn-default"
+                            ng-click="ReverseProxyForm.reset()">
+                        Reset
+                    </button>
+                    <button
+                            type="submit"
+                            class="btn btn-primary"
+                            ng-disabled="!ReverseProxyForm.reverseProxy.webServerType || !ReverseProxyForm.reverseProxyEditForm.$valid">Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

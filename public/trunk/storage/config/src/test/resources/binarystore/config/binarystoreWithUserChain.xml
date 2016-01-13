@@ -1,0 +1,16 @@
+<config version="2">
+    <chain>
+        <provider id="cache-fs" type="cache-fs">
+            <provider id="retry" type="retry">
+                <provider id="file-system" type="file-system"/>
+            </provider>
+        </provider>
+    </chain>
+
+    <provider id="cache-fs" type="cache-fs">
+        <dir>test89</dir>
+    </provider>
+    <provider id="file-system" type="file-system">
+        <dir>test99</dir>
+    </provider>
+</config>
